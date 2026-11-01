@@ -102,15 +102,14 @@ if __name__ == "__main__":
 
 # ---- ภาคเหนือ: รายการตั้งต้นเพิ่ม (ชื่อบทความ en.wikipedia ที่ใช้เป็นกุญแจค้นเท่านั้น) ----
 # ชื่อที่หาไม่เจอหรือไม่มีพิกัดจะถูกข้ามและรายงานใน docs/COVERAGE.md ตอนรัน build_places.py
-NORTH_EXTRA = {
-    "เชียงราย": [("Chiang_Saen", "H"), ("Wat_Phra_That_Doi_Tung", "T"), ("Khun_Chae_National_Park", "N"),
-                 ("Lam_Nam_Kok_National_Park", "N"), ("Tham_Luang_Nang_Non", "N")],
-    "ลำปาง": [("Wat_Pongsanuk", "T"), ("Tham_Pha_Thai_National_Park", "N"), ("Mae_Wang_National_Park", "N")],
-    "ลำพูน": [("Wat_Phra_Yuen", "T")],
-    "แม่ฮ่องสอน": [("Salawin_National_Park", "N"), ("Mae_Sariang", "A"), ("Wat_Chong_Kham", "T"), ("Wat_Chong_Klang", "T")],
-    "น่าน": [("Khun_Nan_National_Park", "N"), ("Nanthaburi_National_Park", "N"), ("Mae_Charim_National_Park", "N")],
-    "พะเยา": [("Phu_Langka_National_Park", "N"), ("Doi_Luang_National_Park", "N")],
-    "แพร่": [("Wiang_Kosai_National_Park", "N")],
+NORTH_EXTRA = {   # ทุกชื่อตรวจแล้วว่ามีบทความ+พิกัดอยู่ในจังหวัดนั้นจริง (2026-11-01)
+    "เชียงราย": [("Chiang_Saen", "H"), ("Khun_Chae_National_Park", "N"), ("Lam_Nam_Kok_National_Park", "N"), ("Tham_Luang_Nang_Non", "N")],
+    "ลำปาง": [("Ratsadaphisek_Bridge", "A"), ("Mae_Wa_National_Park", "N")],
+    "ลำพูน": [("Wat_Phra_Phutthabat_Tak_Pha", "T")],
+    "แม่ฮ่องสอน": [("Salawin_National_Park", "N")],
+    "น่าน": [("Khun_Nan_National_Park", "N"), ("Mae_Charim_National_Park", "N"), ("Phu_Fa_waterfall", "N")],
+    "พะเยา": [("Doi_Luang_National_Park", "N")],
+    "แพร่": [("Wiang_Kosai_National_Park", "N"), ("Lam_Nam_Nan_National_Park", "N"), ("Tham_Pha_Nang_Khoi", "N")],
     "อุตรดิตถ์": [("Ton_Sak_Yai_National_Park", "N")],
 }
 for _prov, _items in NORTH_EXTRA.items():
