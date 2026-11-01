@@ -98,3 +98,38 @@ SEED = {
 if __name__ == "__main__":
     n = sum(len(v) for v in SEED.values())
     print(len(SEED), "จังหวัด", n, "ชื่อบทความ")
+
+
+# ---- ภาคเหนือ: รายการตั้งต้นเพิ่ม (ชื่อบทความ en.wikipedia ที่ใช้เป็นกุญแจค้นเท่านั้น) ----
+# ชื่อที่หาไม่เจอหรือไม่มีพิกัดจะถูกข้ามและรายงานใน docs/COVERAGE.md ตอนรัน build_places.py
+NORTH_EXTRA = {   # ทุกชื่อตรวจแล้วว่ามีบทความ+พิกัดอยู่ในจังหวัดนั้นจริง (2026-11-01)
+    "เชียงราย": [("Chiang_Saen", "H"), ("Khun_Chae_National_Park", "N"), ("Lam_Nam_Kok_National_Park", "N"), ("Tham_Luang_Nang_Non", "N")],
+    "ลำปาง": [("Ratsadaphisek_Bridge", "A"), ("Mae_Wa_National_Park", "N")],
+    "ลำพูน": [("Wat_Phra_Phutthabat_Tak_Pha", "T")],
+    "แม่ฮ่องสอน": [("Salawin_National_Park", "N")],
+    "น่าน": [("Khun_Nan_National_Park", "N"), ("Mae_Charim_National_Park", "N"), ("Phu_Fa_waterfall", "N")],
+    "พะเยา": [("Doi_Luang_National_Park", "N")],
+    "แพร่": [("Wiang_Kosai_National_Park", "N"), ("Lam_Nam_Nan_National_Park", "N"), ("Tham_Pha_Nang_Khoi", "N")],
+    "อุตรดิตถ์": [("Ton_Sak_Yai_National_Park", "N")],
+}
+for _prov, _items in NORTH_EXTRA.items():
+    _have = {t for t, _ in SEED.get(_prov, [])}
+    SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]
+
+
+# ---- ภาคตะวันออกเฉียงเหนือ: รายการเพิ่มที่ตรวจแล้ว (2026-11-01) ----
+NE_EXTRA = {
+    "กาฬสินธุ์": [("Phu_Pha_Lek_National_Park", "N")],
+    "ขอนแก่น": [("Phra_That_Kham_Kaen", "T"), ("Phra_Mahathat_Kaen_Nakhon", "T")],
+    "นครราชสีมา": [("Prasat_Phanom_Wan", "H"), ("Wat_Thammachak_Semaram", "T")],
+    "บึงกาฬ": [("Phu_Thok", "T")],
+    "เลย": [("Phu_Suan_Sai_National_Park", "N")],
+    "ศรีสะเกษ": [("Prasat_Sa_Kamphaeng_Yai", "H")],
+    "อุดรธานี": [("Wat_Kham_Chanot", "T"), ("Wat_Pa_Phu_Kon", "T")],
+    "อำนาจเจริญ": [("Wat_Phra_Lao_Thep_Nimit", "T"), ("Wat_Tham_Saeng_Phet", "T")],
+    "มหาสารคาม": [("Wat_Photharam,_Maha_Sarakham", "T")],
+    "ร้อยเอ็ด": [("Luangpho_Yai", "T")],
+}
+for _prov, _items in NE_EXTRA.items():
+    _have = {t for t, _ in SEED.get(_prov, [])}
+    SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]
