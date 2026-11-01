@@ -65,7 +65,7 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 | Jakkrich | @jakkrich0912-web | เจ้าของ repo |
 | Jirapa Gongmool | @jirapa-gm | การแบ่งโมดูลยังไม่ได้ตกลง |
 
-วิชา Advanced Topics in Computer Software (RMUTT) สอบ ศ. 6 พ.ย. 2569 09:00 ห้อง 16105
+วิชา Advanced Topics in Computer Software (RMUTT) 
 
 ## 8. Git flow
 
@@ -91,7 +91,7 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 
 ### 10.3 ฟีเจอร์ที่อยากเพิ่ม
 
-ตัวจัดแผนรายวัน เส้นทางถนนจริงจาก routing API ภาษาอังกฤษ ส่งออกเป็น PDF
+ตัวจัดแผนรายวัน เส้นทางถนนจริงจาก routing API 
 
 ## 11. เอกสารอื่น
 
