@@ -1,0 +1,211 @@
+"""เส้นทางผู้ใช้ ประวัติ สถานที่โปรด แชต (docs/CONTRACT.md ข้อ 3.3-3.4)
+
+ผู้ที่ไม่ได้ล็อกอินไม่ถูกบันทึกอะไรเลย: ทุกเส้นทางใต้ /api/me ตอบ 401
+"""
+from __future__ import annotations
+
+import re
+
+from fastapi import APIRouter, Request, Response
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+
+from services.places.geo import in_thailand, place_url
+
+from . import auth
+from .store import EmailTaken, Store
+
+COOKIE = "nt_session"
+KINDS = {"attraction", "cafe"}
+OSM_ID_RE = re.compile(r"^osm:(node|way|relation)/\d+$")
+
+
+def _err(status: int, code: str, message: str) -> JSONResponse:
+    return JSONResponse({"error": message, "code": code}, status_code=status)
+
+
+class Credentials(BaseModel):
+    email: str = Field(max_length=300)
+    password: str = Field(max_length=auth.MAX_PASSWORD + 100)
+
+
+class SearchIn(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    lat: float
+    lon: float
+
+
+class FavoriteIn(BaseModel):
+    place_id: str = Field(min_length=1, max_length=100)
+    name_th: str | None = Field(default=None, max_length=200)
+    name_en: str | None = Field(default=None, max_length=200)
+    kind: str | None = None
+    subtype: str | None = Field(default=None, max_length=60)
+    lat: float | None = None
+    lon: float | None = None
+    province: str | None = Field(default=None, max_length=60)
+
+
+def build_router(store: Store, secret: str, verified: list, secure_cookie: bool = True,
+                 throttle: auth.LoginThrottle | None = None) -> APIRouter:
+    r = APIRouter()
+    throttle = throttle or auth.LoginThrottle()
+    verified_by_id = {c.id: c for c in verified}
+
+    def set_session(resp: Response, user_id: int) -> None:
+        resp.set_cookie(COOKIE, auth.make_token(user_id, secret), max_age=auth.SESSION_DAYS * 86400,
+                        httponly=True, secure=secure_cookie, samesite="lax", path="/")
+
+    def current_user(req: Request) -> dict | None:
+        uid = auth.read_token(req.cookies.get(COOKIE), secret)
+        return store.user_by_id(uid) if uid else None
+
+    def need_login(req: Request):
+        """คืน (ผู้ใช้, None) หรือ (None, คำตอบ 401)"""
+        u = current_user(req)
+        if u:
+            return u, None
+        return None, _err(401, "unauthorized", "กรุณาเข้าสู่ระบบก่อน")
+
+    # ---- ผู้ใช้ ----
+    @r.post("/api/auth/register", status_code=201)
+    def register(body: Credentials, response: Response):
+        email = auth.normalize_email(body.email)
+        if not auth.valid_email(email):
+            return _err(400, "invalid_param", "รูปแบบอีเมลไม่ถูกต้อง")
+        if not (auth.MIN_PASSWORD <= len(body.password) <= auth.MAX_PASSWORD):
+            return _err(400, "invalid_param", f"รหัสผ่านต้องยาว {auth.MIN_PASSWORD}-{auth.MAX_PASSWORD} ตัวอักษร")
+        try:
+            user = store.create_user(email, auth.hash_password(body.password))
+        except EmailTaken:
+            return _err(409, "email_taken", "อีเมลนี้สมัครไว้แล้ว")
+        set_session(response, user["id"])
+        return {"user": user}
+
+    @r.post("/api/auth/login")
+    def login(body: Credentials, response: Response):
+        email = auth.normalize_email(body.email)
+        if throttle.blocked(email):
+            return _err(429, "rate_limited", "ใส่รหัสผ่านผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่")
+        row = store.user_by_email(email)
+        ok = auth.verify_password(body.password, row["pw_hash"]) if row else (auth.burn_verify(body.password) or False)
+        if not ok:
+            throttle.fail(email)
+            return _err(401, "unauthorized", "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
+        throttle.reset(email)
+        set_session(response, row["id"])
+        return {"user": {"id": row["id"], "email": row["email"]}}
+
+    @r.post("/api/auth/logout", status_code=204)
+    def logout():
+        resp = Response(status_code=204)
+        resp.delete_cookie(COOKIE, path="/")
+        return resp
+
+    @r.get("/api/auth/me")
+    def me(req: Request):
+        u, bad = need_login(req)
+        return bad or {"user": u}
+
+    # ---- ที่พักที่เคยค้น ----
+    @r.get("/api/me/searches")
+    def searches(req: Request):
+        u, bad = need_login(req)
+        return bad or {"items": store.list_searches(u["id"])}
+
+    @r.post("/api/me/searches", status_code=201)
+    def add_search(body: SearchIn, req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        if not in_thailand(body.lat, body.lon):
+            return _err(400, "invalid_param", "พิกัดอยู่นอกประเทศไทย")
+        name = body.name.strip()
+        if not name:
+            return _err(400, "invalid_param", "ชื่อที่พักว่าง")
+        return store.add_search(u["id"], name, body.lat, body.lon)
+
+    @r.delete("/api/me/searches/{search_id}", status_code=204)
+    def delete_search(search_id: int, req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_search(u["id"], search_id)
+        return Response(status_code=204)
+
+    # ---- สถานที่โปรด ----
+    def fav_out(row: dict) -> dict:
+        return {"id": row["place_id"], "name_th": row["name_th"], "name_en": row["name_en"], "kind": row["kind"],
+                "subtype": row["subtype"], "lat": row["lat"], "lon": row["lon"], "source": row["source"],
+                "province": row["province"], "maps_url": place_url(row["name_th"], row["lat"], row["lon"]),
+                "saved_at": row["created_at"]}
+
+    @r.get("/api/me/favorites")
+    def favorites(req: Request):
+        u, bad = need_login(req)
+        return bad or {"items": [fav_out(x) for x in store.list_favorites(u["id"])]}
+
+    @r.post("/api/me/favorites", status_code=201)
+    def add_favorite(body: FavoriteIn, req: Request, response: Response):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        pid = body.place_id.strip()
+        if pid.startswith("v:"):
+            # สถานที่ที่ตรวจแล้ว: ใช้ข้อมูลจากไฟล์ของเรา ไม่เชื่อค่าที่ไคลเอนต์ส่งมา
+            c = verified_by_id.get(pid)
+            if not c:
+                return _err(400, "invalid_param", "ไม่พบสถานที่ที่ตรวจแล้วรหัสนี้")
+            p = {"place_id": pid, "name_th": c.name_th, "name_en": c.name_en, "kind": c.kind,
+                 "subtype": c.subtype, "lat": c.lat, "lon": c.lon, "source": "verified", "province": c.province}
+        elif OSM_ID_RE.match(pid):
+            if not body.name_th or not body.name_th.strip() or body.lat is None or body.lon is None:
+                return _err(400, "invalid_param", "สถานที่จาก OpenStreetMap ต้องส่ง name_th, lat, lon มาด้วย")
+            if body.kind not in KINDS:
+                return _err(400, "invalid_param", "kind ต้องเป็น attraction หรือ cafe")
+            if not in_thailand(body.lat, body.lon):
+                return _err(400, "invalid_param", "พิกัดอยู่นอกประเทศไทย")
+            p = {"place_id": pid, "name_th": body.name_th.strip(), "name_en": body.name_en, "kind": body.kind,
+                 "subtype": body.subtype, "lat": body.lat, "lon": body.lon, "source": "osm",
+                 "province": body.province}
+        else:
+            return _err(400, "invalid_param", "รหัสสถานที่ต้องขึ้นต้นด้วย v: หรือ osm:")
+        try:
+            row, created = store.add_favorite(u["id"], p)
+        except OverflowError as e:
+            return _err(400, "invalid_param", str(e))
+        if not created:
+            response.status_code = 200
+        return fav_out(row)
+
+    @r.delete("/api/me/favorites/{place_id:path}", status_code=204)
+    def delete_favorite(place_id: str, req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_favorite(u["id"], place_id)
+        return Response(status_code=204)
+
+    # ---- แชต ----
+    @r.get("/api/me/chats")
+    def chats(req: Request):
+        u, bad = need_login(req)
+        return bad or {"items": store.list_chats(u["id"])}
+
+    @r.get("/api/me/chats/{chat_id}")
+    def chat(chat_id: int, req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        c = store.get_chat(u["id"], chat_id)
+        return c or _err(404, "not_found", "ไม่พบแชตนี้")
+
+    @r.delete("/api/me/chats/{chat_id}", status_code=204)
+    def delete_chat(chat_id: int, req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_chat(u["id"], chat_id)
+        return Response(status_code=204)
+
+    return r

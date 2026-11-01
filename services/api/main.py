@@ -15,15 +15,25 @@ from services.places import PlacesService, SearchError
 from services.places.provinces import REGION_ORDER, REGIONS
 from services.places.verified import coverage_by_province
 
+from . import auth
+from .accounts import build_router
+from .store import Store
 from .validator import load_verified_ids, validate_lodgings_near, validate_nearby
 
 
-def create_app(service: PlacesService | None = None) -> FastAPI:
-    app = FastAPI(title="น้องทริป API", version="0.4")
+def create_app(service: PlacesService | None = None, store: Store | None = None, session_secret: str | None = None,
+               secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None) -> FastAPI:
+    app = FastAPI(title="น้องทริป API", version="0.6")
     svc = service or PlacesService()
     known = load_verified_ids()
     origins = [o for o in (os.environ.get("WEB_ORIGINS") or "*").split(",") if o]
-    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
+    # คุกกี้ข้ามที่มาใช้ได้เฉพาะเมื่อระบุที่มาชัดเจน (ห้ามใช้ * คู่กับ credentials) ตอนพัฒนาใช้พร็อกซีของ Vite จึงไม่ต้องข้ามที่มา
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"],
+                       allow_credentials="*" not in origins)
+    if secure_cookie is None:
+        secure_cookie = os.environ.get("SESSION_SECURE", "1") != "0"
+    app.include_router(build_router(store or Store(), auth.resolve_secret(session_secret), svc.verified,
+                                    secure_cookie, throttle))
 
     @app.exception_handler(SearchError)
     async def _search_error(_: Request, e: SearchError):
