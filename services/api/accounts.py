@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import re
 
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Path, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -16,6 +16,7 @@ from . import auth
 from .store import EmailTaken, Store
 
 COOKIE = "nt_session"
+MAX_ID = 2 ** 31 - 1  # เกินนี้ SQLite รับไม่ได้ (เคยทำให้ตอบ 500)
 KINDS = {"attraction", "cafe"}
 OSM_ID_RE = re.compile(r"^osm:(node|way|relation)/\d+$")
 
@@ -126,7 +127,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         return store.add_search(u["id"], name, body.lat, body.lon)
 
     @r.delete("/api/me/searches/{search_id}", status_code=204)
-    def delete_search(search_id: int, req: Request):
+    def delete_search(req: Request, search_id: int = Path(ge=1, le=MAX_ID)):
         u, bad = need_login(req)
         if bad:
             return bad
@@ -193,7 +194,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         return bad or {"items": store.list_chats(u["id"])}
 
     @r.get("/api/me/chats/{chat_id}")
-    def chat(chat_id: int, req: Request):
+    def chat(req: Request, chat_id: int = Path(ge=1, le=MAX_ID)):
         u, bad = need_login(req)
         if bad:
             return bad
@@ -201,7 +202,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         return c or _err(404, "not_found", "ไม่พบแชตนี้")
 
     @r.delete("/api/me/chats/{chat_id}", status_code=204)
-    def delete_chat(chat_id: int, req: Request):
+    def delete_chat(req: Request, chat_id: int = Path(ge=1, le=MAX_ID)):
         u, bad = need_login(req)
         if bad:
             return bad

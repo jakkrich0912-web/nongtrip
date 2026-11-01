@@ -75,7 +75,7 @@ def read_token(token: str | None, secret: str, now: float | None = None) -> int 
         if int(exp) < (now if now is not None else time.time()):
             return None
         return int(uid)
-    except ValueError:
+    except (ValueError, TypeError):  # TypeError: คุกกี้ที่มีอักขระนอก ASCII ทำให้ compare_digest ล้ม
         return None
 
 

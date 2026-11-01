@@ -340,3 +340,24 @@ def test_bad_params_still_400_thai(env):
     signup(c)
     r = c.get("/api/me/chats/abc")
     assert r.status_code == 400 and "พารามิเตอร์ไม่ถูกต้อง" in r.json()["error"]
+
+
+def test_non_ascii_cookie_is_just_not_logged_in(env):
+    """คุกกี้แปลกๆ จากผู้โจมตีต้องได้ 401 ไม่ใช่ 500"""
+    c, _, _ = env
+    r = c.get("/api/auth/me", headers={"cookie": "nt_session=1.99999999999.éé".encode("latin-1")})
+    assert r.status_code == 401
+    assert auth.read_token("1.99999999999.é", "s") is None
+
+
+@pytest.mark.parametrize("path", ["/api/me/chats/{}", "/api/me/searches/{}"])
+@pytest.mark.parametrize("bad", ["99999999999999999999999", "0", "-5"])
+def test_out_of_range_ids_are_400_not_500(env, path, bad):
+    c, _, _ = env
+    signup(c)
+    for method in ("get", "delete"):
+        if method == "get" and "searches" in path:
+            continue  # ไม่มี GET รายตัวของประวัติค้น
+        r = getattr(c, method)(path.format(bad))
+        assert r.status_code == 400, (method, path, bad, r.status_code)
+        assert "พารามิเตอร์ไม่ถูกต้อง" in r.json()["error"]
