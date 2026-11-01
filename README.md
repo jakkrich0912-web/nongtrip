@@ -62,10 +62,12 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 
 | คน | GitHub | หมายเหตุ |
 |---|---|---|
-| Jakkrich | @jakkrich0912-web | เจ้าของ repo |
-| Jirapa Gongmool | @jirapa-gm | การแบ่งโมดูลยังไม่ได้ตกลง |
+| Jakkrich | @jakkrich0912-web | เจ้าของ repo, งานแกน (ค้นหา, API, ตัวตรวจ, แชทบอท, หน้าค้นหา), รีวิวทุก PR |
+| Jirapa Gongmool | @jirapa-gm | หน้าแรก, หน้าล็อกอิน/ประวัติ, ข้อมูลที่ตรวจแล้ว, ชุดทดสอบ, สไลด์ |
 
-วิชา Advanced Topics in Computer Software (RMUTT) สอบ ศ. 6 พ.ย. 2569 09:00 ห้อง 16105
+รายละเอียดและแผน 5 วันอยู่ใน `docs/WORKPLAN.md`
+
+วิชา Advanced Topics in Computer Software (RMUTT) 
 
 ## 8. Git flow
 
@@ -91,7 +93,7 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 
 ### 10.3 ฟีเจอร์ที่อยากเพิ่ม
 
-ตัวจัดแผนรายวัน เส้นทางถนนจริงจาก routing API ภาษาอังกฤษ ส่งออกเป็น PDF
+ตัวจัดแผนรายวัน เส้นทางถนนจริงจาก routing API 
 
 ## 11. เอกสารอื่น
 
