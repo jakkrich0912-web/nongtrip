@@ -83,3 +83,19 @@ def test_without_snapshot_behaviour_unchanged(tmp_path):
 def test_area_query_matches_by_name_not_iso_code():
     q = build_area_query("ลำปาง", ("cafe",))
     assert 'admin_level"="4"' in q and "(จังหวัด)?ลำปาง$" in q and "nwr(area.a)" in q
+
+
+def test_committed_snapshot_files_are_sane():
+    """ไฟล์สแนปช็อตจริงใน repo: รูปแบบถูก พิกัดในไทย แต่ละประเภทไม่ว่าง (กัน Overpass ตอบว่างตอนแน่น)"""
+    import json
+    from services.places.geo import in_thailand
+    from services.places.provinces import PROVINCES
+    from services.places.snapshot import DEFAULT_DIR
+    for f in sorted(DEFAULT_DIR.glob("*.json")) if DEFAULT_DIR.is_dir() else []:
+        d = json.loads(f.read_text(encoding="utf-8"))
+        assert d["_meta"]["province"] in PROVINCES and d["_meta"]["count"] == len(d["items"])
+        kinds = {}
+        for ref, th, en, kind, sub, lat, lon in d["items"]:
+            assert th and in_thailand(lat, lon), (f.name, ref)
+            kinds[kind] = kinds.get(kind, 0) + 1
+        assert all(kinds.get(k, 0) >= 10 for k in ("attraction", "cafe", "lodging")), (f.name, kinds)
