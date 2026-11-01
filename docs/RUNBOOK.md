@@ -21,6 +21,14 @@ make down
 make test
 ```
 
+## ลองค้นกับ OpenStreetMap จริง
+
+```
+python scripts/try_places.py ที่พัก "ชื่อโรงแรม เชียงใหม่"
+python scripts/try_places.py รอบจุด 18.7883 98.9853
+python scripts/try_places.py หมุด 18.7883 98.9853
+```
+
 ## เช็กก่อนวันสอบ (6 พ.ย. 2569)
 
 - ลองค้นที่พักจริงบนเครื่องที่ใช้สอบ ด้วยอินเทอร์เน็ตที่จะใช้จริง (OpenStreetMap ต้องใช้เน็ต)
