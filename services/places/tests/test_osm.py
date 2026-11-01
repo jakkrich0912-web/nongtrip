@@ -69,3 +69,27 @@ def test_nominatim_puts_real_lodging_first():
     out = NominatimClient(FakeHttp(nominatim=rows)).search_lodging("ตัวอย่าง")
     assert out[0].name == "โรงแรมตัวอย่าง" and out[0].subtype == "hotel"
     assert out[0].id == "osm:way/9"
+
+
+def test_overpass_busy_runtime_error_is_not_empty_result():
+    """Overpass ตอบ 200 + remark runtime error + ผลว่างตอนแน่น ต้องลองเซิร์ฟเวอร์ถัดไป ไม่ใช่ถือว่าไม่มีสถานที่"""
+    calls = []
+
+    class H:
+        def post_form(self, url, data):
+            calls.append(url)
+            if len(calls) == 1:
+                return {"elements": [], "remark": "runtime error: open64: 0 Success Dispatcher_Client::request_read_and_idx::timeout. The server is probably too busy"}
+            return {"elements": [el(1, "ก", 18.1, 99.1, {"amenity": "cafe"})]}
+
+    out = OverpassClient(H(), endpoints=("a", "b")).fetch(18, 99, 5, ("cafe",))
+    assert calls == ["a", "b"] and len(out) == 1
+
+
+def test_overpass_all_busy_raises_instead_of_returning_empty():
+    class H:
+        def post_form(self, url, data):
+            return {"elements": [], "remark": "runtime error: Dispatcher_Client::request_read_and_idx::timeout"}
+
+    with pytest.raises(UpstreamError):
+        OverpassClient(H(), endpoints=("a", "b")).fetch(18, 99, 5, ("cafe",))

@@ -10,6 +10,7 @@
   python scripts/prefetch_osm.py --force            ดึงใหม่แม้มีไฟล์แล้ว
 """
 import argparse
+import json
 import sys
 import time
 from datetime import date
@@ -28,6 +29,23 @@ KINDS = ("attraction", "cafe", "lodging")   # ดึงทีละประเ�
 PAUSE = 8          # วินาทีพักระหว่างคำขอ (ใจดีกับเซิร์ฟเวอร์สาธารณะ)
 RETRIES = 3
 SUSPICIOUS = 10    # จังหวัดที่ได้น้อยกว่านี้น่าสงสัย (เขตจังหวัดอาจหาไม่เจอ)
+MIN_PER_KIND = 10  # แต่ละประเภทต้องได้อย่างน้อยเท่านี้ ไม่งั้นถือว่าดึงไม่ครบ (Overpass ตอบว่างตอนแน่นได้) และดึงใหม่
+
+
+def kind_counts(path: Path) -> dict[str, int]:
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))["items"]
+    except (OSError, ValueError, KeyError):
+        return {}
+    counts = {k: 0 for k in KINDS}
+    for r in rows:
+        counts[r[3]] = counts.get(r[3], 0) + 1
+    return counts
+
+
+def is_complete(path: Path) -> bool:
+    c = kind_counts(path)
+    return bool(c) and all(c.get(k, 0) >= MIN_PER_KIND for k in KINDS)
 
 
 def fetch_province(client: OverpassClient, province: str) -> list[Candidate]:
@@ -74,9 +92,12 @@ def main() -> int:
     today = date.today().isoformat()
     failed, suspicious = [], []
     for i, prov in enumerate(todo, 1):
-        if (out / f"{prov}.json").exists() and not a.force:
-            print(f"[{i}/{len(todo)}] {prov}: มีแล้ว ข้าม")
-            continue
+        existing = out / f"{prov}.json"
+        if existing.exists() and not a.force:
+            if is_complete(existing):
+                print(f"[{i}/{len(todo)}] {prov}: มีแล้วและครบ ข้าม")
+                continue
+            print(f"[{i}/{len(todo)}] {prov}: มีไฟล์แต่บางประเภทน้อยผิดปกติ {kind_counts(existing)} ดึงใหม่")
         print(f"[{i}/{len(todo)}] {prov}", flush=True)
         try:
             cands = fetch_province(client, prov)
@@ -85,12 +106,14 @@ def main() -> int:
             failed.append(prov)
             continue
         write_province(out, prov, cands, today)
-        print(f"  บันทึก {len(cands)} แห่ง")
-        if len(cands) < SUSPICIOUS:
-            suspicious.append((prov, len(cands)))
+        per = {k: sum(1 for c in cands if c.kind == k) for k in KINDS}
+        print(f"  บันทึก {len(cands)} แห่ง {per}")
+        low = {k: n for k, n in per.items() if n < MIN_PER_KIND}
+        if len(cands) < SUSPICIOUS or low:
+            suspicious.append((prov, low or len(cands)))
     print("\nสรุป")
     print("ล้มเหลว (รันซ้ำได้):", ", ".join(failed) or "ไม่มี")
-    print("น่าสงสัย (ได้น้อยกว่า", SUSPICIOUS, "แห่ง):", ", ".join(f"{p}={n}" for p, n in suspicious) or "ไม่มี")
+    print("น่าสงสัย (ประเภทใดได้น้อยกว่า", MIN_PER_KIND, "แห่ง รันซ้ำเพื่อดึงใหม่):", ", ".join(f"{p}={n}" for p, n in suspicious) or "ไม่มี")
     return 1 if failed else 0
 
 

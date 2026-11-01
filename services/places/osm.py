@@ -117,6 +117,10 @@ class OverpassClient:
             remark = (data.get("remark") or "").lower() if isinstance(data, dict) else ""
             if "timed out" in remark or "out of memory" in remark:
                 raise UpstreamTooBig(remark)
+            if "runtime error" in remark:
+                # เช่น "Dispatcher_Client::...::timeout ... too busy" เซิร์ฟเวอร์ตอบ 200 แต่ผลว่าง ห้ามถือเป็น "ไม่มีข้อมูล"
+                last = UpstreamError(remark)
+                continue
             if not isinstance(data, dict) or "elements" not in data:
                 last = UpstreamError("รูปแบบคำตอบ Overpass ไม่ถูกต้อง")
                 continue

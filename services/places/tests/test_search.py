@@ -4,13 +4,14 @@ from services.places import PlacesService, RadiusError, OutOfThailandError
 from services.places.cache import TTLCache
 from services.places.fetch import UpstreamError
 from services.places.search import SearchError, dedupe
+from services.places.snapshot import Snapshot
 from .helpers import CM, FakeHttp, cand, el
 
 LAT, LON = CM
 
 
 def svc(http, verified=None, **kw):
-    return PlacesService(http=http, cache=TTLCache(None), verified=verified or [], osm_live=True, **kw)
+    return PlacesService(http=http, cache=TTLCache(None), verified=verified or [], osm_live=True, snapshot=Snapshot(None), **kw)
 
 
 def offset_lat(km):  # เลื่อนไปทางเหนือ km กม.
@@ -203,7 +204,7 @@ def test_province_center_rejects_non_province():
 
 def test_every_province_resolves_in_every_region():
     # ทุกจังหวัดต้องถามจุดกลางได้โดยไม่ error (ข้อมูลจริงใช้ OSM ที่เครื่องผู้ใช้)
-    s = PlacesService(http=FakeHttp(nominatim_error=UpstreamError("x")), cache=TTLCache(None), osm_live=True)
+    s = PlacesService(http=FakeHttp(nominatim_error=UpstreamError("x")), cache=TTLCache(None), osm_live=True, snapshot=Snapshot(None))
     for provs in REGIONS.values():
         for p in provs:
             out = s.province_center(p)
