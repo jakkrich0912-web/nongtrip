@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT))
 
 from services.places.fetch import HttpClient, UpstreamError  # noqa: E402
 from services.places.models import Candidate  # noqa: E402
-from services.places.osm import OverpassClient, build_area_query  # noqa: E402
+from services.places.osm import OverpassClient, build_area_query, split_filters  # noqa: E402
 from services.places.provinces import PROVINCES, REGION_ORDER, REGIONS  # noqa: E402
 from services.places.snapshot import DEFAULT_DIR, write_province  # noqa: E402
 
@@ -48,23 +48,39 @@ def is_complete(path: Path) -> bool:
     return bool(c) and all(c.get(k, 0) >= MIN_PER_KIND for k in KINDS)
 
 
-def fetch_province(client: OverpassClient, province: str) -> list[Candidate]:
+def fetch_kind(client: OverpassClient, province: str, kind: str, pause: float = PAUSE) -> list[Candidate]:
+    """ดึงหนึ่งประเภท: ผลว่างถือว่าผิดปกติ (Overpass แน่นอาจตอบว่างเงียบๆ) ลองใหม่ ถ้ายังว่างแยกคำขอทีละตัวกรอง"""
+    for attempt in range(1, RETRIES + 1):
+        try:
+            got = client.run(build_area_query(province, (kind,)))
+        except UpstreamError as e:
+            print(f"    {kind}: ลองครั้งที่ {attempt}/{RETRIES} ไม่สำเร็จ ({e})", flush=True)
+            if attempt == RETRIES:
+                raise
+            time.sleep(pause * attempt * 2)
+            continue
+        if got:
+            return got
+        print(f"    {kind}: ได้ 0 แห่ง น่าสงสัย ลองใหม่ครั้งที่ {attempt}/{RETRIES}", flush=True)
+        time.sleep(pause * attempt * 2)
+    print(f"    {kind}: ยังได้ 0 แยกคำขอทีละตัวกรอง", flush=True)
+    merged: dict[str, Candidate] = {}
+    for f in split_filters(kind):
+        got = client.run(build_area_query(province, (kind,), filters=[f]))
+        for c in got:
+            merged[c.id] = c
+        time.sleep(pause)
+    return list(merged.values())
+
+
+def fetch_province(client: OverpassClient, province: str, pause: float = PAUSE) -> list[Candidate]:
     seen: dict[str, Candidate] = {}
     for kind in KINDS:
-        query = build_area_query(province, (kind,))
-        for attempt in range(1, RETRIES + 1):
-            try:
-                got = client.run(query)
-                break
-            except UpstreamError as e:
-                print(f"    {kind}: ลองครั้งที่ {attempt}/{RETRIES} ไม่สำเร็จ ({e})", flush=True)
-                if attempt == RETRIES:
-                    raise
-                time.sleep(PAUSE * attempt * 2)
+        got = fetch_kind(client, province, kind, pause)
         for c in got:
             seen[c.id] = c
         print(f"    {kind}: {len(got)}", flush=True)
-        time.sleep(PAUSE)
+        time.sleep(pause)
     return list(seen.values())
 
 

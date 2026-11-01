@@ -34,6 +34,13 @@ FILTERS = {
 }
 
 
+def split_filters(kind: str) -> list[str]:
+    """ตัวกรองแบบแยกเล็กที่สุด ใช้ตอนคำขอรวมถูกตอบว่าง (ที่พัก = แยกทีละชนิด)"""
+    if kind == "lodging":
+        return [f'["tourism"="{t}"]' for t in LODGING_TYPES]
+    return list(FILTERS[kind])
+
+
 def build_query(lat: float, lon: float, radius_m: int, kinds: tuple[str, ...], timeout: int = 40) -> str:
     parts = []
     for k in kinds:
@@ -42,9 +49,11 @@ def build_query(lat: float, lon: float, radius_m: int, kinds: tuple[str, ...], t
     return f"[out:json][timeout:{timeout}];(" + "".join(parts) + ");out center tags;"
 
 
-def build_area_query(province: str, kinds: tuple[str, ...], timeout: int = 180) -> str:
-    """ทุกแห่งในเขตจังหวัด (ใช้ตอนดึงสแนปช็อตล่วงหน้า) หาเขตจากชื่อ ไม่ใช้รหัส ISO"""
-    parts = [f'nwr(area.a){f}["name"];' for k in kinds for f in FILTERS[k]]
+def build_area_query(province: str, kinds: tuple[str, ...], timeout: int = 180, filters: list[str] | None = None) -> str:
+    """ทุกแห่งในเขตจังหวัด (ใช้ตอนดึงสแนปช็อตล่วงหน้า) หาเขตจากชื่อ ไม่ใช้รหัส ISO
+    filters = ระบุตัวกรองเอง (ใช้แยกคำขอเล็กๆ เมื่อคำขอรวมถูกตอบว่าง)"""
+    fl = filters if filters is not None else [f for k in kinds for f in FILTERS[k]]
+    parts = [f'nwr(area.a){f}["name"];' for f in fl]
     return (f'[out:json][timeout:{timeout}];'
             f'area["boundary"="administrative"]["admin_level"="4"]["name"~"^(จังหวัด)?{province}$"]->.a;'
             f'({"".join(parts)});out center tags;')
