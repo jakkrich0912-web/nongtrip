@@ -66,6 +66,19 @@ def dedupe(cands: list[Candidate]) -> list[Candidate]:
     return kept
 
 
+def _area_rank(r: dict) -> int:
+    """จัดอันดับผลค้นชื่อจังหวัด: ตัวเมือง/เมือง ก่อน เทศบาลนคร/เมือง ถัดมา ที่เหลือท้ายสุด (สถานีรถไฟ ฯลฯ ไม่เอา)"""
+    cat, typ = r.get("category"), r.get("type")
+    if cat == "place" and typ in ("city", "town"):
+        return 0
+    first = (r.get("display_name") or "").split(",")[0]
+    if cat == "boundary" and first.startswith(("เทศบาลนคร", "เทศบาลเมือง")):
+        return 1
+    if cat == "boundary":
+        return 2
+    return 3
+
+
 @dataclass
 class _Area:
     candidates: list[Candidate]
@@ -113,10 +126,12 @@ class PlacesService:
             return {**base, **hit}
         if self.osm_live:
             try:
-                q = name if name == "กรุงเทพมหานคร" else f"จังหวัด{name}"
-                rows = self.nominatim.search_area(q)
-                rows.sort(key=lambda r: 0 if r.get("category") in ("boundary", "place") else 1)
+                # ค้นด้วยชื่อล้วน ได้ตัวเมือง (ทดสอบกับ OSM จริง 9 จังหวัดภาคเหนือแล้ว) ส่วน "จังหวัด<ชื่อ>" ได้จุดกลางพื้นที่ซึ่งมักอยู่ในป่า
+                rows = self.nominatim.search_area(name)
+                rows.sort(key=_area_rank)
                 for r in rows:
+                    if _area_rank(r) > 2:
+                        continue
                     lat, lon = float(r["lat"]), float(r["lon"])
                     if in_thailand(lat, lon):
                         res = {"lat": lat, "lon": lon, "source": "osm"}

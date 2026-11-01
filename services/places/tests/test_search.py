@@ -170,7 +170,11 @@ from services.places.provinces import REGIONS
 
 
 def test_province_center_from_osm_and_cached():
-    rows = [{"lat": "18.79", "lon": "98.98", "category": "boundary", "type": "administrative"}]
+    rows = [
+        {"lat": "18.70", "lon": "98.45", "category": "boundary", "type": "administrative", "display_name": "จังหวัดเชียงใหม่, ประเทศไทย"},
+        {"lat": "18.79", "lon": "98.98", "category": "place", "type": "city", "display_name": "เชียงใหม่, อำเภอเมือง"},
+        {"lat": "18.80", "lon": "98.95", "category": "railway", "type": "station", "display_name": "สถานีเชียงใหม่"},
+    ]
     http = FakeHttp(nominatim=rows)
     s = svc(http)
     a = s.province_center("เชียงใหม่")

@@ -24,8 +24,8 @@ def test_77_provinces():
 from services.places.provinces import REGION_ORDER, REGIONS, region_of
 from services.places.verified import coverage_by_province
 
-# ขั้นต่ำสถานที่ที่ตรวจแล้วต่อจังหวัดของภาคที่ "ทำเสร็จ" แล้ว (ปรับขึ้นเป็น 5 หลังรัน scripts/build_places.py)
-DONE_REGIONS = {"เหนือ": 3}
+# ขั้นต่ำสถานที่ที่ตรวจแล้วต่อจังหวัดของภาคที่ "ทำเสร็จ" แล้ว 
+DONE_REGIONS = {"เหนือ": 5}
 
 
 def test_regions_partition_all_77_provinces():
