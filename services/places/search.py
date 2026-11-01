@@ -21,6 +21,7 @@ GRID_MARGIN_KM = 1.0          # ขยายรัศมีดึงข้อม
 FALLBACK_FETCH_KM = 15.0      # ถ้า Overpass บอกว่าคำขอใหญ่เกิน ลดเหลือเท่านี้
 DUP_NEAR_KM = 0.3
 KINDS_ALL = ("attraction", "cafe")
+MAX_LODGINGS = 20             # ที่พักรอบหมุดที่แสดงสูงสุด (ใกล้หมุดที่สุดก่อน) กันหน้าเว็บยาวเป็นพันรายการ
 
 
 class SearchError(ValueError):
@@ -50,20 +51,31 @@ def _similar(a: Candidate, b: Candidate) -> bool:
 
 
 def dedupe(cands: list[Candidate]) -> list[Candidate]:
-    """ตัดสถานที่ซ้ำ: ชื่อคล้ายและอยู่ใกล้กัน; ตัวที่ตรวจแล้ว (verified) ชนะ OSM"""
+    """ตัดสถานที่ซ้ำ: ชื่อคล้ายและอยู่ใกล้กัน; ตัวที่ตรวจแล้ว (verified) ชนะ OSM
+    ใช้ตารางกริดช่องละ ~0.4 กม. ตรวจเฉพาะช่องข้างเคียง (เร็วพอสำหรับข้อมูลหลายพันแห่ง)"""
+    cell = 0.004
     ordered = sorted(cands, key=lambda c: 0 if c.source == "verified" else 1)
+    grid: dict[tuple[int, int], list[Candidate]] = {}
     kept: list[Candidate] = []
     for c in ordered:
+        gx, gy = int(c.lat // cell), int(c.lon // cell)
         dup = False
-        for k in kept:
-            if k.kind != c.kind:
-                continue
-            d = haversine_km(c.lat, c.lon, k.lat, k.lon)
-            if d < 0.03 or (d < DUP_NEAR_KM and _similar(c, k)):
-                dup = True
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for k in grid.get((gx + dx, gy + dy), ()):
+                    if k.kind != c.kind:
+                        continue
+                    d = haversine_km(c.lat, c.lon, k.lat, k.lon)
+                    if d < 0.03 or (d < DUP_NEAR_KM and _similar(c, k)):
+                        dup = True
+                        break
+                if dup:
+                    break
+            if dup:
                 break
         if not dup:
             kept.append(c)
+            grid.setdefault((gx, gy), []).append(c)
     return kept
 
 
@@ -228,12 +240,15 @@ class PlacesService:
         return area
 
     # ---------- จัดอันดับรอบจุดหนึ่ง ----------
-    def _rank(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...], area: _Area) -> tuple[list[Place], float]:
+    def _rank(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...], area: _Area,
+              pool: list[Candidate] | None = None) -> tuple[list[Place], float]:
         eff = radius_km
         if area.osm_ok:
             shift = haversine_km(area.center[0], area.center[1], lat, lon) if area.center else 0.0
             eff = round(max(0.0, min(radius_km, area.covered_km - shift)), 2)
-        pool = [c for c in self.verified if c.kind in kinds] + [c for c in area.candidates if c.kind in kinds]
+        pre = pool is not None          # pool ที่ตัดซ้ำมาแล้วทั้งพื้นที่ (โหมดที่พักรอบหมุด)
+        if pool is None:
+            pool = [c for c in self.verified if c.kind in kinds] + [c for c in area.candidates if c.kind in kinds]
         scored = []
         for c in pool:
             d = haversine_km(lat, lon, c.lat, c.lon)
@@ -241,7 +256,7 @@ class PlacesService:
                 scored.append((d, c))
         scored.sort(key=lambda t: (t[0], t[1].name_th))
         # ตัดซ้ำหลังคัดรัศมีแล้ว (เร็วกว่าตัดทั้งพื้นที่)
-        uniq = dedupe([c for _, c in scored])
+        uniq = [c for _, c in scored] if pre else dedupe([c for _, c in scored])
         keep = {c.id for c in uniq}
         dist = {c.id: d for d, c in scored}
         places = []
@@ -279,7 +294,8 @@ class PlacesService:
         )
 
     # ---------- ค้นที่พักรอบหมุด + สถานที่เด่นของแต่ละที่พัก ----------
-    def lodgings_near(self, lat: float, lon: float, top_n: int = 3, radius_km: float | None = None) -> dict:
+    def lodgings_near(self, lat: float, lon: float, top_n: int = 3, radius_km: float | None = None,
+                      max_lodgings: int = MAX_LODGINGS) -> dict:
         self._check(lat, lon, PIN_LODGING_RADIUS_KM[-1], PIN_LODGING_RADIUS_KM[-1])
         radii = (radius_km,) if radius_km else PIN_LODGING_RADIUS_KM
         for r in radii:
@@ -306,11 +322,17 @@ class PlacesService:
         lodgings.sort(key=lambda c: haversine_km(lat, lon, c.lat, c.lon))
 
         # ดึงสถานที่ครั้งเดียวทั้งพื้นที่ แล้วคำนวณระยะของแต่ละที่พักในเครื่อง
+        lodgings_total = len(lodgings)
+        if lodgings_total > max_lodgings:
+            lodgings = lodgings[:max_lodgings]
+            notices.append(f"พบที่พัก {lodgings_total} แห่ง แสดง {max_lodgings} แห่งที่ใกล้หมุดที่สุด")
         poi_area = self._area(lat, lon, MAX_RADIUS_KM + used, KINDS_ALL)
         notices += poi_area.notices
+        # ตัดซ้ำทั้งพื้นที่ครั้งเดียว แล้วคิดระยะของแต่ละที่พักจากชุดเดียวกัน
+        pool = dedupe([v for v in self.verified if v.kind in KINDS_ALL] + [c for c in poi_area.candidates if c.kind in KINDS_ALL])
         items = []
         for lod in lodgings:
-            places, eff = self._rank(lod.lat, lod.lon, MAX_RADIUS_KM, KINDS_ALL, poi_area)
+            places, eff = self._rank(lod.lat, lod.lon, MAX_RADIUS_KM, KINDS_ALL, poi_area, pool)
             items.append({
                 "id": lod.id, "name": lod.name_th, "subtype": lod.subtype,
                 "lat": lod.lat, "lon": lod.lon,
@@ -322,5 +344,5 @@ class PlacesService:
                 "nearest": [p.to_dict() for p in places[:top_n]],
                 "has_more": len(places) > top_n,
             })
-        return {"items": items, "osm_available": poi_area.osm_ok, "osm_mode": (poi_area.mode if poi_area.osm_ok else "none"), "radius_km": used,
+        return {"items": items, "lodgings_total": lodgings_total, "osm_available": poi_area.osm_ok, "osm_mode": (poi_area.mode if poi_area.osm_ok else "none"), "radius_km": used,
                 "notices": notices, "attribution": "© OpenStreetMap contributors (ODbL)"}
