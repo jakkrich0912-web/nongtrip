@@ -22,7 +22,7 @@ class UpstreamTooBig(UpstreamError):
 
 
 class HttpClient:
-    def __init__(self, timeout: float = 40, sleep: Callable[[float], None] = time.sleep,
+    def __init__(self, timeout: float = 30, sleep: Callable[[float], None] = time.sleep,
                  clock: Callable[[], float] = time.monotonic):
         self.timeout = timeout
         self._sleep = sleep

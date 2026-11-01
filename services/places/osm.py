@@ -5,8 +5,10 @@ from __future__ import annotations
 from .fetch import HttpClient, UpstreamError, UpstreamTooBig
 from .models import Candidate, LodgingCandidate
 
+# เซิร์ฟเวอร์สาธารณะหลายตัว ตัวแรกที่ตอบได้ชนะ (overpass-api.de เข้าไม่ได้จากเครือข่ายผู้พัฒนาตอนทดสอบ 2026-11-01)
 OVERPASS_ENDPOINTS = (
     "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
 )
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
@@ -32,7 +34,7 @@ FILTERS = {
 }
 
 
-def build_query(lat: float, lon: float, radius_m: int, kinds: tuple[str, ...], timeout: int = 60) -> str:
+def build_query(lat: float, lon: float, radius_m: int, kinds: tuple[str, ...], timeout: int = 40) -> str:
     parts = []
     for k in kinds:
         for f in FILTERS[k]:
