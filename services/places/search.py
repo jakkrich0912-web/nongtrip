@@ -10,7 +10,8 @@ from .geo import directions_url, haversine_km, in_thailand, place_url
 from .fetch import HttpClient, UpstreamError, UpstreamTooBig
 from .models import Candidate, LodgingCandidate, Place, SearchResult
 from .osm import NominatimClient, OverpassClient
-from .verified import load_verified
+from .provinces import PROVINCES, region_of
+from .verified import centroid, load_verified
 
 MAX_RADIUS_KM = 30.0          # CONTRACT ข้อ 5 บังคับในโค้ด
 PIN_LODGING_RADIUS_KM = (5.0, 10.0)  # ค้นที่พักรอบหมุด: เริ่ม 5 แล้วขยายเป็น 10
@@ -98,6 +99,37 @@ class PlacesService:
         if not ks:
             raise SearchError("kinds ต้องเป็น attraction และ/หรือ cafe")
         return ks
+
+    # ---------- จังหวัด ----------
+    def province_center(self, province: str) -> dict:
+        """จุดกลางจังหวัดสำหรับเปิดแผนที่ (หน้าแรกเลือกจังหวัด) ลอง OSM ก่อน ไม่ได้ใช้ค่าเฉลี่ยพิกัดสถานที่ที่ตรวจแล้ว"""
+        name = (province or "").strip()
+        if name not in PROVINCES:
+            raise SearchError("ไม่รู้จักชื่อจังหวัดนี้ (ต้องเป็นหนึ่งใน 77 จังหวัด)")
+        base = {"province": name, "region": region_of(name)}
+        key = f"province:{name}"
+        hit = self.cache.get(key)
+        if hit:
+            return {**base, **hit}
+        if self.osm_live:
+            try:
+                q = name if name == "กรุงเทพมหานคร" else f"จังหวัด{name}"
+                rows = self.nominatim.search_area(q)
+                rows.sort(key=lambda r: 0 if r.get("category") in ("boundary", "place") else 1)
+                for r in rows:
+                    lat, lon = float(r["lat"]), float(r["lon"])
+                    if in_thailand(lat, lon):
+                        res = {"lat": lat, "lon": lon, "source": "osm"}
+                        self.cache.set(key, res)
+                        return {**base, **res}
+            except (UpstreamError, KeyError, ValueError):
+                pass
+        c = centroid(name, self.verified)
+        if c:
+            return {**base, "lat": c[0], "lon": c[1], "source": "verified_centroid",
+                    "notice": "ใช้ค่าเฉลี่ยพิกัดสถานที่ที่ตรวจแล้ว เพราะหาจุดกลางจังหวัดจาก OpenStreetMap ไม่ได้"}
+        return {**base, "lat": None, "lon": None, "source": None,
+                "notice": "ยังหาจุดกลางของจังหวัดนี้ไม่ได้ ให้ค้นด้วยชื่อที่พักหรือปักหมุดแทน"}
 
     # ---------- ค้นที่พักจากชื่อ ----------
     def find_lodging(self, query: str) -> dict:

@@ -98,3 +98,21 @@ SEED = {
 if __name__ == "__main__":
     n = sum(len(v) for v in SEED.values())
     print(len(SEED), "จังหวัด", n, "ชื่อบทความ")
+
+
+# ---- ภาคเหนือ: รายการตั้งต้นเพิ่ม (ชื่อบทความ en.wikipedia ที่ใช้เป็นกุญแจค้นเท่านั้น) ----
+# ชื่อที่หาไม่เจอหรือไม่มีพิกัดจะถูกข้ามและรายงานใน docs/COVERAGE.md ตอนรัน build_places.py
+NORTH_EXTRA = {
+    "เชียงราย": [("Chiang_Saen", "H"), ("Wat_Phra_That_Doi_Tung", "T"), ("Khun_Chae_National_Park", "N"),
+                 ("Lam_Nam_Kok_National_Park", "N"), ("Tham_Luang_Nang_Non", "N")],
+    "ลำปาง": [("Wat_Pongsanuk", "T"), ("Tham_Pha_Thai_National_Park", "N"), ("Mae_Wang_National_Park", "N")],
+    "ลำพูน": [("Wat_Phra_Yuen", "T")],
+    "แม่ฮ่องสอน": [("Salawin_National_Park", "N"), ("Mae_Sariang", "A"), ("Wat_Chong_Kham", "T"), ("Wat_Chong_Klang", "T")],
+    "น่าน": [("Khun_Nan_National_Park", "N"), ("Nanthaburi_National_Park", "N"), ("Mae_Charim_National_Park", "N")],
+    "พะเยา": [("Phu_Langka_National_Park", "N"), ("Doi_Luang_National_Park", "N")],
+    "แพร่": [("Wiang_Kosai_National_Park", "N")],
+    "อุตรดิตถ์": [("Ton_Sak_Yai_National_Park", "N")],
+}
+for _prov, _items in NORTH_EXTRA.items():
+    _have = {t for t, _ in SEED.get(_prov, [])}
+    SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]

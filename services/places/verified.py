@@ -34,3 +34,21 @@ def load_verified(data_dir: Path | str = DATA_DIR) -> list[Candidate]:
                 source_url=srcs[0]["url"] if srcs else None,
             )
     return list(out.values())
+
+
+def coverage_by_province(cands: list[Candidate] | None = None) -> dict[str, int]:
+    """จำนวนสถานที่ที่ตรวจแล้วต่อจังหวัด (ครบ 77 จังหวัด จังหวัดที่ไม่มีข้อมูลเป็น 0)"""
+    from .provinces import PROVINCES
+    cands = load_verified() if cands is None else cands
+    counts = {p: 0 for p in PROVINCES}
+    for c in cands:
+        if c.province in counts:
+            counts[c.province] += 1
+    return counts
+
+
+def centroid(province: str, cands: list[Candidate]) -> tuple[float, float] | None:
+    pts = [(c.lat, c.lon) for c in cands if c.province == province]
+    if not pts:
+        return None
+    return sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)

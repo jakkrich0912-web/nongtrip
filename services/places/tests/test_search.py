@@ -163,3 +163,44 @@ def test_lodgings_near_expands_5_to_10_km():
 def test_lodgings_near_none_found_says_so():
     out = svc(FakeHttp(overpass=[])).lodgings_near(LAT, LON)
     assert out["items"] == [] and any("ไม่พบที่พัก" in n for n in out["notices"])
+
+
+# ---------- จุดกลางจังหวัด ----------
+from services.places.provinces import REGIONS
+
+
+def test_province_center_from_osm_and_cached():
+    rows = [{"lat": "18.79", "lon": "98.98", "category": "boundary", "type": "administrative"}]
+    http = FakeHttp(nominatim=rows)
+    s = svc(http)
+    a = s.province_center("เชียงใหม่")
+    b = s.province_center("เชียงใหม่")
+    assert a["source"] == "osm" and a["region"] == "เหนือ" and a["lat"] == 18.79 and b == a
+    assert http.count("nominatim") == 1
+
+
+def test_province_center_falls_back_to_verified_centroid():
+    v = [cand("v:1", "ก", 18.0, 99.0, source="verified"), cand("v:2", "ข", 19.0, 100.0, source="verified")]
+    for c in v:
+        c.province = "ลำปาง"
+    out = svc(FakeHttp(nominatim_error=UpstreamError("x")), verified=v).province_center("ลำปาง")
+    assert out["source"] == "verified_centroid" and (out["lat"], out["lon"]) == (18.5, 99.5) and out["notice"]
+
+
+def test_province_center_unknown_everything_says_so():
+    out = svc(FakeHttp(nominatim_error=UpstreamError("x"))).province_center("ยโสธร")
+    assert out["lat"] is None and out["notice"]
+
+
+def test_province_center_rejects_non_province():
+    with pytest.raises(SearchError):
+        svc(FakeHttp()).province_center("โตเกียว")
+
+
+def test_every_province_resolves_in_every_region():
+    # ทุกจังหวัดต้องถามจุดกลางได้โดยไม่ error (ข้อมูลจริงใช้ OSM ที่เครื่องผู้ใช้)
+    s = PlacesService(http=FakeHttp(nominatim_error=UpstreamError("x")), cache=TTLCache(None), osm_live=True)
+    for provs in REGIONS.values():
+        for p in provs:
+            out = s.province_center(p)
+            assert out["province"] == p and out["region"]

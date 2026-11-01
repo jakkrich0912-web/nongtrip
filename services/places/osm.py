@@ -116,6 +116,15 @@ class NominatimClient:
     def __init__(self, http: HttpClient):
         self.http = http
 
+    def search_area(self, query: str, limit: int = 5) -> list[dict]:
+        """ค้นชื่อพื้นที่ (เช่น จังหวัด) คืนแถวดิบ ใช้หาจุดกลางจังหวัด"""
+        data = self.http.get_json(NOMINATIM_URL, {
+            "q": query, "format": "jsonv2", "countrycodes": "th", "limit": limit, "accept-language": "th,en",
+        })
+        if not isinstance(data, list):
+            raise UpstreamError("รูปแบบคำตอบ Nominatim ไม่ถูกต้อง")
+        return data
+
     def search_lodging(self, query: str, limit: int = 8) -> list[LodgingCandidate]:
         data = self.http.get_json(NOMINATIM_URL, {
             "q": query, "format": "jsonv2", "countrycodes": "th", "limit": limit,
