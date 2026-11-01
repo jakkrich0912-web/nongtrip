@@ -1,7 +1,7 @@
 # Git flow
 
 - มี 2 branch หลัก
-  - `main` คือรุ่นที่นิ่งแล้ว ใช้ส่งสอบ/เดโม ห้าม push ตรง
+  - `main` คือรุ่นที่นิ่งแล้ว ใช้เดโม ห้าม push ตรง
   - `develop` คือที่รวมงานระหว่างพัฒนา ห้าม push ตรง
 - แตก branch จาก `develop` ชื่อ `feature/<ชื่อสั้น>` `fix/<ชื่อสั้น>` หรือ `docs/<ชื่อสั้น>` แล้วเปิด PR เข้า `develop` (ใช้ Squash merge)
 - เมื่อ `develop` ใช้งานได้และเทสต์ผ่าน เปิด PR จาก `develop` เข้า `main` (ใช้ Create a merge commit ไม่ใช้ Squash เพื่อไม่ให้สองสายประวัติไม่ตรงกัน)
