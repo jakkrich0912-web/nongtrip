@@ -57,13 +57,13 @@
 
 ### คำตอบของ `places/nearby`
 
-`center`, `radius_km` (รัศมีที่ใช้จริง อาจน้อยกว่าที่ขอ ถ้าพื้นที่หนาแน่นจน OSM ส่งไม่ไหว), `total`, `offset`, `limit`, `counts` (ต่อ kind), `sources` (`verified`/`osm`), `osm_available`, `notices[]` (ข้อความภาษาไทยที่หน้าเว็บต้องแสดง), `attribution`, `distance_note`, `items[]`
+`center`, `osm_mode` (`live` = ดึงออนไลน์, `snapshot` = ใช้ข้อมูล OSM ที่ดึงไว้ล่วงหน้า, `none` = ไม่มีข้อมูล OSM เลย), `radius_km` (รัศมีที่ใช้จริง อาจน้อยกว่าที่ขอ ถ้าพื้นที่หนาแน่นจน OSM ส่งไม่ไหว), `total`, `offset`, `limit`, `counts` (ต่อ kind), `sources` (`verified`/`osm`), `osm_available`, `notices[]` (ข้อความภาษาไทยที่หน้าเว็บต้องแสดง), `attribution`, `distance_note`, `items[]`
 
-ถ้าเชื่อม OSM ไม่ได้ `osm_available=false` ระบบแสดงเฉพาะ `verified` และใส่ข้อความใน `notices`
+ถ้าเชื่อม OSM ออนไลน์ไม่ได้ ระบบใช้สแนปช็อต (`osm_mode=snapshot`, `osm_available=true`) ถ้าไม่มีสแนปช็อตด้วย `osm_available=false`, `osm_mode=none` ระบบแสดงเฉพาะ `verified` และทุกกรณีใส่ข้อความใน `notices` ที่หน้าเว็บต้องแสดง
 
 ### คำตอบของ `lodgings/search`
 
-`items[]` ของ `{id, name, address, subtype, lat, lon}` (ที่พักจริงขึ้นก่อน), `osm_available`, `notices[]`
+`items[]` ของ `{id, name, address, subtype, lat, lon}` (ที่พักจริงขึ้นก่อน), `osm_available`, `osm_mode`, `notices[]`
 
 ### คำตอบของ `lodgings/near`
 
@@ -86,3 +86,4 @@
 | v0.1-draft | 2026-11-01 | ร่างแรก: ค้นรอบที่พัก 77 จังหวัด เว็บ 4 หน้า ล็อกอิน (ตัวจัดแผนรายวันไม่อยู่ในรอบแรก) |
 | v0.2 | 2026-11-01 | กำหนดเส้นทาง API และรูปแบบคำตอบของบริการค้นหา (ยังไม่มีการลบหรือเปลี่ยนชื่อฟิลด์ จึงไม่ breaking) |
 | v0.3 | 2026-11-01 | เพิ่ม `GET /api/provinces` และ `GET /api/provinces/{ชื่อ}/center` (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.4 | 2026-11-01 | เพิ่มฟิลด์ `osm_mode` ในคำตอบของ nearby / lodgings/search / lodgings/near และโหมดสแนปช็อตเมื่อออนไลน์ไม่ได้ (เพิ่มอย่างเดียว ไม่ breaking) |

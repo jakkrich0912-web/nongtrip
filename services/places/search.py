@@ -10,6 +10,7 @@ from .geo import directions_url, haversine_km, in_thailand, place_url
 from .fetch import HttpClient, UpstreamError, UpstreamTooBig
 from .models import Candidate, LodgingCandidate, Place, SearchResult
 from .osm import NominatimClient, OverpassClient
+from .snapshot import DEFAULT_DIR, Snapshot
 from .provinces import PROVINCES, region_of
 from .verified import centroid, load_verified
 
@@ -86,15 +87,18 @@ class _Area:
     osm_ok: bool
     notices: list[str] = field(default_factory=list)
     center: tuple[float, float] | None = None   # จุดที่ใช้ดึงข้อมูล (ใช้คิดว่าครอบคลุมรอบที่พักอื่นได้แค่ไหน)
+    mode: str = "live"                          # live = ออนไลน์ | snapshot = สแนปช็อตที่ดึงไว้
 
 
 class PlacesService:
     def __init__(self, http: HttpClient | None = None, cache: TTLCache | None = None,
-                 verified: list[Candidate] | None = None, osm_live: bool | None = None):
+                 verified: list[Candidate] | None = None, osm_live: bool | None = None,
+                 snapshot: Snapshot | None = None):
         self.http = http or HttpClient()
         self.cache = cache if cache is not None else TTLCache(os.environ.get("PLACES_CACHE_DIR") or None)
         self.verified = verified if verified is not None else load_verified()
         self.osm_live = (os.environ.get("OSM_LIVE", "1") != "0") if osm_live is None else osm_live
+        self.snapshot = snapshot if snapshot is not None else Snapshot(os.environ.get("OSM_SNAPSHOT_DIR") or DEFAULT_DIR)
         self.overpass = OverpassClient(self.http)
         self.nominatim = NominatimClient(self.http)
 
@@ -152,8 +156,7 @@ class PlacesService:
         if len(q) < 2:
             raise SearchError("ชื่อที่พักสั้นเกินไป")
         if not self.osm_live:
-            return {"items": [], "osm_available": False,
-                    "notices": ["ปิดการค้นหาจาก OpenStreetMap อยู่ ให้ปักหมุดบนแผนที่แทน"]}
+            return self._lodging_offline(q, "ปิดการค้นหาจาก OpenStreetMap อยู่")
         key = f"nominatim:{q.lower()}"
         cached = self.cache.get(key)
         try:
@@ -163,21 +166,33 @@ class PlacesService:
             else:
                 items = cached
         except UpstreamError:
-            return {"items": [], "osm_available": False,
-                    "notices": ["ค้นชื่อที่พักไม่ได้ในตอนนี้ (เชื่อมต่อ OpenStreetMap ไม่ได้) ให้ปักหมุดบนแผนที่แทน"]}
+            return self._lodging_offline(q, "ค้นชื่อที่พักออนไลน์ไม่ได้ในตอนนี้")
         notices = []
         if len(items) > 1:
             notices.append("พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง")
         if not items:
             notices.append("ไม่พบที่พักชื่อนี้ ลองพิมพ์ชื่ออื่น หรือปักหมุดบนแผนที่")
-        return {"items": items, "osm_available": True, "notices": notices}
+        return {"items": items, "osm_available": True, "osm_mode": "live", "notices": notices}
+
+    def _lodging_offline(self, q: str, reason: str) -> dict:
+        if self.snapshot.available():
+            items = [c.to_dict() for c in self.snapshot.find_lodging(q)]
+            when = f" (ดึงไว้เมื่อ {self.snapshot.built_on})" if self.snapshot.built_on else ""
+            notices = [f"{reason} จึงค้นจากข้อมูลที่บันทึกไว้ล่วงหน้า{when}"]
+            if len(items) > 1:
+                notices.append("พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง")
+            if not items:
+                notices.append("ไม่พบที่พักชื่อนี้ ลองพิมพ์ชื่ออื่น หรือปักหมุดบนแผนที่")
+            return {"items": items, "osm_available": True, "osm_mode": "snapshot", "notices": notices}
+        return {"items": [], "osm_available": False, "osm_mode": "none",
+                "notices": [f"{reason} ให้ปักหมุดบนแผนที่แทน"]}
 
     # ---------- ดึงสถานที่รอบจุด (ครั้งเดียวต่อพื้นที่) ----------
     def _fetch_osm(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...]) -> _Area:
         glat, glon = round(lat / GRID_DEG) * GRID_DEG, round(lon / GRID_DEG) * GRID_DEG
         notices: list[str] = []
         if not self.osm_live:
-            return _Area([], radius_km, False, ["ปิดการค้นหาจาก OpenStreetMap อยู่ แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว"])
+            return self._offline_area(lat, lon, radius_km, kinds, "ปิดการค้นหาจาก OpenStreetMap อยู่")
         fetch_km = radius_km + GRID_MARGIN_KM
         attempts = [fetch_km] + ([FALLBACK_FETCH_KM] if FALLBACK_FETCH_KM < fetch_km else [])
         for attempt in attempts:
@@ -192,12 +207,21 @@ class PlacesService:
             except UpstreamTooBig:
                 continue
             except UpstreamError:
-                return _Area([], radius_km, False,
-                             ["เชื่อมต่อ OpenStreetMap ไม่ได้ในตอนนี้ แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว"])
+                return self._offline_area(lat, lon, radius_km, kinds, "เชื่อมต่อ OpenStreetMap ไม่ได้ในตอนนี้")
             if attempt < fetch_km:
                 notices.append(f"พื้นที่หนาแน่นมาก ข้อมูลจาก OpenStreetMap จึงครอบคลุมแค่ {attempt - GRID_MARGIN_KM:g} กม.")
             return _Area(cands, attempt - GRID_MARGIN_KM, True, notices, (lat, lon))
-        return _Area([], radius_km, False, ["ดึงข้อมูลจาก OpenStreetMap ไม่สำเร็จ แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว"])
+        return self._offline_area(lat, lon, radius_km, kinds, "ดึงข้อมูลจาก OpenStreetMap ไม่สำเร็จ")
+
+    def _offline_area(self, lat, lon, radius_km, kinds, reason: str) -> _Area:
+        """ออนไลน์ไม่ได้: ใช้สแนปช็อต OSM ที่ดึงไว้ล่วงหน้า (ถ้ามี) ไม่มีก็เหลือเฉพาะข้อมูลที่ตรวจแล้ว"""
+        if self.snapshot.available():
+            cands = self.snapshot.around(lat, lon, radius_km, kinds)
+            when = f" (ดึงไว้เมื่อ {self.snapshot.built_on})" if self.snapshot.built_on else ""
+            return _Area(cands, radius_km, True,
+                         [f"{reason} จึงใช้ข้อมูล OpenStreetMap ที่บันทึกไว้ล่วงหน้า{when} อาจไม่ใช่ข้อมูลล่าสุด"],
+                         (lat, lon), "snapshot")
+        return _Area([], radius_km, False, [f"{reason} แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว"])
 
     def _area(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...]) -> _Area:
         area = self._fetch_osm(lat, lon, radius_km, kinds)
@@ -251,15 +275,12 @@ class PlacesService:
             offset=offset, limit=limit,
             counts={k: sum(1 for p in places if p.kind == k) for k in ks},
             sources={s: sum(1 for p in places if p.source == s) for s in ("verified", "osm")},
-            osm_available=area.osm_ok, notices=notices,
+            osm_available=area.osm_ok, osm_mode=(area.mode if area.osm_ok else "none"), notices=notices,
         )
 
     # ---------- ค้นที่พักรอบหมุด + สถานที่เด่นของแต่ละที่พัก ----------
     def lodgings_near(self, lat: float, lon: float, top_n: int = 3, radius_km: float | None = None) -> dict:
         self._check(lat, lon, PIN_LODGING_RADIUS_KM[-1], PIN_LODGING_RADIUS_KM[-1])
-        if not self.osm_live:
-            return {"items": [], "osm_available": False, "radius_km": None,
-                    "notices": ["ปิดการค้นหาจาก OpenStreetMap อยู่ จึงค้นที่พักรอบหมุดไม่ได้"]}
         radii = (radius_km,) if radius_km else PIN_LODGING_RADIUS_KM
         for r in radii:
             if not (0 < r <= PIN_LODGING_RADIUS_KM[-1]):
@@ -270,7 +291,7 @@ class PlacesService:
         for r in radii:
             area = self._fetch_osm(lat, lon, r, ("lodging",))
             if not area.osm_ok:
-                return {"items": [], "osm_available": False, "radius_km": r, "notices": area.notices}
+                return {"items": [], "osm_available": False, "osm_mode": "none", "radius_km": r, "notices": area.notices}
             used = r
             lodgings = [c for c in area.candidates
                         if c.kind == "lodging" and haversine_km(lat, lon, c.lat, c.lon) <= r]
@@ -280,7 +301,7 @@ class PlacesService:
                 notices.append(f"ไม่พบที่พักในรัศมี {r:g} กม. จึงขยายเป็น {radii[radii.index(r) + 1]:g} กม.")
         if not lodgings:
             notices.append(f"ไม่พบที่พักในรัศมี {used:g} กม. จากหมุดนี้")
-            return {"items": [], "osm_available": True, "radius_km": used, "notices": notices}
+            return {"items": [], "osm_available": True, "osm_mode": area.mode, "radius_km": used, "notices": notices}
         lodgings = dedupe(lodgings)
         lodgings.sort(key=lambda c: haversine_km(lat, lon, c.lat, c.lon))
 
@@ -301,5 +322,5 @@ class PlacesService:
                 "nearest": [p.to_dict() for p in places[:top_n]],
                 "has_more": len(places) > top_n,
             })
-        return {"items": items, "osm_available": poi_area.osm_ok, "radius_km": used,
+        return {"items": items, "osm_available": poi_area.osm_ok, "osm_mode": (poi_area.mode if poi_area.osm_ok else "none"), "radius_km": used,
                 "notices": notices, "attribution": "© OpenStreetMap contributors (ODbL)"}

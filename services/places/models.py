@@ -61,6 +61,7 @@ class SearchResult:
     sources: dict
     osm_available: bool
     notices: list[str] = field(default_factory=list)
+    osm_mode: str = "live"      # live | snapshot | none
     attribution: str = ATTRIBUTION_OSM
 
     def to_dict(self) -> dict[str, Any]:
@@ -73,6 +74,7 @@ class SearchResult:
             "counts": self.counts,
             "sources": self.sources,
             "osm_available": self.osm_available,
+            "osm_mode": self.osm_mode,
             "notices": self.notices,
             "attribution": self.attribution,
             "distance_note": "ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ",

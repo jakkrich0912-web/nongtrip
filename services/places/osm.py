@@ -42,6 +42,14 @@ def build_query(lat: float, lon: float, radius_m: int, kinds: tuple[str, ...], t
     return f"[out:json][timeout:{timeout}];(" + "".join(parts) + ");out center tags;"
 
 
+def build_area_query(province: str, kinds: tuple[str, ...], timeout: int = 180) -> str:
+    """ทุกแห่งในเขตจังหวัด (ใช้ตอนดึงสแนปช็อตล่วงหน้า) หาเขตจากชื่อ ไม่ใช้รหัส ISO"""
+    parts = [f'nwr(area.a){f}["name"];' for k in kinds for f in FILTERS[k]]
+    return (f'[out:json][timeout:{timeout}];'
+            f'area["boundary"="administrative"]["admin_level"="4"]["name"~"^(จังหวัด)?{province}$"]->.a;'
+            f'({"".join(parts)});out center tags;')
+
+
 def classify(tags: dict) -> tuple[str, str] | None:
     """แปลงแท็ก OSM เป็น (kind, subtype) คืน None ถ้าไม่ใช่ประเภทที่ระบบรองรับ"""
     if tags.get("amenity") == "cafe":
@@ -94,7 +102,9 @@ class OverpassClient:
         self.endpoints = endpoints
 
     def fetch(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...]) -> list[Candidate]:
-        query = build_query(lat, lon, int(radius_km * 1000), kinds)
+        return self.run(build_query(lat, lon, int(radius_km * 1000), kinds))
+
+    def run(self, query: str) -> list[Candidate]:
         last: Exception | None = None
         for ep in self.endpoints:
             try:
