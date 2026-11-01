@@ -23,11 +23,12 @@
 
 | เมธอด / เส้นทาง | หน้าที่ | สถานะ |
 |---|---|---|
-| `GET /api/lodgings/search?q=` | ค้นที่พักจากชื่อ คืนหลายรายการให้ผู้ใช้เลือก ชื่อกำกวมไม่เดา | บริการค้นพร้อม |
-| `GET /api/places/nearby?lat&lon&radius_km=30&kinds=attraction,cafe&limit&offset` | สถานที่รอบจุด เรียงใกล้ไปไกล | บริการค้นพร้อม |
-| `GET /api/lodgings/near?lat&lon` | ผู้ที่ยังไม่ได้จอง: ที่พักรอบหมุด (5 กม. ขยายเป็น 10) พร้อมสถานที่ใกล้สุด 3 แห่งต่อที่พัก | บริการค้นพร้อม |
-| `GET /api/provinces` | รายชื่อ 77 จังหวัดจัดตามภาค (`region`) พร้อมจำนวนสถานที่ที่ตรวจแล้ว ไว้ให้หน้าแรกเลือกจังหวัด | วางแผน (ข้อมูลพร้อมใน `provinces.py`) |
-| `GET /api/provinces/{ชื่อ}/center` | จุดกลางจังหวัด `{province, region, lat, lon, source, notice?}` (`source` = `osm` หรือ `verified_centroid`; หาไม่ได้ `lat`/`lon` เป็น `null` และมี `notice`) | บริการค้นพร้อม |
+| `GET /api/lodgings/search?q=` | ค้นที่พักจากชื่อ คืนหลายรายการให้ผู้ใช้เลือก ชื่อกำกวมไม่เดา | API พร้อม |
+| `GET /api/places/nearby?lat&lon&radius_km=30&kinds=attraction,cafe&limit&offset` | สถานที่รอบจุด เรียงใกล้ไปไกล | API พร้อม |
+| `GET /api/lodgings/near?lat&lon` | ผู้ที่ยังไม่ได้จอง: ที่พักรอบหมุด (5 กม. ขยายเป็น 10) พร้อมสถานที่ใกล้สุด 3 แห่งต่อที่พัก แสดงสูงสุด 20 ที่พักที่ใกล้หมุดที่สุด | API พร้อม |
+| `GET /api/health` | สถานะ `{ok, osm_live, snapshot_available, verified_places}` | API พร้อม |
+| `GET /api/provinces` | รายชื่อ 77 จังหวัดจัดตามภาค `{regions:[{region, provinces:[{name, verified_count}]}]}` ไว้ให้หน้าแรกเลือกจังหวัด | API พร้อม |
+| `GET /api/provinces/{ชื่อ}/center` | จุดกลางจังหวัด `{province, region, lat, lon, source, notice?}` (`source` = `osm` หรือ `verified_centroid`; หาไม่ได้ `lat`/`lon` เป็น `null` และมี `notice`) | API พร้อม |
 | `POST /api/chat` | แชต สตรีมผลทีละขั้น เรียกเครื่องมือค้นตัวเดียวกับหน้าค้นหา | วางแผน |
 | `POST /api/auth/register`, `/login`, `/logout`, `GET /api/me` | ผู้ใช้ (อีเมล+รหัสผ่าน แฮชแล้ว, คุกกี้เซสชัน) | วางแผน |
 | `GET/POST/DELETE /api/history`, `/api/favorites`, `/api/chats` | ประวัติค้นที่พัก สถานที่โปรด ประวัติแชต (เฉพาะผู้ที่ล็อกอิน) | วางแผน |
@@ -61,11 +62,15 @@
 
 ถ้าเชื่อม OSM ออนไลน์ไม่ได้ ระบบใช้สแนปช็อต (`osm_mode=snapshot`, `osm_available=true`) ถ้าไม่มีสแนปช็อตด้วย `osm_available=false`, `osm_mode=none` ระบบแสดงเฉพาะ `verified` และทุกกรณีใส่ข้อความใน `notices` ที่หน้าเว็บต้องแสดง
 
+`validation` (ทั้ง `nearby` และ `lodgings/near`): ผลของตัวตรวจอิสระ `{ok, checked, problems[], problem_count}` ตรวจรัศมี ≤ 30 กม. เรียงใกล้ไปไกล ไม่ซ้ำ ไม่มีเงิน/คะแนน/รีวิว ป้ายแหล่งข้อมูล และสถานที่ที่ตรวจแล้วมีอยู่จริงในไฟล์ข้อมูล ถ้า `ok=false` API เพิ่มข้อความเตือนใน `notices` และหน้าเว็บต้องแสดงป้ายเตือน
+
 ### คำตอบของ `lodgings/search`
 
 `items[]` ของ `{id, name, address, subtype, lat, lon}` (ที่พักจริงขึ้นก่อน), `osm_available`, `osm_mode`, `notices[]`
 
 ### คำตอบของ `lodgings/near`
+
+เพิ่ม `lodgings_total` (จำนวนที่พักที่พบทั้งหมด ถ้ามากกว่า 20 จะแสดง 20 แห่งที่ใกล้หมุดที่สุดและมีข้อความใน `notices`)
 
 `radius_km` (ที่ใช้จริง 5 หรือ 10), `items[]` ของที่พัก: `{id, name, subtype, lat, lon, distance_from_pin_km, maps_url, places_radius_km, places_total, counts, nearest[], has_more}`, `osm_available`, `notices[]`, `attribution`
 
@@ -87,3 +92,4 @@
 | v0.2 | 2026-11-01 | กำหนดเส้นทาง API และรูปแบบคำตอบของบริการค้นหา (ยังไม่มีการลบหรือเปลี่ยนชื่อฟิลด์ จึงไม่ breaking) |
 | v0.3 | 2026-11-01 | เพิ่ม `GET /api/provinces` และ `GET /api/provinces/{ชื่อ}/center` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.4 | 2026-11-01 | เพิ่มฟิลด์ `osm_mode` ในคำตอบของ nearby / lodgings/search / lodgings/near และโหมดสแนปช็อตเมื่อออนไลน์ไม่ได้ (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.5 | 2026-11-02 | API กลางพร้อม (`services/api`): เพิ่ม `validation` ใน `nearby` และ `lodgings/near`, `lodgings_total`, เส้นทาง `GET /api/health` (เพิ่มอย่างเดียว ไม่ breaking) |

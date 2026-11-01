@@ -209,3 +209,20 @@ def test_every_province_resolves_in_every_region():
         for p in provs:
             out = s.province_center(p)
             assert out["province"] == p and out["region"]
+
+
+def test_lodgings_near_truncates_to_nearest_and_reports_total():
+    lods = [{"type": "node", "id": 100 + i, "lat": offset_lat(0.1 * (i + 1)), "lon": LON,
+             "tags": {"name": f"ที่พัก {i}", "tourism": "hotel"}} for i in range(8)]
+    pois = [el(10 + i, f"จุด{i}", offset_lat(i + 1), LON, {"tourism": "attraction"}) for i in range(4)]
+    out = svc(FakeHttp(overpass=lods + pois)).lodgings_near(LAT, LON, max_lodgings=3)
+    assert out["lodgings_total"] == 8 and [i["name"] for i in out["items"]] == ["ที่พัก 0", "ที่พัก 1", "ที่พัก 2"]
+    assert any("แสดง 3 แห่งที่ใกล้หมุดที่สุด" in n for n in out["notices"])
+
+
+def test_dedupe_scales_to_thousands_quickly():
+    import time
+    many = [cand(f"o{i}", f"ชื่อ{i}", 18.0 + (i % 60) * 0.001, 99.0 + (i // 60) * 0.001) for i in range(4000)]
+    t = time.time()
+    dedupe(many)
+    assert time.time() - t < 5
