@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md ภาคเหนือเพิ่ม 16 แห่งเมื่อ 2026-11-01 โดยดึงจาก en.wikipedia API ผ่านเบราว์เซอร์ (พิกัด+ชื่อไทย) และตรวจพิกัดเทียบจังหวัดด้วยตา ตัดรายการที่พิกัดอยู่ผิดจังหวัดออก",
+  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md ภาคเหนือเพิ่ม 16 แห่งเมื่อ 2026-11-01 โดยดึงจาก en.wikipedia API ผ่านเบราว์เซอร์ (พิกัด+ชื่อไทย) และตรวจพิกัดเทียบจังหวัดด้วยตา ตัดรายการที่พิกัดอยู่ผิดจังหวัดออก ภาคตะวันออกเฉียงเหนือเพิ่ม 14 แห่งเมื่อ 2026-11-01 ผ่านเบราว์เซอร์ (en.wikipedia API) ตรวจเนื้อหา/พิกัดว่าอยู่ในจังหวัดนั้น",
   "built_on": "2026-11-01",
   "weekday_index": "0=จันทร์ ... 6=อาทิตย์"
  },
@@ -10224,6 +10224,474 @@
      "fields": [
       "lat",
       "lon",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p402",
+   "name_th": "อุทยานแห่งชาติภูผาเหล็ก",
+   "name_en": "Phu Pha Lek National Park",
+   "category": "nature",
+   "area": "กาฬสินธุ์",
+   "lat": 17.27,
+   "lon": 103.47,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "กาฬสินธุ์",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Pha_Lek_National_Park",
+     "title": "Phu Pha Lek National Park (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p604",
+   "name_th": "พระธาตุขามแก่น",
+   "name_en": "Phra That Kham Kaen",
+   "category": "temple",
+   "area": "ขอนแก่น",
+   "lat": 16.5635,
+   "lon": 102.9519,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ขอนแก่น",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phra_That_Kham_Kaen",
+     "title": "Phra That Kham Kaen (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p605",
+   "name_th": "พระมหาธาตุแก่นนคร",
+   "name_en": "Phra Mahathat Kaen Nakhon",
+   "category": "temple",
+   "area": "ขอนแก่น",
+   "lat": 16.4081,
+   "lon": 102.8342,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ขอนแก่น",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phra_Mahathat_Kaen_Nakhon",
+     "title": "Phra Mahathat Kaen Nakhon (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2103",
+   "name_th": "ปราสาทหินพนมวัน",
+   "name_en": "Prasat Phanom Wan",
+   "category": "museum",
+   "area": "นครราชสีมา",
+   "lat": 15.02,
+   "lon": 102.2,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "นครราชสีมา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Prasat_Phanom_Wan",
+     "title": "Prasat Phanom Wan (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2104",
+   "name_th": "วัดธรรมจักรเสมาราม",
+   "name_en": "Wat Thammachak Semaram",
+   "category": "temple",
+   "area": "นครราชสีมา",
+   "lat": 14.91667,
+   "lon": 101.79361,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "นครราชสีมา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Thammachak_Semaram",
+     "title": "Wat Thammachak Semaram (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2702",
+   "name_th": "Phu Thok",
+   "name_en": "Phu Thok",
+   "category": "temple",
+   "area": "บึงกาฬ",
+   "lat": 18.1375,
+   "lon": 103.87917,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "บึงกาฬ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Thok",
+     "title": "Phu Thok (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5506",
+   "name_th": "อุทยานแห่งชาติภูสวนทราย",
+   "name_en": "Phu Suan Sai National Park",
+   "category": "nature",
+   "area": "เลย",
+   "lat": 17.51,
+   "lon": 100.96,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เลย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Suan_Sai_National_Park",
+     "title": "Phu Suan Sai National Park (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5603",
+   "name_th": "ปราสาทสระกำแพงใหญ่",
+   "name_en": "Prasat Sa Kamphaeng Yai",
+   "category": "museum",
+   "area": "ศรีสะเกษ",
+   "lat": 15.101,
+   "lon": 104.125,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ศรีสะเกษ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Prasat_Sa_Kamphaeng_Yai",
+     "title": "Prasat Sa Kamphaeng Yai (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7405",
+   "name_th": "วัดศิริสุทโธคำชะโนด",
+   "name_en": "Wat Kham Chanot",
+   "category": "temple",
+   "area": "อุดรธานี",
+   "lat": 17.74321,
+   "lon": 103.35933,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อุดรธานี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Kham_Chanot",
+     "title": "Wat Kham Chanot (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7406",
+   "name_th": "วัดป่าภูก้อน",
+   "name_en": "Wat Pa Phu Kon",
+   "category": "temple",
+   "area": "อุดรธานี",
+   "lat": 17.9229,
+   "lon": 102.11818,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อุดรธานี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Pa_Phu_Kon",
+     "title": "Wat Pa Phu Kon (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7301",
+   "name_th": "วัดพระเหลาเทพนิมิต",
+   "name_en": "Wat Phra Lao Thep Nimit",
+   "category": "temple",
+   "area": "อำนาจเจริญ",
+   "lat": 15.67689,
+   "lon": 104.85399,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อำนาจเจริญ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Phra_Lao_Thep_Nimit",
+     "title": "Wat Phra Lao Thep Nimit (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7302",
+   "name_th": "Wat Tham Saeng Phet",
+   "name_en": "Wat Tham Saeng Phet",
+   "category": "temple",
+   "area": "อำนาจเจริญ",
+   "lat": 15.8952,
+   "lon": 104.7293,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "อำนาจเจริญ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Tham_Saeng_Phet",
+     "title": "Wat Tham Saeng Phet (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4301",
+   "name_th": "วัดโพธาราม",
+   "name_en": "Wat Photharam, Maha Sarakham",
+   "category": "temple",
+   "area": "มหาสารคาม",
+   "lat": 15.6603,
+   "lon": 103.2496,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "มหาสารคาม",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Photharam,_Maha_Sarakham",
+     "title": "Wat Photharam, Maha Sarakham (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4801",
+   "name_th": "พระพุทธรัตนมงคลมหามุนี (หลวงพ่อใหญ่)",
+   "name_en": "Luangpho Yai",
+   "category": "temple",
+   "area": "ร้อยเอ็ด",
+   "lat": 16.0621,
+   "lon": 103.6585,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ร้อยเอ็ด",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Luangpho_Yai",
+     "title": "Luangpho Yai (Wikipedia)",
+     "checked_on": "2026-11-01",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
       "name_en"
      ]
     }

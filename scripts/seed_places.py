@@ -115,3 +115,21 @@ NORTH_EXTRA = {   # ทุกชื่อตรวจแล้วว่ามี
 for _prov, _items in NORTH_EXTRA.items():
     _have = {t for t, _ in SEED.get(_prov, [])}
     SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]
+
+
+# ---- ภาคตะวันออกเฉียงเหนือ: รายการเพิ่มที่ตรวจแล้ว (2026-11-01) ----
+NE_EXTRA = {
+    "กาฬสินธุ์": [("Phu_Pha_Lek_National_Park", "N")],
+    "ขอนแก่น": [("Phra_That_Kham_Kaen", "T"), ("Phra_Mahathat_Kaen_Nakhon", "T")],
+    "นครราชสีมา": [("Prasat_Phanom_Wan", "H"), ("Wat_Thammachak_Semaram", "T")],
+    "บึงกาฬ": [("Phu_Thok", "T")],
+    "เลย": [("Phu_Suan_Sai_National_Park", "N")],
+    "ศรีสะเกษ": [("Prasat_Sa_Kamphaeng_Yai", "H")],
+    "อุดรธานี": [("Wat_Kham_Chanot", "T"), ("Wat_Pa_Phu_Kon", "T")],
+    "อำนาจเจริญ": [("Wat_Phra_Lao_Thep_Nimit", "T"), ("Wat_Tham_Saeng_Phet", "T")],
+    "มหาสารคาม": [("Wat_Photharam,_Maha_Sarakham", "T")],
+    "ร้อยเอ็ด": [("Luangpho_Yai", "T")],
+}
+for _prov, _items in NE_EXTRA.items():
+    _have = {t for t, _ in SEED.get(_prov, [])}
+    SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]
