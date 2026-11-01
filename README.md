@@ -62,8 +62,10 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 
 | คน | GitHub | หมายเหตุ |
 |---|---|---|
-| Jakkrich | @jakkrich0912-web | เจ้าของ repo |
-| Jirapa Gongmool | @jirapa-gm | การแบ่งโมดูลยังไม่ได้ตกลง |
+| Jakkrich | @jakkrich0912-web | เจ้าของ repo, งานแกน (ค้นหา, API, ตัวตรวจ, แชทบอท, หน้าค้นหา), รีวิวทุก PR |
+| Jirapa Gongmool | @jirapa-gm | หน้าแรก, หน้าล็อกอิน/ประวัติ, ข้อมูลที่ตรวจแล้ว, ชุดทดสอบ, สไลด์ |
+
+รายละเอียดและแผน 5 วันอยู่ใน `docs/WORKPLAN.md`
 
 วิชา Advanced Topics in Computer Software (RMUTT) 
 
