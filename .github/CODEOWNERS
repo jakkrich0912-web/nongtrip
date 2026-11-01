@@ -1,0 +1,8 @@
+# เจ้าของโฟลเดอร์: GitHub จะขอรีวิวจากเจ้าของอัตโนมัติเมื่อ PR แตะไฟล์ในโฟลเดอร์นั้น
+# A = jakkrich0912-web
+*                      @jakkrich0912-web
+/docs/CONTRACT.md      @jakkrich0912-web
+
+# เมื่อ Jirapa ตอบรับคำเชิญเป็น collaborator แล้ว เอา # ออกและเพิ่ม @jirapa-gm ต่อท้ายบรรทัดที่เป็นของเธอ
+# /apps/web/           @jirapa-gm
+# /services/places/    @jirapa-gm

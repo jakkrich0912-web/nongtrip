@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  structure:
+    # ตรวจโครงโปรเจกต์ และกันความลับหลุดเข้า repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required files exist
+        run: |
+          for f in README.md .env.example docs/CONTRACT.md docs/SPEC.md docs/RUNBOOK.md docs/GIT_FLOW.md; do
+            test -f "$f" || { echo "ขาดไฟล์ $f"; exit 1; }
+          done
+      - name: No secrets committed
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then echo ".env ถูก commit"; exit 1; fi
+
+  test:
+    # รันเทสต์ Python ของทุกบริการ ข้ามถ้ายังไม่มีเทสต์ (ช่วงตั้งโครง)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install and test
+        run: |
+          shopt -s nullglob
+          reqs=(services/*/requirements.txt)
+          if [ ${#reqs[@]} -eq 0 ]; then echo "ยังไม่มีบริการที่ติดตั้งได้ ข้าม"; exit 0; fi
+          for r in "${reqs[@]}"; do pip install -r "$r"; done
+          pip install pytest
+          python -m pytest services -q

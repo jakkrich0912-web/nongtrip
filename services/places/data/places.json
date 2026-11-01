@@ -1,0 +1,922 @@
+{
+  "_meta": {
+    "note": "verified=true หมายถึงค่าข้อเท็จจริงทุกค่าที่ไม่เป็น null (ชื่อ พิกัด เวลาเปิด ราคา คำอธิบาย) มีแหล่งใน sources ค่าที่หาแหล่งไม่ได้เป็น null ฟิลด์ category/tags/area/duration_min/road_factor เป็นป้ายจัดหมวดและค่าประมาณเพื่อการวางแผนของทีม ไม่ใช่ข้อเท็จจริงที่ตรวจแล้ว สถานที่ verified=false ยังมีค่าจากความรู้ทั่วไปที่ยังไม่ตรวจ ระบบติดป้ายเตือน ตรวจเมื่อ 2026-10-27 (พิกัดจาก Wikipedia เท่านั้น ยังไม่พบแหล่งทางการที่ระบุเวลาเปิดและค่าเข้า)",
+    "weekday_index": "0=จันทร์ ... 6=อาทิตย์",
+    "schema": "ดู docs/CONTRACT.md หัวข้อ 4"
+  },
+  "places": [
+    {
+      "id": "p01",
+      "name_th": "วัดพระธาตุดอยสุเทพ",
+      "name_en": "Wat Phra That Doi Suthep",
+      "category": "temple",
+      "area": "ดอยสุเทพ",
+      "lat": 18.80498,
+      "lon": 98.92156,
+      "duration_min": 90,
+      "cost_thb": null,
+      "road_factor": 1.6,
+      "open": null,
+      "tags": [
+        "culture",
+        "photo",
+        "viewpoint",
+        "outdoors"
+      ],
+      "description": null,
+      "notes": [
+        "ต้องเดินขึ้นบันไดประมาณ 300 ขั้น หรือใช้ลิฟต์โดยสาร",
+        "ควรแต่งกายสุภาพ"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Phra_That_Doi_Suthep",
+          "title": "Wat Phra That Doi Suthep (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p02",
+      "name_th": "วัดเจดีย์หลวงวรวิหาร",
+      "name_en": "Wat Chedi Luang",
+      "category": "temple",
+      "area": "เมืองเก่า",
+      "lat": 18.78694,
+      "lon": 98.98639,
+      "duration_min": 60,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "culture",
+        "photo",
+        "old_city",
+        "rainy_ok"
+      ],
+      "description": null,
+      "notes": [
+        "ควรแต่งกายสุภาพ"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Chedi_Luang",
+          "title": "Wat Chedi Luang (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p03",
+      "name_th": "วัดพระสิงห์วรมหาวิหาร",
+      "name_en": "Wat Phra Singh",
+      "category": "temple",
+      "area": "เมืองเก่า",
+      "lat": 18.78875,
+      "lon": 98.981214,
+      "duration_min": 45,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "culture",
+        "old_city",
+        "rainy_ok"
+      ],
+      "description": null,
+      "notes": [
+        "ควรแต่งกายสุภาพ"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Phra_Singh",
+          "title": "Wat Phra Singh (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p04",
+      "name_th": "วัดเชียงมั่น",
+      "name_en": "Wat Chiang Man",
+      "category": "temple",
+      "area": "เมืองเก่า",
+      "lat": 18.7948,
+      "lon": 98.9888,
+      "duration_min": 30,
+      "cost_thb": 0,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "06:00",
+          "to": "17:00"
+        }
+      ],
+      "tags": [
+        "culture",
+        "quiet",
+        "old_city",
+        "budget"
+      ],
+      "description": "วัดเก่าแก่ที่สุดแห่งหนึ่งของเมือง บรรยากาศสงบ มีเจดีย์ช้างล้อมและวิหารเล็กๆ คนมักน้อยกว่าวัดดังอื่นในเมืองเก่า",
+      "notes": [],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p05",
+      "name_th": "วัดอุโมงค์สวนพุทธธรรม",
+      "name_en": "Wat U-Mong",
+      "category": "temple",
+      "area": "สุเทพ",
+      "lat": 18.783183,
+      "lon": 98.951308,
+      "duration_min": 60,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "culture",
+        "quiet",
+        "nature",
+        "photo",
+        "budget"
+      ],
+      "description": null,
+      "notes": [
+        "พื้นที่เป็นดินและทางเดินป่า ควรใส่รองเท้าเดินสบาย"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Umong",
+          "title": "Wat Umong (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p06",
+      "name_th": "พระตำหนักภูพิงคราชนิเวศน์",
+      "name_en": "Phu Phing Palace",
+      "category": "museum",
+      "area": "ดอยสุเทพ",
+      "lat": 18.8059,
+      "lon": 98.8977,
+      "duration_min": 60,
+      "cost_thb": null,
+      "road_factor": 1.5,
+      "open": null,
+      "tags": [
+        "culture",
+        "family",
+        "garden",
+        "photo",
+        "history"
+      ],
+      "description": null,
+      "notes": [
+        "อาจปิดชั่วคราวเมื่อมีพระราชกิจ ควรตรวจสอบก่อนเดินทาง",
+        "ต้องแต่งกายสุภาพ",
+        "Wikipedia ระบุว่าเปิดให้เข้าชม ยกเว้นช่วงที่พระราชวงศ์ประทับ (ปกติราว ม.ค.-มี.ค.) ไม่ระบุเวลารายวัน"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Bhubing_Palace",
+          "title": "Bhubing Palace (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p07",
+      "name_th": "สวนพฤกษศาสตร์สมเด็จพระนางเจ้าสิริกิติ์",
+      "name_en": "Queen Sirikit Botanic Garden",
+      "category": "nature",
+      "area": "แม่ริม",
+      "lat": 18.899,
+      "lon": 98.8625,
+      "duration_min": 150,
+      "cost_thb": 100,
+      "road_factor": 1.5,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "08:30",
+          "to": "17:00"
+        }
+      ],
+      "tags": [
+        "nature",
+        "family",
+        "outdoors",
+        "photo",
+        "garden"
+      ],
+      "description": "สวนพฤกษศาสตร์ขนาดใหญ่ มีเรือนกระจก ทางเดินศึกษาธรรมชาติ และพื้นที่ปิกนิก เหมาะกับครอบครัวที่อยากใช้เวลากลางแจ้งทั้งครึ่งวัน",
+      "notes": [
+        "พื้นที่กว้าง มีรถรางให้บริการบางช่วง"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p08",
+      "name_th": "ม่อนแจ่ม",
+      "name_en": "Mon Jam",
+      "category": "nature",
+      "area": "แม่ริม",
+      "lat": 18.94583,
+      "lon": 98.85833,
+      "duration_min": 180,
+      "cost_thb": null,
+      "road_factor": 1.7,
+      "open": null,
+      "tags": [
+        "nature",
+        "viewpoint",
+        "cool",
+        "photo",
+        "family",
+        "outdoors"
+      ],
+      "description": null,
+      "notes": [
+        "ถนนขึ้นเขาโค้งชันและแคบ ผู้ขับไม่ชำนาญควรระวัง",
+        "อากาศเย็นกว่าในเมือง ควรเตรียมเสื้อกันหนาว"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Mon_Jam",
+          "title": "Mon Jam (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p09",
+      "name_th": "ดอยอินทนนท์ (ยอดดอยและพระมหาธาตุ)",
+      "name_en": "Doi Inthanon",
+      "category": "nature",
+      "area": "จอมทอง",
+      "lat": 18.5875,
+      "lon": 98.48667,
+      "duration_min": 300,
+      "cost_thb": null,
+      "road_factor": 1.9,
+      "open": null,
+      "tags": [
+        "nature",
+        "viewpoint",
+        "cool",
+        "outdoors",
+        "photo"
+      ],
+      "description": null,
+      "notes": [
+        "ห่างจากตัวเมืองเชียงใหม่ประมาณ 100 กม. ใช้เวลาเดินทางเกิน 2 ชั่วโมง",
+        "อากาศเย็นมาก ควรเตรียมเสื้อกันหนาวและกันฝน",
+        "พิกัดคือยอดดอยอินทนนท์ตาม Wikipedia (ไม่ใช่พิกัดของพระมหาธาตุนภเมทนีดลฯ)"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Doi_Inthanon",
+          "title": "Doi Inthanon (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p10",
+      "name_th": "น้ำตกห้วยแก้ว",
+      "name_en": "Huay Kaew Waterfall",
+      "category": "nature",
+      "area": "สุเทพ",
+      "lat": 18.811,
+      "lon": 98.9385,
+      "duration_min": 45,
+      "cost_thb": 0,
+      "road_factor": 1.4,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "06:00",
+          "to": "18:00"
+        }
+      ],
+      "tags": [
+        "nature",
+        "outdoors",
+        "budget",
+        "family"
+      ],
+      "description": "น้ำตกเล็กๆ ใกล้ตัวเมือง เดินเข้าง่าย เหมาะแวะสั้นๆ ก่อนหรือหลังขึ้นดอยสุเทพ",
+      "notes": [
+        "พื้นหินลื่นช่วงฝน"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p11",
+      "name_th": "น้ำตกแม่สา",
+      "name_en": "Mae Sa Waterfall",
+      "category": "nature",
+      "area": "แม่ริม",
+      "lat": 18.915,
+      "lon": 98.91,
+      "duration_min": 90,
+      "cost_thb": 100,
+      "road_factor": 1.5,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "08:30",
+          "to": "16:30"
+        }
+      ],
+      "tags": [
+        "nature",
+        "family",
+        "outdoors",
+        "photo"
+      ],
+      "description": "น้ำตกหลายชั้นในอุทยานแห่งชาติ มีทางเดินขึ้นชมทีละชั้น เหมาะกับครอบครัวที่ชอบเดินป่าเบาๆ",
+      "notes": [
+        "ช่วงฝนน้ำมาก ทางลื่น"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p12",
+      "name_th": "อ่างเก็บน้ำห้วยตึงเฒ่า",
+      "name_en": "Huay Tueng Thao Reservoir",
+      "category": "nature",
+      "area": "แม่ริม",
+      "lat": 18.86,
+      "lon": 98.938,
+      "duration_min": 120,
+      "cost_thb": 50,
+      "road_factor": 1.4,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "08:00",
+          "to": "18:00"
+        }
+      ],
+      "tags": [
+        "nature",
+        "relax",
+        "photo",
+        "budget",
+        "family"
+      ],
+      "description": "อ่างเก็บน้ำที่มีศาลาริมน้ำและร้านอาหารลอยน้ำ บรรยากาศสบายๆ เหมาะนั่งพักผ่อนและทานอาหารกลางวัน",
+      "notes": [],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p13",
+      "name_th": "ถนนคนเดินวันอาทิตย์ (ถนนราชดำเนิน)",
+      "name_en": "Sunday Walking Street",
+      "category": "market",
+      "area": "เมืองเก่า",
+      "lat": 18.7878,
+      "lon": 98.9875,
+      "duration_min": 120,
+      "cost_thb": 300,
+      "open": [
+        {
+          "days": [
+            6
+          ],
+          "from": "16:00",
+          "to": "22:30"
+        }
+      ],
+      "tags": [
+        "market",
+        "shopping",
+        "food",
+        "evening",
+        "culture",
+        "photo"
+      ],
+      "description": "ตลาดถนนคนเดินที่ปิดถนนราชดำเนินทุกวันอาทิตย์ มีงานฝีมือ ของฝาก และอาหารพื้นเมืองหลากหลาย คนแน่นช่วงหัวค่ำ",
+      "notes": [
+        "เปิดเฉพาะวันอาทิตย์ตอนเย็น",
+        "คนแน่น ระวังของมีค่า"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p14",
+      "name_th": "ถนนคนเดินวันเสาร์ (ถนนวัวลาย)",
+      "name_en": "Saturday Walking Street",
+      "category": "market",
+      "area": "เมืองเก่า",
+      "lat": 18.7795,
+      "lon": 98.9858,
+      "duration_min": 90,
+      "cost_thb": 250,
+      "open": [
+        {
+          "days": [
+            5
+          ],
+          "from": "16:00",
+          "to": "22:30"
+        }
+      ],
+      "tags": [
+        "market",
+        "shopping",
+        "food",
+        "evening",
+        "craft"
+      ],
+      "description": "ตลาดถนนคนเดินย่านเครื่องเงินวัวลาย ขนาดเล็กกว่าวันอาทิตย์และเดินสบายกว่า มีงานฝีมือและอาหารว่าง",
+      "notes": [
+        "เปิดเฉพาะวันเสาร์ตอนเย็น"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p15",
+      "name_th": "ตลาดวโรรส (กาดหลวง)",
+      "name_en": "Warorot Market",
+      "category": "market",
+      "area": "ช้างม่อย",
+      "lat": 18.790222,
+      "lon": 99.000657,
+      "duration_min": 60,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "market",
+        "food",
+        "local",
+        "budget",
+        "rainy_ok",
+        "shopping",
+        "morning"
+      ],
+      "description": null,
+      "notes": [
+        "ช่วงสายถึงบ่ายคนเยอะ ที่จอดรถหายาก",
+        "Wikipedia ระบุเฉพาะว่าพ่อค้าม้งในส่วนตรอกโล่ห์ขายทุกวัน 07:00-17:00 ไม่ใช่เวลาของทั้งตลาด"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Warorot_Market",
+          "title": "Warorot Market (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p16",
+      "name_th": "ไนท์บาซาร์ ถนนช้างคลาน",
+      "name_en": "Chang Klan Night Bazaar",
+      "category": "market",
+      "area": "ช้างคลาน",
+      "lat": 18.7835,
+      "lon": 99.001,
+      "duration_min": 90,
+      "cost_thb": 300,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "18:00",
+          "to": "23:00"
+        }
+      ],
+      "tags": [
+        "market",
+        "shopping",
+        "evening",
+        "food"
+      ],
+      "description": "ตลาดกลางคืนเปิดทุกวัน ขายของที่ระลึก เสื้อผ้า และอาหารริมทาง เหมาะแวะตอนค่ำหลังกิจกรรมอื่นเสร็จ",
+      "notes": [],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p17",
+      "name_th": "ย่านนิมมานเหมินท์",
+      "name_en": "Nimmanhaemin Road",
+      "category": "cafe",
+      "area": "นิมมาน",
+      "lat": 18.7995,
+      "lon": 98.968,
+      "duration_min": 120,
+      "cost_thb": 300,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "09:00",
+          "to": "22:00"
+        }
+      ],
+      "tags": [
+        "cafe",
+        "shopping",
+        "food",
+        "photo",
+        "rainy_ok",
+        "trendy"
+      ],
+      "description": "ย่านคาเฟ่และร้านอาหารทันสมัย ร้านกาแฟตกแต่งสวย ร้านขายของดีไซน์ และแกลเลอรี เหมาะนั่งชิลล์และถ่ายรูปได้ทั้งวัน",
+      "notes": [
+        "ที่จอดรถหายากช่วงสุดสัปดาห์"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p18",
+      "name_th": "มหาวิทยาลัยเชียงใหม่ (อ่างแก้ว)",
+      "name_en": "Chiang Mai University Ang Kaew",
+      "category": "nature",
+      "area": "สุเทพ",
+      "lat": 18.806611,
+      "lon": 98.951806,
+      "duration_min": 60,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "relax",
+        "photo",
+        "budget",
+        "outdoors",
+        "morning"
+      ],
+      "description": null,
+      "notes": [
+        "พิกัดคืออ่างเก็บน้ำอ่างแก้วในมหาวิทยาลัย"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Ang_Kaew_Reservoir",
+          "title": "Ang Kaew Reservoir (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p19",
+      "name_th": "หอศิลป์และพิพิธภัณฑ์เมืองเชียงใหม่ (สามกษัตริย์)",
+      "name_en": "Chiang Mai City Arts and Cultural Centre",
+      "category": "museum",
+      "area": "เมืองเก่า",
+      "lat": 18.790205,
+      "lon": 98.98728,
+      "duration_min": 75,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "museum",
+        "culture",
+        "history",
+        "rainy_ok",
+        "family",
+        "old_city"
+      ],
+      "description": null,
+      "notes": [
+        "ปิดวันจันทร์",
+        "พิกัดคืออนุสาวรีย์สามกษัตริย์ ซึ่ง Wikipedia ระบุว่าตั้งอยู่หน้าหอศิลป์และวัฒนธรรมเมืองเชียงใหม่"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Three_Kings_Monument",
+          "title": "Three Kings Monument (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p20",
+      "name_th": "วัดสวนดอก",
+      "name_en": "Wat Suan Dok",
+      "category": "temple",
+      "area": "เมืองเก่า",
+      "lat": 18.788219,
+      "lon": 98.967697,
+      "duration_min": 45,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "culture",
+        "photo",
+        "budget",
+        "rainy_ok"
+      ],
+      "description": null,
+      "notes": [
+        "ควรแต่งกายสุภาพ"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Suan_Dok",
+          "title": "Wat Suan Dok (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p21",
+      "name_th": "วัดศรีสุพรรณ (วัดเงิน)",
+      "name_en": "Wat Sri Suphan",
+      "category": "temple",
+      "area": "เมืองเก่า",
+      "lat": 18.778611,
+      "lon": 98.983333,
+      "duration_min": 45,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "culture",
+        "photo",
+        "craft",
+        "old_city"
+      ],
+      "description": null,
+      "notes": [
+        "ควรแต่งกายสุภาพ",
+        "Wikipedia ระบุว่าห้ามผู้หญิงเข้าอุโบสถ (ซึ่งยังใช้งานอยู่)"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Sri_Suphan",
+          "title": "Wat Sri Suphan (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p22",
+      "name_th": "หมู่บ้านบ่อสร้าง (ร่มและงานหัตถกรรม)",
+      "name_en": "Bo Sang Umbrella Village",
+      "category": "craft",
+      "area": "สันกำแพง",
+      "lat": 18.771,
+      "lon": 99.048,
+      "duration_min": 60,
+      "cost_thb": 100,
+      "road_factor": 1.4,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "08:30",
+          "to": "17:30"
+        }
+      ],
+      "tags": [
+        "craft",
+        "culture",
+        "shopping",
+        "family",
+        "rainy_ok"
+      ],
+      "description": "หมู่บ้านทำร่มกระดาษสาและงานหัตถกรรม ชมขั้นตอนการทำร่มและซื้อของฝากได้ มีส่วนในร่มสำหรับวันฝนตก",
+      "notes": [],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": []
+    },
+    {
+      "id": "p23",
+      "name_th": "ย่านคาเฟ่ริมแม่น้ำปิง (วัดเกตการาม)",
+      "name_en": "Ping Riverside Cafes (Wat Ket)",
+      "category": "cafe",
+      "area": "ช้างคลาน",
+      "lat": 18.7924,
+      "lon": 99.0029,
+      "duration_min": 90,
+      "cost_thb": 250,
+      "open": [
+        {
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from": "09:00",
+          "to": "20:00"
+        }
+      ],
+      "tags": [
+        "cafe",
+        "relax",
+        "photo",
+        "riverside",
+        "rainy_ok",
+        "quiet"
+      ],
+      "description": "ย่านเก่าริมแม่น้ำปิงที่มีบ้านไม้เก่าดัดแปลงเป็นคาเฟ่และร้านอาหารบรรยากาศสงบ เหมาะนั่งพักผ่อนช่วงบ่าย",
+      "notes": [
+        "พิกัดคือวัดเกตการาม ส่วนความเป็น 'ย่านคาเฟ่' ยังไม่มีแหล่งยืนยัน"
+      ],
+      "province": "เชียงใหม่",
+      "verified": false,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Wat_Ket_Karam",
+          "title": "Wat Ket Karam (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p24",
+      "name_th": "สวนสัตว์เชียงใหม่",
+      "name_en": "Chiang Mai Zoo",
+      "category": "activity",
+      "area": "สุเทพ",
+      "lat": 18.809,
+      "lon": 98.947,
+      "duration_min": 180,
+      "cost_thb": null,
+      "open": null,
+      "tags": [
+        "family",
+        "outdoors",
+        "nature",
+        "kids"
+      ],
+      "description": null,
+      "notes": [
+        "พื้นที่เป็นเนิน เดินเยอะ ควรเตรียมร่มและน้ำดื่ม"
+      ],
+      "province": "เชียงใหม่",
+      "verified": true,
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Chiang_Mai_Zoo",
+          "title": "Chiang Mai Zoo (Wikipedia)",
+          "checked_on": "2026-10-27",
+          "fields": [
+            "lat",
+            "lon"
+          ]
+        }
+      ]
+    }
+  ]
+}

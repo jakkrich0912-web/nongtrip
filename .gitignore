@@ -1,0 +1,20 @@
+# ความลับและไฟล์เฉพาะเครื่อง
+.env
+.venv/
+venv/
+/data/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node (apps/web ถ้าใช้)
+node_modules/
+dist/
+
+# ฐานข้อมูล/แคชตอนรัน
+*.db
+*.sqlite3
+*.cache.json
+scripts/.wiki_cache.json
