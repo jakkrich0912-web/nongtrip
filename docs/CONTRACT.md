@@ -30,8 +30,8 @@
 | `GET /api/provinces` | รายชื่อ 77 จังหวัดจัดตามภาค `{regions:[{region, provinces:[{name, verified_count}]}]}` ไว้ให้หน้าแรกเลือกจังหวัด | API พร้อม |
 | `GET /api/provinces/{ชื่อ}/center` | จุดกลางจังหวัด `{province, region, lat, lon, source, notice?}` (`source` = `osm` หรือ `verified_centroid`; หาไม่ได้ `lat`/`lon` เป็น `null` และมี `notice`) | API พร้อม |
 | `POST /api/chat` | แชต สตรีมผลทีละขั้น (SSE) เรียกเครื่องมือค้นตัวเดียวกับหน้าค้นหา ดูข้อ 3.2 | วางแผน |
-| `POST /api/auth/register`, `/login`, `/logout`, `GET /api/auth/me` | ผู้ใช้ (อีเมล+รหัสผ่าน แฮชแล้ว, คุกกี้เซสชัน) ดูข้อ 3.3 | วางแผน |
-| `GET/POST /api/me/searches`, `GET/POST/DELETE /api/me/favorites`, `GET /api/me/chats` | ประวัติค้นที่พัก สถานที่โปรด ประวัติแชต (เฉพาะผู้ที่ล็อกอิน) ดูข้อ 3.4 | วางแผน |
+| `POST /api/auth/register`, `/login`, `/logout`, `GET /api/auth/me` | ผู้ใช้ (อีเมล+รหัสผ่าน แฮชแล้ว, คุกกี้เซสชัน) ดูข้อ 3.3 | API พร้อม |
+| `GET/POST/DELETE /api/me/searches`, `GET/POST/DELETE /api/me/favorites`, `GET/DELETE /api/me/chats` | ประวัติค้นที่พัก สถานที่โปรด ประวัติแชต (เฉพาะผู้ที่ล็อกอิน) ดูข้อ 3.4 | API พร้อม |
 
 กฎของ `kinds`: ค่าที่รับคือ `attraction` และ `cafe` (ค่าเริ่มต้นทั้งสอง) ค่าอื่นถูกเมิน ถ้าไม่เหลือเลยตอบ 400
 
@@ -39,14 +39,15 @@
 
 ### 3.1 ข้อผิดพลาด
 
-ทุก endpoint ที่พร้อมแล้วตอบข้อผิดพลาดแบบเดียวกัน: `{"error": "ข้อความภาษาไทย"}` ส่วน endpoint ที่ยังวางแผน (ข้อ 3.2-3.4) ใช้ HTTP code ตามตารางและมีฟิลด์ `code` เพิ่ม (เพิ่มอย่างเดียว ไม่ทำให้ฝั่งที่อ่านแค่ `error` พัง)
+ทุก endpoint ที่พร้อมแล้วตอบข้อผิดพลาดแบบเดียวกัน: `{"error": "ข้อความภาษาไทย"}` ส่วน endpoint ผู้ใช้/ประวัติ (ข้อ 3.3-3.4) ใช้ HTTP code ตามตารางและมีฟิลด์ `code` เพิ่ม (เพิ่มอย่างเดียว ไม่ทำให้ฝั่งที่อ่านแค่ `error` พัง)
 
 | HTTP | `code` | เมื่อไร | สถานะ |
 |---|---|---|---|
-| 400 | `invalid_param` | พารามิเตอร์ผิด รัศมีเกิน 30 กม. พิกัดนอกประเทศไทย | API พร้อม (ยังไม่ส่ง `code`) |
-| 401 | `unauthorized` | ยังไม่ล็อกอิน (เฉพาะ endpoint ที่ต้องล็อกอิน) | วางแผน |
-| 409 | `email_taken` | สมัครด้วยอีเมลที่มีแล้ว | วางแผน |
-| 429 | `rate_limited` | เรียกถี่เกิน | วางแผน |
+| 400 | `invalid_param` | พารามิเตอร์ผิด รัศมีเกิน 30 กม. พิกัดนอกประเทศไทย | API พร้อม (endpoint ค้นหายังไม่ส่ง `code` ส่วน endpoint ผู้ใช้ส่ง) |
+| 401 | `unauthorized` | ยังไม่ล็อกอิน หรืออีเมล/รหัสผ่านไม่ถูกต้อง | API พร้อม |
+| 404 | `not_found` | ไม่พบแชต (รวมถึงแชตของผู้อื่น) | API พร้อม |
+| 409 | `email_taken` | สมัครด้วยอีเมลที่มีแล้ว | API พร้อม |
+| 429 | `rate_limited` | ใส่รหัสผ่านผิดครบ 5 ครั้งใน 5 นาทีต่ออีเมล | API พร้อม |
 | 502 | `upstream_unavailable` | บริการภายนอกล่มและไม่มีสแนปช็อต | วางแผน |
 
 ### 3.2 แชต (วางแผน)
@@ -63,28 +64,32 @@
 
 สถานที่ที่บอทพูดถึงต้องมาจาก event `places` เท่านั้น บอทห้ามพิมพ์ชื่อสถานที่ ระยะ หรือพิกัดเอง ถ้าไม่มี LLM ให้ใช้โหมดสำรองแบบกฎ (ตอบด้วยผลค้นโดยตรง)
 
-### 3.3 ผู้ใช้ (วางแผน)
+### 3.3 ผู้ใช้ (API พร้อม)
 
-เซสชันเก็บในคุกกี้ `HttpOnly; Secure; SameSite=Lax` เซ็นด้วย `SESSION_SECRET` หน้าเว็บไม่เก็บ token เอง ฐานข้อมูลเดโมใช้ SQLite
+เซสชันเก็บในคุกกี้ `HttpOnly; Secure; SameSite=Lax` เซ็นด้วย `SESSION_SECRET` (ไม่ตั้ง = สุ่มต่อการรัน เซสชันหายเมื่อรีสตาร์ท) อายุ 7 วัน ตอนพัฒนาบน http ตั้ง `SESSION_SECURE=0` หน้าเว็บไม่เก็บ token เอง ฐานข้อมูลใช้ SQLite (`DB_PATH` ค่าเริ่มต้น `data/nongtrip.db`) รหัสผ่านเก็บแบบแฮช scrypt
 
 | เมธอด | เส้นทาง | ส่ง | ตอบ |
 |---|---|---|---|
-| POST | `/api/auth/register` | `{"email", "password"}` รหัสผ่านอย่างน้อย 8 ตัว | `201 {"user": {"id", "email"}}` |
+| POST | `/api/auth/register` | `{"email", "password"}` รหัสผ่าน 8-200 ตัว อีเมลไม่สนตัวพิมพ์ใหญ่เล็ก | `201 {"user": {"id", "email"}}` และล็อกอินให้ทันที (ตั้งคุกกี้) `409 email_taken` |
 | POST | `/api/auth/login` | `{"email", "password"}` | `200 {"user": {...}}` ผิดตอบ `401` (ไม่บอกว่าผิดอีเมลหรือรหัส) |
 | POST | `/api/auth/logout` | - | `204` |
 | GET | `/api/auth/me` | - | `200 {"user": {...}}` หรือ `401` |
 
 ผู้ที่ไม่ได้ล็อกอินไม่ถูกบันทึกอะไรเลย (ทั้งประวัติ สถานที่โปรด และแชต)
 
-### 3.4 ประวัติ สถานที่โปรด แชต (วางแผน ต้องล็อกอิน)
+### 3.4 ประวัติ สถานที่โปรด แชต (API พร้อม ต้องล็อกอิน)
 
 | เมธอด | เส้นทาง | ใช้ทำอะไร |
 |---|---|---|
-| GET / POST | `/api/me/searches` | ที่พักที่เคยค้น POST ส่ง `{"name", "lat", "lon"}` |
-| GET / POST | `/api/me/favorites` | สถานที่โปรด POST ส่ง `{"place_id"}` (ใช้ `id` ตามข้อ 4) |
-| DELETE | `/api/me/favorites/{place_id}` | เอาออกจากสถานที่โปรด |
-| GET | `/api/me/chats` | รายการแชต |
-| GET | `/api/me/chats/{chat_id}` | ข้อความในแชตนั้น |
+| GET / POST | `/api/me/searches` | ที่พักที่เคยค้น ใหม่สุดก่อน คืน `{items:[{id, name, lat, lon, created_at}]}` POST ส่ง `{"name", "lat", "lon"}` (พิกัดต้องอยู่ในไทย, ค้นที่พักเดิมซ้ำจะยกขึ้นบนสุด, เก็บสูงสุด 100) |
+| DELETE | `/api/me/searches/{id}` | ลบหนึ่งรายการ (`204`) |
+| GET / POST | `/api/me/favorites` | สถานที่โปรด คืน `{items:[{id, name_th, name_en, kind, subtype, lat, lon, source, province, maps_url, saved_at}]}` POST ส่ง `{"place_id"}` ถ้าเป็น `v:` ระบบอ่านข้อมูลจากไฟล์ของเราเอง (ไม่เชื่อค่าที่ส่งมา) ถ้าเป็น `osm:` ต้องส่ง `name_th, lat, lon, kind` มาด้วย (เก็บสูงสุด 500) ตอบ `201` ใหม่ หรือ `200` ถ้ามีอยู่แล้ว |
+| DELETE | `/api/me/favorites/{place_id}` | เอาออกจากสถานที่โปรด (`204`) `place_id` มี `/` ได้ เช่น `osm:node/123` |
+| GET | `/api/me/chats` | รายการแชต `{items:[{id, title, created_at, updated_at, message_count}]}` ใหม่สุดก่อน |
+| GET | `/api/me/chats/{chat_id}` | ข้อความในแชตนั้น `{id, title, messages:[{role, content, created_at}]}` ของผู้อื่นตอบ 404 |
+| DELETE | `/api/me/chats/{chat_id}` | ลบแชต (`204`) |
+
+แชตถูกสร้างและเพิ่มข้อความโดย `POST /api/chat` ในอนาคต (ตอนนี้ฝั่งฐานข้อมูลพร้อมแล้ว)
 
 ## 4. รูปแบบข้อมูล
 
@@ -194,3 +199,4 @@
 | v0.4 | 2026-11-01 | เพิ่มฟิลด์ `osm_mode` ในคำตอบของ nearby / lodgings/search / lodgings/near และโหมดสแนปช็อตเมื่อออนไลน์ไม่ได้ (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.5 | 2026-11-02 | API กลางพร้อม (`services/api`): เพิ่ม `validation` ใน `nearby` และ `lodgings/near`, `lodgings_total`, เส้นทาง `GET /api/health` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.6 | 2026-11-02 | เพิ่มข้อ 3.1-3.4: ตารางข้อผิดพลาด, แชตแบบ SSE, ผู้ใช้, ประวัติ/สถานที่โปรด และตัวอย่างคำตอบ ปรับเส้นทางที่ยังวางแผนให้ตรงร่างของ Jirapa (`/api/auth/me`, `/api/me/...`) ไม่เปลี่ยน endpoint ที่พร้อมแล้ว (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.7 | 2026-11-02 | API ผู้ใช้/ประวัติ/สถานที่โปรด/แชต พร้อมใช้ (`services/api`): สมัครแล้วล็อกอินให้ทันที เพิ่ม `DELETE /api/me/searches/{id}` และ `DELETE /api/me/chats/{id}` กำหนดรูปคำตอบและเพดานจำนวน เพิ่ม 404 `not_found` (เพิ่มอย่างเดียว ไม่ breaking) |
