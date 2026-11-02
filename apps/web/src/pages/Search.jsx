@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -47,16 +47,25 @@ export default function Search() {
   const [kind, setKind] = useState('');
   const PAGE = 100;
 
+  // กันผลเก่าทับผลใหม่: ทุกคำขอได้เลขลำดับ ผลที่กลับมาไม่ตรงเลขล่าสุดจะถูกทิ้ง
+  // (ปักหมุดใหม่เร็วๆ หรือสลับประเภท แล้วคำตอบของหมุดเก่ามาช้ากว่า)
+  const nearSeq = useRef(0);
+  const lodgeSeq = useRef(0);
+  const cancelPending = () => { nearSeq.current += 1; lodgeSeq.current += 1; };
+
   const loadNear = (o, k, offset = 0) => {
+    const seq = offset ? nearSeq.current : ++nearSeq.current;
+    const current = () => seq === nearSeq.current;
     setNear((n) => ({ ...n, status: offset ? 'more' : 'loading', ...(offset ? {} : { items: [] }) }));
     placesNearby({ lat: o.lat, lon: o.lon, kinds: k || undefined, limit: PAGE, offset })
-      .then((d) => setNear((n) => ({
+      .then((d) => current() && setNear((n) => ({
         status: 'ok', source: 'api',
         items: offset ? [...n.items, ...d.items] : d.items,
         total: d.total, counts: d.counts, notices: d.notices ?? [], attribution: d.attribution,
         offset: d.offset + d.items.length,
       })))
       .catch((e) => {
+        if (!current()) return;
         if (!(e instanceof ApiUnavailable)) { setNear({ status: 'error', items: [], message: e.message }); return; }
         const local = placesAround(o, PLACES, MAX_RADIUS_KM).filter((p) => !k || p.kind === k);
         setNear({
@@ -71,13 +80,14 @@ export default function Search() {
   const pick = (o) => {
     setActive(null);
     if (mode === 'booked') { setOrigin(o); return; }
+    const seq = ++lodgeSeq.current;
     setPin(o); setOrigin(null); setLodging({ status: 'loading' });
     lodgingsNear(o)
-      .then((data) => setLodging({ status: 'ok', data }))
-      .catch((e) => setLodging({ status: 'error', message: e.message }));
+      .then((data) => seq === lodgeSeq.current && setLodging({ status: 'ok', data }))
+      .catch((e) => seq === lodgeSeq.current && setLodging({ status: 'error', message: e.message }));
   };
-  const chooseLodging = (l) => { setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name }); };
-  const switchMode = (m) => { setKind(''); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
+  const chooseLodging = (l) => { cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name }); };
+  const switchMode = (m) => { cancelPending(); setKind(''); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
   const results = origin ? near.items : [];
   const check = validateResults(results);
@@ -173,14 +183,12 @@ export default function Search() {
                   <ol className="track">
                     {g.items.map((p) => (
                       <li key={p.id} className={`c-${iconGroup(p)}`} data-active={active?.id === p.id} onClick={() => setActive(p)}>
-                        <span className="km">{p.distance_km}<small>กม.</small></span>
+                        <span className="km">{p.distance_km}<small>กม.<br />เส้นตรง</small></span>
                         <div className="place">
                           <h3>{p.name_th}</h3>
                           <div className="tags">
                             <span className="cat-tag"><CatIcon cat={iconGroup(p)} size={12} /> {subtypeLabel(p.subtype, p.kind)}</span>
-                            {p.source === 'verified'
-                              ? <span className="verified">ตรวจที่มาแล้ว</span>
-                              : <span className="osm-tag">OpenStreetMap</span>}
+                            {p.source === 'verified' && <span className="verified">ตรวจที่มาแล้ว</span>}
                           </div>
                           <div className="links">
                             <a className="go" href={p.directions_url ?? mapsDirUrl(p)} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>นำทาง</a>

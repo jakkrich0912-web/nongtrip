@@ -3,15 +3,16 @@
 import all from '@data/places_all_provinces.json';
 import cm from '@data/places.json';
 
+// รหัสในไฟล์ไม่ซ้ำกัน (p01..p24 เชียงใหม่, p101.. จังหวัดอื่น) ใช้เป็นรหัส v: แบบเดียวกับ API
 const merged = new Map();
 [...cm.places, ...all.places]
   .filter((p) => p.verified)
-  .forEach((p) => { if (!merged.has(`${p.province}|${p.name_th}`)) merged.set(`${p.province}|${p.name_th}`, p); });
+  .forEach((p) => { if (!merged.has(p.id)) merged.set(p.id, p); });
 
 // ไม่ส่งต่อราคา/ค่าเข้า (CONTRACT ข้อ 1) และแปลง category ในไฟล์เป็น kind + subtype
-export const PLACES = [...merged.values()].map(({ cost_thb, category, ...p }, i) => ({
+export const PLACES = [...merged.values()].map(({ cost_thb, category, ...p }) => ({
   ...p,
-  id: `v:${p.id}-${i}`,
+  id: `v:${p.id}`,
   kind: category === 'cafe' ? 'cafe' : 'attraction',
   subtype: category ?? null,
   source: 'verified',

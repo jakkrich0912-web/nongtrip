@@ -66,7 +66,7 @@ export default function Home() {
               <div key={p.id} className="demo-row">
                 <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={18} /></span>
                 <span className="demo-name">{p.name_th}<small>{subtypeLabel(p.subtype, p.kind)}</small></span>
-                <span className="demo-km">{p.distance_km} กม.</span>
+                <span className="demo-km">{p.distance_km} กม.<small>เส้นตรง</small></span>
               </div>
             ))}
           </div>

@@ -38,7 +38,7 @@ export default function LodgingResults({ state, hasPin, onChoose }) {
           <li key={l.id} className="lodge">
             <div className="lodge-head">
               <h3>{l.name}</h3>
-              <span className="lodge-km">{l.distance_from_pin_km} กม.</span>
+              <span className="lodge-km">{l.distance_from_pin_km} กม. <small>(เส้นตรง)</small></span>
             </div>
             {l.subtype && <p className="attr">{subtypeLabel(l.subtype)}</p>}
             <ol className="mini">
@@ -46,7 +46,7 @@ export default function LodgingResults({ state, hasPin, onChoose }) {
                 <li key={p.id}>
                   <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={14} /></span>
                   <span>{p.name_th}<small>{subtypeLabel(p.subtype, p.kind)}</small></span>
-                  <b>{p.distance_km} กม.</b>
+                  <b>{p.distance_km} กม.<small>เส้นตรง</small></b>
                 </li>
               ))}
             </ol>

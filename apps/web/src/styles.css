@@ -352,5 +352,9 @@ main { min-height:calc(100vh - var(--chrome)); }
 @keyframes ring-glow { 0%,100% { box-shadow:0 0 0 3px rgba(249,166,32,.12), 0 0 12px rgba(249,166,32,.35), 0 0 22px rgba(74,124,89,.2); } 50% { box-shadow:0 0 0 4px rgba(249,166,32,.18), 0 0 20px rgba(249,166,32,.6), 0 0 34px rgba(74,124,89,.3); } }
 @media (prefers-reduced-motion:reduce){ .brand:hover .mascot-head img, .mascot-head:hover img { animation:none; } }
 
-.osm-tag { background:#eef0ea; color:var(--muted); padding:1px 8px; border-radius:6px; font-weight:500; }
 .more { padding:8px 20px 4px; }
+
+/* ระยะเส้นตรงบนทุกการ์ด (CONTRACT ข้อ 1) */
+.km small { line-height:1.25; }
+.lodge-km small { font:400 .72rem var(--body); color:var(--muted); }
+.mini b small, .demo-km small { display:block; font:400 .68rem var(--body); color:var(--muted); text-align:right; }
