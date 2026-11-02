@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .fetch import HttpClient, UpstreamError, UpstreamTooBig
 from .models import Candidate, LodgingCandidate
+from .provinces import province_in_address
 
 # เซิร์ฟเวอร์สาธารณะหลายตัว ตัวแรกที่ตอบได้ชนะ (overpass-api.de เข้าไม่ได้จากเครือข่ายผู้พัฒนาตอนทดสอบ 2026-11-01)
 OVERPASS_ENDPOINTS = (
@@ -169,7 +170,7 @@ class NominatimClient:
                 name=(r.get("name") or (r.get("display_name") or "").split(",")[0]).strip(),
                 address=r.get("display_name"),
                 subtype=typ if r.get("category") == "tourism" else None,
-                lat=lat, lon=lon,
+                lat=lat, lon=lon, province=province_in_address(r.get("display_name")),
             ))
         # ที่พักจริง (tourism=hotel ฯลฯ) ขึ้นก่อน แล้วค่อยผลลัพธ์อื่น
         out.sort(key=lambda c: 0 if c.subtype in LODGING_TYPES else 1)

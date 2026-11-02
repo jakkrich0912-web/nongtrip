@@ -53,10 +53,11 @@ class Snapshot:
                 meta = data.get("_meta", {})
                 if meta.get("built_on"):
                     dates.append(meta["built_on"])
-                self.provinces.append(meta.get("province") or f.stem)
+                prov = meta.get("province") or f.stem
+                self.provinces.append(prov)
                 for ref, th, en, kind, sub, lat, lon in data.get("items", []):
                     items.append(Candidate(id=f"osm:{ref}", name_th=th, name_en=en, kind=kind, subtype=sub,
-                                           lat=lat, lon=lon, source="osm",
+                                           lat=lat, lon=lon, source="osm", province=prov,
                                            source_url=f"https://www.openstreetmap.org/{ref}"))
         self.built_on = min(dates) if dates else None
         self._items = items
@@ -69,17 +70,19 @@ class Snapshot:
         return [c for c in self._load()
                 if c.kind in kinds and abs(c.lat - lat) <= dlat and abs(c.lon - lon) <= dlon]
 
-    def find_lodging(self, query: str, limit: int = 8) -> list[LodgingCandidate]:
-        """ค้นชื่อที่พักแบบออฟไลน์: ทุกคำในคำค้นต้องอยู่ในชื่อ (ไทยหรืออังกฤษ)"""
+    def find_lodging(self, query: str, limit: int = 8, province: str | None = None,
+                     subtype: str | None = None) -> list[LodgingCandidate]:
+        """ค้นชื่อที่พักแบบออฟไลน์: ทุกคำในคำค้นต้องอยู่ในชื่อ (ไทยหรืออังกฤษ) กรองจังหวัด/ประเภทได้"""
         words = [_norm(w) for w in query.split() if _norm(w)]
         if not words:
             return []
         out = []
         for c in self._load():
-            if c.kind != "lodging":
+            if c.kind != "lodging" or (province and c.province != province) or (subtype and c.subtype != subtype):
                 continue
             hay = _norm(c.name_th) + _norm(c.name_en or "")
             if all(w in hay for w in words):
-                out.append(LodgingCandidate(id=c.id, name=c.name_th, address=None, subtype=c.subtype, lat=c.lat, lon=c.lon))
+                out.append(LodgingCandidate(id=c.id, name=c.name_th, address=None, subtype=c.subtype, lat=c.lat, lon=c.lon,
+                                            province=c.province))
         out.sort(key=lambda x: len(x.name))
         return out[:limit]

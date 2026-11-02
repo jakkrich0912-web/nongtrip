@@ -41,3 +41,15 @@ def region_of(province: str) -> str | None:
         if province in provs:
             return region
     return None
+
+
+def province_in_address(address: str | None) -> str | None:
+    """หาจังหวัดจากที่อยู่แบบ Nominatim (ส่วนต่างๆ คั่นด้วยจุลภาค) ใช้เทียบทั้งส่วนเท่านั้น
+    ไม่ค้นหาข้อความย่อย เพราะชื่อสั้นอย่าง เลย/ตาก/แพร่ จะไปตรงกับคำอื่น"""
+    for part in reversed((address or "").split(",")):
+        name = part.strip()
+        if name.startswith("จังหวัด"):
+            name = name[len("จังหวัด"):].strip()
+        if name in PROVINCES:
+            return name
+    return None
