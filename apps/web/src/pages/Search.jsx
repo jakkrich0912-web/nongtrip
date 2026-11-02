@@ -43,7 +43,7 @@ export default function Search() {
     const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
   });
-  const { user, favIds, setFavIds } = useAuth();
+  const { user, favIds, setFavIds, forget } = useAuth();
   const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');
   const [active, setActive] = useState(null);
@@ -107,7 +107,12 @@ export default function Search() {
     const on = favIds.has(p.id);
     const next = new Set(favIds); on ? next.delete(p.id) : next.add(p.id); setFavIds(next);
     setSaveNote('');
-    (on ? removeFavorite(p.id) : addFavorite(p)).catch((e) => { setFavIds(favIds); setSaveNote(e.message); });
+    (on ? removeFavorite(p.id) : addFavorite(p)).catch((e) => {
+      setFavIds(favIds);
+      // session หมดอายุ: ซ่อนปุ่มบันทึก และบอกให้เข้าสู่ระบบใหม่
+      if (e.status === 401) { forget(); setSaveNote('หมดเวลาเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้งเพื่อบันทึก'); }
+      else setSaveNote(e.message);
+    });
   };
   const switchMode = (m) => { cancelPending(); setKind(''); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 

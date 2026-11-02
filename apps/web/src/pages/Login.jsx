@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Rings from '../components/Rings.jsx';
 import Mascot from '../components/Mascot.jsx';
 import { useAuth } from '../lib/auth.jsx';
@@ -9,6 +9,7 @@ import { useAuth } from '../lib/auth.jsx';
 export default function Login() {
   const { user, ready, login, register } = useAuth();
   const nav = useNavigate();
+  const expired = useLocation().state?.expired === true;
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,6 +43,7 @@ export default function Login() {
       </div>
       <section className="auth">
         <h2>{isLogin ? 'เข้าสู่ระบบ' : 'สร้างบัญชี'}</h2>
+        {expired && !error && <p className="notice" role="status">หมดเวลาเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้ง</p>}
         <form onSubmit={submit} noValidate={false}>
           <label>อีเมล
             <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />

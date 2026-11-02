@@ -28,12 +28,12 @@ function ConfirmButton({ label, confirmLabel, onConfirm, className = 'linkbtn da
   );
 }
 
-// โหลดรายการจาก API พร้อมสถานะ
-function useList(loader) {
+// โหลดรายการจาก API พร้อมสถานะ ถ้าได้ 401 (session หมดอายุ) ส่งต่อให้ onExpired
+function useList(loader, onExpired) {
   const [state, setState] = useState({ status: 'loading', items: [] });
   const load = () => loader()
     .then((d) => setState({ status: 'ok', items: d.items ?? [] }))
-    .catch((e) => setState({ status: 'error', items: [], message: e.message }));
+    .catch((e) => (e.status === 401 ? onExpired() : setState({ status: 'error', items: [], message: e.message })));
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return [state, setState, load];
 }
@@ -58,22 +58,29 @@ function Status({ state, empty }) {
 }
 
 // หน้า "ทริปของฉัน": ที่พักที่เคยค้น สถานที่โปรด ประวัติแชต และจัดการบัญชี (ข้อ 3.3-3.4)
+// รอรู้ก่อนว่าล็อกอินอยู่หรือไม่ ค่อยดึงรายการ (ไม่ยิงคำขอที่รู้อยู่แล้วว่าจะได้ 401)
 export default function MyTrips() {
-  const { user, ready, logout, forget, setFavIds } = useAuth();
+  const { user, ready } = useAuth();
+  if (!ready) return <p className="note" style={{ padding: 32 }} role="status">กำลังโหลด</p>;
+  if (!user) return <Navigate to="/login" replace />;
+  return <MyTripsBody user={user} />;
+}
+
+function MyTripsBody({ user }) {
+  const { logout, forget, setFavIds } = useAuth();
   const nav = useNavigate();
-  const [searches, setSearches] = useList(mySearches);
-  const [favs, setFavs] = useList(myFavorites);
-  const [chats, setChats] = useList(myChats);
+  // session หมดอายุระหว่างใช้งาน: ล้างสถานะผู้ใช้ แล้วพาไปหน้าเข้าสู่ระบบพร้อมบอกเหตุผล
+  const expire = () => { forget(); nav('/login', { replace: true, state: { expired: true } }); };
+  const [searches, setSearches] = useList(mySearches, expire);
+  const [favs, setFavs] = useList(myFavorites, expire);
+  const [chats, setChats] = useList(myChats, expire);
   const [error, setError] = useState('');
   const [delEmail, setDelEmail] = useState('');
-
-  if (!ready) return <p className="note" style={{ padding: 32 }}>กำลังโหลด</p>;
-  if (!user) return <Navigate to="/login" replace />;
 
   // ลบแล้วเอาออกจากหน้าจอทันที ถ้า API ไม่ยอมให้แสดงข้อความ
   const run = async (fn, after) => {
     setError('');
-    try { await fn(); after(); } catch (e) { setError(e.message); }
+    try { await fn(); after(); } catch (e) { if (e.status === 401) expire(); else setError(e.message); }
   };
   const syncFavIds = (items) => setFavIds(new Set(items.map((i) => i.id)));
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { errorFromBody, lodgingsSearch, addFavorite, removeFavorite } from './api.js';
+import { errorFromBody, lodgingsSearch, addFavorite, removeFavorite, mySearches, ApiError } from './api.js';
 
 describe('errorFromBody', () => {
   it('ใช้ข้อความในฟิลด์ error และเก็บ code', () => {
@@ -74,5 +74,20 @@ describe('สถานที่โปรด', () => {
     expect(calls[0].url).toBe('/api/me/favorites/osm%3Anode/123');
     expect(calls[0].init.method).toBe('DELETE');
     expect(r).toBeNull();
+  });
+});
+
+describe('session หมดอายุ', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it('request() ได้ 401 โยน ApiError ที่มี status 401 และ code ให้หน้าจอเช็กได้', async () => {
+    vi.stubGlobal('fetch', async () => ({
+      ok: false, status: 401, headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({ error: 'กรุณาเข้าสู่ระบบก่อน', code: 'unauthorized' }),
+    }));
+    const err = await mySearches().catch((e) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err.status).toBe(401);
+    expect(err.code).toBe('unauthorized');
+    expect(err.message).toBe('กรุณาเข้าสู่ระบบก่อน');
   });
 });
