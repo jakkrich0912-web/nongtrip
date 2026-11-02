@@ -142,7 +142,7 @@
 |---|---|---|---|
 | 0 | ตกลงเอกสารนี้ | Jakkrich, Jirapa | - |
 | 1 | `scripts/build_knowledge.py` + รันสร้างคลังทุกภาค + ตรวจการจับคู่ | Jakkrich เขียน รัน Jirapa ช่วยตรวจ | ขั้น 0 |
-| 2 | ตัวค้นคืน BM25 + เทสต์ + ชุดคำถาม | Jakkrich | ขั้น 1 (ใช้ข้อมูลตัวอย่างเริ่มได้) |
+| 2 | ตัวค้นคืน BM25 + เทสต์ + ชุดคำถาม (เสร็จ: `services/places/retrieval.py`, ชุดตัวอย่าง 14 ข้อใน `services/places/tests/rag/` ชุดคำถามจริง 40 ข้อ `tests/rag/golden.json` เขียนหลังมีคลังจริง) | Jakkrich | ขั้น 1 (ใช้ข้อมูลตัวอย่างเริ่มได้) |
 | 3 | ด่านตรวจคำตอบ + เทสต์ | Jakkrich | - |
 | 4 | ตัวเชื่อม LLM + ลำดับในข้อ 2 + event `sources`/`mode` + CONTRACT v0.13 | Jakkrich | ขั้น 2-3 |
 | 5 | หน้าเว็บ: แสดงที่มา ป้ายโหมด ข้อความสัญญาอนุญาต | Jirapa | CONTRACT v0.13 |
