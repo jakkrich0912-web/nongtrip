@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PROVINCES } from '../lib/provinces.js';
 import { subtypeLabel } from '../lib/data.js';
 import { lodgingsSearch } from '../lib/api.js';
@@ -17,6 +17,8 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
   const [state, setState] = useState({ status: 'idle' });
   // ค้นซ้ำเร็วๆ หรือเลือกที่พักไปแล้ว ผลของคำขอเก่าที่มาช้าจะถูกทิ้ง ไม่ทับรายการและหมุดบนแผนที่
   const seq = useRef(latestOnly()).current;
+  // ช่องค้นถูกปิด (สลับโหมด เลือกจังหวัดใหม่ หรือแตะแผนที่เลือกเอง) ระหว่างรอผล: ทิ้งผลที่ค้างอยู่
+  useEffect(() => () => seq.cancel(), []); // eslint-disable-line react-hooks/exhaustive-deps
   const choose = (l) => { seq.cancel(); onChoose(l); };
 
   const search = (e) => {
