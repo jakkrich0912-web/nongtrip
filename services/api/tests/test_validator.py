@@ -78,8 +78,11 @@ def test_osm_requires_attribution_and_mode_notice():
     assert any("OpenStreetMap" in p for p in problems(r))
     r = good()
     r["osm_mode"] = "snapshot"
+    r["notices"] = []
+    assert validate_nearby(r)["ok"]          # v0.14 โหมดสแนปช็อตไม่ต้องมีข้อความเตือน
+    r["osm_mode"] = "none"
     assert any("ไม่มีข้อความแจ้ง" in p for p in problems(r))
-    r["notices"] = ["ใช้ข้อมูลที่บันทึกไว้"]
+    r["notices"] = ["ไม่มีข้อมูล OpenStreetMap"]
     assert validate_nearby(r)["ok"]
 
 
