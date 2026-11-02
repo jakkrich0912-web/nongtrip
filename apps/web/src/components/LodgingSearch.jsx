@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { PROVINCES } from '../lib/provinces.js';
 import { subtypeLabel } from '../lib/data.js';
 import { lodgingsSearch } from '../lib/api.js';
+import { latestOnly } from '../lib/latest.js';
 
 // ประเภทที่พักที่ API รับ (CONTRACT v0.11)
 const LODGING_SUBTYPES = ['hotel', 'guest_house', 'hostel', 'motel', 'resort', 'apartment', 'chalet'];
@@ -14,15 +15,23 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
   const [area, setArea] = useState('');
   const [subtype, setSubtype] = useState('');
   const [state, setState] = useState({ status: 'idle' });
+  // ค้นซ้ำเร็วๆ หรือเลือกที่พักไปแล้ว ผลของคำขอเก่าที่มาช้าจะถูกทิ้ง ไม่ทับรายการและหมุดบนแผนที่
+  const seq = useRef(latestOnly()).current;
+  const choose = (l) => { seq.cancel(); onChoose(l); };
 
   const search = (e) => {
     e.preventDefault();
     if (!q.trim()) return;
+    const token = seq.next();
     setState({ status: 'loading' });
     onResults?.([]);
     lodgingsSearch({ q: q.trim(), province, area: area.trim(), subtype })
-      .then((d) => { setState({ status: 'ok', data: d }); onResults?.(d.items ?? []); })
-      .catch((err) => setState({ status: 'error', message: err.message }));
+      .then((d) => {
+        if (!seq.isCurrent(token)) return;
+        setState({ status: 'ok', data: d });
+        onResults?.(d.items ?? []);
+      })
+      .catch((err) => { if (seq.isCurrent(token)) setState({ status: 'error', message: err.message }); });
   };
 
   const items = state.data?.items ?? [];
@@ -77,7 +86,7 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
                         {[l.subtype && subtypeLabel(l.subtype), l.province ?? 'ไม่ทราบจังหวัด', l.address].filter(Boolean).join(' · ')}
                       </small>
                     </div>
-                    <button className="btn small" onClick={() => onChoose(l)}>เลือก</button>
+                    <button className="btn small" onClick={() => choose(l)}>เลือก</button>
                   </li>
                 ))}
               </ul>
