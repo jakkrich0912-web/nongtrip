@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Mascot from '../components/Mascot.jsx';
 import MascotHead from '../components/MascotHead.jsx';
 import { useAuth } from '../lib/auth.jsx';
-import { licenseLabel, numberCitations, sendChat } from '../lib/chat.js';
+import { licenseLabel, numberCitations, safeUrl, sendChat } from '../lib/chat.js';
 
 const SUGGEST = ['คาเฟ่ในเชียงใหม่', 'ที่เที่ยวในน่าน 5 แห่ง', 'ที่เที่ยวใกล้ที่พักใน 10 กม.'];
 const HELLO = { role: 'bot', lines: ['สวัสดีค่ะ บอกชื่อที่พัก ชื่อจังหวัด หรือถามเรื่องที่เที่ยวรอบๆ ได้เลย'] };
@@ -95,7 +95,7 @@ export default function Chat() {
                   <ol>
                     {m.sources.map((s) => (
                       <li key={s.id}>
-                        {s.url ? <a href={s.url} target="_blank" rel="noreferrer noopener">{s.title}</a> : s.title}
+                        {safeUrl(s.url) ? <a href={safeUrl(s.url)} target="_blank" rel="noreferrer noopener">{s.title}</a> : s.title}
                         {licenseLabel(s) && <small> ({licenseLabel(s)})</small>}
                       </li>
                     ))}

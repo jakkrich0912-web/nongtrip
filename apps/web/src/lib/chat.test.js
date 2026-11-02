@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { licenseLabel, numberCitations, parseSSE } from './chat.js';
+import { licenseLabel, numberCitations, parseSSE, safeUrl } from './chat.js';
 
 describe('parseSSE', () => {
   it('แยก event ที่ครบ และเก็บเศษที่ยังไม่ครบไว้', () => {
@@ -33,5 +33,16 @@ describe('licenseLabel', () => {
     expect(licenseLabel({ license: 'CC BY-SA 4.0' })).toBe('CC BY-SA 4.0');
     expect(licenseLabel({ url: 'https://www.openstreetmap.org/node/1' })).toBe('© OpenStreetMap contributors (ODbL)');
     expect(licenseLabel({ url: 'https://example.com' })).toBeNull();
+  });
+});
+
+describe('safeUrl', () => {
+  it('รับเฉพาะ http และ https', () => {
+    expect(safeUrl('https://th.wikipedia.org/wiki/x')).toBe('https://th.wikipedia.org/wiki/x');
+    expect(safeUrl('HTTP://example.com')).toBe('HTTP://example.com');
+    expect(safeUrl('javascript:alert(1)')).toBeNull();
+    expect(safeUrl('data:text/html,x')).toBeNull();
+    expect(safeUrl('//evil.example')).toBeNull();
+    expect(safeUrl(null)).toBeNull();
   });
 });

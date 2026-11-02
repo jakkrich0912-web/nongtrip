@@ -33,6 +33,11 @@ export function licenseLabel(src) {
   return null;
 }
 
+// ลิงก์ที่มาใช้ได้เฉพาะ http:// หรือ https:// กันลิงก์แบบ javascript: หรือ data:
+export function safeUrl(url) {
+  return typeof url === 'string' && /^https?:\/\//i.test(url.trim()) ? url.trim() : null;
+}
+
 // เปลี่ยนรหัสที่มา [k:...] ในข้อความเป็นเลข [1] [2] ตามลำดับรายการ sources
 export function numberCitations(text, sources) {
   if (!sources?.length) return text.replace(/\s?\[k:[^\]]+\]/g, '');
