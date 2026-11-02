@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { errorFromBody, lodgingsSearch, addFavorite, removeFavorite, mySearches, ApiError } from './api.js';
+import { errorFromBody, lodgingsSearch, addFavorite, removeFavorite, mySearches, ApiError, placeById, provincePlaces } from './api.js';
 
 describe('errorFromBody', () => {
   it('ใช้ข้อความในฟิลด์ error และเก็บ code', () => {
@@ -89,5 +89,30 @@ describe('session หมดอายุ', () => {
     expect(err.status).toBe(401);
     expect(err.code).toBe('unauthorized');
     expect(err.message).toBe('กรุณาเข้าสู่ระบบก่อน');
+  });
+});
+
+describe('ไกด์ที่เที่ยว', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const stub = () => {
+    const calls = [];
+    vi.stubGlobal('fetch', async (url) => {
+      calls.push(url);
+      return { ok: true, status: 200, headers: new Headers({ 'content-type': 'application/json' }), json: async () => ({}) };
+    });
+    return calls;
+  };
+  it('รายละเอียดสถานที่ใช้รหัส v: ในเส้นทาง', async () => {
+    const calls = stub();
+    await placeById('v:p01');
+    expect(calls[0]).toBe('/api/places/v%3Ap01');
+  });
+  it('สถานที่ในจังหวัด เข้ารหัสชื่อไทย และไม่ส่ง category ว่าง', async () => {
+    const calls = stub();
+    await provincePlaces('เชียงใหม่', { limit: 50, offset: 50 });
+    const u = new URL(calls[0], 'http://x');
+    expect(decodeURIComponent(u.pathname)).toBe('/api/provinces/เชียงใหม่/places');
+    expect(u.searchParams.get('offset')).toBe('50');
+    expect(u.searchParams.has('category')).toBe(false);
   });
 });

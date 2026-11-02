@@ -4,6 +4,8 @@ import Search from './pages/Search.jsx';
 import Chat from './pages/Chat.jsx';
 import Login from './pages/Login.jsx';
 import MyTrips from './pages/MyTrips.jsx';
+import PlaceDetail from './pages/PlaceDetail.jsx';
+import ProvincePage from './pages/ProvincePage.jsx';
 import { useAuth } from './lib/auth.jsx';
 import Mascot from './components/Mascot.jsx';
 import MascotHead from './components/MascotHead.jsx';
@@ -52,6 +54,8 @@ export default function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/login" element={<Login />} />
             <Route path="/me" element={<MyTrips />} />
+            <Route path="/places/:id" element={<PlaceDetail />} />
+            <Route path="/provinces/:name" element={<ProvincePage />} />
           </Routes>
         </main>
         <footer className="foot">

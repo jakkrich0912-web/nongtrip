@@ -65,7 +65,7 @@ export default function Home() {
             {demo.map((p) => (
               <div key={p.id} className="demo-row">
                 <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={18} /></span>
-                <span className="demo-name">{p.name_th}<small>{subtypeLabel(p.subtype, p.kind)}</small></span>
+                <span className="demo-name"><Link to={`/places/${encodeURIComponent(p.id)}`}>{p.name_th}</Link><small>{subtypeLabel(p.subtype, p.kind)}</small></span>
                 <span className="demo-km">{p.distance_km} กม.<small>เส้นตรง</small></span>
               </div>
             ))}
@@ -96,7 +96,7 @@ export default function Home() {
                 <span className="cat-n">{list.length} แห่ง</span>
               </div>
               <h3>{subtypeLabel(c)}</h3>
-              <ul>{list.slice(0, 3).map((p) => <li key={p.id}>{p.name_th}<small>{p.province}</small></li>)}</ul>
+              <ul>{list.slice(0, 3).map((p) => <li key={p.id}><Link to={`/places/${encodeURIComponent(p.id)}`}>{p.name_th}</Link><small>{p.province}</small></li>)}</ul>
             </article>
           ))}
         </div>
@@ -109,7 +109,7 @@ export default function Home() {
         </div>
         <div className="prov-grid">
           {topProv.map(([p, n]) => (
-            <Link key={p} to={`/search?province=${encodeURIComponent(p)}`} className="prov">
+            <Link key={p} to={`/provinces/${encodeURIComponent(p)}`} className="prov">
               <span>{p}</span><small>{n} แห่ง</small>
             </Link>
           ))}
