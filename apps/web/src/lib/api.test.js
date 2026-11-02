@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { errorFromBody } from './api.js';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { errorFromBody, lodgingsSearch } from './api.js';
 
 describe('errorFromBody', () => {
   it('ใช้ข้อความในฟิลด์ error และเก็บ code', () => {
@@ -14,5 +14,34 @@ describe('errorFromBody', () => {
   it('คำตอบไม่มี error ใช้ข้อความกลาง ไม่โชว์รหัส HTTP', () => {
     const e = errorFromBody({}, 500);
     expect(e.message).not.toMatch(/500|HTTP/);
+  });
+});
+
+describe('lodgingsSearch', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const stub = () => {
+    const calls = [];
+    vi.stubGlobal('fetch', async (url) => {
+      calls.push(url);
+      return { ok: true, status: 200, headers: new Headers({ 'content-type': 'application/json' }), json: async () => ({ items: [] }) };
+    });
+    return calls;
+  };
+  it('ส่งเฉพาะตัวกรองที่กรอก', async () => {
+    const calls = stub();
+    await lodgingsSearch({ q: 'October Hostel', province: 'เชียงใหม่', area: '', subtype: '' });
+    const u = new URL(calls[0], 'http://x');
+    expect(u.pathname).toBe('/api/lodgings/search');
+    expect(u.searchParams.get('q')).toBe('October Hostel');
+    expect(u.searchParams.get('province')).toBe('เชียงใหม่');
+    expect(u.searchParams.has('area')).toBe(false);
+    expect(u.searchParams.has('subtype')).toBe(false);
+  });
+  it('ส่งย่านและประเภทเมื่อกรอก', async () => {
+    const calls = stub();
+    await lodgingsSearch({ q: 'hostel', area: 'นิมมาน', subtype: 'hostel' });
+    const u = new URL(calls[0], 'http://x');
+    expect(u.searchParams.get('area')).toBe('นิมมาน');
+    expect(u.searchParams.get('subtype')).toBe('hostel');
   });
 });

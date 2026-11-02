@@ -358,3 +358,23 @@ main { min-height:calc(100vh - var(--chrome)); }
 .km small { line-height:1.25; }
 .lodge-km small { font:400 .72rem var(--body); color:var(--muted); }
 .mini b small, .demo-km small { display:block; font:400 .68rem var(--body); color:var(--muted); text-align:right; }
+
+/* ค้นที่พักจากชื่อ */
+.lsearch-form { margin-top:12px; }
+.lsearch-row { display:flex; gap:8px; }
+.lsearch-row .field { margin:0; flex:1; min-width:0; padding:11px 14px; border:1.5px solid var(--mist); border-radius:14px; font:inherit; background:#fff; color:var(--ink); }
+.lsearch-row .field:focus { outline:none; border-color:var(--lagoon); box-shadow:0 0 0 3px rgba(74,124,89,.15); }
+.lsearch-row .btn.small { width:auto; padding:10px 18px; }
+.lsearch-more { margin-top:8px; font-size:.88rem; }
+.lsearch-more summary { cursor:pointer; color:var(--lagoon-2); font-weight:500; padding:4px 0; }
+.lsearch-more label { display:flex; flex-direction:column; gap:4px; margin-top:8px; color:var(--muted); }
+.lsearch-more select, .lsearch-more .field { margin:0; padding:9px 12px; border:1.5px solid var(--mist); border-radius:12px; font:inherit; background:#fff; color:var(--ink); }
+.lsearch-results .notice { margin:10px 0 0; }
+.lsearch-results .count { padding:10px 0 0; }
+.cands { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:8px; max-height:280px; overflow:auto; }
+.cands li { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--mist); border-radius:14px; background:#fff; }
+.cands strong { display:block; font:600 .98rem/1.35 var(--display); }
+.cands small { display:block; color:var(--muted); font-size:.78rem; }
+.cands .btn.small { width:auto; padding:7px 16px; }
+.lsearch-results .attr { margin:8px 0 0; }
+.linkbtn.change { margin-top:10px; font-size:.88rem; }
