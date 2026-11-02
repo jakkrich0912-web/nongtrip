@@ -1,0 +1,30 @@
+{
+ "_meta": {
+  "province": "ตราด",
+  "built_on": "2026-11-02",
+  "count": 2,
+  "source": "Wikipedia (CC BY-SA 4.0) ตัดทอนส่วนนำของบทความ"
+ },
+ "docs": [
+  {
+   "id": "k:p1602:0",
+   "place_id": "v:p1602",
+   "title": "Mu Ko Chang National Park",
+   "text": "Mu Ko Chang National Park (Thai: อุทยานแห่งชาติหมู่เกาะช้าง) is in Trat Province, eastern Thailand. It spans several provincial districts. It is a marine national park with an area of 406,250 rai ~ 650 square kilometres (250 sq mi), including 52 islands. The most notable island within the archipelago is Ko Chang. Ko Chang covers an area of 213 square kilometres (82 sq mi) and is the major island in the Mu Ko Chang National Park, which became Thailand's 45th National Park in 1982. The park is an IUCN Category II protected area with coral reefs.",
+   "url": "https://en.wikipedia.org/wiki/Mu_Ko_Chang_National_Park",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p1603:0",
+   "place_id": "v:p1603",
+   "title": "เกาะหมาก",
+   "text": "เกาะหมาก เป็นเกาะในจังหวัดตราด อยู่ระหว่าง เกาะช้างกับเกาะกูด ห่างจากฝั่งประมาณ 38 กิโลเมตร มีพื้นที่ 8,500 ไร่ หรือ 12.398 ตารางกิโลเมตร มีรูปร่างคล้ายดาวสี่แฉก มีความยาวชายหาด 27 กม. มีชายหาด เช่น บริเวณอ่าวตานิด อ่าวไผ่ อ่าวโปร่ง อ่าวผาด อ่าวแดง บริเวณชายฝั่งรอบเกาะและเกาะใกล้เคียงจะพบแนวปะการังที่สมบูรณ์",
+   "url": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%AB%E0%B8%A1%E0%B8%B2%E0%B8%81",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  }
+ ]
+}
