@@ -7,7 +7,8 @@ import CatIcon from '../components/CatIcon.jsx';
 import Mascot from '../components/Mascot.jsx';
 import LodgingResults from '../components/LodgingResults.jsx';
 import LodgingSearch from '../components/LodgingSearch.jsx';
-import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch, addFavorite, removeFavorite } from '../lib/api.js';
+import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch } from '../lib/api.js';
+import FavButton from '../components/FavButton.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM } from '../lib/geo.js';
 
@@ -43,7 +44,7 @@ export default function Search() {
     const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
   });
-  const { user, favIds, setFavIds, forget } = useAuth();
+  const { user } = useAuth();
   const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');
   const [active, setActive] = useState(null);
@@ -102,18 +103,6 @@ export default function Search() {
     // ล็อกอินอยู่: จำที่พักที่เลือกไว้ใน "ทริปของฉัน" (ไม่ล็อกอินไม่บันทึกอะไร)
     if (user && l.name) saveSearch({ name: l.name, lat: l.lat, lon: l.lon }).catch(() => {});
   };
-  // หัวใจสถานที่โปรด อัปเดตหน้าจอก่อน ถ้าบันทึกไม่ผ่านคืนค่าเดิมและบอกผู้ใช้
-  const toggleFav = (p) => {
-    const on = favIds.has(p.id);
-    const next = new Set(favIds); on ? next.delete(p.id) : next.add(p.id); setFavIds(next);
-    setSaveNote('');
-    (on ? removeFavorite(p.id) : addFavorite(p)).catch((e) => {
-      setFavIds(favIds);
-      // session หมดอายุ: ซ่อนปุ่มบันทึก และบอกให้เข้าสู่ระบบใหม่
-      if (e.status === 401) { forget(); setSaveNote('หมดเวลาเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้งเพื่อบันทึก'); }
-      else setSaveNote(e.message);
-    });
-  };
   const switchMode = (m) => { cancelPending(); setKind(''); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
   const results = origin ? near.items : [];
@@ -133,7 +122,7 @@ export default function Search() {
         <div className="panel-head">
           <div className="title-row">
             <h2>{province || 'รอบที่พัก'}</h2>
-            {inProv.length > 0 && <span className="prov-n">{inProv.length} แห่งในจังหวัด</span>}
+            {inProv.length > 0 && <Link className="prov-n" to={`/provinces/${encodeURIComponent(province)}`}>ดูทั้งจังหวัด {inProv.length} แห่ง</Link>}
           </div>
           {inProv.length > 0 && (
             <div className="mix" aria-label="สัดส่วนประเภทในจังหวัด">
@@ -221,17 +210,10 @@ export default function Search() {
                         <span className="km">{p.distance_km}<small>กม.<br />เส้นตรง</small></span>
                         <div className="place">
                           <div className="place-head">
-                            <h3>{p.name_th}</h3>
-                            {user && (
-                              <button
-                                className={`fav ${favIds.has(p.id) ? 'on' : ''}`}
-                                aria-pressed={favIds.has(p.id)}
-                                aria-label={favIds.has(p.id) ? `เอา ${p.name_th} ออกจากสถานที่โปรด` : `เก็บ ${p.name_th} เป็นสถานที่โปรด`}
-                                onClick={(e) => { e.stopPropagation(); toggleFav(p); }}
-                              >
-                                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z" /></svg>
-                              </button>
-                            )}
+                            <h3>{p.source === 'verified'
+                              ? <Link to={`/places/${encodeURIComponent(p.id)}`} onClick={(e) => e.stopPropagation()}>{p.name_th}</Link>
+                              : p.name_th}</h3>
+                            <FavButton place={p} onError={setSaveNote} />
                           </div>
                           <div className="tags">
                             <span className="cat-tag"><CatIcon cat={iconGroup(p)} size={12} /> {subtypeLabel(p.subtype, p.kind)}</span>

@@ -81,3 +81,10 @@ export const deleteAllFavorites = () => request('DELETE', '/api/me/favorites');
 export const myChats = () => request('GET', '/api/me/chats');
 export const deleteChat = (id) => request('DELETE', `/api/me/chats/${encodeURIComponent(id)}`);
 export const deleteAllChats = () => request('DELETE', '/api/me/chats');
+
+// ไกด์ที่เที่ยว (ข้อ 3.5 ไม่ต้องล็อกอิน)
+export const placeById = (id) => request('GET', `/api/places/${encodeURIComponent(id)}`);
+export const provincePlaces = (name, { category, limit = 50, offset = 0 } = {}) =>
+  request('GET', `/api/provinces/${encodeURIComponent(name)}/places?${qs({ category, limit, offset })}`);
+export const provinceCenter = (name) => request('GET', `/api/provinces/${encodeURIComponent(name)}/center`);
+export const guideFeatured = ({ limit = 12, category } = {}) => request('GET', `/api/guide/featured?${qs({ limit, category })}`);

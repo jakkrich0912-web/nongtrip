@@ -133,7 +133,7 @@ function MyTripsBody({ user }) {
               <li key={p.id} className={`c-${iconGroup(p)}`}>
                 <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={16} /></span>
                 <div className="mt-main">
-                  <strong>{p.name_th}</strong>
+                  <strong>{p.source === 'verified' ? <Link to={`/places/${encodeURIComponent(p.id)}`}>{p.name_th}</Link> : p.name_th}</strong>
                   <small>{[subtypeLabel(p.subtype, p.kind), p.province].filter(Boolean).join(' · ')}</small>
                   <span className="links">
                     <a className="go" href={mapsDirUrl(p)} target="_blank" rel="noreferrer">นำทาง</a>
