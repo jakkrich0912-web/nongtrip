@@ -305,7 +305,53 @@ def build(fetch=fetch_json, today: str | None = None, sleep: float = 1.0, cache_
     return apply_drop(places), skipped, today
 
 
-def write_report(places, skipped, today):
+def keep_ids(places: list[dict], previous: list[dict]) -> list[dict]:
+    """คงรหัสเดิมของสถานที่ที่เคยมีอยู่แล้ว (จับคู่ด้วย URL แหล่งที่มา) เพื่อไม่ให้รหัสเลื่อนเมื่อเพิ่มชื่อบทความใหม่
+    รหัสถูกใช้ต่อในสถานที่โปรดของผู้ใช้ (v:<id>) และคลังความรู้ (place_id) ถ้าเลื่อนจะชี้ผิดแห่ง
+    สถานที่ใหม่ได้เลขถัดไปที่ยังว่างในจังหวัดนั้น (seed ช่วง 01-39, จากการค้น th-wiki ช่วง 41 ขึ้นไป)
+    รหัสของสถานที่เดิมที่หายไปจะไม่ถูกนำมาใช้ซ้ำ"""
+    def url(p):
+        return (p.get("sources") or [{}])[0].get("url")
+    # จับคู่ด้วย (จังหวัด, URL) เพราะรหัสขึ้นต้นด้วยเลขจังหวัด สถานที่ที่คร่อมสองจังหวัด (เช่น อุทยานแห่งชาติภูลังกา)
+    # อาจถูกค้นเจอในอีกจังหวัด ห้ามเอารหัสของจังหวัดหนึ่งไปให้อีกจังหวัด
+    prev_by_key = {(p["province"], url(p)): p["id"] for p in previous if url(p)}
+    used = {p["id"] for p in previous}
+    out, fresh = [], []
+    for p in places:
+        old = prev_by_key.get((p["province"], url(p)))
+        if old and old not in {q["id"] for q in out}:
+            out.append({**p, "id": old})
+        else:
+            fresh.append(p)
+    used |= {q["id"] for q in out}
+    # สถานที่ใหม่ที่ชื่อซ้ำกับที่มีอยู่แล้วในจังหวัดเดียวกัน (บทความไทยกับอังกฤษของที่เดียวกัน) ไม่เพิ่ม
+    names = {(q["province"], q["name_th"]) for q in [*previous, *out]}
+    for p in fresh:
+        if (p["province"], p["name_th"]) in names:
+            continue
+        names.add((p["province"], p["name_th"]))
+        idx = PROVINCES.index(p["province"]) + 1
+        n = 41 if p.get("matched_from_seed") == "th-wiki" else 1
+        while f"p{idx}{n:02d}" in used:
+            n += 1
+        p = {**p, "id": f"p{idx}{n:02d}"}
+        used.add(p["id"])
+        out.append(p)
+    return out
+
+
+def keep_previous(places: list[dict], previous: list[dict]) -> tuple[list[dict], list[dict]]:
+    """สถานที่จากรอบก่อนที่รอบนี้ดึงไม่เจอ ให้คงไว้ตามเดิม (การค้น th-wiki ได้ผลไม่เหมือนกันทุกครั้ง และ Wikipedia อาจจำกัดความถี่)
+    ไม่อย่างนั้นสถานที่โปรดและคลังความรู้ที่อ้างรหัสเดิมจะชี้ไปที่ไม่มีอยู่ ถ้าต้องการเอาออกจริงให้ใส่ใน DROP"""
+    def url(p):
+        return (p.get("sources") or [{}])[0].get("url")
+    have = {url(p) for p in places}
+    have_ids = {p["id"] for p in places}
+    kept = [p for p in apply_drop(previous) if url(p) not in have and p["id"] not in have_ids]
+    return places + kept, kept
+
+
+def write_report(places, skipped, today, kept=()):
     by = {}
     for p in places:
         by[p["province"]] = by.get(p["province"], 0) + 1
@@ -323,6 +369,9 @@ def write_report(places, skipped, today):
               *[f"| {p['province']} | {p['matched_from_seed']} | {p['name_en']} |" for p in via], "",
               f"## รายการที่ข้าม ({len(skipped)})", "| จังหวัด | บทความ | เหตุผล |", "|---|---|---|"]
     lines += [f"| {a} | {b} | {c} |" for a, b, c in skipped]
+    if kept:
+        lines += ["", f"## คงไว้จากรอบก่อน ({len(kept)}) รอบนี้ดึงไม่เจอแต่ยังเก็บไว้เพื่อไม่ให้รหัสที่ผู้ใช้บันทึกไว้หาย", "| จังหวัด | ชื่อ | รหัส |", "|---|---|---|"]
+        lines += [f"| {p['province']} | {p['name_th']} | {p['id']} |" for p in kept]
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -331,6 +380,11 @@ def main():
     ap.add_argument("--dry", action="store_true")
     a = ap.parse_args()
     places, skipped, today = build(sleep=3.0, cache_path=ROOT / "scripts" / ".wiki_cache.json", discover=True)
+    previous = json.loads(OUT.read_text(encoding="utf-8"))["places"] if OUT.exists() else []
+    places = keep_ids(places, previous)
+    places, kept_prev = keep_previous(places, previous)
+    kept = sum(1 for p in places if p["id"] in {q["id"] for q in previous})
+    print(f"คงรหัสเดิม {kept} แห่ง (ในนั้นเก็บจากรอบก่อน {len(kept_prev)} แห่งที่รอบนี้ดึงไม่เจอ) สถานที่ใหม่ {len(places) - kept} แห่ง")
     by = {}
     for p in places:
         by[p["province"]] = by.get(p["province"], 0) + 1
@@ -341,7 +395,7 @@ def main():
     meta = {"note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md",
             "built_on": today, "weekday_index": "0=จันทร์ ... 6=อาทิตย์"}
     OUT.write_text(json.dumps({"_meta": meta, "places": places}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    write_report(places, skipped, today)
+    write_report(places, skipped, today, kept_prev)
     print("เขียน", OUT, "และ", REPORT)
 
 
