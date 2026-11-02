@@ -84,6 +84,14 @@ python scripts/eval_retrieval.py                                   # ชุด�
 python scripts/eval_retrieval.py --docs services/places/data/knowledge --golden tests/rag/golden.json
 ```
 
+## เปิดโหมด LLM
+
+1. ใน `.env` ตั้ง `LLM_PROVIDER=anthropic` (หรือ `openai`) ใส่ `ANTHROPIC_API_KEY` (หรือ `OPENAI_API_KEY`) และ `LLM_MODEL` ให้ครบ
+2. มีคลังความรู้ที่ `services/places/data/knowledge/` (สร้างด้วย `python scripts/build_knowledge.py` ต้องเข้า Wikipedia ได้)
+3. รัน API แล้วเปิด `/api/health` ดู `rag`: `{"docs": จำนวนก้อน, "llm": true}` ถ้า `llm` เป็น `false` แปลว่าตั้งค่าไม่ครบ ระบบอยู่โหมดกฎ
+4. ถามเรื่องที่ในคลังมี เช่น ประวัติวัด แล้วดู event สุดท้าย `done.mode` ต้องเป็น `llm` และมี event `sources` ถ้าเป็น `rule` ตลอด ดูว่าคลังมีก้อนของสถานที่นั้นไหม
+5. ถ้า LLM ตอบผิดกฎ ด่านตรวจจะทิ้งคำตอบและตอบโหมดกฎพร้อมบรรทัด `หมายเหตุ:` ไม่ต้องทำอะไร คีย์ไม่ถูกเขียนลง log และไม่ปรากฏในข้อความผิดพลาด
+
 ## เช็กก่อนวันเดโม
 
 - ลองค้นที่พักจริงบนเครื่องที่ใช้เดโม ด้วยอินเทอร์เน็ตที่จะใช้จริง (OpenStreetMap ต้องใช้เน็ต)
