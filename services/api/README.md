@@ -19,11 +19,12 @@ python -m uvicorn services.api.main:app --port 8000
 | `auth.py` | แฮชรหัสผ่าน (scrypt) เซสชันคุกกี้ที่เซ็นด้วย HMAC ตัวจำกัดการเดารหัสผ่าน |
 | `chat.py`, `chat_rules.py` | แชตบอทแบบกฎ `POST /api/chat` (SSE) ตัวแปลงข้อความอยู่ใน `chat_rules.py` |
 | `store.py` | ฐานข้อมูล SQLite: ผู้ใช้ ประวัติที่พัก สถานที่โปรด แชต |
+| `google.py` | ตรวจ Google ID token (ให้ Google ตรวจลายเซ็น แล้วตรวจ aud/iss/exp/อีเมลยืนยัน) |
 | `accounts.py` | เส้นทาง `/api/auth/*` และ `/api/me/*` (ผู้ที่ไม่ล็อกอินไม่ถูกบันทึกอะไร) |
 | `validator.py` | ตัวตรวจอิสระ ไม่ใช้โค้ดค้นหาร่วมกัน คำนวณระยะ ตรวจเรียงลำดับ รัศมี ซ้ำ ฟิลด์ต้องห้าม ป้ายแหล่งข้อมูล |
 | `tests/` | เทสต์ตัวตรวจ (ทดลองทำผลให้ผิดแล้วต้องจับได้) และเส้นทาง API |
 
-ตัวแปร env: `OSM_LIVE`, `PLACES_CACHE_DIR`, `OSM_SNAPSHOT_DIR`, `SESSION_SECRET`, `SESSION_SECURE` (ตั้ง 0 ตอนพัฒนาบน http), `DB_PATH` (ดู `.env.example`) และ `WEB_ORIGINS` (ถ้าไม่ตั้งอนุญาตทุกที่มา ใช้ตอนพัฒนา)
+ตัวแปร env: `OSM_LIVE`, `PLACES_CACHE_DIR`, `OSM_SNAPSHOT_DIR`, `SESSION_SECRET`, `SESSION_SECURE` (ตั้ง 0 ตอนพัฒนาบน http), `GOOGLE_CLIENT_ID` (ล็อกอินด้วย Google), `DB_PATH` (ดู `.env.example`) และ `WEB_ORIGINS` (ถ้าไม่ตั้งอนุญาตทุกที่มา ใช้ตอนพัฒนา)
 
 ## สถานะ
 
