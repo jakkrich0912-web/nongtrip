@@ -155,6 +155,10 @@ class Store:
         with self._db() as c:
             return c.execute("DELETE FROM searches WHERE user_id = ? AND id = ?", (user_id, search_id)).rowcount > 0
 
+    def delete_all_searches(self, user_id: int) -> int:
+        with self._db() as c:
+            return c.execute("DELETE FROM searches WHERE user_id = ?", (user_id,)).rowcount
+
     # ---- สถานที่โปรด ----
     def add_favorite(self, user_id: int, p: dict) -> tuple[dict, bool]:
         """คืน (รายการ, สร้างใหม่หรือไม่) บันทึกซ้ำได้โดยไม่เกิดรายการซ้ำ"""
@@ -183,6 +187,10 @@ class Store:
         with self._db() as c:
             return c.execute("DELETE FROM favorites WHERE user_id = ? AND place_id = ?",
                              (user_id, place_id)).rowcount > 0
+
+    def delete_all_favorites(self, user_id: int) -> int:
+        with self._db() as c:
+            return c.execute("DELETE FROM favorites WHERE user_id = ?", (user_id,)).rowcount
 
     # ---- แชต (หน้าแชตจะเรียกสร้างและเพิ่มข้อความ ตอนนี้เปิดให้อ่านและลบ) ----
     def create_chat(self, user_id: int, title: str) -> int:
@@ -222,3 +230,14 @@ class Store:
     def delete_chat(self, user_id: int, chat_id: int) -> bool:
         with self._db() as c:
             return c.execute("DELETE FROM chats WHERE id = ? AND user_id = ?", (chat_id, user_id)).rowcount > 0
+
+    def delete_all_chats(self, user_id: int) -> int:
+        """ลบแชตทั้งหมดของผู้ใช้ (ข้อความในแชตถูกลบตามด้วย ON DELETE CASCADE)"""
+        with self._db() as c:
+            return c.execute("DELETE FROM chats WHERE user_id = ?", (user_id,)).rowcount
+
+    # ---- ลบบัญชี ----
+    def delete_user(self, user_id: int) -> bool:
+        """ลบผู้ใช้และข้อมูลทั้งหมดของเขา (ที่พักที่ค้น สถานที่โปรด แชตและข้อความ) ย้อนกลับไม่ได้"""
+        with self._db() as c:
+            return c.execute("DELETE FROM users WHERE id = ?", (user_id,)).rowcount > 0

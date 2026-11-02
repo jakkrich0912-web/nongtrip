@@ -91,6 +91,7 @@
 | POST | `/api/auth/logout` | - | `204` |
 | GET | `/api/auth/me` | - | `200 {"user": {...}}` หรือ `401` |
 | POST | `/api/auth/google` | `{"credential": "<Google ID token>"}` (1-5000 ตัวอักษร) | `201 {"user": {...}}` เข้าครั้งแรก (สร้างบัญชีให้) `200` เข้าซ้ำ แล้วตั้งคุกกี้เซสชันเหมือนล็อกอินปกติ `401` token ใช้ไม่ได้ `409 email_taken` `429 rate_limited` `501 google_not_configured` `502 upstream_unavailable` |
+| POST | `/api/me/delete` | `{"email": "<อีเมลของตัวเอง>"}` ต้องล็อกอิน | `204` ลบบัญชีและข้อมูลทั้งหมดของผู้ใช้ถาวร (ที่พักที่ค้น สถานที่โปรด แชตและข้อความ) แล้วล้างคุกกี้เซสชัน `400 invalid_param` ถ้าอีเมลไม่ตรงกับบัญชี (ไม่สนตัวพิมพ์ใหญ่เล็กและช่องว่างหัวท้าย) `401` ถ้าไม่ได้ล็อกอิน บัญชี Google ลบได้เหมือนกัน ลบแล้วสมัครอีเมลเดิมใหม่ได้ เป็นบัญชีใหม่ไม่มีข้อมูลเก่า |
 
 **ล็อกอินด้วย Google:** หน้าเว็บใช้ Google Identity Services ขอ ID token แล้วส่งมาที่ `/api/auth/google` (ต้องมี `GOOGLE_CLIENT_ID` ที่สร้างใน Google Cloud Console และใส่ที่มาของเว็บใน Authorized JavaScript origins) หลังบ้านให้ Google ตรวจลายเซ็น แล้วตรวจเองว่า `aud` ตรงกับ `GOOGLE_CLIENT_ID` ของเรา, `iss` เป็น Google, ยังไม่หมดอายุ และอีเมลผ่านการยืนยันแล้ว บัญชี Google ใช้ `sub` เป็นตัวระบุ (เปลี่ยนอีเมลที่ Google ก็ยังเป็นคนเดิม) ไม่มีรหัสผ่านจึงล็อกอินด้วยอีเมล/รหัสผ่านไม่ได้ **ถ้าอีเมลนั้นสมัครด้วยรหัสผ่านไว้แล้ว ตอบ 409 และไม่ผูกให้เอง** เพราะตอนสมัครด้วยรหัสผ่านเรายังไม่ยืนยันอีเมล (ถ้าผูกให้ ผู้ที่สมัครอีเมลของคนอื่นไว้ล่วงหน้าจะเข้าบัญชีเดียวกับเจ้าของอีเมลได้) ตัวจำกัด: 30 คำขอต่อ IP ต่อนาที (กันถูกใช้ยิง Google)
 
@@ -102,11 +103,14 @@
 |---|---|---|
 | GET / POST | `/api/me/searches` | ที่พักที่เคยค้น ใหม่สุดก่อน คืน `{items:[{id, name, lat, lon, created_at}]}` POST ส่ง `{"name", "lat", "lon"}` (พิกัดต้องอยู่ในไทย, ค้นที่พักเดิมซ้ำจะยกขึ้นบนสุด, เก็บสูงสุด 100) |
 | DELETE | `/api/me/searches/{id}` | ลบหนึ่งรายการ (`204`) |
+| DELETE | `/api/me/searches` | ลบที่พักที่เคยค้นทั้งหมดของฉัน (`204` ลบซ้ำได้ ไม่ error) |
 | GET / POST | `/api/me/favorites` | สถานที่โปรด คืน `{items:[{id, name_th, name_en, kind, subtype, lat, lon, source, province, maps_url, saved_at}]}` POST ส่ง `{"place_id"}` ถ้าเป็น `v:` ระบบอ่านข้อมูลจากไฟล์ของเราเอง (ไม่เชื่อค่าที่ส่งมา) ถ้าเป็น `osm:` ต้องส่ง `name_th, lat, lon, kind` มาด้วย (เก็บสูงสุด 500) ตอบ `201` ใหม่ หรือ `200` ถ้ามีอยู่แล้ว |
+| DELETE | `/api/me/favorites` | ลบสถานที่โปรดทั้งหมดของฉัน (`204`) |
 | DELETE | `/api/me/favorites/{place_id}` | เอาออกจากสถานที่โปรด (`204`) `place_id` มี `/` ได้ เช่น `osm:node/123` |
 | GET | `/api/me/chats` | รายการแชต `{items:[{id, title, created_at, updated_at, message_count}]}` ใหม่สุดก่อน |
 | GET | `/api/me/chats/{chat_id}` | ข้อความในแชตนั้น `{id, title, messages:[{role, content, created_at}]}` ของผู้อื่นตอบ 404 |
 | DELETE | `/api/me/chats/{chat_id}` | ลบแชต (`204`) |
+| DELETE | `/api/me/chats` | ลบแชตทั้งหมดของฉัน พร้อมข้อความในแชต (`204`) |
 
 แชตถูกสร้างและเพิ่มข้อความโดย `POST /api/chat` (ข้อ 3.2) ชื่อแชตคือข้อความแรกของผู้ใช้ (ตัดที่ 80 ตัวอักษร)
 
@@ -237,3 +241,4 @@
 | v0.9 | 2026-11-02 | เพิ่ม `POST /api/auth/google` (ล็อกอินด้วย Google ID token), code `google_not_configured` (501), `upstream_unavailable` ใช้กับล็อกอิน Google แล้ว, ตัวแปร env `GOOGLE_CLIENT_ID` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.10 | 2026-11-02 | เพิ่ม API ไกด์ที่เที่ยว: `GET /api/guide/featured`, `GET /api/provinces/{ชื่อ}/places`, `GET /api/places/{id}` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.11 | 2026-11-02 | `GET /api/lodgings/search` รับตัวกรอง `province`, `area`, `subtype` และรายการมีฟิลด์ `province` เพิ่ม (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.12 | 2026-11-02 | เพิ่มลบข้อมูลของตัวเอง: `DELETE /api/me/searches`, `DELETE /api/me/favorites`, `DELETE /api/me/chats` (ลบทั้งหมดของฉัน) และ `POST /api/me/delete` (ลบบัญชีถาวร ต้องส่งอีเมลยืนยัน) เพิ่มอย่างเดียว ไม่ breaking |

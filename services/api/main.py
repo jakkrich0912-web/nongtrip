@@ -28,7 +28,7 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
                secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None,
                chat_throttle: ChatThrottle | None = None, google: GoogleVerifier | None = None,
                guide: list[dict] | None = None) -> FastAPI:
-    app = FastAPI(title="น้องทริป API", version="0.10")
+    app = FastAPI(title="น้องทริป API", version="0.12")
     svc = service or PlacesService()
     known = load_verified_ids()
     origins = [o for o in (os.environ.get("WEB_ORIGINS") or "*").split(",") if o]
