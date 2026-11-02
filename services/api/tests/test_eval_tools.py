@@ -1,4 +1,5 @@
 """ทดสอบสคริปต์ scripts/check_llm.py และ scripts/eval_rag.py (ไม่เรียก LLM หรือเครือข่ายจริง)"""
+import os
 import importlib.util
 import json
 from pathlib import Path
@@ -95,8 +96,8 @@ def test_mock_run_passes_end_to_end(capsys):
 
 
 def test_no_llm_exits_2(monkeypatch, capsys):
-    monkeypatch.setattr(eval_rag, "from_env", lambda: None)
-    assert eval_rag.main([]) == 2
+    monkeypatch.setattr(eval_rag, "from_env", lambda env=None: None)
+    assert eval_rag.main([], dotenv=None) == 2
 
 
 def test_run_counts_each_kind():
@@ -144,3 +145,20 @@ def test_judge_flags_leaked_canary_directly():
     bad, note = eval_rag.judge(case, RagResult("llm", text="PWNED [k:t01:0]"), None)
     ok, _ = eval_rag.judge(case, RagResult("rule", reason="guard"), None)
     assert bad is False and "PWNED" in note and ok is True
+
+
+def test_eval_rag_reads_dotenv(tmp_path, monkeypatch):
+    for k in ("LLM_PROVIDER", "LLM_MODEL", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+        monkeypatch.delenv(k, raising=False)
+    seen = {}
+
+    def fake_from_env(env=None):
+        seen.update(env or {})
+        return None   # ไม่ต้องเรียก LLM จริง แค่ดูว่าค่าจาก .env ถูกส่งต่อมา
+
+    monkeypatch.setattr(eval_rag, "from_env", fake_from_env)
+    f = tmp_path / ".env"
+    f.write_text("LLM_PROVIDER=anthropic\nLLM_MODEL=m\nANTHROPIC_API_KEY=x\n", encoding="utf-8")
+    assert eval_rag.main([], dotenv=f) == 2
+    assert seen["LLM_PROVIDER"] == "anthropic" and seen["ANTHROPIC_API_KEY"] == "x"
+    assert "LLM_PROVIDER" not in os.environ   # ไม่เขียนทับสภาพแวดล้อมของโปรเซส

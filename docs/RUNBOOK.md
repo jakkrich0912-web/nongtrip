@@ -92,7 +92,7 @@ python scripts/eval_retrieval.py --docs services/places/data/knowledge --golden 
 4. ถามเรื่องที่ในคลังมี เช่น ประวัติวัด แล้วดู event สุดท้าย `done.mode` ต้องเป็น `llm` และมี event `sources` ถ้าเป็น `rule` ตลอด ดูว่าคลังมีก้อนของสถานที่นั้นไหม
 5. ถ้า LLM ตอบผิดกฎ ด่านตรวจจะทิ้งคำตอบและตอบโหมดกฎพร้อมบรรทัด `หมายเหตุ:` ไม่ต้องทำอะไร คีย์ไม่ถูกเขียนลง log และไม่ปรากฏในข้อความผิดพลาด
 6. ตรวจว่าคีย์และรุ่นใช้ได้จริงก่อนเปิดระบบ: `python scripts/check_llm.py` (อ่านจาก `.env` เรียก LLM 1 ครั้ง ไม่พิมพ์คีย์) รหัสออก 0 = ใช้ได้, 1 = เรียกไม่สำเร็จ (ตรวจคีย์ ชื่อรุ่น เครดิต เน็ต), 2 = ตั้งค่าไม่ครบ
-7. วัดผลครบวงจรกับ LLM จริง (RAG_PLAN ขั้น 6): `python scripts/eval_rag.py --docs services/places/data/knowledge --golden tests/rag/golden_e2e.json --sleep 1 --out ผลวัด.json` (ชุดนี้ 200 ข้อ มีชนิดคำถามครบ ส่วน `tests/rag/golden.json` ใช้กับ `scripts/eval_retrieval.py` ที่วัดเฉพาะตัวค้นคืน) แล้วนำผลลง `docs/COVERAGE.md` พร้อมวันที่และรุ่นโมเดล ถ้าไม่ใส่ `--docs` และ `--golden` สคริปต์ใช้ชุดตัวอย่างในเทสต์ซึ่งไม่ใช่ผลวัดจริง และ `--mock` ไว้ตรวจว่าสคริปต์ทำงานเท่านั้น
+7. วัดผลครบวงจรกับ LLM จริง (RAG_PLAN ขั้น 6): `python scripts/eval_rag.py --docs services/places/data/knowledge --golden tests/rag/golden_e2e.json --sleep 1 --out ผลวัด.json` (ชุดนี้ 200 ข้อ มีชนิดคำถามครบ ส่วน `tests/rag/golden.json` ใช้กับ `scripts/eval_retrieval.py` ที่วัดเฉพาะตัวค้นคืน) แล้วนำผลลง `docs/RAG_EVAL.md` พร้อมวันที่และรุ่นโมเดล (ไม่ลง `docs/COVERAGE.md` เพราะไฟล์นั้นถูกสร้างทับโดย `build_places.py`) ถ้าไม่ใส่ `--docs` และ `--golden` สคริปต์ใช้ชุดตัวอย่างในเทสต์ซึ่งไม่ใช่ผลวัดจริง และ `--mock` ไว้ตรวจว่าสคริปต์ทำงานเท่านั้น
 
 ## เช็กก่อนวันเดโม
 
