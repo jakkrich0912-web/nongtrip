@@ -17,16 +17,18 @@ from services.places.verified import coverage_by_province
 
 from . import auth
 from .accounts import build_router
-from .google import GoogleVerifier
 from .chat import ChatThrottle, build_chat_router
+from .google import GoogleVerifier
+from .guide import build_guide_router, load_guide
 from .store import Store
 from .validator import load_verified_ids, validate_lodgings_near, validate_nearby
 
 
 def create_app(service: PlacesService | None = None, store: Store | None = None, session_secret: str | None = None,
                secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None,
-               chat_throttle: ChatThrottle | None = None, google: GoogleVerifier | None = None) -> FastAPI:
-    app = FastAPI(title="น้องทริป API", version="0.9")
+               chat_throttle: ChatThrottle | None = None, google: GoogleVerifier | None = None,
+               guide: list[dict] | None = None) -> FastAPI:
+    app = FastAPI(title="น้องทริป API", version="0.10")
     svc = service or PlacesService()
     known = load_verified_ids()
     origins = [o for o in (os.environ.get("WEB_ORIGINS") or "*").split(",") if o]
@@ -86,6 +88,9 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
         if not res["validation"]["ok"]:
             res["notices"] = res["notices"] + ["ผลค้นนี้ไม่ผ่านการตรวจอิสระ โปรดอย่าเชื่อถือจนกว่าจะตรวจสอบ"]
         return res
+
+    # ต้องลงทะเบียนหลัง /api/places/nearby ไม่งั้น /api/places/{place_id} จะรับ "nearby" ไปเสีย
+    app.include_router(build_guide_router(guide if guide is not None else load_guide()))
 
     return app
 
