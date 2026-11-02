@@ -182,7 +182,7 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str])
         rows = [f"{i}. {_one_line(x['name'])} ห่างหมุด {x['distance_from_pin_km']:g} กม. (เส้นตรง)"
                 for i, x in enumerate(shown, 1)]
         yield from say(f"พบที่พักรอบ{where} {len(items)} แห่ง แสดง {len(shown)} แห่งที่ใกล้ที่สุด", *rows,
-                       "ข้อมูลที่พักจาก OpenStreetMap ไม่มีราคาหรือห้องว่าง " + (res.get("attribution") or ""),
+                       "ข้อมูลที่พักจาก OpenStreetMap ไม่มีราคาหรือห้องว่าง",
                        *_notes(notes + res_notes), *tail)
         return
 
@@ -210,19 +210,16 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str])
     rows = [f"{i}. {_one_line(p['name_th'])} ห่าง {p['distance_km']:g} กม." for i, p in enumerate(items, 1)]
     more = (f"ยังมีอีก {res['total'] - len(items)} แห่งในรัศมีนี้ บอกจำนวนที่อยากดูได้ เช่น \"10 แห่ง\""
             if res["total"] > len(items) else "")
-    attr = res["attribution"] if any(p["source"] == "osm" for p in items) else ""
     yield from say(f"พบ{kinds_th} {res['total']} แห่งในรัศมี {res['radius_km']:g} กม. รอบ{where} "
-                   f"แสดง {len(items)} แห่งที่ใกล้ที่สุด", *rows, more, f"{res['distance_note']} {attr}".strip(),
+                   f"แสดง {len(items)} แห่งที่ใกล้ที่สุด", *rows, more, res["distance_note"],
                    *_notes(notes + res_notes), *tail)
 
 
 def _footer(places_ev: dict | None, it: Intent) -> list[str]:
-    """ข้อความที่โค้ดของเราเติมท้ายคำตอบ LLM (ไม่ผ่านด่านตรวจเพราะเป็นข้อความสำเร็จรูป): หมายเหตุระยะ ที่มาข้อมูล OSM ข้อความเตือน"""
+    """ข้อความที่โค้ดของเราเติมท้ายคำตอบ LLM (ไม่ผ่านด่านตรวจเพราะเป็นข้อความสำเร็จรูป): หมายเหตุระยะ ข้อความเตือน"""
     ev = places_ev or {}
     out = []
-    items = ev.get("items") or []
-    attr = ev.get("attribution") if any(p.get("source") == "osm" for p in items) else ""
-    note = " ".join(x for x in (ev.get("distance_note"), attr) if x).strip()
+    note = (ev.get("distance_note") or "").strip()      # ที่มา © OSM แสดงที่ท้ายหน้าเว็บ ไม่ใส่ในข้อความแชท
     if note:
         out.append(note + "\n")
     out += [n + "\n" for n in _notes(list(ev.get("notices") or []))]

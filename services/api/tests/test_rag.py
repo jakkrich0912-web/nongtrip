@@ -83,7 +83,7 @@ def test_llm_answer_passes_guard_and_streams_sources(tmp_path):
     text = text_of(evs)
     assert "สร้างขึ้นในสมัยล้านนา [k:p01:0]" in text
     assert "1. " not in text                       # ไม่ใช่รายการแบบกฎ
-    assert "เส้นตรง" in text and "OpenStreetMap" in text   # ข้อความท้ายที่โค้ดเติม (ระยะ ที่มาข้อมูล OSM)
+    assert "ระยะเป็นเส้นตรง" in text and "OpenStreetMap" not in text   # ข้อความท้ายที่โค้ดเติม (หมายเหตุระยะ) ที่มา OSM อยู่ท้ายหน้าเว็บ
     assert len(llm.calls) == 1
 
 
