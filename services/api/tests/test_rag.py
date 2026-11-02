@@ -200,3 +200,14 @@ def test_known_names_loader_reads_verified_names(tmp_path):
         encoding="utf-8")
     assert load_known_names(tmp_path) == {"วัดก", "Wat A"}
     assert load_known_names(tmp_path / "ไม่มี") == set()
+
+
+def test_prompt_asks_for_citation_even_when_saying_no_data():
+    from services.api.rag import SYSTEM_PROMPT
+    line = next(l for l in SYSTEM_PROMPT.splitlines() if l.startswith("1."))
+    assert "ไม่มีข้อมูลเรื่องนี้ในคลังของระบบ" in line and "[k:" in line
+
+
+def test_llm_token_cap_leaves_room_for_thinking():
+    from services.api import llm
+    assert llm.MAX_TOKENS >= 2000

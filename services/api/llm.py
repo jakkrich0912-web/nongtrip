@@ -18,7 +18,7 @@ log = logging.getLogger("nongtrip.llm")
 
 TIMEOUT = 30
 RETRIES = 1
-MAX_TOKENS = 700
+MAX_TOKENS = 2000      # รวมโทเคนที่โมเดลใช้คิด (Sonnet 5.5 เปิดโหมดคิดเองโดยปริยาย) เพดานต่ำเกินไปทำให้ได้ข้อความว่าง
 MAX_RESPONSE_BYTES = 200_000
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
