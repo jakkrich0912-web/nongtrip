@@ -28,6 +28,7 @@ Jirapa ทำงานที่แยกออกมาได้ชัด ไม
 | ข้อมูลที่ตรวจแล้ว: ตรวจ/เพิ่มสถานที่ใน `places.json` ภาคกลาง ตะวันออก ตะวันตก ใต้ | `services/places/data` | Jirapa | Jakkrich เขียนสคริปต์ตรวจ | ภาคเหนือและอีสานเสร็จ ที่เหลือรอ |
 | สแนปช็อต OSM ทั้ง 77 จังหวัด (รันดึงล่วงหน้า ตรวจผล แล้ว commit) | `services/places/data/osm_snapshot` | Jakkrich | - | กำลังทำ (เข้าแล้ว 21 จังหวัด (เหนือ 9 อีสาน 12) เหลือ 56 จังหวัด ต้องรันบนเครื่องที่เข้า Overpass ได้) |
 | Docker: `docker-compose.yml` (web nginx + api) พร้อม volume ฐานข้อมูล, `scripts/smoke_test.py`, CI job `docker` | `docker-compose.yml`, `apps/web`, `services/api` | Jakkrich | - | กำลังทำ (PR docker) |
+| RAG ความรู้ท่องเที่ยว (คลังความรู้จาก Wikipedia, ค้นคืน BM25, LLM เขียนคำตอบพร้อมที่มา, ด่านตรวจคำตอบ) | `docs/RAG_PLAN.md`, `services/api`, `services/places` | Jakkrich | Jirapa ตรวจข้อมูลและทำหน้าเว็บส่วนที่มา | ตกลงแผนแล้ว เริ่มขั้น 1 (สคริปต์สร้างคลังความรู้) |
 | ชุดทดสอบ/ผลวัด (เคสค้นหาจริง 10-15 จังหวัด) | `docs/COVERAGE.md`, `tests` | Jirapa | Jakkrich | รอ |
 | สไลด์, DEMO_SCRIPT, ซ้อมพูด | `docs`, สไลด์ | ทั้งคู่ | Jakkrich เรียบเรียงภาพรวม | รอ (เอกสารเก่าต้องเขียนใหม่ให้ตรงระบบนี้) |
 
