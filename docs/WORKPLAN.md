@@ -27,6 +27,7 @@ Jirapa ทำงานที่แยกออกมาได้ชัด ไม
 | หน้าล็อกอิน/สมัคร และหน้าประวัติ/สถานที่โปรด (ฝั่งหน้าจอ) ต่อกับ API v0.7 | `apps/web` | Jirapa | Jakkrich ทำ API ให้แล้ว | รอ PR #1 |
 | ข้อมูลที่ตรวจแล้ว: ตรวจ/เพิ่มสถานที่ใน `places.json` ภาคกลาง ตะวันออก ตะวันตก ใต้ | `services/places/data` | Jirapa | Jakkrich เขียนสคริปต์ตรวจ | ภาคเหนือและอีสานเสร็จ ที่เหลือรอ |
 | สแนปช็อต OSM ทั้ง 77 จังหวัด (รันดึงล่วงหน้า ตรวจผล แล้ว commit) | `services/places/data/osm_snapshot` | Jakkrich | - | กำลังทำ (เข้าแล้ว 21 จังหวัด (เหนือ 9 อีสาน 12) เหลือ 56 จังหวัด ต้องรันบนเครื่องที่เข้า Overpass ได้) |
+| Docker: `docker-compose.yml` (web nginx + api) พร้อม volume ฐานข้อมูล, `scripts/smoke_test.py`, CI job `docker` | `docker-compose.yml`, `apps/web`, `services/api` | Jakkrich | - | กำลังทำ (PR docker) |
 | ชุดทดสอบ/ผลวัด (เคสค้นหาจริง 10-15 จังหวัด) | `docs/COVERAGE.md`, `tests` | Jirapa | Jakkrich | รอ |
 | สไลด์, DEMO_SCRIPT, ซ้อมพูด | `docs`, สไลด์ | ทั้งคู่ | Jakkrich เรียบเรียงภาพรวม | รอ (เอกสารเก่าต้องเขียนใหม่ให้ตรงระบบนี้) |
 

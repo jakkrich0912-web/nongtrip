@@ -8,7 +8,10 @@ help:  ## แสดงรายการคำสั่ง
 up:  ## เปิดระบบทั้งชุด (docker compose)
 	docker compose up -d --build --wait
 
-down:  ## ปิดระบบ
+build:  ## build ภาพ Docker ใหม่โดยไม่เปิดระบบ
+	docker compose build
+
+down:  ## ปิดระบบ (ข้อมูลใน volume ยังอยู่)
 	docker compose down
 
 logs:  ## ดู log: make logs หรือ make logs s=api

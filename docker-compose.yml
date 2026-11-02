@@ -1,0 +1,32 @@
+# เปิดทั้งระบบ: docker compose up -d --build --wait (หรือ make up) แล้วเข้า http://localhost:8080
+services:
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      # ค่าในนี้ชนะค่าใน .env: ให้ฐานข้อมูลและแคชอยู่ใน volume
+      DB_PATH: /data/nongtrip.db
+      PLACES_CACHE_DIR: /data/cache
+      # API ไม่เปิดพอร์ตออกนอก คนเรียกมีแต่ nginx จึงเชื่อ X-Forwarded-For เพื่อให้จำกัดความถี่ต่อ IP จริงของผู้ใช้
+      FORWARDED_ALLOW_IPS: "*"
+    volumes:
+      - nongtrip-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  nongtrip-data:
