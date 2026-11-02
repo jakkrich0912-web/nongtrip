@@ -77,6 +77,13 @@ python scripts/build_knowledge.py --check          # ตรวจไฟล์ท
 
 อ่านท้ายผลลัพธ์: "ให้คนตรวจ" คือบทความที่ชื่อไม่ตรงสถานที่ ถ้าเห็นว่าผิดแห่งให้ลบไฟล์จังหวัดนั้นแล้วแจ้ง Jakkrich ก่อน commit โฟลเดอร์ `services/places/data/knowledge/` ข้อความมาจาก Wikipedia ภายใต้ CC BY-SA 4.0 หน้าเว็บต้องแสดงที่มาเมื่อใช้
 
+วัดตัวค้นคืนกับชุดคำถาม (ไม่ต้องใช้เน็ต ตัวเลข Hit@3 ที่ขึ้นสไลด์ต้องมาจากคลังจริง):
+
+```bash
+python scripts/eval_retrieval.py                                   # ชุดตัวอย่างในเทสต์
+python scripts/eval_retrieval.py --docs services/places/data/knowledge --golden tests/rag/golden.json
+```
+
 ## เช็กก่อนวันเดโม
 
 - ลองค้นที่พักจริงบนเครื่องที่ใช้เดโม ด้วยอินเทอร์เน็ตที่จะใช้จริง (OpenStreetMap ต้องใช้เน็ต)
