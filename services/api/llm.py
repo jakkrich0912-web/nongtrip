@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import json
+import re
 import logging
 import os
 import urllib.error
@@ -83,8 +84,22 @@ class LLMClient:
         except (KeyError, IndexError, TypeError, AttributeError):
             raise LLMError("รูปแบบคำตอบจาก LLM ไม่ถูกต้อง") from None
         if not isinstance(text, str) or not text.strip():
-            raise LLMError("LLM ตอบว่างเปล่า")
+            raise LLMError(f"LLM ตอบว่างเปล่า ({self._why_empty(data)})")
         return text.strip()
+
+    def _why_empty(self, data: dict) -> str:
+        """เหตุที่ได้ข้อความว่าง ไว้วินิจฉัย: เก็บเฉพาะค่าสั้นๆ ที่ไม่ใช่เนื้อหาคำตอบ (stop_reason ชนิดบล็อก จำนวนโทเคน)"""
+        def clean(v: object) -> str:
+            return re.sub(r"[^A-Za-z0-9_.\-]", "", str(v))[:40] or "?"
+        try:
+            if self.provider == "anthropic":
+                kinds = ",".join(clean(b.get("type")) for b in data.get("content", []) if isinstance(b, dict)) or "ไม่มีบล็อก"
+                out = (data.get("usage") or {}).get("output_tokens")
+                return f"stop_reason={clean(data.get('stop_reason'))} blocks={kinds} output_tokens={clean(out)}"
+            choice = data["choices"][0]
+            return f"finish_reason={clean(choice.get('finish_reason'))}"
+        except (KeyError, IndexError, TypeError, AttributeError):
+            return "ไม่ทราบเหตุ"
 
     def complete(self, system: str, user: str, max_tokens: int = MAX_TOKENS) -> str:
         url, headers, body = self._request(system, user, max_tokens)
