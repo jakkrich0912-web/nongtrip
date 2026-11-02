@@ -280,6 +280,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 use_rag = rag is not None and rag.enabled
                 held: list[str] = []          # ข้อความแบบกฎที่พักไว้จนรู้ว่า LLM ผ่านด่านตรวจหรือไม่
                 places_ev: dict | None = None
+                t0 = time.perf_counter()
                 for ev, data in answer(intent, ctx, svc, known):
                     if ev == "places":
                         places_ev = data
@@ -290,6 +291,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         parts.append(data["text"])
                     yield _sse(ev, data)
                 mode = "rule"
+                t_search = time.perf_counter() - t0
+                t1 = time.perf_counter()
                 if use_rag:
                     res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"))
                     if res.mode == "llm":
@@ -303,6 +306,10 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         parts.append(ln)
                         yield _sse("token", {"text": ln})
                 save()
+                # เวลาของแต่ละขั้น ไว้ดูว่าช้าที่ไหน (ไม่มีข้อความของผู้ใช้ในบรรทัดนี้) ขึ้นใน log ของ uvicorn
+                logging.getLogger("uvicorn.error").info(
+                    "chat timing: ค้นสถานที่ %.1f วินาที, ขั้น RAG/LLM %.1f วินาที, โหมด %s",
+                    t_search, time.perf_counter() - t1, mode)
                 yield _sse("done", {"chat_id": chat_id, "mode": mode})
             except SearchError as e:
                 yield _sse("error", {"error": str(e), "code": "invalid_param"})
