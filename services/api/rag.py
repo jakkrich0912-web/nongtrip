@@ -75,6 +75,8 @@ class RagResult:
     sources: list[dict] = field(default_factory=list)
     reason: str = ""                            # เหตุที่ใช้โหมดกฎ: no_llm / no_places / no_chunks / llm_error / guard
     problems: list[dict] = field(default_factory=list)
+    rejected: str = ""                          # คำตอบที่ด่านตรวจตีตก (ไว้ให้สคริปต์วัดผลดูเท่านั้น ห้ามส่งให้ผู้ใช้)
+    error: str = ""                             # ข้อความข้อผิดพลาดของ LLM เมื่อ reason = llm_error
 
     @property
     def guard_failed(self) -> bool:
@@ -111,12 +113,12 @@ class Rag:
             text = self.llm.complete(system, user)
         except LLMError as e:
             log.warning("LLM ล้มเหลว: %s", e)
-            return RagResult("rule", reason="llm_error")
+            return RagResult("rule", reason="llm_error", error=str(e))
         verdict = check_answer(text, places=items, chunks=docs, known_names=self.known_names,
                                question=question, radius_km=radius_km)
         if not verdict["ok"]:
             log.warning("ด่านตรวจไม่ผ่าน %d ข้อ: %s", verdict["problem_count"], [p["rule"] for p in verdict["problems"]])
-            return RagResult("rule", reason="guard", problems=verdict["problems"])
+            return RagResult("rule", reason="guard", problems=verdict["problems"], rejected=text)
         return RagResult("llm", text=text, sources=source_items(hits))
 
 
