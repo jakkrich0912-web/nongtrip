@@ -148,7 +148,7 @@
 | 3 | ด่านตรวจคำตอบ + เทสต์ (เสร็จ: `services/api/answer_guard.py`, เทสต์ 53 ข้อ) | Jakkrich | - |
 | 4 | ตัวเชื่อม LLM + ลำดับในข้อ 2 + event `sources`/`mode` + CONTRACT v0.13 (เสร็จ: `services/api/llm.py`, `rag.py`, เชื่อมใน `chat.py` ทดสอบด้วย LLM จำลอง ยังไม่เคยเรียก LLM จริง) | Jakkrich | ขั้น 2-3 |
 | 5 | หน้าเว็บ: แสดงที่มา ป้ายโหมด ข้อความสัญญาอนุญาต | Jirapa | CONTRACT v0.13 |
-| 6 | รันชุดทดสอบกับ LLM จริง ลงผลใน COVERAGE | ทั้งคู่ | คีย์ LLM |
+| 6 | รันชุดทดสอบกับ LLM จริง ลงผลใน COVERAGE (สคริปต์พร้อมแล้ว: `scripts/check_llm.py`, `scripts/eval_rag.py` ทดสอบด้วย LLM จำลองเท่านั้น ยังไม่เคยเรียก LLM จริง) | ทั้งคู่ | คีย์ LLM, คลังจริง, `tests/rag/golden.json` |
 
 ## 11. ความเสี่ยงและเรื่องที่ยังไม่รู้
 
