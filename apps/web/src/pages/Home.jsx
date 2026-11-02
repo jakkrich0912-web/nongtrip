@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PROVINCES } from '../lib/provinces.js';
-import { PLACES, categoryLabel } from '../lib/data.js';
+import { PLACES, subtypeLabel, iconGroup } from '../lib/data.js';
 import { placesAround } from '../lib/geo.js';
 import CatIcon from '../components/CatIcon.jsx';
 import Mascot from '../components/Mascot.jsx';
@@ -22,7 +22,7 @@ export default function Home() {
   }, []);
   const byCat = useMemo(() => {
     const m = {};
-    PLACES.forEach((p) => { (m[p.category] ??= []).push(p); });
+    PLACES.forEach((p) => { (m[p.subtype] ??= []).push(p); });
     return Object.entries(m).sort((a, b) => b[1].length - a[1].length);
   }, []);
 
@@ -64,8 +64,8 @@ export default function Home() {
             <p className="demo-from">ที่พักตัวอย่าง: {DEMO.name}</p>
             {demo.map((p) => (
               <div key={p.id} className="demo-row">
-                <span className={`ico c-${p.category}`}><CatIcon cat={p.category} size={18} /></span>
-                <span className="demo-name">{p.name_th}<small>{categoryLabel(p.category)}</small></span>
+                <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={18} /></span>
+                <span className="demo-name">{p.name_th}<small>{subtypeLabel(p.subtype, p.kind)}</small></span>
                 <span className="demo-km">{p.distance_km} กม.</span>
               </div>
             ))}
@@ -95,7 +95,7 @@ export default function Home() {
                 <span className="ico big"><CatIcon cat={c} size={26} /></span>
                 <span className="cat-n">{list.length} แห่ง</span>
               </div>
-              <h3>{categoryLabel(c)}</h3>
+              <h3>{subtypeLabel(c)}</h3>
               <ul>{list.slice(0, 3).map((p) => <li key={p.id}>{p.name_th}<small>{p.province}</small></li>)}</ul>
             </article>
           ))}

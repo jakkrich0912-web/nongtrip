@@ -1,8 +1,9 @@
-import { categoryLabel } from '../lib/data.js';
+import { subtypeLabel, iconGroup } from '../lib/data.js';
 import CatIcon from './CatIcon.jsx';
 import Mascot from './Mascot.jsx';
 
-// รายการที่พักรอบหมุด (โหมดยังไม่ได้จอง) ข้อมูลจาก GET /api/lodging/nearby
+// รายการที่พักรอบหมุด (โหมดยังไม่ได้จอง) ข้อมูลจาก GET /api/lodgings/near
+// รูปแบบคำตอบตาม docs/CONTRACT.md ข้อ 4 "คำตอบของ lodgings/near"
 // ระบบไม่ตั้งที่พักให้จนกว่าผู้ใช้กดเลือกเอง (SPEC)
 export default function LodgingResults({ state, hasPin, onChoose }) {
   if (!hasPin) {
@@ -25,26 +26,26 @@ export default function LodgingResults({ state, hasPin, onChoose }) {
     );
   }
   if (state.status !== 'ok') return null;
-  const { items, meta } = state.data;
+  const { items = [], radius_km: radius, notices = [], osm_available: osmAvailable, attribution } = state.data;
   return (
     <>
-      {meta.notes?.map((n) => <p key={n} className="notice">{n}</p>)}
-      {meta.osm_available === false && <p className="notice">ตอนนี้ดึงข้อมูลจาก OpenStreetMap ไม่ได้ แสดงเฉพาะข้อมูลที่ตรวจที่มาแล้ว</p>}
-      <p className="count"><b>{items.length}</b> ที่พักในรัศมี {meta.radius_km} กม. วัดเป็นระยะเส้นตรง</p>
-      {items.length === 0 && <div className="empty"><strong>ไม่พบที่พักรอบหมุดนี้</strong>ลองปักหมุดใกล้ตัวเมือง</div>}
+      {notices.map((n) => <p key={n} className="notice">{n}</p>)}
+      {osmAvailable === false && <p className="notice">ตอนนี้ดึงข้อมูลจาก OpenStreetMap ไม่ได้ แสดงเฉพาะข้อมูลที่ตรวจที่มาแล้ว</p>}
+      <p className="count"><b>{items.length}</b> ที่พักในรัศมี {radius} กม. วัดเป็นระยะเส้นตรง</p>
+      {items.length === 0 && <div className="empty"><Mascot size={84} mood="think" /><strong>ไม่พบที่พักรอบหมุดนี้</strong>ลองปักหมุดใกล้ตัวเมือง</div>}
       <ul className="lodges">
         {items.map((l) => (
           <li key={l.id} className="lodge">
             <div className="lodge-head">
               <h3>{l.name}</h3>
-              <span className="lodge-km">{l.distance_km} กม.</span>
+              <span className="lodge-km">{l.distance_from_pin_km} กม.</span>
             </div>
-            {l.source === 'osm' && <p className="attr">© OpenStreetMap contributors</p>}
+            {l.subtype && <p className="attr">{subtypeLabel(l.subtype)}</p>}
             <ol className="mini">
-              {(l.places_preview ?? []).map((p) => (
+              {(l.nearest ?? []).map((p) => (
                 <li key={p.id}>
-                  <span className={`ico c-${p.category}`}><CatIcon cat={p.category} size={14} /></span>
-                  <span>{p.name_th}<small>{categoryLabel(p.category)}</small></span>
+                  <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={14} /></span>
+                  <span>{p.name_th}<small>{subtypeLabel(p.subtype, p.kind)}</small></span>
                   <b>{p.distance_km} กม.</b>
                 </li>
               ))}
@@ -55,6 +56,7 @@ export default function LodgingResults({ state, hasPin, onChoose }) {
           </li>
         ))}
       </ul>
+      {attribution && <p className="attr" style={{ padding: '0 22px 16px' }}>{attribution}</p>}
     </>
   );
 }

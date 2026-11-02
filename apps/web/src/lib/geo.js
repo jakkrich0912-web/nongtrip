@@ -13,11 +13,11 @@ export function haversineKm(a, b) {
 }
 
 // ค้นสถานที่รอบจุด: บังคับรัศมีไม่เกิน 30 กม. ในโค้ด เรียงใกล้ไปไกล
-export function placesAround(origin, places, radiusKm = MAX_RADIUS_KM, category = null) {
+export function placesAround(origin, places, radiusKm = MAX_RADIUS_KM, subtype = null) {
   const r = Math.min(radiusKm, MAX_RADIUS_KM);
   return places
     .filter((p) => p.lat != null && p.lon != null)
-    .filter((p) => !category || p.category === category)
+    .filter((p) => !subtype || p.subtype === subtype)
     .map((p) => ({ ...p, distance_km: Math.round(haversineKm(origin, p) * 10) / 10 }))
     .filter((p) => p.distance_km <= r)
     .sort((a, b) => a.distance_km - b.distance_km);
