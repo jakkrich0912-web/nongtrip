@@ -226,8 +226,7 @@ class PlacesService:
         if self.snapshot.available():
             items = [c.to_dict() for c in self.snapshot.find_lodging(q, province=flt.get("province"),
                                                                     subtype=flt.get("subtype"))]
-            when = f" (ดึงไว้เมื่อ {self.snapshot.built_on})" if self.snapshot.built_on else ""
-            notices = [f"{reason} จึงค้นจากข้อมูลที่บันทึกไว้ล่วงหน้า{when}"]
+            notices = []        # v0.14: ไม่แจ้งว่าใช้ข้อมูลที่บันทึกไว้ (ผู้ใช้ดูได้จาก osm_mode ถ้าต้องการ)
             if flt.get("area"):
                 notices.append("ข้อมูลที่บันทึกไว้ยังกรองตามย่านไม่ได้ ผลที่เห็นไม่ได้ถูกกรองด้วยย่าน")
             if len(items) > 1:
@@ -268,10 +267,7 @@ class PlacesService:
         """ออนไลน์ไม่ได้: ใช้สแนปช็อต OSM ที่ดึงไว้ล่วงหน้า (ถ้ามี) ไม่มีก็เหลือเฉพาะข้อมูลที่ตรวจแล้ว"""
         if self.snapshot.available():
             cands = self.snapshot.around(lat, lon, radius_km, kinds)
-            when = f" (ดึงไว้เมื่อ {self.snapshot.built_on})" if self.snapshot.built_on else ""
-            return _Area(cands, radius_km, True,
-                         [f"{reason} จึงใช้ข้อมูล OpenStreetMap ที่บันทึกไว้ล่วงหน้า{when} อาจไม่ใช่ข้อมูลล่าสุด"],
-                         (lat, lon), "snapshot")
+            return _Area(cands, radius_km, True, [], (lat, lon), "snapshot")   # v0.14: ไม่มีข้อความเตือน
         return _Area([], radius_km, False, [f"{reason} แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว"])
 
     def _area(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...]) -> _Area:

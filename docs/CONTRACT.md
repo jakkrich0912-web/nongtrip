@@ -152,7 +152,7 @@
 
 `center`, `osm_mode` (`live` = ดึงออนไลน์, `snapshot` = ใช้ข้อมูล OSM ที่ดึงไว้ล่วงหน้า, `none` = ไม่มีข้อมูล OSM เลย), `radius_km` (รัศมีที่ใช้จริง อาจน้อยกว่าที่ขอ ถ้าพื้นที่หนาแน่นจน OSM ส่งไม่ไหว), `total`, `offset`, `limit`, `counts` (ต่อ kind), `sources` (`verified`/`osm`), `osm_available`, `notices[]` (ข้อความภาษาไทยที่หน้าเว็บต้องแสดง), `attribution`, `distance_note`, `items[]`
 
-ถ้าเชื่อม OSM ออนไลน์ไม่ได้ ระบบใช้สแนปช็อต (`osm_mode=snapshot`, `osm_available=true`) ถ้าไม่มีสแนปช็อตด้วย `osm_available=false`, `osm_mode=none` ระบบแสดงเฉพาะ `verified` และทุกกรณีใส่ข้อความใน `notices` ที่หน้าเว็บต้องแสดง
+ถ้าเชื่อม OSM ออนไลน์ไม่ได้ ระบบใช้สแนปช็อต (`osm_mode=snapshot`, `osm_available=true`) **v0.14:** โหมดนี้ไม่ใส่ข้อความเตือนว่าใช้ข้อมูลที่บันทึกไว้ใน `notices` อีก (ไคลเอนต์ดูได้จาก `osm_mode`) ถ้าไม่มีสแนปช็อตด้วย `osm_available=false`, `osm_mode=none` ระบบแสดงเฉพาะ `verified` และใส่ข้อความใน `notices` ที่หน้าเว็บต้องแสดง
 
 `validation` (ทั้ง `nearby` และ `lodgings/near`): ผลของตัวตรวจอิสระ `{ok, checked, problems[], problem_count}` ตรวจรัศมี ≤ 30 กม. เรียงใกล้ไปไกล ไม่ซ้ำ ไม่มีเงิน/คะแนน/รีวิว ป้ายแหล่งข้อมูล และสถานที่ที่ตรวจแล้วมีอยู่จริงในไฟล์ข้อมูล ถ้า `ok=false` API เพิ่มข้อความเตือนใน `notices` และหน้าเว็บต้องแสดงป้ายเตือน
 
@@ -246,3 +246,4 @@
 | v0.11 | 2026-11-02 | `GET /api/lodgings/search` รับตัวกรอง `province`, `area`, `subtype` และรายการมีฟิลด์ `province` เพิ่ม (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.12 | 2026-11-02 | เพิ่มลบข้อมูลของตัวเอง: `DELETE /api/me/searches`, `DELETE /api/me/favorites`, `DELETE /api/me/chats` (ลบทั้งหมดของฉัน) และ `POST /api/me/delete` (ลบบัญชีถาวร ต้องส่งอีเมลยืนยัน) เพิ่มอย่างเดียว ไม่ breaking |
 | v0.13 | 2026-11-02 | โหมด LLM ของแชต: เพิ่ม event `sources`, ฟิลด์ `mode` ใน `done`, ฟิลด์ `rag` ใน `/api/health` (เพิ่มอย่างเดียว ไม่ breaking โหมดกฎคงเดิม) |
+| v0.14 | 2026-11-03 | `osm_mode=snapshot` ไม่ใส่ข้อความเตือนว่าใช้ข้อมูลที่บันทึกไว้ล่วงหน้าใน `notices` (ตามที่ Jakkrich ตัดสินใจ) ฟิลด์ `osm_mode` ยังบอกโหมดอยู่ ส่วน `osm_mode=none` ยังมีข้อความเตือนเหมือนเดิม ข้อความ `notices` อื่นไม่เปลี่ยน |

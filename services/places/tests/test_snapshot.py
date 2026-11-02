@@ -38,11 +38,11 @@ def test_missing_dir_is_not_available(tmp_path):
     assert not Snapshot(None).available()
 
 
-def test_offline_nearby_uses_snapshot_and_says_so(tmp_path):
+def test_offline_nearby_uses_snapshot_without_staleness_notice(tmp_path):
     r = svc(tmp_path, FakeHttp(overpass_error=UpstreamError("down"))).nearby(LAT, LON, 30)
     assert [p.name_th for p in r.items] == ["คาเฟ่ในสแนปช็อต", "วัดในสแนปช็อต"]
     assert r.osm_mode == "snapshot" and r.osm_available is True
-    assert any("บันทึกไว้ล่วงหน้า" in n and "2026-11-01" in n for n in r.notices)
+    assert not any("บันทึกไว้ล่วงหน้า" in n or "ไม่ใช่ข้อมูลล่าสุด" in n for n in r.notices)   # CONTRACT v0.14
     d = [p.distance_km for p in r.items]
     assert d == sorted(d) and all(x <= 30 for x in d)
 
