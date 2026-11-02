@@ -110,6 +110,18 @@
 
 แชตถูกสร้างและเพิ่มข้อความโดย `POST /api/chat` (ข้อ 3.2) ชื่อแชตคือข้อความแรกของผู้ใช้ (ตัดที่ 80 ตัวอักษร)
 
+### 3.5 ไกด์ที่เที่ยว (API พร้อม ไม่ต้องล็อกอิน)
+
+ใช้กับหน้าแรก หน้าจังหวัด และหน้ารายละเอียดสถานที่ ข้อมูลมาจากสถานที่ที่ **ตรวจที่มาแล้วเท่านั้น** (`verified=true`) ไม่มีราคา ค่าเข้า คะแนน หรือรีวิว ฟิลด์ที่ไม่มีแหล่งอ้างอิงเป็น `null` หรือ `[]` หน้าเว็บต้องซ่อนส่วนนั้นเลย ห้ามเติมเอง สถานที่จาก OpenStreetMap ไม่มีหน้ารายละเอียด
+
+| เมธอด | เส้นทาง | ตอบ |
+|---|---|---|
+| GET | `/api/guide/featured?limit=12&category=` | `{items:[สถานที่], categories:{temple: 92, ...}, total}` จังหวัดละ 1 แห่ง (ถ้าจังหวัดนั้นมีคำอธิบายจะเลือกแห่งที่มี) สลับไปทีละภาค **ไม่ใช่การจัดอันดับความนิยม** (ระบบไม่มีข้อมูลนั้น) `limit` 1-50 |
+| GET | `/api/provinces/{ชื่อ}/places?category=&limit=50&offset=0` | `{province, region, verified_count, categories, total, items, has_more}` จังหวัดที่ยังไม่มีข้อมูลตอบ `verified_count: 0` และ `items: []` (ไม่ใช่ข้อผิดพลาด) ชื่อจังหวัดผิดตอบ `400 invalid_param` `limit` 1-200 `verified_count` ไม่ขึ้นกับ `category` |
+| GET | `/api/places/{id}` | สถานที่ 1 แห่ง (`id` แบบ `v:p01`) ไม่พบ หรือเป็นรหัส `osm:` ตอบ `404 not_found` |
+
+รูปสถานที่ในไกด์: `{id, name_th, name_en, kind, subtype, province, area, description, notes[], lat, lon, maps_url, source_url, source_title, source_checked_on}` `subtype` ตอนนี้มี `temple` `nature` `museum` `activity` `market` `cafe` `craft` (หน้าเว็บเป็นคนแปลงเป็นป้ายภาษาไทย) `area` เป็น `null` เมื่อไม่มีข้อมูลย่านแยกจากจังหวัด `description` ตอนนี้ยังมีไม่กี่แห่ง ต้องมีแหล่งอ้างอิงก่อนจึงเติมได้ (กติกาข้อ 1) `source_*` คือแหล่งที่ตรวจพิกัด/ชื่อ แสดงเป็น "ที่มาของข้อมูล" ได้
+
 ## 4. รูปแบบข้อมูล
 
 ### สถานที่ (`items[]` ของ `nearby` และ `nearest[]` ของ `lodgings/near`)
@@ -221,3 +233,4 @@
 | v0.7 | 2026-11-02 | API ผู้ใช้/ประวัติ/สถานที่โปรด/แชต พร้อมใช้ (`services/api`): สมัครแล้วล็อกอินให้ทันที เพิ่ม `DELETE /api/me/searches/{id}` และ `DELETE /api/me/chats/{id}` กำหนดรูปคำตอบและเพดานจำนวน เพิ่ม 404 `not_found` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.8 | 2026-11-02 | `POST /api/chat` พร้อมใช้ (โหมดกฎ): กำหนด event `lodgings`, ฟิลด์ `chat_id` ในคำขอ, `chat_id` เป็น `null` เมื่อไม่ล็อกอิน, `rate_limited` ของแชต (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.9 | 2026-11-02 | เพิ่ม `POST /api/auth/google` (ล็อกอินด้วย Google ID token), code `google_not_configured` (501), `upstream_unavailable` ใช้กับล็อกอิน Google แล้ว, ตัวแปร env `GOOGLE_CLIENT_ID` (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.10 | 2026-11-02 | เพิ่ม API ไกด์ที่เที่ยว: `GET /api/guide/featured`, `GET /api/provinces/{ชื่อ}/places`, `GET /api/places/{id}` (เพิ่มอย่างเดียว ไม่ breaking) |
