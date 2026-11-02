@@ -6,6 +6,7 @@ import { PLACES, subtypeLabel, iconGroup } from '../lib/data.js';
 import CatIcon from '../components/CatIcon.jsx';
 import Mascot from '../components/Mascot.jsx';
 import LodgingResults from '../components/LodgingResults.jsx';
+import LodgingSearch from '../components/LodgingSearch.jsx';
 import { lodgingsNear, placesNearby, ApiUnavailable } from '../lib/api.js';
 import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM } from '../lib/geo.js';
 
@@ -18,6 +19,7 @@ const homeIcon = dot('#F9A620', 18);
 const placeIcon = dot('#B7472A', 12);
 const activeIcon = dot('#4A7C59', 16);
 const lodgeIcon = dot('#3D6A4B', 14);
+const candIcon = dot('#7B5A2E', 14);
 
 function PinPicker({ onPick }) {
   useMapEvents({ click: (e) => onPick({ lat: e.latlng.lat, lon: e.latlng.lng }) });
@@ -41,6 +43,7 @@ export default function Search() {
   const [mode, setMode] = useState('booked'); // booked = มีที่พักแล้ว, browse = ยังไม่ได้จอง
   const [pin, setPin] = useState(null);
   const [lodging, setLodging] = useState({ status: 'idle' });
+  const [cands, setCands] = useState([]); // ที่พักที่ค้นเจอจากชื่อ รอผู้ใช้เลือก
   // สถานที่รอบที่พักจาก GET /api/places/nearby ครั้งละ 100 แห่ง (เรียงใกล้ไปไกล)
   // ถ้าเปิด API ไม่ได้ ใช้สถานที่ที่ตรวจที่มาแล้วในเครื่องแทน และบอกผู้ใช้
   const [near, setNear] = useState({ status: 'idle', items: [] });
@@ -79,15 +82,15 @@ export default function Search() {
 
   const pick = (o) => {
     setActive(null);
-    if (mode === 'booked') { setOrigin(o); return; }
+    if (mode === 'booked') { setOrigin(o); setCands([]); return; }
     const seq = ++lodgeSeq.current;
     setPin(o); setOrigin(null); setLodging({ status: 'loading' });
     lodgingsNear(o)
       .then((data) => seq === lodgeSeq.current && setLodging({ status: 'ok', data }))
       .catch((e) => seq === lodgeSeq.current && setLodging({ status: 'error', message: e.message }));
   };
-  const chooseLodging = (l) => { cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name }); };
-  const switchMode = (m) => { cancelPending(); setKind(''); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
+  const chooseLodging = (l) => { cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setCands([]); setActive({ lat: l.lat, lon: l.lon }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name }); };
+  const switchMode = (m) => { cancelPending(); setKind(''); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
   const results = origin ? near.items : [];
   const check = validateResults(results);
@@ -119,6 +122,12 @@ export default function Search() {
             <button role="tab" aria-selected={mode === 'booked'} onClick={() => switchMode('booked')}>มีที่พักแล้ว</button>
             <button role="tab" aria-selected={mode === 'browse'} onClick={() => switchMode('browse')}>ยังไม่ได้จอง</button>
           </div>
+          {mode === 'booked' && !origin && (
+            <LodgingSearch key={province} province={province} onChoose={chooseLodging} onResults={setCands} />
+          )}
+          {mode === 'booked' && origin && (
+            <button className="linkbtn change" onClick={() => { setOrigin(null); setActive(null); }}>เปลี่ยนที่พัก</button>
+          )}
           {mode === 'booked' && origin && (
             <div className="chips" role="group" aria-label="ประเภท">
               {KINDS.map(([k, label]) => (
@@ -138,7 +147,7 @@ export default function Search() {
               <div className="hint-card">
                 <Mascot size={58} mood="wave" className="hint-buddy" />
                 <div>
-                  <strong>แตะแผนที่ตรงที่พักของคุณ</strong>
+                  <strong>พิมพ์ชื่อที่พัก หรือแตะแผนที่</strong>
                   <p>แล้วที่เที่ยวในรัศมี 30 กม. จะเรียงจากใกล้ไปไกลที่นี่</p>
                 </div>
               </div>
@@ -217,6 +226,7 @@ export default function Search() {
       <div className="legend" aria-hidden="true">
         <span><i style={{ background: '#F9A620' }} />{mode === 'booked' ? 'ที่พักของคุณ' : 'ย่านที่เลือก'}</span>
         {mode === 'browse' && <span><i style={{ background: '#3D6A4B' }} />ที่พัก</span>}
+        {cands.length > 0 && <span><i style={{ background: '#7B5A2E' }} />ที่พักที่ค้นเจอ</span>}
         <span><i style={{ background: '#B7472A' }} />สถานที่</span>
         <span><i style={{ background: 'transparent', border: '2px dashed #4A7C59' }} />รัศมี {mode === 'booked' ? 30 : (lodging.data?.radius_km ?? 5)} กม.</span>
       </div>
@@ -230,7 +240,7 @@ export default function Search() {
         {origin && (
           <>
             <Circle center={[origin.lat, origin.lon]} radius={30000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
-            <Marker position={[origin.lat, origin.lon]} icon={homeIcon}><Popup>ที่พักของคุณ</Popup></Marker>
+            <Marker position={[origin.lat, origin.lon]} icon={homeIcon}><Popup>{origin.name ?? 'ที่พักของคุณ'}</Popup></Marker>
           </>
         )}
         {pin && (
@@ -239,6 +249,11 @@ export default function Search() {
             <Marker position={[pin.lat, pin.lon]} icon={homeIcon}><Popup>ย่านที่เลือก</Popup></Marker>
           </>
         )}
+        {cands.map((l) => (
+          <Marker key={`c-${l.id}`} position={[l.lat, l.lon]} icon={candIcon} eventHandlers={{ click: () => chooseLodging(l) }}>
+            <Popup>{l.name}</Popup>
+          </Marker>
+        ))}
         {lodging.status === 'ok' && lodging.data.items.map((l) => (
           <Marker key={l.id} position={[l.lat, l.lon]} icon={lodgeIcon} eventHandlers={{ click: () => chooseLodging(l) }}>
             <Popup>{l.name} · {l.distance_from_pin_km} กม.</Popup>
