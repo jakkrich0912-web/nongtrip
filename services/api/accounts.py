@@ -35,6 +35,10 @@ class GoogleIn(BaseModel):
     credential: str = Field(min_length=1, max_length=5000)
 
 
+class DeleteAccountIn(BaseModel):
+    email: str = Field(max_length=300)  # พิมพ์อีเมลของตัวเองยืนยัน กันกดลบพลาด
+
+
 class SearchIn(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     lat: float
@@ -143,6 +147,19 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         u, bad = need_login(req)
         return bad or {"user": u}
 
+    @r.post("/api/me/delete", status_code=204)
+    def delete_account(body: DeleteAccountIn, req: Request):
+        """ลบบัญชีและข้อมูลทั้งหมดถาวร ต้องส่งอีเมลของตัวเองมายืนยัน"""
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        if body.email.strip().lower() != u["email"]:
+            return _err(400, "invalid_param", "อีเมลที่พิมพ์ไม่ตรงกับบัญชีนี้")
+        store.delete_user(u["id"])
+        resp = Response(status_code=204)
+        resp.delete_cookie(COOKIE, path="/")
+        return resp
+
     # ---- ที่พักที่เคยค้น ----
     @r.get("/api/me/searches")
     def searches(req: Request):
@@ -160,6 +177,14 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         if not name:
             return _err(400, "invalid_param", "ชื่อที่พักว่าง")
         return store.add_search(u["id"], name, body.lat, body.lon)
+
+    @r.delete("/api/me/searches", status_code=204)
+    def delete_all_searches(req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_all_searches(u["id"])
+        return Response(status_code=204)
 
     @r.delete("/api/me/searches/{search_id}", status_code=204)
     def delete_search(req: Request, search_id: int = Path(ge=1, le=MAX_ID)):
@@ -214,6 +239,14 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
             response.status_code = 200
         return fav_out(row)
 
+    @r.delete("/api/me/favorites", status_code=204)
+    def delete_all_favorites(req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_all_favorites(u["id"])
+        return Response(status_code=204)
+
     @r.delete("/api/me/favorites/{place_id:path}", status_code=204)
     def delete_favorite(place_id: str, req: Request):
         u, bad = need_login(req)
@@ -235,6 +268,14 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
             return bad
         c = store.get_chat(u["id"], chat_id)
         return c or _err(404, "not_found", "ไม่พบแชตนี้")
+
+    @r.delete("/api/me/chats", status_code=204)
+    def delete_all_chats(req: Request):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        store.delete_all_chats(u["id"])
+        return Response(status_code=204)
 
     @r.delete("/api/me/chats/{chat_id}", status_code=204)
     def delete_chat(req: Request, chat_id: int = Path(ge=1, le=MAX_ID)):
