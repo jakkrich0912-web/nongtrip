@@ -70,7 +70,7 @@ export default function Chat() {
         <Mascot size={72} mood="happy" />
         <div>
           <h2>ถามน้องทริป</h2>
-          <p className="note">ผู้ช่วยค้นจากข้อมูลจริงชุดเดียวกับหน้าค้นหา ไม่เดาข้อมูล</p>
+          <p className="note">ตอบจากข้อมูลที่ตรวจที่มาแล้ว ไม่เดา</p>
         </div>
       </div>
 

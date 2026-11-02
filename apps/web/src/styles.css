@@ -500,17 +500,12 @@ a.prov-n:hover { text-decoration:underline; }
 /* แชต: บรรทัดคำตอบ รายการสถานที่ และที่มา */
 .msg .ln { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
 .msg .ln + .ln { margin-top:4px; }
-.msg .typing { color:var(--muted, #6b7a6b); }
+.msg .typing { color:#56635a; } /* ตัดกับพื้นฟองข้อความ ≥ 4.5:1 */
 .msg .err { color:#B7472A; }
 .chat-picks { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-.chat-places { list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:6px; }
-.chat-places li { display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-radius:12px; background:rgba(255,255,255,.55); }
-.chat-places .nm small { display:block; font-size:.78rem; opacity:.7; }
-.chat-places .km { white-space:nowrap; font-variant-numeric:tabular-nums; }
 .chat-sources { margin-top:10px; padding-top:8px; border-top:1px dashed rgba(34,48,31,.18); font-size:.85rem; }
 .chat-sources .src-h { margin:0 0 4px; font-weight:600; }
 .chat-sources ol { margin:0; padding-left:20px; }
 .chat-sources small { opacity:.75; }
-.msg .attr { margin:8px 0 0; font-size:.75rem; opacity:.7; }
 .chat-ctx { margin:0 0 8px; }
 .linkish { background:none; border:none; padding:0; color:var(--lagoon); text-decoration:underline; cursor:pointer; font:inherit; }
