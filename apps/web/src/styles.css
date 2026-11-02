@@ -496,3 +496,16 @@ main { min-height:calc(100vh - var(--chrome)); }
 .cat li a:hover, .demo-name a:hover, .place h3 a:hover, .mt-main strong a:hover { text-decoration:underline; text-underline-offset:3px; }
 a.prov-n { color:var(--lagoon-2); text-decoration:none; font-weight:500; }
 a.prov-n:hover { text-decoration:underline; }
+
+/* แชต: บรรทัดคำตอบ รายการสถานที่ และที่มา */
+.msg .ln { margin:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.msg .ln + .ln { margin-top:4px; }
+.msg .typing { color:#56635a; } /* ตัดกับพื้นฟองข้อความ ≥ 4.5:1 */
+.msg .err { color:#B7472A; }
+.chat-picks { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.chat-sources { margin-top:10px; padding-top:8px; border-top:1px dashed rgba(34,48,31,.18); font-size:.85rem; }
+.chat-sources .src-h { margin:0 0 4px; font-weight:600; }
+.chat-sources ol { margin:0; padding-left:20px; }
+.chat-sources small { opacity:.75; }
+.chat-ctx { margin:0 0 8px; }
+.linkish { background:none; border:none; padding:0; color:var(--lagoon); text-decoration:underline; cursor:pointer; font:inherit; }
