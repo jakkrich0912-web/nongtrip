@@ -14,6 +14,7 @@ from pathlib import Path
 
 MAX_SEARCHES = 100
 MAX_FAVORITES = 500
+GOOGLE_PW_HASH = "google"  # ไม่ใช่รูปแบบ scrypt$... จึงล็อกอินด้วยรหัสผ่านไม่ได้
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -66,6 +67,15 @@ class Store:
         self._ready = False
         self._lock = threading.Lock()
 
+    @staticmethod
+    def _migrate(c: sqlite3.Connection) -> None:
+        """เพิ่มคอลัมน์ที่มาทีหลังให้ฐานข้อมูลเดิม (ไม่ลบหรือแก้ข้อมูลเก่า)"""
+        cols = {r[1] for r in c.execute("PRAGMA table_info(users)")}
+        if "google_sub" not in cols:
+            c.execute("ALTER TABLE users ADD COLUMN google_sub TEXT")
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google ON users(google_sub)")
+        c.commit()
+
     @contextmanager
     def _db(self):
         with self._lock:
@@ -74,6 +84,7 @@ class Store:
                     Path(self.path).parent.mkdir(parents=True, exist_ok=True)
                 with closing(sqlite3.connect(self.path, timeout=10)) as c:
                     c.executescript(SCHEMA)
+                    self._migrate(c)
                 self._ready = True
         with closing(sqlite3.connect(self.path, timeout=10)) as c:
             c.row_factory = sqlite3.Row
@@ -94,6 +105,21 @@ class Store:
             except sqlite3.IntegrityError as e:
                 raise EmailTaken(email) from e
             return {"id": cur.lastrowid, "email": email}
+
+    def create_google_user(self, email: str, google_sub: str) -> dict:
+        """ผู้ใช้ที่เข้าด้วย Google ไม่มีรหัสผ่าน: pw_hash เป็นค่าที่ verify_password ไม่มีวันผ่าน"""
+        with self._db() as c:
+            try:
+                cur = c.execute("INSERT INTO users(email, pw_hash, created_at, google_sub) VALUES (?,?,?,?)",
+                                (email, GOOGLE_PW_HASH, now_iso(), google_sub))
+            except sqlite3.IntegrityError as e:
+                raise EmailTaken(email) from e
+            return {"id": cur.lastrowid, "email": email}
+
+    def user_by_google_sub(self, google_sub: str) -> dict | None:
+        with self._db() as c:
+            r = c.execute("SELECT id, email FROM users WHERE google_sub = ?", (google_sub,)).fetchone()
+            return dict(r) if r else None
 
     def user_by_email(self, email: str) -> dict | None:
         with self._db() as c:

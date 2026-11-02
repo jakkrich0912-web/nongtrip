@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 from services.places.geo import in_thailand, place_url
 
 from . import auth
+from .google import GoogleInvalid, GoogleUnavailable, GoogleVerifier
 from .store import EmailTaken, Store
 
 COOKIE = "nt_session"
@@ -28,6 +29,10 @@ def _err(status: int, code: str, message: str) -> JSONResponse:
 class Credentials(BaseModel):
     email: str = Field(max_length=300)
     password: str = Field(max_length=auth.MAX_PASSWORD + 100)
+
+
+class GoogleIn(BaseModel):
+    credential: str = Field(min_length=1, max_length=5000)
 
 
 class SearchIn(BaseModel):
@@ -48,9 +53,11 @@ class FavoriteIn(BaseModel):
 
 
 def build_router(store: Store, secret: str, verified: list, secure_cookie: bool = True,
-                 throttle: auth.LoginThrottle | None = None) -> APIRouter:
+                 throttle: auth.LoginThrottle | None = None, google: GoogleVerifier | None = None) -> APIRouter:
     r = APIRouter()
     throttle = throttle or auth.LoginThrottle()
+    google = google or GoogleVerifier()
+    google_throttle = auth.LoginThrottle(max_fails=30, window=60)  # กันคนยิงให้เราเรียก Google รัวๆ (นับทุกคำขอต่อ IP)
     verified_by_id = {c.id: c for c in verified}
 
     def set_session(resp: Response, user_id: int) -> None:
@@ -96,6 +103,34 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         throttle.reset(email)
         set_session(response, row["id"])
         return {"user": {"id": row["id"], "email": row["email"]}}
+
+    @r.post("/api/auth/google")
+    def login_google(body: GoogleIn, req: Request, response: Response):
+        if not google.configured:
+            return _err(501, "google_not_configured", "ยังไม่เปิดใช้การเข้าสู่ระบบด้วย Google")
+        ip = req.client.host if req.client else "?"
+        if google_throttle.blocked(ip):
+            return _err(429, "rate_limited", "ลองบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่")
+        google_throttle.fail(ip)
+        try:
+            who = google.verify(body.credential)
+        except GoogleInvalid:
+            return _err(401, "unauthorized", "ยืนยันตัวตนกับ Google ไม่สำเร็จ กรุณาลองใหม่")
+        except GoogleUnavailable:
+            return _err(502, "upstream_unavailable", "ติดต่อ Google ไม่ได้ในตอนนี้ กรุณาลองใหม่อีกครั้ง")
+        user = store.user_by_google_sub(who["sub"])
+        if user is None:
+            # อีเมลนี้สมัครด้วยรหัสผ่านไว้แล้ว: ไม่ผูกให้เอง เพราะระบบเราไม่ได้ยืนยันอีเมลตอนสมัคร
+            # (ถ้าผูกให้ ผู้ที่สมัครอีเมลของคนอื่นไว้ล่วงหน้าจะเข้าบัญชีเดียวกับเจ้าของอีเมลได้)
+            if store.user_by_email(who["email"]):
+                return _err(409, "email_taken", "อีเมลนี้สมัครด้วยรหัสผ่านไว้แล้ว กรุณาเข้าสู่ระบบด้วยอีเมลและรหัสผ่าน")
+            try:
+                user = store.create_google_user(who["email"], who["sub"])
+            except EmailTaken:
+                return _err(409, "email_taken", "อีเมลนี้สมัครไว้แล้ว")
+            response.status_code = 201
+        set_session(response, user["id"])
+        return {"user": {"id": user["id"], "email": user["email"]}}
 
     @r.post("/api/auth/logout", status_code=204)
     def logout():
