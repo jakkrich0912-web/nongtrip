@@ -13,8 +13,8 @@ from services.places import PlacesService
 from services.places.cache import TTLCache
 from services.places.fetch import UpstreamError
 from services.places.models import Candidate
-from services.places.snapshot import Snapshot
-from services.places.tests.helpers import CM, FakeHttp, el
+from services.places.snapshot import Snapshot, write_province
+from services.places.tests.helpers import CM, FakeHttp, cand, el
 
 LAT, LON = CM
 PW = "รหัสผ่านยาวพอ-123"
@@ -243,6 +243,20 @@ def test_osm_down_still_answers_with_notice(tmp_path):
     p = dict(evs)["places"]
     assert p["osm_available"] is False and p["notices"] and evs[-1][0] == "done"
     assert "หมายเหตุ" in text_of(evs)
+
+
+def test_snapshot_mode_shows_names_without_notice(tmp_path):
+    # ย้อนรอย: OSM_LIVE=0 ใช้สแนปช็อต ไม่มีข้อความเตือน (CONTRACT v0.14) ตัวตรวจอิสระต้องไม่ตีตกผลค้น
+    write_province(tmp_path / "snap", "เชียงใหม่",
+                   [cand("osm:node/1", "วัดในสแนปช็อต", up(2), LON)], "2026-11-01")
+    svc = PlacesService(http=FakeHttp(), cache=TTLCache(None), verified=VERIFIED, osm_live=False,
+                        snapshot=Snapshot(tmp_path / "snap"))
+    app = create_app(svc, store=Store(tmp_path / "t.db"), session_secret="s", secure_cookie=False,
+                     chat_throttle=ChatThrottle(limit=1000))
+    evs = events(ask(TestClient(app), "ที่เที่ยวใกล้ๆ", context={"lat": LAT, "lon": LON}))
+    p = dict(evs)["places"]
+    assert p["osm_mode"] == "snapshot" and p["validation"]["ok"] and p["items"]
+    assert "วัดในสแนปช็อต" in text_of(evs) and "ไม่ผ่านการตรวจอิสระ" not in text_of(evs)
 
 
 def test_failed_validation_withholds_names(env, monkeypatch):

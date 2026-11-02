@@ -126,7 +126,8 @@ def validate_nearby(resp: dict, known_verified_ids: set[str] | None = None) -> d
     if any(it.get("source") == "osm" for it in items):
         if "OpenStreetMap" not in (resp.get("attribution") or ""):
             problems.append("ใช้ข้อมูล OSM แต่ไม่มีข้อความ © OpenStreetMap contributors")
-    if mode in ("snapshot", "none") and not resp.get("notices"):
+    # v0.14: โหมด snapshot ไม่ต้องมีข้อความเตือน (ดูจาก osm_mode) ส่วนโหมด none ยังต้องบอกผู้ใช้ว่าไม่มีข้อมูล OSM
+    if mode == "none" and not resp.get("notices"):
         problems.append(f"osm_mode={mode} แต่ไม่มีข้อความแจ้งผู้ใช้")
     if len(items) > resp.get("total", 0):
         problems.append("จำนวนรายการมากกว่า total")
