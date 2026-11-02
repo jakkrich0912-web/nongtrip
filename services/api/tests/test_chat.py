@@ -151,7 +151,9 @@ def test_reply_names_and_distances_come_only_from_places_event(env):
     for i, p in enumerate(items, 1):
         assert f"{i}. {p['name_th']}" in text and f"{p['distance_km']:g} กม." in text
     assert "ไกลหน่อย" not in text          # แห่งที่ 4 ไม่อยู่ในรายการที่แสดง
-    assert "ระยะเป็นเส้นตรง" in text and "OpenStreetMap" in text
+    assert "ระยะเป็นเส้นตรง" in text and "OpenStreetMap" in text          # ที่มา OSM ยังอยู่ในบรรทัดท้าย
+    for tag in ("ตรวจที่มาแล้ว", "ข้อมูล OpenStreetMap", "(สถานที่เที่ยว", "(คาเฟ่"):
+        assert tag not in text                                              # ไม่ต่อวงเล็บชนิด/ที่มาท้ายชื่อรายการ
     ds = [p["distance_km"] for p in items]
     assert ds == sorted(ds)
 

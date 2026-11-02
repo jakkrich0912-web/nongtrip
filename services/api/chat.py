@@ -34,7 +34,6 @@ from .validator import validate_lodgings_near, validate_nearby
 log = logging.getLogger("nongtrip.chat")
 
 KIND_TH = {"attraction": "สถานที่เที่ยว", "cafe": "คาเฟ่"}
-SOURCE_TH = {"verified": "ตรวจที่มาแล้ว", "osm": "ข้อมูล OpenStreetMap"}
 INVALID_NOTICE = "ผลค้นนี้ไม่ผ่านการตรวจอิสระ โปรดอย่าเชื่อถือจนกว่าจะตรวจสอบ"
 
 HELP = ("สวัสดีค่ะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณได้ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล\n"
@@ -208,8 +207,7 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str])
     if not items:
         yield from say(f"ไม่พบ{kinds_th}ในรัศมี {res['radius_km']:g} กม. รอบ{where}", *_notes(notes + res_notes), *tail)
         return
-    rows = [f"{i}. {_one_line(p['name_th'])} ({KIND_TH[p['kind']]}, {SOURCE_TH[p['source']]}) "
-            f"ห่าง {p['distance_km']:g} กม." for i, p in enumerate(items, 1)]
+    rows = [f"{i}. {_one_line(p['name_th'])} ห่าง {p['distance_km']:g} กม." for i, p in enumerate(items, 1)]
     more = (f"ยังมีอีก {res['total'] - len(items)} แห่งในรัศมีนี้ บอกจำนวนที่อยากดูได้ เช่น \"10 แห่ง\""
             if res["total"] > len(items) else "")
     attr = res["attribution"] if any(p["source"] == "osm" for p in items) else ""
