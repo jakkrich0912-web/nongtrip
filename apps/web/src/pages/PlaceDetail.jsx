@@ -30,7 +30,7 @@ export default function PlaceDetail() {
 
   useEffect(() => {
     let alive = true;
-    setState({ status: 'loading' }); setNear([]);
+    setState({ status: 'loading' }); setNear([]); setNote('');
     placeById(id)
       .then((p) => {
         if (!alive) return;

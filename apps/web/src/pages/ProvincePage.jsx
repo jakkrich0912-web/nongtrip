@@ -11,8 +11,13 @@ const PAGE = 50;
 
 // หน้าจังหวัด GET /api/provinces/{ชื่อ}/places (ข้อ 3.5)
 // แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว จังหวัดที่ยังไม่มีข้อมูลไม่ใช่ข้อผิดพลาด
+// key ตามชื่อจังหวัด: เปลี่ยนจังหวัดแล้วเริ่มใหม่หมด ไม่มีหมวดหรือข้อความของจังหวัดเดิมค้าง
 export default function ProvincePage() {
   const { name } = useParams();
+  return <ProvinceBody key={name} name={name} />;
+}
+
+function ProvinceBody({ name }) {
   const [category, setCategory] = useState('');
   const [state, setState] = useState({ status: 'loading', items: [] });
   const [note, setNote] = useState('');
