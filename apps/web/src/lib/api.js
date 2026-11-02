@@ -21,19 +21,27 @@ export function errorFromBody(body, status) {
   return new ApiError(message, status, typeof body?.code === 'string' ? body.code : null);
 }
 
-async function get(path) {
+// เรียก API ทุกแบบ ส่งคุกกี้เซสชันไปด้วยเสมอ (ข้อ 3.3) ตอบ 204 คืน null
+async function request(method, path, body) {
   let res;
   try {
-    res = await fetch(path, { credentials: 'include' });
+    res = await fetch(path, {
+      method,
+      credentials: 'include',
+      headers: body === undefined ? undefined : { 'content-type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
   } catch {
-    throw new ApiUnavailable('เชื่อมต่อระบบค้นไม่ได้ ตรวจว่าเปิด services/api อยู่');
+    throw new ApiUnavailable('เชื่อมต่อระบบไม่ได้ ตรวจว่าเปิด services/api อยู่');
   }
+  if (res.status === 204) return null;
   const ct = res.headers.get('content-type') ?? '';
-  if (!ct.includes('application/json')) throw new ApiUnavailable('ระบบค้นยังไม่เปิดใช้');
-  const body = await res.json();
-  if (!res.ok) throw errorFromBody(body, res.status);
-  return body;
+  if (!ct.includes('application/json')) throw new ApiUnavailable('ระบบยังไม่เปิดใช้');
+  const data = await res.json();
+  if (!res.ok) throw errorFromBody(data, res.status);
+  return data;
 }
+const get = (path) => request('GET', path);
 
 const qs = (o) => new URLSearchParams(Object.entries(o).filter(([, v]) => v != null && v !== '')).toString();
 
@@ -47,3 +55,29 @@ export const lodgingsSearch = ({ q, province, area, subtype }) =>
 // สถานที่รอบจุด kinds = attraction,cafe
 export const placesNearby = ({ lat, lon, radius_km = 30, kinds, limit, offset }) =>
   get(`/api/places/nearby?${qs({ lat, lon, radius_km, kinds, limit, offset })}`);
+
+// ผู้ใช้ (ข้อ 3.3)
+export const authMe = () => request('GET', '/api/auth/me');
+export const authLogin = (email, password) => request('POST', '/api/auth/login', { email, password });
+export const authRegister = (email, password) => request('POST', '/api/auth/register', { email, password });
+export const authLogout = () => request('POST', '/api/auth/logout');
+export const deleteAccount = (email) => request('POST', '/api/me/delete', { email });
+
+// ประวัติ สถานที่โปรด แชต (ข้อ 3.4 ต้องล็อกอิน)
+export const mySearches = () => request('GET', '/api/me/searches');
+export const saveSearch = ({ name, lat, lon }) => request('POST', '/api/me/searches', { name, lat, lon });
+export const deleteSearch = (id) => request('DELETE', `/api/me/searches/${encodeURIComponent(id)}`);
+export const deleteAllSearches = () => request('DELETE', '/api/me/searches');
+
+export const myFavorites = () => request('GET', '/api/me/favorites');
+// v: ระบบอ่านข้อมูลจากไฟล์เอง ส่งแค่รหัส, osm: ต้องส่งชื่อ พิกัด และ kind ไปด้วย
+export const addFavorite = (p) => request('POST', '/api/me/favorites', String(p.id).startsWith('v:')
+  ? { place_id: p.id }
+  : { place_id: p.id, name_th: p.name_th, lat: p.lat, lon: p.lon, kind: p.kind, subtype: p.subtype ?? null, province: p.province ?? null });
+// place_id มี / ได้ (osm:node/123) ส่งเป็นเส้นทางตรงๆ ตามสัญญา
+export const removeFavorite = (id) => request('DELETE', `/api/me/favorites/${String(id).split('/').map(encodeURIComponent).join('/')}`);
+export const deleteAllFavorites = () => request('DELETE', '/api/me/favorites');
+
+export const myChats = () => request('GET', '/api/me/chats');
+export const deleteChat = (id) => request('DELETE', `/api/me/chats/${encodeURIComponent(id)}`);
+export const deleteAllChats = () => request('DELETE', '/api/me/chats');

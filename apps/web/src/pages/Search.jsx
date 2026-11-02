@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { PLACES, subtypeLabel, iconGroup } from '../lib/data.js';
@@ -7,7 +7,8 @@ import CatIcon from '../components/CatIcon.jsx';
 import Mascot from '../components/Mascot.jsx';
 import LodgingResults from '../components/LodgingResults.jsx';
 import LodgingSearch from '../components/LodgingSearch.jsx';
-import { lodgingsNear, placesNearby, ApiUnavailable } from '../lib/api.js';
+import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch, addFavorite, removeFavorite } from '../lib/api.js';
+import { useAuth } from '../lib/auth.jsx';
 import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM } from '../lib/geo.js';
 
 const dot = (color, size) => L.divIcon({
@@ -37,7 +38,13 @@ export default function Search() {
   const inProv = PLACES.filter((p) => p.province === province);
   const center = inProv[0] ? [inProv[0].lat, inProv[0].lon] : [13.75, 100.5];
 
-  const [origin, setOrigin] = useState(null);
+  // เปิดจาก "ทริปของฉัน" ได้ด้วย ?lat=&lon=&name= (ที่พักที่เคยค้น)
+  const [origin, setOrigin] = useState(() => {
+    const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
+  });
+  const { user, favIds, setFavIds, forget } = useAuth();
+  const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');
   const [active, setActive] = useState(null);
   const [mode, setMode] = useState('booked'); // booked = มีที่พักแล้ว, browse = ยังไม่ได้จอง
@@ -89,7 +96,24 @@ export default function Search() {
       .then((data) => seq === lodgeSeq.current && setLodging({ status: 'ok', data }))
       .catch((e) => seq === lodgeSeq.current && setLodging({ status: 'error', message: e.message }));
   };
-  const chooseLodging = (l) => { cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setCands([]); setActive({ lat: l.lat, lon: l.lon }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name }); };
+  const chooseLodging = (l) => {
+    cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setCands([]);
+    setActive({ lat: l.lat, lon: l.lon }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name });
+    // ล็อกอินอยู่: จำที่พักที่เลือกไว้ใน "ทริปของฉัน" (ไม่ล็อกอินไม่บันทึกอะไร)
+    if (user && l.name) saveSearch({ name: l.name, lat: l.lat, lon: l.lon }).catch(() => {});
+  };
+  // หัวใจสถานที่โปรด อัปเดตหน้าจอก่อน ถ้าบันทึกไม่ผ่านคืนค่าเดิมและบอกผู้ใช้
+  const toggleFav = (p) => {
+    const on = favIds.has(p.id);
+    const next = new Set(favIds); on ? next.delete(p.id) : next.add(p.id); setFavIds(next);
+    setSaveNote('');
+    (on ? removeFavorite(p.id) : addFavorite(p)).catch((e) => {
+      setFavIds(favIds);
+      // session หมดอายุ: ซ่อนปุ่มบันทึก และบอกให้เข้าสู่ระบบใหม่
+      if (e.status === 401) { forget(); setSaveNote('หมดเวลาเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้งเพื่อบันทึก'); }
+      else setSaveNote(e.message);
+    });
+  };
   const switchMode = (m) => { cancelPending(); setKind(''); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
   const results = origin ? near.items : [];
@@ -178,6 +202,8 @@ export default function Search() {
           {mode === 'booked' && origin && (near.status === 'ok' || near.status === 'more') && check.ok && (
             <>
               {near.notices?.map((n) => <p key={n} className="notice">{n}</p>)}
+              {saveNote && <p className="notice" role="alert">{saveNote}</p>}
+              {!user && <p className="attr" style={{ padding: '8px 20px 0' }}><Link to="/login">เข้าสู่ระบบ</Link> เพื่อเก็บสถานที่โปรดและจำที่พักที่ค้นไว้</p>}
               <p className="count">
                 {origin.name ? <>รอบ <b>{origin.name}</b> · </> : null}
                 <b>{near.total}</b> แห่งใน 30 กม. วัดเป็นระยะเส้นตรง
@@ -194,7 +220,19 @@ export default function Search() {
                       <li key={p.id} className={`c-${iconGroup(p)}`} data-active={active?.id === p.id} onClick={() => setActive(p)}>
                         <span className="km">{p.distance_km}<small>กม.<br />เส้นตรง</small></span>
                         <div className="place">
-                          <h3>{p.name_th}</h3>
+                          <div className="place-head">
+                            <h3>{p.name_th}</h3>
+                            {user && (
+                              <button
+                                className={`fav ${favIds.has(p.id) ? 'on' : ''}`}
+                                aria-pressed={favIds.has(p.id)}
+                                aria-label={favIds.has(p.id) ? `เอา ${p.name_th} ออกจากสถานที่โปรด` : `เก็บ ${p.name_th} เป็นสถานที่โปรด`}
+                                onClick={(e) => { e.stopPropagation(); toggleFav(p); }}
+                              >
+                                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z" /></svg>
+                              </button>
+                            )}
+                          </div>
                           <div className="tags">
                             <span className="cat-tag"><CatIcon cat={iconGroup(p)} size={12} /> {subtypeLabel(p.subtype, p.kind)}</span>
                             {p.source === 'verified' && <span className="verified">ตรวจที่มาแล้ว</span>}
