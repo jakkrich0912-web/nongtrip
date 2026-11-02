@@ -1,7 +1,7 @@
 {
  "_meta": {
-  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md ภาคเหนือเพิ่ม 16 แห่งเมื่อ 2026-11-01 โดยดึงจาก en.wikipedia API ผ่านเบราว์เซอร์ (พิกัด+ชื่อไทย) และตรวจพิกัดเทียบจังหวัดด้วยตา ตัดรายการที่พิกัดอยู่ผิดจังหวัดออก ภาคตะวันออกเฉียงเหนือเพิ่ม 14 แห่งเมื่อ 2026-11-01 ผ่านเบราว์เซอร์ (en.wikipedia API) ตรวจเนื้อหา/พิกัดว่าอยู่ในจังหวัดนั้น",
-  "built_on": "2026-11-01",
+  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md",
+  "built_on": "2026-11-02",
   "weekday_index": "0=จันทร์ ... 6=อาทิตย์"
  },
  "places": [
@@ -29,7 +29,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Grand_Palace",
      "title": "Grand Palace (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -62,7 +62,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Pho",
      "title": "Wat Pho (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -95,7 +95,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Arun",
      "title": "Wat Arun (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -128,7 +128,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Saket",
      "title": "Wat Saket (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -162,7 +162,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Jim_Thompson_House",
      "title": "Jim Thompson House (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -196,7 +196,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Chatuchak_Weekend_Market",
      "title": "Chatuchak Weekend Market (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -230,7 +230,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Lumphini_Park",
      "title": "Lumphini Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -263,7 +263,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Benchamabophit",
      "title": "Wat Benchamabophit (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -296,7 +296,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Erawan_Shrine",
      "title": "Erawan Shrine (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -330,7 +330,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bangkok_National_Museum",
      "title": "Bangkok National Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -363,7 +363,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Giant_Swing",
      "title": "Giant Swing (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -396,7 +396,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Democracy_Monument",
      "title": "Democracy Monument (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -430,7 +430,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Vimanmek_Mansion",
      "title": "Vimanmek Mansion (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -464,7 +464,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Suan_Pakkad_Palace",
      "title": "Suan Pakkad Palace (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -498,7 +498,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Asiatique",
      "title": "Asiatique (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -532,7 +532,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khaosan_Road",
      "title": "Khaosan Road (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -565,7 +565,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Ratchanatdaram",
      "title": "Wat Ratchanatdaram (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -600,7 +600,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Railay_Beach",
      "title": "Railay Beach (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -635,7 +635,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phi_Phi_Islands",
      "title": "Phi Phi Islands (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -669,7 +669,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Tiger_Cave_Temple",
      "title": "Tiger Cave Temple (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -703,7 +703,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Phanom_Bencha_National_Park",
      "title": "Khao Phanom Bencha National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -738,7 +738,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Poda",
      "title": "Ko Poda (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -772,7 +772,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Erawan_National_Park",
      "title": "Erawan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -806,7 +806,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hellfire_Pass",
      "title": "Hellfire Pass (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -840,7 +840,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sai_Yok_National_Park",
      "title": "Sai Yok National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -874,7 +874,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Kanchanaburi_War_Cemetery",
      "title": "Kanchanaburi War Cemetery (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -908,7 +908,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/JEATH_War_Museum",
      "title": "JEATH War Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -942,7 +942,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Thung_Yai_Naresuan_Wildlife_Sanctuary",
      "title": "Thung Yai Naresuan Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -976,7 +976,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Laem_National_Park",
      "title": "Khao Laem National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1009,7 +1009,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Srinagarind_Dam",
      "title": "Srinagarind Dam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1043,7 +1043,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sirindhorn_Museum",
      "title": "Sirindhorn Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p402",
+   "name_th": "อุทยานแห่งชาติภูผาเหล็ก",
+   "name_en": "Phu Pha Lek National Park",
+   "category": "nature",
+   "area": "กาฬสินธุ์",
+   "lat": 17.27,
+   "lon": 103.47,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "กาฬสินธุ์",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Pha_Lek_National_Park",
+     "title": "Phu Pha Lek National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1077,7 +1111,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Kamphaeng_Phet_Historical_Park",
      "title": "Kamphaeng Phet Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1111,7 +1145,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khlong_Lan_National_Park",
      "title": "Khlong Lan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1145,7 +1179,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khlong_Wang_Chao_National_Park",
      "title": "Khlong Wang Chao National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1179,7 +1213,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mae_Wong_National_Park",
      "title": "Mae Wong National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1213,7 +1247,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Wiang_National_Park",
      "title": "Phu Wiang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1247,7 +1281,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Pha_Man_National_Park",
      "title": "Phu Pha Man National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1281,7 +1315,73 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Wiang_Dinosaur_Museum",
      "title": "Phu Wiang Dinosaur Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p604",
+   "name_th": "พระธาตุขามแก่น",
+   "name_en": "Phra That Kham Kaen",
+   "category": "temple",
+   "area": "ขอนแก่น",
+   "lat": 16.5635,
+   "lon": 102.9519,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ขอนแก่น",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phra_That_Kham_Kaen",
+     "title": "Phra That Kham Kaen (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p605",
+   "name_th": "พระมหาธาตุแก่นนคร",
+   "name_en": "Phra Mahathat Kaen Nakhon",
+   "category": "temple",
+   "area": "ขอนแก่น",
+   "lat": 16.4081,
+   "lon": 102.8342,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ขอนแก่น",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phra_Mahathat_Kaen_Nakhon",
+     "title": "Phra Mahathat Kaen Nakhon (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1315,7 +1415,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Khitchakut_National_Park",
      "title": "Khao Khitchakut National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1349,7 +1449,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Namtok_Phlio_National_Park",
      "title": "Namtok Phlio National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1382,7 +1482,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Cathedral_of_the_Immaculate_Conception,_Chanthaburi",
      "title": "Cathedral of the Immaculate Conception, Chanthaburi (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1417,7 +1517,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Sip_Ha_Chan_National_Park",
      "title": "Khao Sip Ha Chan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1452,7 +1552,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pattaya",
      "title": "Pattaya (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1486,7 +1586,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sanctuary_of_Truth",
      "title": "Sanctuary of Truth (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1519,7 +1619,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Kheow_Open_Zoo",
      "title": "Khao Kheow Open Zoo (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1554,7 +1654,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bang_Saen_Beach",
      "title": "Bang Saen Beach (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1587,7 +1687,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nong_Nooch_Tropical_Garden",
      "title": "Nong Nooch Tropical Garden (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1620,7 +1720,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Yansangwararam",
      "title": "Wat Yansangwararam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1653,7 +1753,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Buddha_Mountain_(Thailand)",
      "title": "Buddha Mountain (Thailand) (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1688,7 +1788,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Lan",
      "title": "Ko Lan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1721,7 +1821,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Chao_Phraya_Dam",
      "title": "Chao Phraya Dam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1755,7 +1855,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pa_Hin_Ngam_National_Park",
      "title": "Pa Hin Ngam National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1789,7 +1889,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Tat_Ton_National_Park",
      "title": "Tat Ton National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1823,7 +1923,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sai_Thong_National_Park",
      "title": "Sai Thong National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1859,7 +1959,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Khiao_Wildlife_Sanctuary",
      "title": "Phu Khiao Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1893,7 +1993,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mu_Ko_Chumphon_National_Park",
      "title": "Mu Ko Chumphon National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1926,7 +2026,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Rong_Khun",
      "title": "Wat Rong Khun (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1962,7 +2062,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Baandam_Museum",
      "title": "Baandam Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -1994,7 +2094,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Rong_Suea_Ten",
      "title": "Wat Rong Suea Ten (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2028,7 +2128,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Doi_Tung",
      "title": "Doi Tung (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2061,7 +2161,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Golden_Triangle_(Southeast_Asia)",
      "title": "Golden Triangle (Southeast Asia) (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2095,7 +2195,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Chi_Fa",
      "title": "Phu Chi Fa (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2129,7 +2229,143 @@
     {
      "url": "https://en.wikipedia.org/wiki/Doi_Mae_Salong",
      "title": "Doi Mae Salong (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p1308",
+   "name_th": "เมืองเชียงแสน",
+   "name_en": "Chiang Saen",
+   "category": "museum",
+   "area": "เชียงราย",
+   "lat": 20.27536,
+   "lon": 100.08764,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เชียงราย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Chiang_Saen",
+     "title": "Chiang Saen (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p1309",
+   "name_th": "อุทยานแห่งชาติขุนแจ",
+   "name_en": "Khun Chae National Park",
+   "category": "nature",
+   "area": "เชียงราย",
+   "lat": 19.15306,
+   "lon": 99.46722,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เชียงราย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Khun_Chae_National_Park",
+     "title": "Khun Chae National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p1310",
+   "name_th": "อุทยานแห่งชาติลำน้ำกก",
+   "name_en": "Lam Nam Kok National Park",
+   "category": "nature",
+   "area": "เชียงราย",
+   "lat": 19.95444,
+   "lon": 99.71083,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เชียงราย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Lam_Nam_Kok_National_Park",
+     "title": "Lam Nam Kok National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p1311",
+   "name_th": "ถ้ำหลวงนางนอน",
+   "name_en": "Tham Luang Nang Non",
+   "category": "nature",
+   "area": "เชียงราย",
+   "lat": 20.38167,
+   "lon": 99.86833,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เชียงราย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Tham_Luang_Nang_Non",
+     "title": "Tham Luang Nang Non (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2164,7 +2400,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hat_Chao_Mai_National_Park",
      "title": "Hat Chao Mai National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2199,7 +2435,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Kradan",
      "title": "Ko Kradan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2234,7 +2470,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Libong",
      "title": "Ko Libong (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2269,7 +2505,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mu_Ko_Chang_National_Park",
      "title": "Mu Ko Chang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2304,7 +2540,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Mak",
      "title": "Ko Mak (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2337,7 +2573,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mae_Sot",
      "title": "Mae Sot (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2370,7 +2606,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bhumibol_Dam",
      "title": "Bhumibol Dam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2404,7 +2640,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Thi_Lo_Su_Waterfall",
      "title": "Thi Lo Su Waterfall (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2438,7 +2674,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Taksin_Maharat_National_Park",
      "title": "Taksin Maharat National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2472,7 +2708,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Lan_Sang_National_Park",
      "title": "Lan Sang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2506,7 +2742,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Umphang_Wildlife_Sanctuary",
      "title": "Umphang Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2540,7 +2776,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nang_Rong_Waterfall",
      "title": "Nang Rong Waterfall (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2573,7 +2809,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phra_Pathommachedi",
      "title": "Phra Pathommachedi (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2607,7 +2843,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sanam_Chandra_Palace",
      "title": "Sanam Chandra Palace (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2641,7 +2877,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Don_Wai_Market",
      "title": "Don Wai Market (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2674,7 +2910,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_That_Phanom",
      "title": "Wat Phra That Phanom (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2708,7 +2944,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Langka_National_Park",
      "title": "Phu Langka National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2742,7 +2978,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phimai_Historical_Park",
      "title": "Phimai Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2776,7 +3012,74 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Yai_National_Park",
      "title": "Khao Yai National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2103",
+   "name_th": "ปราสาทหินพนมวัน",
+   "name_en": "Prasat Phanom Wan",
+   "category": "museum",
+   "area": "นครราชสีมา",
+   "lat": 15.02,
+   "lon": 102.2,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "นครราชสีมา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Prasat_Phanom_Wan",
+     "title": "Prasat Phanom Wan (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2104",
+   "name_th": "วัดธรรมจักรเสมาราม",
+   "name_en": "Wat Thammachak Semaram",
+   "category": "temple",
+   "area": "นครราชสีมา",
+   "lat": 14.91667,
+   "lon": 101.79361,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "นครราชสีมา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Thammachak_Semaram",
+     "title": "Wat Thammachak Semaram (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2809,7 +3112,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Mahathat",
      "title": "Wat Phra Mahathat (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2843,7 +3146,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Luang",
      "title": "Khao Luang (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2877,7 +3180,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nakhon_Si_Thammarat_National_Museum",
      "title": "Nakhon Si Thammarat National Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2911,7 +3214,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bueng_Boraphet",
      "title": "Bueng Boraphet (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2944,7 +3247,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Kret",
      "title": "Ko Kret (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -2977,7 +3280,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Chaloem_Phra_Kiat_Worawihan",
      "title": "Wat Chaloem Phra Kiat Worawihan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3010,7 +3313,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nonthaburi_Pier",
      "title": "Nonthaburi Pier (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3044,7 +3347,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hala-Bala_Wildlife_Sanctuary",
      "title": "Hala-Bala Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3077,7 +3380,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phumin",
      "title": "Wat Phumin (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3111,7 +3414,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Doi_Phu_Kha_National_Park",
      "title": "Doi Phu Kha National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3145,7 +3448,109 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nan,_Thailand",
      "title": "Nan, Thailand (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2604",
+   "name_th": "อุทยานแห่งชาติขุนน่าน",
+   "name_en": "Khun Nan National Park",
+   "category": "nature",
+   "area": "น่าน",
+   "lat": 19.18306,
+   "lon": 101.1775,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "น่าน",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Khun_Nan_National_Park",
+     "title": "Khun Nan National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2605",
+   "name_th": "อุทยานแห่งชาติแม่จริม",
+   "name_en": "Mae Charim National Park",
+   "category": "nature",
+   "area": "น่าน",
+   "lat": 18.6,
+   "lon": 100.96667,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "น่าน",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Mae_Charim_National_Park",
+     "title": "Mae Charim National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2606",
+   "name_th": "น้ำตกภูฟ้า",
+   "name_en": "Phu Fa waterfall",
+   "category": "nature",
+   "area": "น่าน",
+   "lat": 19.00278,
+   "lon": 101.21611,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "น่าน",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Fa_waterfall",
+     "title": "Phu Fa waterfall (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3181,7 +3586,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Wua_Wildlife_Sanctuary",
      "title": "Phu Wua Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2702",
+   "name_th": "Phu Thok",
+   "name_en": "Phu Thok",
+   "category": "temple",
+   "area": "บึงกาฬ",
+   "lat": 18.1375,
+   "lon": 103.87917,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "บึงกาฬ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Thok",
+     "title": "Phu Thok (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3214,7 +3653,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phanom_Rung_Historical_Park",
      "title": "Phanom Rung Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3248,7 +3687,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Prasat_Muang_Tam",
      "title": "Prasat Muang Tam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3282,7 +3721,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Kradong_Forest_Park",
      "title": "Khao Kradong Forest Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3315,7 +3754,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Buriram_International_Circuit",
      "title": "Buriram International Circuit (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3348,7 +3787,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Dhammakaya",
      "title": "Wat Phra Dhammakaya (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3381,7 +3820,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Dream_World_(Thailand)",
      "title": "Dream World (Thailand) (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3414,7 +3853,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Siam_Amazing_Park",
      "title": "Siam Amazing Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3449,7 +3888,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hua_Hin",
      "title": "Hua Hin (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3483,7 +3922,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Sam_Roi_Yot_National_Park",
      "title": "Khao Sam Roi Yot National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3517,7 +3956,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phraya_Nakhon_Cave",
      "title": "Phraya Nakhon Cave (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3551,7 +3990,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Klai_Kangwon_Palace",
      "title": "Klai Kangwon Palace (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3584,7 +4023,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hua_Hin_railway_station",
      "title": "Hua Hin railway station (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3618,7 +4057,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Thap_Lan_National_Park",
      "title": "Thap Lan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3651,7 +4090,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Krue_Se_Mosque",
      "title": "Krue Se Mosque (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3685,7 +4124,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ayutthaya_Historical_Park",
      "title": "Ayutthaya Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3718,7 +4157,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Mahathat_(Ayutthaya)",
      "title": "Wat Mahathat (Ayutthaya) (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3751,7 +4190,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Si_Sanphet",
      "title": "Wat Phra Si Sanphet (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3784,7 +4223,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Chaiwatthanaram",
      "title": "Wat Chaiwatthanaram (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3818,7 +4257,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bang_Pa-In_Royal_Palace",
      "title": "Bang Pa-In Royal Palace (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3851,7 +4290,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Yai_Chai_Mongkhon",
      "title": "Wat Yai Chai Mongkhon (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3884,7 +4323,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phanan_Choeng",
      "title": "Wat Phanan Choeng (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3917,7 +4356,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wihan_Phra_Mongkhon_Bophit",
      "title": "Wihan Phra Mongkhon Bophit (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3950,7 +4389,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Lokayasutharam",
      "title": "Wat Lokayasutharam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -3984,7 +4423,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Ratchaburana,_Ayutthaya",
      "title": "Wat Ratchaburana, Ayutthaya (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4017,7 +4456,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phutthaisawan",
      "title": "Wat Phutthaisawan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4051,7 +4490,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phayao_Lake",
      "title": "Phayao Lake (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4084,7 +4523,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Si_Khom_Kham",
      "title": "Wat Si Khom Kham (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4118,7 +4557,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Sang_National_Park",
      "title": "Phu Sang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4152,7 +4591,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Doi_Phu_Nang_National_Park",
      "title": "Doi Phu Nang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3405",
+   "name_th": "อุทยานแห่งชาติดอยหลวง",
+   "name_en": "Doi Luang National Park",
+   "category": "nature",
+   "area": "พะเยา",
+   "lat": 19.2,
+   "lon": 99.71,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "พะเยา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Doi_Luang_National_Park",
+     "title": "Doi Luang National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4187,7 +4660,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phang_Nga_Bay",
      "title": "Phang Nga Bay (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4222,7 +4695,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Similan_Islands",
      "title": "Similan Islands (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4259,7 +4732,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Lak",
      "title": "Khao Lak (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4293,7 +4766,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Phing_Kan",
      "title": "Khao Phing Kan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4328,7 +4801,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Surin_Islands",
      "title": "Surin Islands (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4362,7 +4835,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Lak%E2%80%93Lam_Ru_National_Park",
      "title": "Khao Lak–Lam Ru National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4396,7 +4869,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Pu%E2%80%93Khao_Ya_National_Park",
      "title": "Khao Pu–Khao Ya National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4430,7 +4903,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bueng_Si_Fai",
      "title": "Bueng Si Fai (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4463,7 +4936,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Tha_Luang",
      "title": "Wat Tha Luang (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4497,7 +4970,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Si_Rattana_Mahathat",
      "title": "Wat Phra Si Rattana Mahathat (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4531,7 +5004,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Hin_Rong_Kla_National_Park",
      "title": "Phu Hin Rong Kla National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4565,7 +5038,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Thung_Salaeng_Luang_National_Park",
      "title": "Thung Salaeng Luang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4598,7 +5071,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Chulamani",
      "title": "Wat Chulamani (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4632,7 +5105,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phra_Nakhon_Khiri_Historical_Park",
      "title": "Phra Nakhon Khiri Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4666,7 +5139,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Kaeng_Krachan_National_Park",
      "title": "Kaeng Krachan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4700,7 +5173,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Kho",
      "title": "Khao Kho (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4734,7 +5207,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nam_Nao_National_Park",
      "title": "Nam Nao National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4768,7 +5241,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Thap_Boek",
      "title": "Phu Thap Boek (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4804,7 +5277,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phae_Mueang_Phi",
      "title": "Phae Mueang Phi (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4837,11 +5310,114 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mae_Yom_National_Park",
      "title": "Mae Yom National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
       "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4103",
+   "name_th": "อุทยานแห่งชาติเวียงโกศัย",
+   "name_en": "Wiang Kosai National Park",
+   "category": "nature",
+   "area": "แพร่",
+   "lat": 17.93,
+   "lon": 99.55,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "แพร่",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wiang_Kosai_National_Park",
+     "title": "Wiang Kosai National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4104",
+   "name_th": "อุทยานแห่งชาติลำน้ำน่าน",
+   "name_en": "Lam Nam Nan National Park",
+   "category": "nature",
+   "area": "แพร่",
+   "lat": 18.06333,
+   "lon": 100.54861,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "แพร่",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Lam_Nam_Nan_National_Park",
+     "title": "Lam Nam Nan National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4105",
+   "name_th": "Tham Pha Nang Khoi",
+   "name_en": "Tham Pha Nang Khoi",
+   "category": "nature",
+   "area": "แพร่",
+   "lat": 18.36889,
+   "lon": 100.35112,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "แพร่",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Tham_Pha_Nang_Khoi",
+     "title": "Tham Pha Nang Khoi (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
       "name_en"
      ]
     }
@@ -4872,7 +5448,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Patong",
      "title": "Patong (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4906,7 +5482,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phuket_Big_Buddha",
      "title": "Phuket Big Buddha (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4939,7 +5515,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Chalong",
      "title": "Wat Chalong (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -4974,7 +5550,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phuket_Old_Town",
      "title": "Phuket Old Town (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5010,7 +5586,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Karon_Beach",
      "title": "Karon Beach (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5043,7 +5619,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sirinat_National_Park",
      "title": "Sirinat National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5076,7 +5652,40 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phuket_FantaSea",
      "title": "Phuket FantaSea (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4301",
+   "name_th": "วัดโพธาราม (ตำบลดงบัง)",
+   "name_en": "Wat Photharam, Maha Sarakham",
+   "category": "temple",
+   "area": "มหาสารคาม",
+   "lat": 15.6603,
+   "lon": 103.2496,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "มหาสารคาม",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Photharam,_Maha_Sarakham",
+     "title": "Wat Photharam, Maha Sarakham (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5110,7 +5719,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Pha_Thoep_National_Park",
      "title": "Phu Pha Thoep National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5144,7 +5753,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Sa_Dok_Bua_National_Park",
      "title": "Phu Sa Dok Bua National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5179,7 +5788,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pai,_Thailand",
      "title": "Pai, Thailand (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5211,7 +5820,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mae_Hong_Son",
      "title": "Mae Hong Son (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5245,7 +5854,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phrathat_Doi_Kong_Mu",
      "title": "Wat Phrathat Doi Kong Mu (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5281,7 +5890,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Tham_Lot_cave",
      "title": "Tham Lot cave (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5314,7 +5923,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pang_Ung",
      "title": "Pang Ung (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5349,7 +5958,74 @@
     {
      "url": "https://en.wikipedia.org/wiki/Namtok_Mae_Surin_National_Park",
      "title": "Namtok Mae Surin National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4507",
+   "name_th": "อุทยานแห่งชาติสาละวิน",
+   "name_en": "Salawin National Park",
+   "category": "nature",
+   "area": "แม่ฮ่องสอน",
+   "lat": 18.09,
+   "lon": 97.75,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "แม่ฮ่องสอน",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Salawin_National_Park",
+     "title": "Salawin National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4801",
+   "name_th": "พระพุทธรัตนมงคลมหามุนี",
+   "name_en": "Luangpho Yai",
+   "category": "temple",
+   "area": "ร้อยเอ็ด",
+   "lat": 16.0621,
+   "lon": 103.6585,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ร้อยเอ็ด",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Luangpho_Yai",
+     "title": "Luangpho Yai (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5383,7 +6059,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Laem_Son_National_Park",
      "title": "Laem Son National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5418,7 +6094,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Phayam",
      "title": "Ko Phayam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5453,7 +6129,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Samet",
      "title": "Ko Samet (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5488,7 +6164,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Laem_Ya%E2%80%93Mu_Ko_Samet_National_Park",
      "title": "Khao Laem Ya–Mu Ko Samet National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5522,7 +6198,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Chamao%E2%80%93Khao_Wong_National_Park",
      "title": "Khao Chamao–Khao Wong National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5557,7 +6233,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Man_Nok",
      "title": "Ko Man Nok (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5591,7 +6267,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Damnoen_Saduak_Floating_Market",
      "title": "Damnoen Saduak Floating Market (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5625,7 +6301,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phra_Prang_Sam_Yot",
      "title": "Phra Prang Sam Yot (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5658,7 +6334,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/San_Phra_Kan",
      "title": "San Phra Kan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5691,7 +6367,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pa_Sak_Jolasid_Dam",
      "title": "Pa Sak Jolasid Dam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5724,7 +6400,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_That_Lampang_Luang",
      "title": "Wat Phra That Lampang Luang (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5758,7 +6434,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Chae_Son_National_Park",
      "title": "Chae Son National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5791,11 +6467,79 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Kaeo_Don_Tao",
      "title": "Wat Phra Kaeo Don Tao (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
       "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5304",
+   "name_th": "สะพานรัษฎาภิเศก",
+   "name_en": "Ratsadaphisek Bridge",
+   "category": "activity",
+   "area": "ลำปาง",
+   "lat": 18.29323,
+   "lon": 99.50077,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "family",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ลำปาง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Ratsadaphisek_Bridge",
+     "title": "Ratsadaphisek Bridge (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5305",
+   "name_th": "Mae Wa National Park",
+   "name_en": "Mae Wa National Park",
+   "category": "nature",
+   "area": "ลำปาง",
+   "lat": 17.37194,
+   "lon": 99.25889,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "ลำปาง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Mae_Wa_National_Park",
+     "title": "Mae Wa National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
       "name_en"
      ]
     }
@@ -5825,7 +6569,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_That_Hariphunchai",
      "title": "Wat Phra That Hariphunchai (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5859,7 +6603,40 @@
     {
      "url": "https://en.wikipedia.org/wiki/Doi_Khun_Tan_National_Park",
      "title": "Doi Khun Tan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5403",
+   "name_th": "วัดพระพุทธบาทตากผ้า",
+   "name_en": "Wat Phra Phutthabat Tak Pha",
+   "category": "temple",
+   "area": "ลำพูน",
+   "lat": 18.45472,
+   "lon": 98.92139,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ลำพูน",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Phra_Phutthabat_Tak_Pha",
+     "title": "Wat Phra Phutthabat Tak Pha (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5893,7 +6670,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Kradueng_National_Park",
      "title": "Phu Kradueng National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5927,7 +6704,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Ruea_National_Park",
      "title": "Phu Ruea National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5963,7 +6740,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Luang_Wildlife_Sanctuary",
      "title": "Phu Luang Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -5995,7 +6772,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phra_That_Si_Song_Rak",
      "title": "Phra That Si Song Rak (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5506",
+   "name_th": "อุทยานแห่งชาติภูสวนทราย",
+   "name_en": "Phu Suan Sai National Park",
+   "category": "nature",
+   "area": "เลย",
+   "lat": 17.51,
+   "lon": 100.96,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เลย",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Phu_Suan_Sai_National_Park",
+     "title": "Phu Suan Sai National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6028,7 +6839,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Pa_Maha_Chedi_Kaew",
      "title": "Wat Pa Maha Chedi Kaew (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6062,7 +6873,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Phra_Wihan_National_Park",
      "title": "Khao Phra Wihan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5603",
+   "name_th": "ปราสาทสระกำแพงใหญ่",
+   "name_en": "Prasat Sa Kamphaeng Yai",
+   "category": "museum",
+   "area": "ศรีสะเกษ",
+   "lat": 15.101,
+   "lon": 104.125,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ศรีสะเกษ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Prasat_Sa_Kamphaeng_Yai",
+     "title": "Prasat Sa Kamphaeng Yai (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6096,7 +6941,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Phan_National_Park",
      "title": "Phu Phan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6129,7 +6974,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_That_Choeng_Chum",
      "title": "Wat Phra That Choeng Chum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6162,7 +7007,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Hat_Yai",
      "title": "Hat Yai (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6196,7 +7041,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Songkhla_Lake",
      "title": "Songkhla Lake (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6229,7 +7074,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Yo",
      "title": "Ko Yo (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6264,7 +7109,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Tarutao_National_Park",
      "title": "Tarutao National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6299,7 +7144,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Lipe",
      "title": "Ko Lipe (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6334,7 +7179,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Tarutao",
      "title": "Ko Tarutao (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6368,7 +7213,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Thale_Ban_National_Park",
      "title": "Thale Ban National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6403,7 +7248,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Adang",
      "title": "Ko Adang (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6437,7 +7282,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Erawan_Museum",
      "title": "Erawan Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6470,7 +7315,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Samut_Chedi",
      "title": "Wat Phra Samut Chedi (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6505,7 +7350,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Chulachomklao_Fort",
      "title": "Chulachomklao Fort (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6540,7 +7385,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bang_Pu",
      "title": "Bang Pu (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6573,7 +7418,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Bang_Kung",
      "title": "Wat Bang Kung (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6608,7 +7453,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/King_Rama_II_Memorial_Park",
      "title": "King Rama II Memorial Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6642,7 +7487,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Don_Hoi_Lot",
      "title": "Don Hoi Lot (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6676,7 +7521,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pang_Sida_National_Park",
      "title": "Pang Sida National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6710,7 +7555,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ta_Phraya_National_Park",
      "title": "Ta Phraya National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6744,7 +7589,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Aranyaprathet",
      "title": "Aranyaprathet (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6778,7 +7623,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Rong_Kluea_Market",
      "title": "Rong Kluea Market (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6812,7 +7657,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Namtok_Sam_Lan_National_Park",
      "title": "Namtok Sam Lan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6846,7 +7691,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bang_Rachan",
      "title": "Bang Rachan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6880,7 +7725,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sukhothai_Historical_Park",
      "title": "Sukhothai Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6914,7 +7759,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Si_Satchanalai_Historical_Park",
      "title": "Si Satchanalai Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6947,7 +7792,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Pa_Lelai_Worawihan",
      "title": "Wat Pa Lelai Worawihan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -6981,7 +7826,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/U_Thong_National_Museum",
      "title": "U Thong National Museum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7015,7 +7860,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Bueng_Chawak",
      "title": "Bueng Chawak (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7050,7 +7895,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Samui",
      "title": "Ko Samui (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7085,7 +7930,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Pha-ngan",
      "title": "Ko Pha-ngan (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7120,7 +7965,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ko_Tao",
      "title": "Ko Tao (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7154,7 +7999,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Khao_Sok_National_Park",
      "title": "Khao Sok National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7188,7 +8033,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Cheow_Lan_Lake",
      "title": "Cheow Lan Lake (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7223,7 +8068,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Mu_Ko_Ang_Thong_National_Park",
      "title": "Mu Ko Ang Thong National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7256,7 +8101,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Phra_Borommathat_Chaiya",
      "title": "Wat Phra Borommathat Chaiya (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7290,7 +8135,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Prasat_Sikhoraphum",
      "title": "Prasat Sikhoraphum (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7324,7 +8169,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Prasat_Ta_Muen_Thom",
      "title": "Prasat Ta Muen Thom (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7358,7 +8203,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sala_Keoku",
      "title": "Sala Keoku (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7392,11 +8237,78 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Kao%E2%80%93Phu_Phan_Kham_National_Park",
      "title": "Phu Kao–Phu Phan Kham National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
       "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7301",
+   "name_th": "วัดพระเหลาเทพนิมิต",
+   "name_en": "Wat Phra Lao Thep Nimit",
+   "category": "temple",
+   "area": "อำนาจเจริญ",
+   "lat": 15.67689,
+   "lon": 104.85399,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อำนาจเจริญ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Phra_Lao_Thep_Nimit",
+     "title": "Wat Phra Lao Thep Nimit (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7302",
+   "name_th": "Wat Tham Saeng Phet",
+   "name_en": "Wat Tham Saeng Phet",
+   "category": "temple",
+   "area": "อำนาจเจริญ",
+   "lat": 15.8952,
+   "lon": 104.7293,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "อำนาจเจริญ",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Tham_Saeng_Phet",
+     "title": "Wat Tham Saeng Phet (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
       "name_en"
      ]
     }
@@ -7426,7 +8338,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Ban_Chiang",
      "title": "Ban Chiang (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7462,7 +8374,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Nong_Han_Kumphawapi_Lake",
      "title": "Nong Han Kumphawapi Lake (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7495,7 +8407,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Phra_Bat_Historical_Park",
      "title": "Phu Phra Bat Historical Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7529,7 +8441,73 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Foi_Lom",
      "title": "Phu Foi Lom (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7405",
+   "name_th": "วัดศิริสุทโธคำชะโนด",
+   "name_en": "Wat Kham Chanot",
+   "category": "temple",
+   "area": "อุดรธานี",
+   "lat": 17.74321,
+   "lon": 103.35933,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อุดรธานี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Kham_Chanot",
+     "title": "Wat Kham Chanot (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7406",
+   "name_th": "วัดป่าภูก้อน",
+   "name_en": "Wat Pa Phu Kon",
+   "category": "temple",
+   "area": "อุดรธานี",
+   "lat": 17.9229,
+   "lon": 102.11818,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อุดรธานี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Pa_Phu_Kon",
+     "title": "Wat Pa Phu Kon (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7562,7 +8540,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sirikit_Dam",
      "title": "Sirikit Dam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7596,7 +8574,41 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Soi_Dao_National_Park",
      "title": "Phu Soi Dao National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7503",
+   "name_th": "อุทยานแห่งชาติต้นสักใหญ่",
+   "name_en": "Ton Sak Yai National Park",
+   "category": "nature",
+   "area": "อุตรดิตถ์",
+   "lat": 17.65,
+   "lon": 100.56667,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อุตรดิตถ์",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Ton_Sak_Yai_National_Park",
+     "title": "Ton Sak Yai National Park (Wikipedia)",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7630,7 +8642,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Huai_Kha_Khaeng_Wildlife_Sanctuary",
      "title": "Huai Kha Khaeng Wildlife Sanctuary (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7663,7 +8675,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Chantharam",
      "title": "Wat Chantharam (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7697,7 +8709,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sakae_Krang_River",
      "title": "Sakae Krang River (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7731,7 +8743,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Pha_Taem_National_Park",
      "title": "Pha Taem National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7764,7 +8776,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Wat_Nong_Pah_Pong",
      "title": "Wat Nong Pah Pong (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7798,7 +8810,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Sam_Phan_Bok",
      "title": "Sam Phan Bok (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7832,7 +8844,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Kaeng_Tana_National_Park",
      "title": "Kaeng Tana National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7866,7 +8878,7 @@
     {
      "url": "https://en.wikipedia.org/wiki/Phu_Chong%E2%80%93Na_Yoi_National_Park",
      "title": "Phu Chong–Na Yoi National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7902,43 +8914,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%97%E0%B9%88%E0%B8%B2%E0%B8%84%E0%B8%B1%E0%B8%99%E0%B9%82%E0%B8%97",
      "title": "วัดท่าคันโท (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1243",
-   "name_th": "อุทยานแห่งชาติหมู่เกาะชุมพร",
-   "name_en": "อุทยานแห่งชาติหมู่เกาะชุมพร",
-   "category": "nature",
-   "area": "ชุมพร",
-   "lat": 10.35643,
-   "lon": 99.23108,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ชุมพร",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%AB%E0%B8%A1%E0%B8%B9%E0%B9%88%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%8A%E0%B8%B8%E0%B8%A1%E0%B8%9E%E0%B8%A3",
-     "title": "อุทยานแห่งชาติหมู่เกาะชุมพร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -7973,7 +8949,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B8%B1%E0%B8%99%E0%B8%95%E0%B8%A2%E0%B8%B2%E0%B8%A0%E0%B8%B4%E0%B8%A3%E0%B8%A1",
      "title": "วัดตันตยาภิรม (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8009,7 +8985,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B8%82%E0%B8%B8%E0%B8%99%E0%B8%94%E0%B9%88%E0%B8%B2%E0%B8%99%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%8A%E0%B8%A5",
      "title": "เขื่อนขุนด่านปราการชล (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8045,42 +9021,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%90%E0%B8%A1%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C",
      "title": "พิพิธภัณฑ์วัดพระปฐมเจดีย์ (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1945",
-   "name_th": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร",
-   "name_en": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร",
-   "category": "temple",
-   "area": "นครปฐม",
-   "lat": 13.81693,
-   "lon": 100.05998,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "นครปฐม",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%90%E0%B8%A1%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
-     "title": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8115,7 +9056,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%84%E0%B8%9C%E0%B9%88%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%9B%E0%B8%90%E0%B8%A1)",
      "title": "วัดไผ่ล้อม (จังหวัดนครปฐม) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8151,42 +9092,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%88%E0%B8%A7%E0%B8%99%E0%B8%9C%E0%B8%B9%E0%B9%89%E0%B8%A7%E0%B9%88%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%9E%E0%B8%99%E0%B8%A1_(%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2)",
      "title": "พิพิธภัณฑ์จวนผู้ว่าราชการจังหวัดนครพนม (หลังเก่า) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2244",
-   "name_th": "วัดพระมหาธาตุวรมหาวิหาร",
-   "name_en": "วัดพระมหาธาตุวรมหาวิหาร",
-   "category": "temple",
-   "area": "นครศรีธรรมราช",
-   "lat": 8.41147,
-   "lon": 99.96622,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "นครศรีธรรมราช",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
-     "title": "วัดพระมหาธาตุวรมหาวิหาร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8222,7 +9128,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%A2%E0%B9%89%E0%B8%AD%E0%B8%99%E0%B8%A3%E0%B8%AD%E0%B8%A2%E0%B8%AD%E0%B8%94%E0%B8%B5%E0%B8%95%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%9B%E0%B8%B2%E0%B8%81%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B9%82%E0%B8%9E",
      "title": "พิพิธภัณฑ์ย้อนรอยอดีตเมืองปากน้ำโพ (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8258,42 +9164,7 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%81%E0%B8%8B%E0%B8%B5%E0%B9%82%E0%B8%9B",
      "title": "อุทยานแห่งชาติน้ำตกซีโป (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2544",
-   "name_th": "วัดชลธาราสิงเห",
-   "name_en": "วัดชลธาราสิงเห",
-   "category": "temple",
-   "area": "นราธิวาส",
-   "lat": 6.262,
-   "lon": 102.05,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "นราธิวาส",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B8%A5%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B9%80%E0%B8%AB",
-     "title": "วัดชลธาราสิงเห (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
+     "checked_on": "2026-11-02",
      "fields": [
       "lat",
       "lon",
@@ -8329,6 +9200,1301 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%AD%E0%B9%88%E0%B8%B2%E0%B8%A7%E0%B8%A1%E0%B8%B0%E0%B8%99%E0%B8%B2%E0%B8%A7-%E0%B9%80%E0%B8%82%E0%B8%B2%E0%B8%95%E0%B8%B1%E0%B8%99%E0%B8%AB%E0%B8%A2%E0%B8%87",
      "title": "อุทยานแห่งชาติอ่าวมะนาว-เขาตันหยง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2743",
+   "name_th": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ",
+   "name_en": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ",
+   "category": "museum",
+   "area": "บึงกาฬ",
+   "lat": 18.09938,
+   "lon": 103.40495,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "บึงกาฬ",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%8A%E0%B8%B8%E0%B8%A1%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%B5%E0%B8%8A%E0%B8%B5%E0%B8%A7%E0%B8%B4%E0%B8%95_%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%B6%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%AC",
+     "title": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3242",
+   "name_th": "วัดช้างให้ราษฎร์บูรณาราม",
+   "name_en": "วัดช้างให้ราษฎร์บูรณาราม",
+   "category": "temple",
+   "area": "ปัตตานี",
+   "lat": 6.6699,
+   "lon": 101.16847,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ปัตตานี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B9%89%E0%B8%A3%E0%B8%B2%E0%B8%A9%E0%B8%8E%E0%B8%A3%E0%B9%8C%E0%B8%9A%E0%B8%B9%E0%B8%A3%E0%B8%93%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
+     "title": "วัดช้างให้ราษฎร์บูรณาราม (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3743",
+   "name_th": "วัดมหาธาตุ (จังหวัดพิจิตร)",
+   "name_en": "วัดมหาธาตุ (จังหวัดพิจิตร)",
+   "category": "temple",
+   "area": "พิจิตร",
+   "lat": 16.41219,
+   "lon": 100.29469,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "พิจิตร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%B4%E0%B8%88%E0%B8%B4%E0%B8%95%E0%B8%A3)",
+     "title": "วัดมหาธาตุ (จังหวัดพิจิตร) (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4341",
+   "name_th": "พิพิธภัณฑ์บ้านอีสาน",
+   "name_en": "พิพิธภัณฑ์บ้านอีสาน",
+   "category": "museum",
+   "area": "มหาสารคาม",
+   "lat": 15.70437,
+   "lon": 103.2306,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "มหาสารคาม",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%AD%E0%B8%B5%E0%B8%AA%E0%B8%B2%E0%B8%99",
+     "title": "พิพิธภัณฑ์บ้านอีสาน (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4741",
+   "name_th": "อุทยานแห่งชาติบางลาง",
+   "name_en": "อุทยานแห่งชาติบางลาง",
+   "category": "nature",
+   "area": "ยะลา",
+   "lat": 6.00833,
+   "lon": 101.16002,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ยะลา",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B8%A5%E0%B8%B2%E0%B8%87",
+     "title": "อุทยานแห่งชาติบางลาง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4742",
+   "name_th": "วัดคูหาภิมุข",
+   "name_en": "วัดคูหาภิมุข",
+   "category": "temple",
+   "area": "ยะลา",
+   "lat": 6.52801,
+   "lon": 101.2241,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ยะลา",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%84%E0%B8%B9%E0%B8%AB%E0%B8%B2%E0%B8%A0%E0%B8%B4%E0%B8%A1%E0%B8%B8%E0%B8%82",
+     "title": "วัดคูหาภิมุข (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4841",
+   "name_th": "ปรางค์กู่ (จังหวัดร้อยเอ็ด)",
+   "name_en": "ปรางค์กู่ (จังหวัดร้อยเอ็ด)",
+   "category": "museum",
+   "area": "ร้อยเอ็ด",
+   "lat": 16.06667,
+   "lon": 103.73333,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ร้อยเอ็ด",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%81%E0%B8%B9%E0%B9%88_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B9%80%E0%B8%AD%E0%B9%87%E0%B8%94)",
+     "title": "ปรางค์กู่ (จังหวัดร้อยเอ็ด) (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5142",
+   "name_th": "วัดดอนตูม (จังหวัดราชบุรี)",
+   "name_en": "วัดดอนตูม (จังหวัดราชบุรี)",
+   "category": "temple",
+   "area": "ราชบุรี",
+   "lat": 13.81573,
+   "lon": 99.88176,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ราชบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%94%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%B9%E0%B8%A1_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
+     "title": "วัดดอนตูม (จังหวัดราชบุรี) (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5143",
+   "name_th": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน",
+   "name_en": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน",
+   "category": "nature",
+   "area": "ราชบุรี",
+   "lat": 13.38814,
+   "lon": 99.55592,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ราชบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B9%80%E0%B8%89%E0%B8%A5%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%81%E0%B8%B5%E0%B8%A2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B9%84%E0%B8%97%E0%B8%A2%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B1%E0%B8%99",
+     "title": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5144",
+   "name_th": "พิพิธภัณฑ์หนังใหญ่วัดขนอน",
+   "name_en": "พิพิธภัณฑ์หนังใหญ่วัดขนอน",
+   "category": "museum",
+   "area": "ราชบุรี",
+   "lat": 13.72651,
+   "lon": 99.84481,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ราชบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%AB%E0%B8%99%E0%B8%B1%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%82%E0%B8%99%E0%B8%AD%E0%B8%99",
+     "title": "พิพิธภัณฑ์หนังใหญ่วัดขนอน (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5145",
+   "name_th": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม",
+   "name_en": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม",
+   "category": "museum",
+   "area": "ราชบุรี",
+   "lat": 13.71533,
+   "lon": 99.85028,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ราชบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%84%E0%B8%87%E0%B8%84%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
+     "title": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5146",
+   "name_th": "พิพิธภัณฑ์พื้นบ้านวัดม่วง",
+   "name_en": "พิพิธภัณฑ์พื้นบ้านวัดม่วง",
+   "category": "museum",
+   "area": "ราชบุรี",
+   "lat": 13.76965,
+   "lon": 99.84369,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ราชบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B9%88%E0%B8%A7%E0%B8%87",
+     "title": "พิพิธภัณฑ์พื้นบ้านวัดม่วง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5745",
+   "name_th": "พิพิธภัณฑ์เมืองสกลนคร",
+   "name_en": "พิพิธภัณฑ์เมืองสกลนคร",
+   "category": "museum",
+   "area": "สกลนคร",
+   "lat": 17.18962,
+   "lon": 104.09017,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สกลนคร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AA%E0%B8%81%E0%B8%A5%E0%B8%99%E0%B8%84%E0%B8%A3",
+     "title": "พิพิธภัณฑ์เมืองสกลนคร (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5743",
+   "name_th": "วัดพระธาตุดุม",
+   "name_en": "วัดพระธาตุดุม",
+   "category": "temple",
+   "area": "สกลนคร",
+   "lat": 17.14392,
+   "lon": 104.16415,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สกลนคร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%94%E0%B8%B8%E0%B8%A1",
+     "title": "วัดพระธาตุดุม (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6443",
+   "name_th": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย",
+   "name_en": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย",
+   "category": "nature",
+   "area": "สระบุรี",
+   "lat": 14.72611,
+   "lon": 101.18917,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สระบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%81%E0%B9%80%E0%B8%88%E0%B9%87%E0%B8%94%E0%B8%AA%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%89%E0%B8%AD%E0%B8%A2",
+     "title": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6445",
+   "name_th": "วัดพระพุทธบาทราชวรมหาวิหาร",
+   "name_en": "วัดพระพุทธบาทราชวรมหาวิหาร",
+   "category": "temple",
+   "area": "สระบุรี",
+   "lat": 14.71832,
+   "lon": 100.78869,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สระบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%9A%E0%B8%B2%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
+     "title": "วัดพระพุทธบาทราชวรมหาวิหาร (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6446",
+   "name_th": "วัดวิหารแดง",
+   "name_en": "วัดวิหารแดง",
+   "category": "temple",
+   "area": "สระบุรี",
+   "lat": 14.34045,
+   "lon": 100.99549,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สระบุรี",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%94%E0%B8%87",
+     "title": "วัดวิหารแดง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6643",
+   "name_th": "วัดเจดีย์สูง",
+   "name_en": "วัดเจดีย์สูง",
+   "category": "temple",
+   "area": "สุโขทัย",
+   "lat": 17.01581,
+   "lon": 99.72286,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สุโขทัย",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%AA%E0%B8%B9%E0%B8%87",
+     "title": "วัดเจดีย์สูง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6644",
+   "name_th": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย)",
+   "name_en": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย)",
+   "category": "temple",
+   "area": "สุโขทัย",
+   "lat": 17.02031,
+   "lon": 99.71966,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สุโขทัย",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1_(%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%A7%E0%B8%B1%E0%B8%95%E0%B8%B4%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%A3%E0%B9%8C%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2)",
+     "title": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย) (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6645",
+   "name_th": "วัดมุมลังกา",
+   "name_en": "วัดมุมลังกา",
+   "category": "temple",
+   "area": "สุโขทัย",
+   "lat": 17.0255,
+   "lon": 99.71428,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สุโขทัย",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%B8%E0%B8%A1%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%B2",
+     "title": "วัดมุมลังกา (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6646",
+   "name_th": "วัดตระพังทอง",
+   "name_en": "วัดตระพังทอง",
+   "category": "temple",
+   "area": "สุโขทัย",
+   "lat": 17.01758,
+   "lon": 99.70917,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สุโขทัย",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B1%E0%B8%87%E0%B8%97%E0%B8%AD%E0%B8%87",
+     "title": "วัดตระพังทอง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7042",
+   "name_th": "วัดผาตากเสื้อ",
+   "name_en": "วัดผาตากเสื้อ",
+   "category": "temple",
+   "area": "หนองคาย",
+   "lat": 18.0368,
+   "lon": 102.3051,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "หนองคาย",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9C%E0%B8%B2%E0%B8%95%E0%B8%B2%E0%B8%81%E0%B9%80%E0%B8%AA%E0%B8%B7%E0%B9%89%E0%B8%AD",
+     "title": "วัดผาตากเสื้อ (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p118",
+   "name_th": "วัดไตรมิตรวิทยารามวรวิหาร",
+   "name_en": "Wat Traimit",
+   "category": "temple",
+   "area": "กรุงเทพมหานคร",
+   "lat": 13.73806,
+   "lon": 100.51361,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "กรุงเทพมหานคร",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Traimit",
+     "title": "Wat Traimit (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p801",
+   "name_th": "วัดโสธรวรารามวรวิหาร",
+   "name_en": "Wat Sothonwararam",
+   "category": "temple",
+   "area": "ฉะเชิงเทรา",
+   "lat": 13.6737,
+   "lon": 101.0673,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ฉะเชิงเทรา",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Sothonwararam",
+     "title": "Wat Sothonwararam (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2302",
+   "name_th": "วัดวรนาถบรรพต",
+   "name_en": "Wat Woranat Banphot",
+   "category": "temple",
+   "area": "นครสวรรค์",
+   "lat": 15.7153,
+   "lon": 100.1337,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "นครสวรรค์",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Woranat_Banphot",
+     "title": "Wat Woranat Banphot (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3602",
+   "name_th": "ทะเลน้อย",
+   "name_en": "Thale Noi Non-Hunting Area",
+   "category": "nature",
+   "area": "พัทลุง",
+   "lat": 7.76667,
+   "lon": 100.15306,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "nature",
+    "outdoors",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "พัทลุง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Thale_Noi_Non-Hunting_Area",
+     "title": "Thale Noi Non-Hunting Area (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3903",
+   "name_th": "วัดถ้ำรงค์",
+   "name_en": "Wat Tham Rong",
+   "category": "temple",
+   "area": "เพชรบุรี",
+   "lat": 13.02591,
+   "lon": 99.91851,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เพชรบุรี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Tham_Rong",
+     "title": "Wat Tham Rong (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3904",
+   "name_th": "วัดพลับพลาชัย (จังหวัดเพชรบุรี)",
+   "name_en": "Wat Phlapphla Chai, Phetchaburi",
+   "category": "temple",
+   "area": "เพชรบุรี",
+   "lat": 13.1071,
+   "lon": 99.94787,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "เพชรบุรี",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Phlapphla_Chai,_Phetchaburi",
+     "title": "Wat Phlapphla Chai, Phetchaburi (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6201",
+   "name_th": "วัดท่าไม้ (จังหวัดสมุทรสาคร)",
+   "name_en": "Wat Tha Mai",
+   "category": "temple",
+   "area": "สมุทรสาคร",
+   "lat": 13.67644,
+   "lon": 100.25385,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "สมุทรสาคร",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Tha_Mai",
+     "title": "Wat Tha Mai (Wikipedia)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p1841",
+   "name_th": "วัดใหญ่ทักขิณาราม",
+   "name_en": "วัดใหญ่ทักขิณาราม",
+   "category": "temple",
+   "area": "นครนายก",
+   "lat": 14.21106,
+   "lon": 101.22616,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "นครนายก",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88%E0%B8%97%E0%B8%B1%E0%B8%81%E0%B8%82%E0%B8%B4%E0%B8%93%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
+     "title": "วัดใหญ่ทักขิณาราม (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p3741",
+   "name_th": "พิพิธภัณฑ์บ้านดงโฮจิมินห์",
+   "name_en": "พิพิธภัณฑ์บ้านดงโฮจิมินห์",
+   "category": "museum",
+   "area": "พิจิตร",
+   "lat": 16.46322,
+   "lon": 100.38741,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "พิจิตร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%94%E0%B8%87%E0%B9%82%E0%B8%AE%E0%B8%88%E0%B8%B4%E0%B8%A1%E0%B8%B4%E0%B8%99%E0%B8%AB%E0%B9%8C",
+     "title": "พิพิธภัณฑ์บ้านดงโฮจิมินห์ (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4743",
+   "name_th": "พิพิธภัณฑ์เมืองยะลา",
+   "name_en": "พิพิธภัณฑ์เมืองยะลา",
+   "category": "museum",
+   "area": "ยะลา",
+   "lat": 6.56005,
+   "lon": 101.28396,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ยะลา",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%A2%E0%B8%B0%E0%B8%A5%E0%B8%B2",
+     "title": "พิพิธภัณฑ์เมืองยะลา (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4941",
+   "name_th": "วัดวารีบรรพต",
+   "name_en": "วัดวารีบรรพต",
+   "category": "temple",
+   "area": "ระนอง",
+   "lat": 10.00856,
+   "lon": 98.65561,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "ระนอง",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A7%E0%B8%B2%E0%B8%A3%E0%B8%B5%E0%B8%9A%E0%B8%A3%E0%B8%A3%E0%B8%9E%E0%B8%95",
+     "title": "วัดวารีบรรพต (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5741",
+   "name_th": "วัดถ้ำขาม",
+   "name_en": "วัดถ้ำขาม",
+   "category": "temple",
+   "area": "สกลนคร",
+   "lat": 17.21667,
+   "lon": 103.90167,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สกลนคร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%96%E0%B9%89%E0%B8%B3%E0%B8%82%E0%B8%B2%E0%B8%A1",
+     "title": "วัดถ้ำขาม (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p5742",
+   "name_th": "พระธาตุภูเพ็ก",
+   "name_en": "พระธาตุภูเพ็ก",
+   "category": "temple",
+   "area": "สกลนคร",
+   "lat": 17.19207,
+   "lon": 103.93729,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สกลนคร",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%A0%E0%B8%B9%E0%B9%80%E0%B8%9E%E0%B9%87%E0%B8%81",
+     "title": "พระธาตุภูเพ็ก (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p6041",
+   "name_th": "ป้อมผีเสื้อสมุทร",
+   "name_en": "ป้อมผีเสื้อสมุทร",
+   "category": "museum",
+   "area": "สมุทรปราการ",
+   "lat": 13.59502,
+   "lon": 100.58742,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "สมุทรปราการ",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%9C%E0%B8%B5%E0%B9%80%E0%B8%AA%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B8%AA%E0%B8%A1%E0%B8%B8%E0%B8%97%E0%B8%A3",
+     "title": "ป้อมผีเสื้อสมุทร (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-02",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p2544",
+   "name_th": "วัดชลธาราสิงเห",
+   "name_en": "วัดชลธาราสิงเห",
+   "category": "temple",
+   "area": "นราธิวาส",
+   "lat": 6.262,
+   "lon": 102.05,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [
+    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
+   ],
+   "province": "นราธิวาส",
+   "verified": true,
+   "matched_from_seed": "th-wiki",
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B8%A5%E0%B8%98%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B9%80%E0%B8%AB",
+     "title": "วัดชลธาราสิงเห (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-01",
      "fields": [
       "lat",
@@ -8375,112 +10541,6 @@
    ]
   },
   {
-   "id": "p2743",
-   "name_th": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ",
-   "name_en": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ",
-   "category": "museum",
-   "area": "บึงกาฬ",
-   "lat": 18.09938,
-   "lon": 103.40495,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "บึงกาฬ",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%8A%E0%B8%B8%E0%B8%A1%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%B5%E0%B8%8A%E0%B8%B5%E0%B8%A7%E0%B8%B4%E0%B8%95_%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%B6%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%AC",
-     "title": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p3242",
-   "name_th": "วัดช้างให้ราษฎร์บูรณาราม",
-   "name_en": "วัดช้างให้ราษฎร์บูรณาราม",
-   "category": "temple",
-   "area": "ปัตตานี",
-   "lat": 6.6699,
-   "lon": 101.16847,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ปัตตานี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B9%89%E0%B8%A3%E0%B8%B2%E0%B8%A9%E0%B8%8E%E0%B8%A3%E0%B9%8C%E0%B8%9A%E0%B8%B9%E0%B8%A3%E0%B8%93%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
-     "title": "วัดช้างให้ราษฎร์บูรณาราม (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p3743",
-   "name_th": "วัดมหาธาตุ (จังหวัดพิจิตร)",
-   "name_en": "วัดมหาธาตุ (จังหวัดพิจิตร)",
-   "category": "temple",
-   "area": "พิจิตร",
-   "lat": 16.41219,
-   "lon": 100.29469,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "พิจิตร",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%B4%E0%B8%88%E0%B8%B4%E0%B8%95%E0%B8%A3)",
-     "title": "วัดมหาธาตุ (จังหวัดพิจิตร) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
    "id": "p4143",
    "name_th": "วัดพระธาตุช่อแฮ",
    "name_en": "วัดพระธาตุช่อแฮ",
@@ -8506,149 +10566,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%8A%E0%B9%88%E0%B8%AD%E0%B9%81%E0%B8%AE",
      "title": "วัดพระธาตุช่อแฮ (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4341",
-   "name_th": "พิพิธภัณฑ์บ้านอีสาน",
-   "name_en": "พิพิธภัณฑ์บ้านอีสาน",
-   "category": "museum",
-   "area": "มหาสารคาม",
-   "lat": 15.70437,
-   "lon": 103.2306,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "มหาสารคาม",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%AD%E0%B8%B5%E0%B8%AA%E0%B8%B2%E0%B8%99",
-     "title": "พิพิธภัณฑ์บ้านอีสาน (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4741",
-   "name_th": "อุทยานแห่งชาติบางลาง",
-   "name_en": "อุทยานแห่งชาติบางลาง",
-   "category": "nature",
-   "area": "ยะลา",
-   "lat": 6.00833,
-   "lon": 101.16002,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ยะลา",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B8%A5%E0%B8%B2%E0%B8%87",
-     "title": "อุทยานแห่งชาติบางลาง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4742",
-   "name_th": "วัดคูหาภิมุข",
-   "name_en": "วัดคูหาภิมุข",
-   "category": "temple",
-   "area": "ยะลา",
-   "lat": 6.52801,
-   "lon": 101.2241,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ยะลา",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%84%E0%B8%B9%E0%B8%AB%E0%B8%B2%E0%B8%A0%E0%B8%B4%E0%B8%A1%E0%B8%B8%E0%B8%82",
-     "title": "วัดคูหาภิมุข (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4841",
-   "name_th": "ปรางค์กู่ (จังหวัดร้อยเอ็ด)",
-   "name_en": "ปรางค์กู่ (จังหวัดร้อยเอ็ด)",
-   "category": "museum",
-   "area": "ร้อยเอ็ด",
-   "lat": 16.06667,
-   "lon": 103.73333,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ร้อยเอ็ด",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%81%E0%B8%B9%E0%B9%88_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B9%80%E0%B8%AD%E0%B9%87%E0%B8%94)",
-     "title": "ปรางค์กู่ (จังหวัดร้อยเอ็ด) (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-01",
      "fields": [
       "lat",
@@ -8721,185 +10638,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%AB%E0%B8%A1%E0%B8%B9%E0%B9%88%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%A3%E0%B8%B0%E0%B8%99%E0%B8%AD%E0%B8%87",
      "title": "อุทยานแห่งชาติหมู่เกาะระนอง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5142",
-   "name_th": "วัดดอนตูม (จังหวัดราชบุรี)",
-   "name_en": "วัดดอนตูม (จังหวัดราชบุรี)",
-   "category": "temple",
-   "area": "ราชบุรี",
-   "lat": 13.81573,
-   "lon": 99.88176,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ราชบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%94%E0%B8%AD%E0%B8%99%E0%B8%95%E0%B8%B9%E0%B8%A1_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
-     "title": "วัดดอนตูม (จังหวัดราชบุรี) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5143",
-   "name_th": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน",
-   "name_en": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน",
-   "category": "nature",
-   "area": "ราชบุรี",
-   "lat": 13.38814,
-   "lon": 99.55592,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ราชบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B9%80%E0%B8%89%E0%B8%A5%E0%B8%B4%E0%B8%A1%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%81%E0%B8%B5%E0%B8%A2%E0%B8%A3%E0%B8%95%E0%B8%B4%E0%B9%84%E0%B8%97%E0%B8%A2%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B1%E0%B8%99",
-     "title": "อุทยานแห่งชาติเฉลิมพระเกียรติไทยประจัน (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5144",
-   "name_th": "พิพิธภัณฑ์หนังใหญ่วัดขนอน",
-   "name_en": "พิพิธภัณฑ์หนังใหญ่วัดขนอน",
-   "category": "museum",
-   "area": "ราชบุรี",
-   "lat": 13.72651,
-   "lon": 99.84481,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ราชบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%AB%E0%B8%99%E0%B8%B1%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B8%8D%E0%B9%88%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%82%E0%B8%99%E0%B8%AD%E0%B8%99",
-     "title": "พิพิธภัณฑ์หนังใหญ่วัดขนอน (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5145",
-   "name_th": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม",
-   "name_en": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม",
-   "category": "museum",
-   "area": "ราชบุรี",
-   "lat": 13.71533,
-   "lon": 99.85028,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ราชบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%84%E0%B8%87%E0%B8%84%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
-     "title": "พิพิธภัณฑ์พื้นบ้านวัดคงคาราม (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5146",
-   "name_th": "พิพิธภัณฑ์พื้นบ้านวัดม่วง",
-   "name_en": "พิพิธภัณฑ์พื้นบ้านวัดม่วง",
-   "category": "museum",
-   "area": "ราชบุรี",
-   "lat": 13.76965,
-   "lon": 99.84369,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ราชบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%9A%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B9%88%E0%B8%A7%E0%B8%87",
-     "title": "พิพิธภัณฑ์พื้นบ้านวัดม่วง (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-01",
      "fields": [
       "lat",
@@ -9053,41 +10791,6 @@
    ]
   },
   {
-   "id": "p5743",
-   "name_th": "วัดพระธาตุดุม",
-   "name_en": "วัดพระธาตุดุม",
-   "category": "temple",
-   "area": "สกลนคร",
-   "lat": 17.14392,
-   "lon": 104.16415,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สกลนคร",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%94%E0%B8%B8%E0%B8%A1",
-     "title": "วัดพระธาตุดุม (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
    "id": "p5744",
    "name_th": "วัดพระธาตุนารายณ์เจงเวง",
    "name_en": "วัดพระธาตุนารายณ์เจงเวง",
@@ -9113,42 +10816,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%99%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%93%E0%B9%8C%E0%B9%80%E0%B8%88%E0%B8%87%E0%B9%80%E0%B8%A7%E0%B8%87",
      "title": "วัดพระธาตุนารายณ์เจงเวง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5745",
-   "name_th": "พิพิธภัณฑ์เมืองสกลนคร",
-   "name_en": "พิพิธภัณฑ์เมืองสกลนคร",
-   "category": "museum",
-   "area": "สกลนคร",
-   "lat": 17.18962,
-   "lon": 104.09017,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "rainy_ok",
-    "history"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สกลนคร",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AA%E0%B8%81%E0%B8%A5%E0%B8%99%E0%B8%84%E0%B8%A3",
-     "title": "พิพิธภัณฑ์เมืองสกลนคร (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-01",
      "fields": [
       "lat",
@@ -9219,323 +10886,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%AA%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%95%E0%B8%A7%E0%B8%A3%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%A1",
      "title": "วัดสุทธิวาตวราราม (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6443",
-   "name_th": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย",
-   "name_en": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย",
-   "category": "nature",
-   "area": "สระบุรี",
-   "lat": 14.72611,
-   "lon": 101.18917,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สระบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%81%E0%B9%80%E0%B8%88%E0%B9%87%E0%B8%94%E0%B8%AA%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%89%E0%B8%AD%E0%B8%A2",
-     "title": "อุทยานแห่งชาติน้ำตกเจ็ดสาวน้อย (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6445",
-   "name_th": "วัดพระพุทธบาทราชวรมหาวิหาร",
-   "name_en": "วัดพระพุทธบาทราชวรมหาวิหาร",
-   "category": "temple",
-   "area": "สระบุรี",
-   "lat": 14.71832,
-   "lon": 100.78869,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สระบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B8%E0%B8%97%E0%B8%98%E0%B8%9A%E0%B8%B2%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
-     "title": "วัดพระพุทธบาทราชวรมหาวิหาร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6446",
-   "name_th": "วัดวิหารแดง",
-   "name_en": "วัดวิหารแดง",
-   "category": "temple",
-   "area": "สระบุรี",
-   "lat": 14.34045,
-   "lon": 100.99549,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สระบุรี",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%94%E0%B8%87",
-     "title": "วัดวิหารแดง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6643",
-   "name_th": "วัดเจดีย์สูง",
-   "name_en": "วัดเจดีย์สูง",
-   "category": "temple",
-   "area": "สุโขทัย",
-   "lat": 17.01581,
-   "lon": 99.72286,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุโขทัย",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%AA%E0%B8%B9%E0%B8%87",
-     "title": "วัดเจดีย์สูง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6644",
-   "name_th": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย)",
-   "name_en": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย)",
-   "category": "temple",
-   "area": "สุโขทัย",
-   "lat": 17.02031,
-   "lon": 99.71966,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุโขทัย",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%8A%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%A5%E0%B9%89%E0%B8%AD%E0%B8%A1_(%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%A7%E0%B8%B1%E0%B8%95%E0%B8%B4%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%A3%E0%B9%8C%E0%B8%AA%E0%B8%B8%E0%B9%82%E0%B8%82%E0%B8%97%E0%B8%B1%E0%B8%A2)",
-     "title": "วัดช้างล้อม (อุทยานประวัติศาสตร์สุโขทัย) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6645",
-   "name_th": "วัดมุมลังกา",
-   "name_en": "วัดมุมลังกา",
-   "category": "temple",
-   "area": "สุโขทัย",
-   "lat": 17.0255,
-   "lon": 99.71428,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุโขทัย",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A1%E0%B8%B8%E0%B8%A1%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%B2",
-     "title": "วัดมุมลังกา (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6646",
-   "name_th": "วัดตระพังทอง",
-   "name_en": "วัดตระพังทอง",
-   "category": "temple",
-   "area": "สุโขทัย",
-   "lat": 17.01758,
-   "lon": 99.70917,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุโขทัย",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B1%E0%B8%87%E0%B8%97%E0%B8%AD%E0%B8%87",
-     "title": "วัดตระพังทอง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6943",
-   "name_th": "ปราสาทศีขรภูมิ",
-   "name_en": "ปราสาทศีขรภูมิ",
-   "category": "museum",
-   "area": "สุรินทร์",
-   "lat": 14.94444,
-   "lon": 103.79806,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุรินทร์",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%AA%E0%B8%B2%E0%B8%97%E0%B8%A8%E0%B8%B5%E0%B8%82%E0%B8%A3%E0%B8%A0%E0%B8%B9%E0%B8%A1%E0%B8%B4",
-     "title": "ปราสาทศีขรภูมิ (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7042",
-   "name_th": "วัดผาตากเสื้อ",
-   "name_en": "วัดผาตากเสื้อ",
-   "category": "temple",
-   "area": "หนองคาย",
-   "lat": 18.0368,
-   "lon": 102.3051,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "หนองคาย",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9C%E0%B8%B2%E0%B8%95%E0%B8%B2%E0%B8%81%E0%B9%80%E0%B8%AA%E0%B8%B7%E0%B9%89%E0%B8%AD",
-     "title": "วัดผาตากเสื้อ (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-01",
      "fields": [
       "lat",
@@ -9681,1018 +11031,6 @@
       "lat",
       "lon",
       "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1308",
-   "name_th": "เมืองเชียงแสน",
-   "name_en": "Chiang Saen",
-   "category": "museum",
-   "area": "เชียงราย",
-   "lat": 20.27536,
-   "lon": 100.08764,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "เชียงราย",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Chiang_Saen",
-     "title": "Chiang Saen (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1309",
-   "name_th": "อุทยานแห่งชาติขุนแจ",
-   "name_en": "Khun Chae National Park",
-   "category": "nature",
-   "area": "เชียงราย",
-   "lat": 19.15306,
-   "lon": 99.46722,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "เชียงราย",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Khun_Chae_National_Park",
-     "title": "Khun Chae National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1310",
-   "name_th": "อุทยานแห่งชาติลำน้ำกก",
-   "name_en": "Lam Nam Kok National Park",
-   "category": "nature",
-   "area": "เชียงราย",
-   "lat": 19.95444,
-   "lon": 99.71083,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "เชียงราย",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Lam_Nam_Kok_National_Park",
-     "title": "Lam Nam Kok National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p1311",
-   "name_th": "ถ้ำหลวงนางนอน",
-   "name_en": "Tham Luang Nang Non",
-   "category": "nature",
-   "area": "เชียงราย",
-   "lat": 20.38167,
-   "lon": 99.86833,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "เชียงราย",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Tham_Luang_Nang_Non",
-     "title": "Tham Luang Nang Non (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4507",
-   "name_th": "อุทยานแห่งชาติสาละวิน",
-   "name_en": "Salawin National Park",
-   "category": "nature",
-   "area": "แม่ฮ่องสอน",
-   "lat": 18.09,
-   "lon": 97.75,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "แม่ฮ่องสอน",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Salawin_National_Park",
-     "title": "Salawin National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2604",
-   "name_th": "อุทยานแห่งชาติขุนน่าน",
-   "name_en": "Khun Nan National Park",
-   "category": "nature",
-   "area": "น่าน",
-   "lat": 19.18306,
-   "lon": 101.1775,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "น่าน",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Khun_Nan_National_Park",
-     "title": "Khun Nan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2605",
-   "name_th": "อุทยานแห่งชาติแม่จริม",
-   "name_en": "Mae Charim National Park",
-   "category": "nature",
-   "area": "น่าน",
-   "lat": 18.6,
-   "lon": 100.96667,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "น่าน",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Mae_Charim_National_Park",
-     "title": "Mae Charim National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2606",
-   "name_th": "น้ำตกภูฟ้า",
-   "name_en": "Phu Fa waterfall",
-   "category": "nature",
-   "area": "น่าน",
-   "lat": 19.00278,
-   "lon": 101.21611,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "น่าน",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phu_Fa_waterfall",
-     "title": "Phu Fa waterfall (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p3405",
-   "name_th": "อุทยานแห่งชาติดอยหลวง",
-   "name_en": "Doi Luang National Park",
-   "category": "nature",
-   "area": "พะเยา",
-   "lat": 19.2,
-   "lon": 99.71,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "พะเยา",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Doi_Luang_National_Park",
-     "title": "Doi Luang National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4103",
-   "name_th": "อุทยานแห่งชาติเวียงโกศัย",
-   "name_en": "Wiang Kosai National Park",
-   "category": "nature",
-   "area": "แพร่",
-   "lat": 17.93,
-   "lon": 99.55,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "แพร่",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wiang_Kosai_National_Park",
-     "title": "Wiang Kosai National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4104",
-   "name_th": "อุทยานแห่งชาติลำน้ำน่าน",
-   "name_en": "Lam Nam Nan National Park",
-   "category": "nature",
-   "area": "แพร่",
-   "lat": 18.06333,
-   "lon": 100.54861,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "แพร่",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Lam_Nam_Nan_National_Park",
-     "title": "Lam Nam Nan National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4105",
-   "name_th": "Tham Pha Nang Khoi",
-   "name_en": "Tham Pha Nang Khoi",
-   "category": "nature",
-   "area": "แพร่",
-   "lat": 18.36889,
-   "lon": 100.35112,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
-   ],
-   "province": "แพร่",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Tham_Pha_Nang_Khoi",
-     "title": "Tham Pha Nang Khoi (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7503",
-   "name_th": "อุทยานแห่งชาติต้นสักใหญ่",
-   "name_en": "Ton Sak Yai National Park",
-   "category": "nature",
-   "area": "อุตรดิตถ์",
-   "lat": 17.65,
-   "lon": 100.56667,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "อุตรดิตถ์",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Ton_Sak_Yai_National_Park",
-     "title": "Ton Sak Yai National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5403",
-   "name_th": "วัดพระพุทธบาทตากผ้า",
-   "name_en": "Wat Phra Phutthabat Tak Pha",
-   "category": "temple",
-   "area": "ลำพูน",
-   "lat": 18.45472,
-   "lon": 98.92139,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ลำพูน",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Phra_Phutthabat_Tak_Pha",
-     "title": "Wat Phra Phutthabat Tak Pha (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5304",
-   "name_th": "สะพานรัษฎาภิเศก",
-   "name_en": "Ratsadaphisek Bridge",
-   "category": "activity",
-   "area": "ลำปาง",
-   "lat": 18.29323,
-   "lon": 99.50077,
-   "duration_min": 90,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "family",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ลำปาง",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Ratsadaphisek_Bridge",
-     "title": "Ratsadaphisek Bridge (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5305",
-   "name_th": "Mae Wa National Park",
-   "name_en": "Mae Wa National Park",
-   "category": "nature",
-   "area": "ลำปาง",
-   "lat": 17.37194,
-   "lon": 99.25889,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
-   ],
-   "province": "ลำปาง",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Mae_Wa_National_Park",
-     "title": "Mae Wa National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p402",
-   "name_th": "อุทยานแห่งชาติภูผาเหล็ก",
-   "name_en": "Phu Pha Lek National Park",
-   "category": "nature",
-   "area": "กาฬสินธุ์",
-   "lat": 17.27,
-   "lon": 103.47,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "กาฬสินธุ์",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phu_Pha_Lek_National_Park",
-     "title": "Phu Pha Lek National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p604",
-   "name_th": "พระธาตุขามแก่น",
-   "name_en": "Phra That Kham Kaen",
-   "category": "temple",
-   "area": "ขอนแก่น",
-   "lat": 16.5635,
-   "lon": 102.9519,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ขอนแก่น",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phra_That_Kham_Kaen",
-     "title": "Phra That Kham Kaen (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p605",
-   "name_th": "พระมหาธาตุแก่นนคร",
-   "name_en": "Phra Mahathat Kaen Nakhon",
-   "category": "temple",
-   "area": "ขอนแก่น",
-   "lat": 16.4081,
-   "lon": 102.8342,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ขอนแก่น",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phra_Mahathat_Kaen_Nakhon",
-     "title": "Phra Mahathat Kaen Nakhon (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2103",
-   "name_th": "ปราสาทหินพนมวัน",
-   "name_en": "Prasat Phanom Wan",
-   "category": "museum",
-   "area": "นครราชสีมา",
-   "lat": 15.02,
-   "lon": 102.2,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "นครราชสีมา",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Prasat_Phanom_Wan",
-     "title": "Prasat Phanom Wan (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2104",
-   "name_th": "วัดธรรมจักรเสมาราม",
-   "name_en": "Wat Thammachak Semaram",
-   "category": "temple",
-   "area": "นครราชสีมา",
-   "lat": 14.91667,
-   "lon": 101.79361,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "นครราชสีมา",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Thammachak_Semaram",
-     "title": "Wat Thammachak Semaram (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2702",
-   "name_th": "Phu Thok",
-   "name_en": "Phu Thok",
-   "category": "temple",
-   "area": "บึงกาฬ",
-   "lat": 18.1375,
-   "lon": 103.87917,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
-   ],
-   "province": "บึงกาฬ",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phu_Thok",
-     "title": "Phu Thok (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5506",
-   "name_th": "อุทยานแห่งชาติภูสวนทราย",
-   "name_en": "Phu Suan Sai National Park",
-   "category": "nature",
-   "area": "เลย",
-   "lat": 17.51,
-   "lon": 100.96,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "เลย",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Phu_Suan_Sai_National_Park",
-     "title": "Phu Suan Sai National Park (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p5603",
-   "name_th": "ปราสาทสระกำแพงใหญ่",
-   "name_en": "Prasat Sa Kamphaeng Yai",
-   "category": "museum",
-   "area": "ศรีสะเกษ",
-   "lat": 15.101,
-   "lon": 104.125,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ศรีสะเกษ",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Prasat_Sa_Kamphaeng_Yai",
-     "title": "Prasat Sa Kamphaeng Yai (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7405",
-   "name_th": "วัดศิริสุทโธคำชะโนด",
-   "name_en": "Wat Kham Chanot",
-   "category": "temple",
-   "area": "อุดรธานี",
-   "lat": 17.74321,
-   "lon": 103.35933,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "อุดรธานี",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Kham_Chanot",
-     "title": "Wat Kham Chanot (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7406",
-   "name_th": "วัดป่าภูก้อน",
-   "name_en": "Wat Pa Phu Kon",
-   "category": "temple",
-   "area": "อุดรธานี",
-   "lat": 17.9229,
-   "lon": 102.11818,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "อุดรธานี",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Pa_Phu_Kon",
-     "title": "Wat Pa Phu Kon (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7301",
-   "name_th": "วัดพระเหลาเทพนิมิต",
-   "name_en": "Wat Phra Lao Thep Nimit",
-   "category": "temple",
-   "area": "อำนาจเจริญ",
-   "lat": 15.67689,
-   "lon": 104.85399,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "อำนาจเจริญ",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Phra_Lao_Thep_Nimit",
-     "title": "Wat Phra Lao Thep Nimit (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p7302",
-   "name_th": "Wat Tham Saeng Phet",
-   "name_en": "Wat Tham Saeng Phet",
-   "category": "temple",
-   "area": "อำนาจเจริญ",
-   "lat": 15.8952,
-   "lon": 104.7293,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
-   ],
-   "province": "อำนาจเจริญ",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Tham_Saeng_Phet",
-     "title": "Wat Tham Saeng Phet (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4301",
-   "name_th": "วัดโพธาราม",
-   "name_en": "Wat Photharam, Maha Sarakham",
-   "category": "temple",
-   "area": "มหาสารคาม",
-   "lat": 15.6603,
-   "lon": 103.2496,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "มหาสารคาม",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Wat_Photharam,_Maha_Sarakham",
-     "title": "Wat Photharam, Maha Sarakham (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p4801",
-   "name_th": "พระพุทธรัตนมงคลมหามุนี (หลวงพ่อใหญ่)",
-   "name_en": "Luangpho Yai",
-   "category": "temple",
-   "area": "ร้อยเอ็ด",
-   "lat": 16.0621,
-   "lon": 103.6585,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [],
-   "province": "ร้อยเอ็ด",
-   "verified": true,
-   "sources": [
-    {
-     "url": "https://en.wikipedia.org/wiki/Luangpho_Yai",
-     "title": "Luangpho Yai (Wikipedia)",
-     "checked_on": "2026-11-01",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th",
-      "name_en"
      ]
     }
    ]

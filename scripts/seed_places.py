@@ -24,21 +24,21 @@ SEED = {
     'กำแพงเพชร': [('Kamphaeng_Phet_Historical_Park', 'H'), ('Khlong_Lan_National_Park', 'N'), ('Khlong_Wang_Chao_National_Park', 'N'), ('Mae_Wong_National_Park', 'N')],
     'ขอนแก่น': [('Phu_Wiang_National_Park', 'N'), ('Ubolratana_Dam', 'A'), ('Phu_Pha_Man_National_Park', 'N'), ('Bueng_Kaen_Nakhon', 'A'), ('Phu_Wiang_Dinosaur_Museum', 'M')],
     'จันทบุรี': [('Khao_Khitchakut_National_Park', 'N'), ('Namtok_Phlio_National_Park', 'N'), ('Laem_Sing', 'B'), ('Cathedral_of_the_Immaculate_Conception,_Chanthaburi', 'T'), ('Kung_Krabaen_Bay', 'B'), ('Khao_Sip_Ha_Chan', 'N')],
-    'ฉะเชิงเทรา': [('Wat_Sothon_Wararam_Worawihan', 'T'), ('Wat_Pho_Bang_Khla', 'T'), ('Khao_Hin_Son', 'N')],
+    'ฉะเชิงเทรา': [('Wat_Sothon_Wararam_Worawihan', 'T'), ('Wat_Pho_Bang_Khla', 'T'), ('Khao_Hin_Son', 'N'), ('Wat_Sothonwararam', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'ชลบุรี': [('Pattaya', 'B'), ('Sanctuary_of_Truth', 'M'), ('Ko_Si_Chang', 'B'), ('Khao_Kheow_Open_Zoo', 'A'), ('Bang_Saen', 'B'), ('Nong_Nooch_Tropical_Garden', 'A'), ('Wat_Yansangwararam', 'T'), ('Khao_Chi_Chan', 'A'), ('Ko_Larn', 'B'), ('Pattaya_Floating_Market', 'K')],
     'ชัยนาท': [('Chao_Phraya_Dam', 'A'), ('Chai_Nat_Bird_Park', 'A'), ('Wat_Phra_Borommathat_Woramahawihan', 'T')],
     'ชัยภูมิ': [('Pa_Hin_Ngam_National_Park', 'N'), ('Tat_Ton_National_Park', 'N'), ('Sai_Thong_National_Park', 'N'), ('Phu_Khiao_Wildlife_Sanctuary', 'N')],
     'ชุมพร': [('Mu_Ko_Chumphon_National_Park', 'B'), ('Hat_Sai_Ri', 'B'), ('Tham_Khao_Phlai', 'N')],
     'เชียงราย': [('Wat_Rong_Khun', 'T'), ('Baan_Dam_Museum', 'M'), ('Wat_Rong_Suea_Ten', 'T'), ('Doi_Tung', 'N'), ('Golden_Triangle_(Southeast_Asia)', 'A'), ('Phu_Chi_Fa', 'N'), ('Wat_Huay_Pla_Kang', 'T'), ('Chiang_Rai_Clock_Tower', 'A'), ('Doi_Mae_Salong', 'N'), ('Mae_Fah_Luang_Garden', 'N')],
     'ตรัง': [('Hat_Chao_Mai_National_Park', 'B'), ('Ko_Kradan', 'B'), ('Ko_Libong', 'B'), ('Ko_Mook', 'B'), ('Tham_Morakot', 'N')],
-    'ตราด': [('Ko_Chang', 'B'), ('Ko_Kood', 'B'), ('Mu_Ko_Chang_National_Park', 'B'), ('Ko_Mak', 'B'), ('Ko_Wai', 'B')],
+    'ตราด': [('Ko_Chang', 'B'), ('Ko_Kood', 'B'), ('Mu_Ko_Chang_National_Park', 'B'), ('Ko_Mak', 'B'), ('Ko_Wai', 'B'), ('Ko_Kut', 'B')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'ตาก': [('Mae_Sot', 'A'), ('Bhumibol_Dam', 'A'), ('Thi_Lo_Su_Waterfall', 'N'), ('Taksin_Maharat_National_Park', 'N'), ('Lan_Sang_National_Park', 'N'), ('Um_Phang_Wildlife_Sanctuary', 'N')],
-    'นครนายก': [('Nang_Rong_Waterfall', 'N'), ('Sarika_Waterfall', 'N'), ('Khun_Dan_Prakarn_Chon_Dam', 'A')],
+    'นครนายก': [('Nang_Rong_Waterfall', 'N'), ('Sarika_Waterfall', 'N'), ('Khun_Dan_Prakarn_Chon_Dam', 'A')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'นครปฐม': [('Phra_Pathommachedi', 'T'), ('Sanam_Chandra_Palace', 'M'), ('Don_Wai_Market', 'K'), ('Rose_Garden_Riverside', 'A'), ('Phra_Pathom_Chedi_National_Museum', 'M')],
     'นครพนม': [('Wat_Phra_That_Phanom', 'T'), ('Phu_Langka_National_Park', 'N')],
     'นครราชสีมา': [('Phimai_Historical_Park', 'H'), ('Khao_Yai_National_Park', 'N'), ('Thao_Suranari_Monument', 'A'), ('Wat_Sala_Loi', 'T'), ('Dan_Kwian', 'K'), ('Wat_Phra_Narai_Maharat', 'T'), ('Phu_Ruea', 'N')],
     'นครศรีธรรมราช': [('Wat_Phra_Mahathat_Woramahawihan', 'T'), ('Khao_Luang_National_Park', 'N'), ('Khanom', 'B'), ('Nakhon_Si_Thammarat_National_Museum', 'M'), ('Khao_Luang_(Nakhon_Si_Thammarat)', 'N')],
-    'นครสวรรค์': [('Bueng_Boraphet', 'N'), ('Wat_Khiriwong', 'T')],
+    'นครสวรรค์': [('Bueng_Boraphet', 'N'), ('Wat_Khiriwong', 'T'), ('Wat_Woranat_Banphot', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'นนทบุรี': [('Ko_Kret', 'A'), ('Wat_Poramai_Yikawat', 'T'), ('Wat_Chaloem_Phra_Kiat_Worawihan', 'T'), ('Nonthaburi_Pier', 'A')],
     'นราธิวาส': [('Taksin_Ratchaniwet_Palace', 'M'), ('Hala-Bala_Wildlife_Sanctuary', 'N'), ('Bacho_Waterfall', 'N')],
     'น่าน': [('Wat_Phumin', 'T'), ('Wat_Phra_That_Chae_Haeng', 'T'), ('Doi_Phu_Kha_National_Park', 'N'), ('Wat_Phra_That_Khao_Noi', 'T'), ('Bo_Kluea', 'A'), ('Nan_National_Museum', 'M'), ('Sri_Nan_National_Park', 'N'), ('Wat_Phra_That_Chang_Kham', 'T')],
@@ -47,14 +47,14 @@ SEED = {
     'ปทุมธานี': [('Wat_Phra_Dhammakaya', 'T'), ('Dream_World_(Thailand)', 'A'), ('Siam_Amazing_Park', 'A'), ('Wat_Sing', 'T')],
     'ประจวบคีรีขันธ์': [('Hua_Hin', 'B'), ('Khao_Sam_Roi_Yot_National_Park', 'N'), ('Phraya_Nakhon_Cave', 'N'), ('Klai_Kangwon_Palace', 'M'), ('Hua_Hin_railway_station', 'A'), ('Wat_Huay_Mongkol', 'T'), ('Hua_Hin_Night_Market', 'K')],
     'ปราจีนบุรี': [('Thap_Lan_National_Park', 'N'), ('Si_Mahosot', 'H')],
-    'ปัตตานี': [('Krue_Se_Mosque', 'T'), ('Pattani_Central_Mosque', 'T'), ('Lim_Ko_Niao_Shrine', 'T')],
+    'ปัตตานี': [('Krue_Se_Mosque', 'T'), ('Pattani_Central_Mosque', 'T'), ('Lim_Ko_Niao_Shrine', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'พระนครศรีอยุธยา': [('Ayutthaya_Historical_Park', 'H'), ('Wat_Mahathat_(Ayutthaya)', 'T'), ('Wat_Phra_Si_Sanphet', 'T'), ('Wat_Chaiwatthanaram', 'T'), ('Bang_Pa-In_Royal_Palace', 'M'), ('Wat_Yai_Chai_Mongkhon', 'T'), ('Wat_Phanan_Choeng', 'T'), ('Wihan_Phra_Mongkhon_Bophit', 'T'), ('Wat_Lokayasutharam', 'T'), ('Chao_Sam_Phraya_National_Museum', 'M'), ('Wat_Ratchaburana_(Ayutthaya)', 'T'), ('Wat_Phutthaisawan', 'T')],
     'พะเยา': [('Kwan_Phayao', 'N'), ('Wat_Si_Khom_Kham', 'T'), ('Phu_Sang_National_Park', 'N'), ('Wat_Analayo_Thipphayaram', 'T'), ('Doi_Phu_Nang_National_Park', 'N')],
     'พังงา': [('Phang_Nga_Bay', 'B'), ('Similan_Islands', 'B'), ('Khao_Lak', 'B'), ('Ko_Tapu', 'B'), ('Mu_Ko_Surin_National_Park', 'B'), ('Khao_Lak-Lam_Ru_National_Park', 'N')],
-    'พัทลุง': [('Thale_Noi_Waterbird_Park', 'N'), ('Khao_Pu-Khao_Ya_National_Park', 'N'), ('Tham_Malai', 'N')],
+    'พัทลุง': [('Thale_Noi_Waterbird_Park', 'N'), ('Khao_Pu-Khao_Ya_National_Park', 'N'), ('Tham_Malai', 'N'), ('Thale_Noi_Non-Hunting_Area', 'N')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'พิจิตร': [('Bueng_Si_Fai', 'N'), ('Wat_Tha_Luang', 'T')],
     'พิษณุโลก': [('Wat_Phra_Si_Rattana_Mahathat_(Phitsanulok)', 'T'), ('Phu_Hin_Rong_Kla_National_Park', 'N'), ('Thung_Salaeng_Luang_National_Park', 'N'), ('Sergeant_Major_Thawee_Folk_Museum', 'M'), ('Wat_Chula_Mani', 'T'), ('Sakunothayan_Waterfall', 'N')],
-    'เพชรบุรี': [('Phra_Nakhon_Khiri', 'H'), ('Kaeng_Krachan_National_Park', 'N'), ('Cha-am', 'B'), ('Phra_Ram_Ratchaniwet', 'M'), ('Wat_Mahathat_Worawihan_(Phetchaburi)', 'T'), ('Tham_Khao_Luang', 'N')],
+    'เพชรบุรี': [('Phra_Nakhon_Khiri', 'H'), ('Kaeng_Krachan_National_Park', 'N'), ('Cha-am', 'B'), ('Phra_Ram_Ratchaniwet', 'M'), ('Wat_Mahathat_Worawihan_(Phetchaburi)', 'T'), ('Tham_Khao_Luang', 'N'), ('Phra_Nakhon_Khiri_Historical_Park', 'H'), ('Wat_Tham_Rong', 'T'), ('Wat_Phlapphla_Chai,_Phetchaburi', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'เพชรบูรณ์': [('Khao_Kho', 'N'), ('Nam_Nao_National_Park', 'N'), ('Phu_Thap_Boek', 'N'), ('Wat_Phra_That_Pha_Son_Kaew', 'T')],
     'แพร่': [('Wat_Phra_That_Cho_Hae', 'T'), ('Phae_Mueang_Phi', 'N'), ('Mae_Yom_National_Park', 'N'), ('Vongburi_House', 'M'), ('Wat_Luang_(Phrae)', 'T')],
     'ภูเก็ต': [('Patong', 'B'), ('Big_Buddha_(Phuket)', 'T'), ('Wat_Chalong', 'T'), ('Phuket_Old_Town', 'A'), ('Karon_Beach', 'B'), ('Kata_Beach', 'B'), ('Promthep_Cape', 'A'), ('Surin_Beach', 'B'), ('Nai_Harn_Beach', 'B'), ('Sirinat_National_Park', 'N'), ('Naithon_Beach', 'B'), ('Phuket_FantaSea', 'A')],
@@ -77,7 +77,7 @@ SEED = {
     'สตูล': [('Tarutao_National_Park', 'B'), ('Ko_Lipe', 'B'), ('Ko_Tarutao', 'B'), ('Thale_Ban_National_Park', 'N'), ('Ko_Adang', 'B'), ('Ko_Bulon_Lae', 'B')],
     'สมุทรปราการ': [('Ancient_City_(Thailand)', 'M'), ('Erawan_Museum', 'M'), ('Phra_Samut_Chedi', 'T'), ('Phra_Chulachomklao_Fort', 'H'), ('Bang_Pu', 'B')],
     'สมุทรสงคราม': [('Amphawa', 'K'), ('Maeklong_Railway_Market', 'K'), ('Wat_Bang_Kung', 'T'), ('Rama_II_Memorial_Park', 'M'), ('Don_Hoi_Lot', 'N')],
-    'สมุทรสาคร': [('Khlong_Khon', 'N'), ('Wat_Yai_Chom_Prasat', 'T')],
+    'สมุทรสาคร': [('Khlong_Khon', 'N'), ('Wat_Yai_Chom_Prasat', 'T'), ('Wat_Tha_Mai', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'สระแก้ว': [('Pang_Sida_National_Park', 'N'), ('Ta_Phraya_National_Park', 'N'), ('Aranyaprathet', 'K'), ('Rong_Kluea_Market', 'K'), ('Prasat_Sdok_Kok_Thom', 'H')],
     'สระบุรี': [('Phra_Phutthabat', 'T'), ('Namtok_Sam_Lan_National_Park', 'N'), ('Khao_Chin_Lae', 'N')],
     'สิงห์บุรี': [('Bang_Rachan', 'H'), ('Wat_Phra_Non_Chaksi', 'T')],
@@ -87,7 +87,7 @@ SEED = {
     'สุรินทร์': [('Prasat_Sikhoraphum', 'H'), ('Prasat_Ta_Muen_Thom', 'H'), ('Prasat_Ta_Muan', 'H'), ('Ban_Ta_Klang', 'A')],
     'หนองคาย': [('Sala_Keoku', 'M'), ('Wat_Phra_That_Bang_Phuan', 'T'), ('Thai-Lao_Friendship_Bridge', 'A'), ('Wat_Pho_Chai_(Nong_Khai)', 'T'), ('Tha_Sadet_Market', 'K')],
     'หนองบัวลำภู': [('Tham_Erawan', 'N'), ('Phu_Kao-Phu_Phan_Kham_National_Park', 'N'), ('Wat_Tham_Pha_Daen', 'T')],
-    'อ่างทอง': [('Wat_Muang', 'T'), ('Wat_Chaiyo_Worawihan', 'T')],
+    'อ่างทอง': [('Wat_Muang', 'T'), ('Wat_Chaiyo_Worawihan', 'T'), ('Great_Buddha_of_Thailand', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'อำนาจเจริญ': [('Phu_Sa_Dok_Bua', 'N'), ('Phra_That_Phra_Mongkol_Ming_Mueang', 'T')],
     'อุดรธานี': [('Ban_Chiang_Archaeological_Site', 'H'), ('Nong_Han_Kumphawapi', 'N'), ('Phu_Phra_Bat_Historical_Park', 'H'), ('Phu_Foi_Lom', 'N')],
     'อุตรดิตถ์': [('Sirikit_Dam', 'A'), ('Phu_Soi_Dao_National_Park', 'N'), ('Wat_Phra_Borommathat_Thung_Yang', 'T')],
