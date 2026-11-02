@@ -157,3 +157,21 @@ def test_post_json_sends_json_post(monkeypatch):
     monkeypatch.setattr(llm.urllib.request, "urlopen", fake)
     llm._post_json("https://api.example/x", {"X-Key": "1"}, {"ก": "ข"}, 7)
     assert seen == {"method": "POST", "data": {"ก": "ข"}, "ct": "application/json", "t": 7, "url": "https://api.example/x"}
+
+
+def test_empty_answer_error_says_why_without_leaking_content():
+    c = llm.LLMClient("anthropic", "m", "k")
+    data = {"content": [{"type": "thinking", "thinking": "ความลับในเนื้อหา"}], "stop_reason": "max_tokens",
+            "usage": {"output_tokens": 2000}}
+    with pytest.raises(llm.LLMError) as e:
+        c._extract(data)
+    msg = str(e.value)
+    assert "stop_reason=max_tokens" in msg and "blocks=thinking" in msg and "output_tokens=2000" in msg
+    assert "ความลับ" not in msg
+
+
+def test_empty_openai_answer_reports_finish_reason():
+    c = llm.LLMClient("openai", "m", "k")
+    with pytest.raises(llm.LLMError) as e:
+        c._extract({"choices": [{"message": {"content": ""}, "finish_reason": "length"}]})
+    assert "finish_reason=length" in str(e.value)
