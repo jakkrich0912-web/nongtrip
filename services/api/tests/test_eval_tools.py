@@ -181,3 +181,14 @@ def test_only_failed_reruns_just_those_cases(tmp_path, capsys):
     eval_rag.main(["--mock", "--only-failed", str(first), "--out", str(second)])
     rows = json.loads(second.read_text(encoding="utf-8"))["rows"]
     assert [r["q"] for r in rows] == [data["rows"][0]["q"]]
+
+
+def test_build_items_prefers_real_verified_names(monkeypatch):
+    rag = sample_rag(eval_rag.MockLLM())
+    pid = rag.retriever.docs[0]["place_id"]
+    monkeypatch.setattr(eval_rag, "_REAL", {pid: ["ชื่อไทยจริง", "Real English Name"]})
+    item = eval_rag.build_items({"q": "x", "place_ids": [pid]}, rag.retriever)[0]
+    assert item["name_th"] == "ชื่อไทยจริง" and item["name_en"] == "Real English Name"
+    monkeypatch.setattr(eval_rag, "_REAL", {})       # ไม่มีชื่อจริง ใช้ชื่อเรื่องของก้อนตามเดิม
+    item = eval_rag.build_items({"q": "x", "place_ids": [pid]}, rag.retriever)[0]
+    assert item["name_th"] == rag.retriever.docs[0]["title"] and "name_en" not in item

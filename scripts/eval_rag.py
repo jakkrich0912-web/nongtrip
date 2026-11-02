@@ -36,7 +36,7 @@ sys.path.insert(0, str(ROOT))
 from services.api.llm import LLMError, from_env  # noqa: E402
 from scripts.check_llm import load_dotenv  # noqa: E402
 from services.api.rag import Rag, load_known_names  # noqa: E402
-from services.places.retrieval import Retriever  # noqa: E402
+from services.places.retrieval import Retriever, verified_names  # noqa: E402
 
 SAMPLE = ROOT / "services" / "places" / "tests" / "rag"
 TARGET = 0.8          # เป้าอัตราผ่านของ kind=answer
@@ -55,8 +55,21 @@ class MockLLM:
         return f"{name} มีข้อมูลในคลังของระบบ [{doc.group(1)}]" if doc else "ไม่มีข้อมูลเรื่องนี้ในคลังของระบบ"
 
 
+_REAL: dict | None = None
+
+
+def _real_names() -> dict[str, list[str]]:
+    global _REAL
+    if _REAL is None:
+        try:
+            _REAL = verified_names()
+        except Exception:      # ไม่มีไฟล์สถานที่ที่ตรวจแล้ว (เช่นในเทสต์) ใช้ชื่อเรื่องของก้อนแทน
+            _REAL = {}
+    return _REAL
+
+
 def build_items(case: dict, retriever: Retriever) -> list[dict]:
-    """สมมติผลค้นรอบนั้น: สถานที่ที่ตรวจแล้วตาม place_ids ใช้ชื่อเรื่องของก้อนในคลังเป็นชื่อสถานที่"""
+    """สมมติผลค้นรอบนั้น: สถานที่ที่ตรวจแล้วตาม place_ids ใช้ชื่อจริงจากข้อมูลที่ตรวจแล้ว ถ้าไม่มีใช้ชื่อเรื่องของก้อนในคลัง"""
     pids = case.get("place_ids")
     if pids is None:
         want = case.get("expect")
@@ -68,8 +81,12 @@ def build_items(case: dict, retriever: Retriever) -> list[dict]:
             continue
         seen.add(pid)
         title = next((d["title"] for d in retriever.docs if d["place_id"] == pid), None)
-        if title:
-            items.append({"id": pid, "source": "verified", "name_th": title, "distance_km": km})
+        real = _real_names().get(pid, [])      # ชื่อจริงของสถานที่ที่ตรวจแล้ว เหมือนที่แชตส่งให้ด่านตรวจ
+        if title or real:
+            item = {"id": pid, "source": "verified", "name_th": real[0] if real else title, "distance_km": km}
+            if len(real) > 1:
+                item["name_en"] = real[1]
+            items.append(item)
     return items
 
 
