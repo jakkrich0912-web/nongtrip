@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from collections import defaultdict
@@ -33,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from services.api.llm import LLMError, from_env  # noqa: E402
+from scripts.check_llm import load_dotenv  # noqa: E402
 from services.api.rag import Rag, load_known_names  # noqa: E402
 from services.places.retrieval import Retriever  # noqa: E402
 
@@ -133,7 +135,7 @@ def passed(report: dict) -> bool:
     return all(v["rate"] == 1 for k, v in s.items() if k != "answer" and v["rate"] is not None)
 
 
-def main(argv: list[str] | None = None, llm=None) -> int:
+def main(argv: list[str] | None = None, llm=None, dotenv: Path | None = ROOT / ".env") -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--docs", default=str(SAMPLE / "sample_docs.json"), help="โฟลเดอร์คลัง (*.json) หรือไฟล์เดียว")
     ap.add_argument("--golden", default=str(SAMPLE / "golden_e2e_sample.json"))
@@ -149,7 +151,10 @@ def main(argv: list[str] | None = None, llm=None) -> int:
     if a.mock:
         llm = MockLLM()
     elif llm is None:
-        llm = from_env()
+        env = dict(os.environ)
+        if dotenv is not None:
+            load_dotenv(dotenv, env)   # อ่าน .env เหมือน check_llm.py (ตัวแปรสภาพแวดล้อมมาก่อน)
+        llm = from_env(env)
     if llm is None:
         print("ยังตั้งค่า LLM ไม่ครบ รัน scripts/check_llm.py เพื่อดูว่าขาดอะไร (หรือใช้ --mock เพื่อตรวจสคริปต์)")
         return 2
