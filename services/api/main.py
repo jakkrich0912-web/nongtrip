@@ -17,13 +17,15 @@ from services.places.verified import coverage_by_province
 
 from . import auth
 from .accounts import build_router
+from .chat import ChatThrottle, build_chat_router
 from .store import Store
 from .validator import load_verified_ids, validate_lodgings_near, validate_nearby
 
 
 def create_app(service: PlacesService | None = None, store: Store | None = None, session_secret: str | None = None,
-               secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None) -> FastAPI:
-    app = FastAPI(title="น้องทริป API", version="0.6")
+               secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None,
+               chat_throttle: ChatThrottle | None = None) -> FastAPI:
+    app = FastAPI(title="น้องทริป API", version="0.8")
     svc = service or PlacesService()
     known = load_verified_ids()
     origins = [o for o in (os.environ.get("WEB_ORIGINS") or "*").split(",") if o]
@@ -32,8 +34,10 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
                        allow_credentials="*" not in origins)
     if secure_cookie is None:
         secure_cookie = os.environ.get("SESSION_SECURE", "1") != "0"
-    app.include_router(build_router(store or Store(), auth.resolve_secret(session_secret), svc.verified,
-                                    secure_cookie, throttle))
+    store = store or Store()
+    secret = auth.resolve_secret(session_secret)
+    app.include_router(build_router(store, secret, svc.verified, secure_cookie, throttle))
+    app.include_router(build_chat_router(store, secret, svc, known, chat_throttle))
 
     @app.exception_handler(SearchError)
     async def _search_error(_: Request, e: SearchError):
