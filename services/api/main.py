@@ -69,8 +69,9 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
         return svc.province_center(name)
 
     @app.get("/api/lodgings/search")
-    def lodgings_search(q: str = Query(..., min_length=1)):
-        return svc.find_lodging(q)
+    def lodgings_search(q: str = Query(..., min_length=1), province: str | None = Query(None, max_length=60),
+                        area: str | None = Query(None, max_length=100), subtype: str | None = Query(None, max_length=30)):
+        return svc.find_lodging(q, province=province, area=area, subtype=subtype)
 
     @app.get("/api/places/nearby")
     def places_nearby(lat: float, lon: float, radius_km: float = 30.0,

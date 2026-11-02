@@ -9,9 +9,9 @@ from .cache import TTLCache
 from .geo import directions_url, haversine_km, in_thailand, place_url
 from .fetch import HttpClient, UpstreamError, UpstreamTooBig
 from .models import Candidate, LodgingCandidate, Place, SearchResult
-from .osm import NominatimClient, OverpassClient
+from .osm import LODGING_TYPES, NominatimClient, OverpassClient
 from .snapshot import DEFAULT_DIR, Snapshot
-from .provinces import PROVINCES, region_of
+from .provinces import PROVINCES, province_in_address, region_of
 from .verified import centroid, load_verified
 
 MAX_RADIUS_KM = 30.0          # CONTRACT ข้อ 5 บังคับในโค้ด
@@ -22,6 +22,22 @@ FALLBACK_FETCH_KM = 15.0      # ถ้า Overpass บอกว่าคำข�
 DUP_NEAR_KM = 0.3
 KINDS_ALL = ("attraction", "cafe")
 MAX_LODGINGS = 20             # ที่พักรอบหมุดที่แสดงสูงสุด (ใกล้หมุดที่สุดก่อน) กันหน้าเว็บยาวเป็นพันรายการ
+
+
+def _filter_lodgings(items: list[dict], province: str | None, area: str | None, subtype: str | None) -> list[dict]:
+    """กรองรายการที่พัก (dict จาก LodgingCandidate) ตามจังหวัด ย่าน ประเภท รายการที่ไม่รู้จังหวัดจะถูกตัดออก
+    เมื่อขอกรองจังหวัด เพราะแยกไม่ได้ว่าใช่แห่งที่ต้องการหรือไม่ (ไม่เดาให้)"""
+    out = []
+    a = _norm(area) if area else ""
+    for it in items:
+        if province and (it.get("province") or province_in_address(it.get("address"))) != province:
+            continue
+        if subtype and it.get("subtype") != subtype:
+            continue
+        if a and a not in _norm((it.get("name") or "") + (it.get("address") or "")):
+            continue
+        out.append(it)
+    return out
 
 
 class SearchError(ValueError):
@@ -163,34 +179,57 @@ class PlacesService:
                 "notice": "ยังหาจุดกลางของจังหวัดนี้ไม่ได้ ให้ค้นด้วยชื่อที่พักหรือปักหมุดแทน"}
 
     # ---------- ค้นที่พักจากชื่อ ----------
-    def find_lodging(self, query: str) -> dict:
+    def find_lodging(self, query: str, province: str | None = None, area: str | None = None,
+                     subtype: str | None = None) -> dict:
+        """ค้นที่พักด้วยชื่อ ถ้าชื่อซ้ำหลายแห่งให้ผู้ใช้เลือก ตัวกรองช่วยแยกที่พักชื่อซ้ำ:
+        province (หนึ่งใน 77 จังหวัด), area (ย่าน/อำเภอ/ถนน ข้อความที่ปรากฏในที่อยู่), subtype (ประเภทที่พัก OSM)"""
         q = (query or "").strip()
         if len(q) < 2:
             raise SearchError("ชื่อที่พักสั้นเกินไป")
+        province = (province or "").strip() or None
+        area = (area or "").strip() or None
+        subtype = (subtype or "").strip() or None
+        if province and province not in PROVINCES:
+            raise SearchError("ไม่รู้จักชื่อจังหวัดนี้ (ต้องเป็นหนึ่งใน 77 จังหวัด)")
+        if subtype and subtype not in LODGING_TYPES:
+            raise SearchError("ประเภทที่พักต้องเป็นหนึ่งใน " + ", ".join(LODGING_TYPES))
+        if area and len(area) > 100:
+            raise SearchError("ชื่อย่านยาวเกินไป")
+        flt = {"province": province, "area": area, "subtype": subtype}
         if not self.osm_live:
-            return self._lodging_offline(q, "ปิดการค้นหาจาก OpenStreetMap อยู่")
-        key = f"nominatim:{q.lower()}"
+            return self._lodging_offline(q, "ปิดการค้นหาจาก OpenStreetMap อยู่", flt)
+        # ใส่จังหวัด/ย่านต่อท้ายคำค้นด้วย เพื่อให้ Nominatim ส่งแห่งที่อยู่ตรงนั้นมาแทนแห่งอื่นที่ชื่อเหมือนกัน
+        text = " ".join(x for x in (q, area, province) if x)
+        limit = 20 if (province or area) else 8
+        key = f"nominatim:{text.lower()}" + (f":{limit}" if limit != 8 else "")
         cached = self.cache.get(key)
         try:
             if cached is None:
-                items = [c.to_dict() for c in self.nominatim.search_lodging(q)]
+                items = [c.to_dict() for c in self.nominatim.search_lodging(text, limit=limit)]
                 self.cache.set(key, items)
             else:
                 items = cached
         except UpstreamError:
-            return self._lodging_offline(q, "ค้นชื่อที่พักออนไลน์ไม่ได้ในตอนนี้")
+            return self._lodging_offline(q, "ค้นชื่อที่พักออนไลน์ไม่ได้ในตอนนี้", flt)
+        total = len(items)
+        items = _filter_lodgings(items, **flt)
         notices = []
         if len(items) > 1:
             notices.append("พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง")
         if not items:
-            notices.append("ไม่พบที่พักชื่อนี้ ลองพิมพ์ชื่ออื่น หรือปักหมุดบนแผนที่")
+            notices.append("ไม่พบที่พักที่ตรงตัวกรอง ลองเอาตัวกรองออกบางข้อ หรือปักหมุดบนแผนที่" if total
+                           else "ไม่พบที่พักชื่อนี้ ลองพิมพ์ชื่ออื่น หรือปักหมุดบนแผนที่")
         return {"items": items, "osm_available": True, "osm_mode": "live", "notices": notices}
 
-    def _lodging_offline(self, q: str, reason: str) -> dict:
+    def _lodging_offline(self, q: str, reason: str, flt: dict | None = None) -> dict:
+        flt = flt or {}
         if self.snapshot.available():
-            items = [c.to_dict() for c in self.snapshot.find_lodging(q)]
+            items = [c.to_dict() for c in self.snapshot.find_lodging(q, province=flt.get("province"),
+                                                                    subtype=flt.get("subtype"))]
             when = f" (ดึงไว้เมื่อ {self.snapshot.built_on})" if self.snapshot.built_on else ""
             notices = [f"{reason} จึงค้นจากข้อมูลที่บันทึกไว้ล่วงหน้า{when}"]
+            if flt.get("area"):
+                notices.append("ข้อมูลที่บันทึกไว้ยังกรองตามย่านไม่ได้ ผลที่เห็นไม่ได้ถูกกรองด้วยย่าน")
             if len(items) > 1:
                 notices.append("พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง")
             if not items:

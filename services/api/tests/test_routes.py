@@ -93,3 +93,15 @@ def test_province_center_and_unknown():
     assert client().get("/api/provinces/ลำปาง/center").status_code == 200
     r = client().get("/api/provinces/โตเกียว/center")
     assert r.status_code == 400 and "77" in r.json()["error"]
+
+
+def test_lodging_search_filters_and_validation():
+    rows = [{"lat": "18.79", "lon": "98.98", "osm_type": "node", "osm_id": i, "category": "tourism", "type": "hotel",
+             "name": "โรงแรมตัวอย่าง", "display_name": f"โรงแรมตัวอย่าง, {p}, ประเทศไทย"}
+            for i, p in [(1, "เชียงใหม่"), (2, "ขอนแก่น")]]
+    c = client(FakeHttp(nominatim=rows))
+    j = c.get("/api/lodgings/search", params={"q": "โรงแรมตัวอย่าง", "province": "ขอนแก่น"}).json()
+    assert [i["id"] for i in j["items"]] == ["osm:node/2"] and j["items"][0]["province"] == "ขอนแก่น"
+    for bad in [{"province": "ไม่มีจังหวัดนี้"}, {"subtype": "castle"}, {"area": "ก" * 101}]:
+        r = c.get("/api/lodgings/search", params={"q": "โรงแรมตัวอย่าง", **bad})
+        assert r.status_code == 400 and "error" in r.json()

@@ -90,6 +90,7 @@ class LodgingCandidate:
     subtype: str | None
     lat: float
     lon: float
+    province: str | None = None  # รู้จากที่อยู่ (ออนไลน์) หรือไฟล์สแนปช็อตของจังหวัดนั้น ไม่รู้ = None
 
     def to_dict(self) -> dict[str, Any]:
         return dict(self.__dict__)

@@ -186,12 +186,14 @@
 }
 ```
 
-`GET /api/lodgings/search?q=<ชื่อ>` (`maps_url` ในตัวอย่างข้างบนย่อไว้ ค่าจริงเป็น URL ที่เข้ารหัสแล้ว)
+`GET /api/lodgings/search?q=<ชื่อ>&province=&area=&subtype=` (`maps_url` ในตัวอย่างข้างบนย่อไว้ ค่าจริงเป็น URL ที่เข้ารหัสแล้ว)
+
+ตัวกรองไม่บังคับ ใช้แยกที่พักชื่อซ้ำ ทุกตัวต้องตรงพร้อมกัน: `province` ต้องเป็นหนึ่งใน 77 จังหวัด, `area` คือย่าน/อำเภอ/ถนน (ข้อความที่ปรากฏในที่อยู่ ไม่เกิน 100 ตัว), `subtype` ต้องเป็น `hotel` `guest_house` `hostel` `motel` `resort` `apartment` `chalet` ค่าผิดตอบ `400` รายการที่ไม่รู้จังหวัดจะถูกตัดออกเมื่อขอกรองจังหวัด (ไม่เดาให้) ตัวอย่างรายการมีฟิลด์ `province` เพิ่ม (`null` ถ้าไม่รู้) โหมด `osm_mode: snapshot` กรองย่านไม่ได้ และจะบอกใน `notices` ผลค้นที่พบหลายรายการยังขึ้นข้อความให้เลือกเหมือนเดิม หน้าเว็บต้องให้ผู้ใช้เลือกเองเสมอ ห้ามเลือกแห่งแรกให้
 
 ```json
 {
   "items": [{"id": "osm:way/123456", "name": "โรงแรมตัวอย่าง", "address": null,
-             "subtype": "hotel", "lat": 18.79, "lon": 98.98}],
+             "subtype": "hotel", "lat": 18.79, "lon": 98.98, "province": "เชียงใหม่"}],
   "osm_available": true,
   "osm_mode": "live",
   "notices": []
@@ -234,3 +236,4 @@
 | v0.8 | 2026-11-02 | `POST /api/chat` พร้อมใช้ (โหมดกฎ): กำหนด event `lodgings`, ฟิลด์ `chat_id` ในคำขอ, `chat_id` เป็น `null` เมื่อไม่ล็อกอิน, `rate_limited` ของแชต (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.9 | 2026-11-02 | เพิ่ม `POST /api/auth/google` (ล็อกอินด้วย Google ID token), code `google_not_configured` (501), `upstream_unavailable` ใช้กับล็อกอิน Google แล้ว, ตัวแปร env `GOOGLE_CLIENT_ID` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.10 | 2026-11-02 | เพิ่ม API ไกด์ที่เที่ยว: `GET /api/guide/featured`, `GET /api/provinces/{ชื่อ}/places`, `GET /api/places/{id}` (เพิ่มอย่างเดียว ไม่ breaking) |
+| v0.11 | 2026-11-02 | `GET /api/lodgings/search` รับตัวกรอง `province`, `area`, `subtype` และรายการมีฟิลด์ `province` เพิ่ม (เพิ่มอย่างเดียว ไม่ breaking) |
