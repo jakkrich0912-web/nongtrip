@@ -36,7 +36,8 @@ apps/web/          หน้าเว็บ
 services/api/      ผู้ใช้ ประวัติ แชตบอท ตัวตรวจผลค้น (ประตูเดียวที่เว็บคุยด้วย)
 services/places/   ค้นที่พักและสถานที่รอบจุด (OpenStreetMap + ข้อมูลที่ตรวจที่มาแล้วใน data/)
 docs/              CONTRACT, SPEC, RUNBOOK, DEMO_SCRIPT, DATA_SOURCES, GIT_FLOW
-scripts/           สคริปต์ช่วยงาน
+scripts/           สคริปต์ช่วยงาน (รวม smoke_test.py)
+docker-compose.yml เปิดทั้งระบบด้วย `make up` (web + api) ดู docs/RUNBOOK.md
 .github/           CODEOWNERS, PR template, CI
 ```
 
