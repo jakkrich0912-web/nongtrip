@@ -20,6 +20,7 @@ from .accounts import build_router
 from .chat import ChatThrottle, build_chat_router
 from .google import GoogleVerifier
 from .guide import build_guide_router, load_guide
+from .rag import Rag, build_default
 from .store import Store
 from .validator import load_verified_ids, validate_lodgings_near, validate_nearby
 
@@ -27,8 +28,9 @@ from .validator import load_verified_ids, validate_lodgings_near, validate_nearb
 def create_app(service: PlacesService | None = None, store: Store | None = None, session_secret: str | None = None,
                secure_cookie: bool | None = None, throttle: auth.LoginThrottle | None = None,
                chat_throttle: ChatThrottle | None = None, google: GoogleVerifier | None = None,
-               guide: list[dict] | None = None) -> FastAPI:
-    app = FastAPI(title="น้องทริป API", version="0.12")
+               guide: list[dict] | None = None, rag: Rag | None = None) -> FastAPI:
+    app = FastAPI(title="น้องทริป API", version="0.13")
+    rag = rag if rag is not None else build_default()
     svc = service or PlacesService()
     known = load_verified_ids()
     origins = [o for o in (os.environ.get("WEB_ORIGINS") or "*").split(",") if o]
@@ -40,7 +42,7 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     store = store or Store()
     secret = auth.resolve_secret(session_secret)
     app.include_router(build_router(store, secret, svc.verified, secure_cookie, throttle, google))
-    app.include_router(build_chat_router(store, secret, svc, known, chat_throttle))
+    app.include_router(build_chat_router(store, secret, svc, known, chat_throttle, rag))
 
     @app.exception_handler(SearchError)
     async def _search_error(_: Request, e: SearchError):
@@ -55,7 +57,7 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     def health():
         snap = svc.snapshot
         return {"ok": True, "osm_live": svc.osm_live, "snapshot_available": snap.available(),
-                "verified_places": len(svc.verified)}
+                "verified_places": len(svc.verified), "rag": rag.health()}
 
     @app.get("/api/provinces")
     def provinces():

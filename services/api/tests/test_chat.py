@@ -139,7 +139,7 @@ def test_chat_with_pin_streams_events_in_order(env):
     assert evs[0][1]["name"] == "places_nearby"
     places = evs[1][1]
     assert places["validation"]["ok"] and [p["name_th"] for p in places["items"]][:2] == ["ใกล้สุด", "วัดพระธาตุดอยสุเทพ"]
-    assert evs[-1][1] == {"chat_id": None}
+    assert evs[-1][1] == {"chat_id": None, "mode": "rule"}
 
 
 def test_reply_names_and_distances_come_only_from_places_event(env):
@@ -312,7 +312,7 @@ def test_throttle_unit_window_and_key_cap():
 def test_anonymous_chat_stores_nothing(tmp_path):
     c, store, db, _ = make(tmp_path)
     evs = events(ask(c, "ที่เที่ยวใกล้ๆ", context={"lat": LAT, "lon": LON}))
-    assert evs[-1] == ("done", {"chat_id": None})
+    assert evs[-1] == ("done", {"chat_id": None, "mode": "rule"})
     assert count(db, "chats") == 0 and count(db, "chat_messages") == 0
     assert ask(c, "x", chat_id=1, context={"lat": LAT, "lon": LON}).status_code == 200   # ไม่ล็อกอิน: chat_id ถูกเมิน
 

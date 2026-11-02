@@ -25,7 +25,9 @@ from services.places.geo import in_thailand
 
 from . import auth
 from .accounts import COOKIE, MAX_ID
+from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, Intent, clean, parse
+from .rag import Rag
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
 
@@ -216,8 +218,22 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str])
                    *_notes(notes + res_notes), *tail)
 
 
+def _footer(places_ev: dict | None, it: Intent) -> list[str]:
+    """ข้อความที่โค้ดของเราเติมท้ายคำตอบ LLM (ไม่ผ่านด่านตรวจเพราะเป็นข้อความสำเร็จรูป): หมายเหตุระยะ ที่มาข้อมูล OSM ข้อความเตือน"""
+    ev = places_ev or {}
+    out = []
+    items = ev.get("items") or []
+    attr = ev.get("attribution") if any(p.get("source") == "osm" for p in items) else ""
+    note = " ".join(x for x in (ev.get("distance_note"), attr) if x).strip()
+    if note:
+        out.append(note + "\n")
+    out += [n + "\n" for n in _notes(list(ev.get("notices") or []))]
+    out += [t + "\n" for t in _tail(it)]
+    return out
+
+
 def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[str],
-                      throttle: ChatThrottle | None = None) -> APIRouter:
+                      throttle: ChatThrottle | None = None, rag: Rag | None = None) -> APIRouter:
     r = APIRouter()
     throttle = throttle or ChatThrottle()
 
@@ -260,12 +276,34 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         log.exception("save chat message failed")
 
             try:
-                for ev, data in answer(parse(text), ctx, svc, known):
+                intent = parse(text)
+                use_rag = rag is not None and rag.enabled
+                held: list[str] = []          # ข้อความแบบกฎที่พักไว้จนรู้ว่า LLM ผ่านด่านตรวจหรือไม่
+                places_ev: dict | None = None
+                for ev, data in answer(intent, ctx, svc, known):
+                    if ev == "places":
+                        places_ev = data
+                    if ev == "token" and use_rag:
+                        held.append(data["text"])
+                        continue
                     if ev == "token":
                         parts.append(data["text"])
                     yield _sse(ev, data)
+                mode = "rule"
+                if use_rag:
+                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"))
+                    if res.mode == "llm":
+                        mode = "llm"
+                        yield _sse("sources", {"items": res.sources})
+                        lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
+                        lines += _footer(places_ev, intent)
+                    else:
+                        lines = held + ([f"หมายเหตุ: {GUARD_NOTICE}\n"] if res.guard_failed else [])
+                    for ln in lines:
+                        parts.append(ln)
+                        yield _sse("token", {"text": ln})
                 save()
-                yield _sse("done", {"chat_id": chat_id})
+                yield _sse("done", {"chat_id": chat_id, "mode": mode})
             except SearchError as e:
                 yield _sse("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้

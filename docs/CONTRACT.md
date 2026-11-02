@@ -26,10 +26,10 @@
 | `GET /api/lodgings/search?q=` | ค้นที่พักจากชื่อ คืนหลายรายการให้ผู้ใช้เลือก ชื่อกำกวมไม่เดา | API พร้อม |
 | `GET /api/places/nearby?lat&lon&radius_km=30&kinds=attraction,cafe&limit&offset` | สถานที่รอบจุด เรียงใกล้ไปไกล | API พร้อม |
 | `GET /api/lodgings/near?lat&lon` | ผู้ที่ยังไม่ได้จอง: ที่พักรอบหมุด (5 กม. ขยายเป็น 10) พร้อมสถานที่ใกล้สุด 3 แห่งต่อที่พัก แสดงสูงสุด 20 ที่พักที่ใกล้หมุดที่สุด | API พร้อม |
-| `GET /api/health` | สถานะ `{ok, osm_live, snapshot_available, verified_places}` | API พร้อม |
+| `GET /api/health` | สถานะ `{ok, osm_live, snapshot_available, verified_places, rag}` โดย `rag` = `{docs, llm}` (จำนวนก้อนความรู้ในคลัง และมี LLM ต่อไว้หรือไม่) | API พร้อม |
 | `GET /api/provinces` | รายชื่อ 77 จังหวัดจัดตามภาค `{regions:[{region, provinces:[{name, verified_count}]}]}` ไว้ให้หน้าแรกเลือกจังหวัด | API พร้อม |
 | `GET /api/provinces/{ชื่อ}/center` | จุดกลางจังหวัด `{province, region, lat, lon, source, notice?}` (`source` = `osm` หรือ `verified_centroid`; หาไม่ได้ `lat`/`lon` เป็น `null` และมี `notice`) | API พร้อม |
-| `POST /api/chat` | แชต สตรีมผลทีละขั้น (SSE) เรียกเครื่องมือค้นตัวเดียวกับหน้าค้นหา ดูข้อ 3.2 | API พร้อม (โหมดกฎ) |
+| `POST /api/chat` | แชต สตรีมผลทีละขั้น (SSE) เรียกเครื่องมือค้นตัวเดียวกับหน้าค้นหา ดูข้อ 3.2 | API พร้อม (โหมดกฎ หรือ LLM ถ้าต่อไว้) |
 | `POST /api/auth/register`, `/login`, `/logout`, `GET /api/auth/me` | ผู้ใช้ (อีเมล+รหัสผ่าน แฮชแล้ว, คุกกี้เซสชัน) ดูข้อ 3.3 | API พร้อม |
 | `GET/POST/DELETE /api/me/searches`, `GET/POST/DELETE /api/me/favorites`, `GET/DELETE /api/me/chats` | ประวัติค้นที่พัก สถานที่โปรด ประวัติแชต (เฉพาะผู้ที่ล็อกอิน) ดูข้อ 3.4 | API พร้อม |
 
@@ -51,7 +51,7 @@
 | 501 | `google_not_configured` | ยังไม่ตั้ง `GOOGLE_CLIENT_ID` จึงยังไม่เปิดล็อกอินด้วย Google | API พร้อม |
 | 502 | `upstream_unavailable` | บริการภายนอกล่มและไม่มีสแนปช็อต หรือติดต่อ Google ตอนล็อกอินไม่ได้ | ล็อกอิน Google พร้อม ส่วนค้นหายังวางแผน |
 
-### 3.2 แชต (API พร้อม โหมดกฎ ไม่ใช้ LLM)
+### 3.2 แชต (API พร้อม โหมดกฎ และโหมด LLM เมื่อตั้งค่าไว้)
 
 `POST /api/chat` ส่ง `{"message": "...", "context": {"lat": 18.79, "lon": 98.98}, "chat_id": 12}` ตอบเป็น Server-Sent Events (`text/event-stream`)
 
@@ -70,11 +70,14 @@
 | `tool` | `{"name": "places_nearby", "args": {...}}` | กำลังเรียกเครื่องมือค้น ชื่อที่เป็นไปได้: `province_center`, `lodgings_search`, `lodgings_near`, `places_nearby` |
 | `places` | `{"items": [...], "validation": {...}, "notices": [...], "center", "radius_km", "total", "counts", "sources", "osm_mode", "osm_available", "attribution", "distance_note"}` | ผลค้นสถานที่ที่ผ่านตัวตรวจแล้ว หน้าเว็บแสดงเป็นการ์ด ถ้าตัวตรวจไม่ผ่าน `items` เป็น `[]` และมีข้อความเตือนใน `notices` |
 | `lodgings` | `{"source": "search" \| "near", "items": [...], "notices": [...], ...}` | `search` = ผลค้นชื่อที่พัก (รูปแบบเดียวกับ `/api/lodgings/search`) `near` = ที่พักรอบหมุด (รูปแบบเดียวกับ `/api/lodgings/near`) |
+| `sources` | `{"items": [{"id", "place_id", "title", "url", "license", "checked_on"}]}` | **v0.13** ส่งก่อน `token` เฉพาะโหมด LLM บอกก้อนความรู้ที่คำตอบอ้าง (รหัส `id` ตรงกับ `[k:...]` ในข้อความ) หน้าเว็บต้องแสดงที่มาและสัญญาอนุญาตจาก `license`/`url` โหมดกฎไม่ส่ง event นี้ |
 | `token` | `{"text": "..."}` | ข้อความตอบทีละบรรทัด (ลงท้ายด้วย `\n`) |
-| `done` | `{"chat_id": 12}` | จบ `chat_id` เป็น `null` ถ้าไม่ได้ล็อกอิน (ไม่บันทึก) |
+| `done` | `{"chat_id": 12, "mode": "rule" \| "llm"}` | จบ `chat_id` เป็น `null` ถ้าไม่ได้ล็อกอิน (ไม่บันทึก) `mode` (v0.13) บอกว่าคำตอบนี้มาจากโหมดไหน ใช้แสดงป้ายโหมด |
 | `error` | `{"error": "...", "code": "invalid_param" \| "internal"}` | ผิดพลาดระหว่างสตรีม (HTTP ยังเป็น 200) ไม่ส่ง `done` |
 
 ถ้าคำขอผิดก่อนเริ่มสตรีม ตอบ HTTP 400/404/429 เป็น JSON ตามข้อ 3.1
+
+**โหมด LLM (v0.13):** เปิดเมื่อตั้ง `LLM_PROVIDER` (anthropic/openai) พร้อมคีย์และ `LLM_MODEL` ใน `.env` และมีคลังความรู้ ลำดับคือ ค้นด้วยเครื่องมือและตัวตรวจเดิมก่อน (`places` ผ่านตัวตรวจแล้ว) > ค้นก้อนความรู้เฉพาะสถานที่ในผลนั้น > ให้ LLM เขียนคำตอบพร้อมรหัสที่มา `[k:...]` > ด่านตรวจคำตอบด้วยโค้ด ถ้าไม่ผ่าน หรือ LLM ล้มเหลว หรือไม่พบก้อนความรู้ที่เกี่ยวข้อง ระบบตอบโหมดกฎแทน (`mode: "rule"` ไม่ส่ง `sources` ถ้าด่านตรวจไม่ผ่านจะมีบรรทัด `หมายเหตุ:` บอก) ข้อความท้าย (ระยะเส้นตรง ที่มา OpenStreetMap หมายเหตุ ข้อความปฏิเสธเรื่องราคา) โค้ดเป็นคนเติมเสมอ ไม่ให้ LLM เขียน ลูกค้าเว็บที่ไม่รู้จัก event ต้องข้ามไปได้
 
 บอทหาตำแหน่งค้นตามลำดับ: ชื่อจังหวัดในข้อความ (ค้นรอบจุดกลางจังหวัดและบอกผู้ใช้) > `context` > ชื่อที่พักในข้อความ (ถ้าพบหลายรายการหรือไม่พบ ไม่เดา ให้ผู้ใช้เลือกหรือปักหมุด) > ถามผู้ใช้ ปรับได้ด้วยข้อความ เช่น "คาเฟ่", "5 แห่ง", "ใน 10 กม." (เพดาน 30 กม. และ 10 แห่งต่อครั้ง)
 
@@ -242,3 +245,4 @@
 | v0.10 | 2026-11-02 | เพิ่ม API ไกด์ที่เที่ยว: `GET /api/guide/featured`, `GET /api/provinces/{ชื่อ}/places`, `GET /api/places/{id}` (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.11 | 2026-11-02 | `GET /api/lodgings/search` รับตัวกรอง `province`, `area`, `subtype` และรายการมีฟิลด์ `province` เพิ่ม (เพิ่มอย่างเดียว ไม่ breaking) |
 | v0.12 | 2026-11-02 | เพิ่มลบข้อมูลของตัวเอง: `DELETE /api/me/searches`, `DELETE /api/me/favorites`, `DELETE /api/me/chats` (ลบทั้งหมดของฉัน) และ `POST /api/me/delete` (ลบบัญชีถาวร ต้องส่งอีเมลยืนยัน) เพิ่มอย่างเดียว ไม่ breaking |
+| v0.13 | 2026-11-02 | โหมด LLM ของแชต: เพิ่ม event `sources`, ฟิลด์ `mode` ใน `done`, ฟิลด์ `rag` ใน `/api/health` (เพิ่มอย่างเดียว ไม่ breaking โหมดกฎคงเดิม) |
