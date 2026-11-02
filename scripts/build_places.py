@@ -175,9 +175,13 @@ DROP = {("นราธิวาส", "พิพิธภัณฑ์เมือ
         ("ศรีสะเกษ", "ปราสาทบ้านปราสาท"), ("ศรีสะเกษ", "ปราสาทตาเล็ง"), ("สระบุรี", "ปราสาทนครหลวง"), ("นครราชสีมา", "ภูเรือ"),
         ("ปทุมธานี", "อำเภอวัดสิงห์"), ("แม่ฮ่องสอน", "อุทยานแห่งชาติศรีลานนา")}
 
+# ตัดตามรหัส: สถานที่เดียวกันที่ได้มาสองรอบ (en-wiki กับ th-wiki) เก็บรหัสเดิมที่ขึ้นต้นด้วยเลขต่ำ
+DROP_IDS = {"p1243", "p1945", "p2244", "p6943"}
+
 
 def apply_drop(places: list[dict]) -> list[dict]:
-    return [p for p in places if (p["province"], p["name_th"]) not in DROP and not p["name_th"].startswith("อำเภอ")]
+    return [p for p in places if (p["province"], p["name_th"]) not in DROP and p["id"] not in DROP_IDS
+            and not p["name_th"].startswith("อำเภอ")]
 
 
 def _th_ok(t: str, prov: str) -> str | None:

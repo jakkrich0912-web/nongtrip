@@ -8924,42 +8924,6 @@
    ]
   },
   {
-   "id": "p1243",
-   "name_th": "อุทยานแห่งชาติหมู่เกาะชุมพร",
-   "name_en": "อุทยานแห่งชาติหมู่เกาะชุมพร",
-   "category": "nature",
-   "area": "ชุมพร",
-   "lat": 10.35643,
-   "lon": 99.23108,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "nature",
-    "outdoors",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "ชุมพร",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%AB%E0%B8%A1%E0%B8%B9%E0%B9%88%E0%B9%80%E0%B8%81%E0%B8%B2%E0%B8%B0%E0%B8%8A%E0%B8%B8%E0%B8%A1%E0%B8%9E%E0%B8%A3",
-     "title": "อุทยานแห่งชาติหมู่เกาะชุมพร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-02",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
    "id": "p1544",
    "name_th": "วัดตันตยาภิรม",
    "name_en": "วัดตันตยาภิรม",
@@ -9067,41 +9031,6 @@
    ]
   },
   {
-   "id": "p1945",
-   "name_th": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร",
-   "name_en": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร",
-   "category": "temple",
-   "area": "นครปฐม",
-   "lat": 13.81693,
-   "lon": 100.05998,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "นครปฐม",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%90%E0%B8%A1%E0%B9%80%E0%B8%88%E0%B8%94%E0%B8%B5%E0%B8%A2%E0%B9%8C%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
-     "title": "วัดพระปฐมเจดีย์ราชวรมหาวิหาร (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-02",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
    "id": "p1946",
    "name_th": "วัดไผ่ล้อม (จังหวัดนครปฐม)",
    "name_en": "วัดไผ่ล้อม (จังหวัดนครปฐม)",
@@ -9163,41 +9092,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%88%E0%B8%A7%E0%B8%99%E0%B8%9C%E0%B8%B9%E0%B9%89%E0%B8%A7%E0%B9%88%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%8A%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%99%E0%B8%84%E0%B8%A3%E0%B8%9E%E0%B8%99%E0%B8%A1_(%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%88%E0%B8%B2)",
      "title": "พิพิธภัณฑ์จวนผู้ว่าราชการจังหวัดนครพนม (หลังเก่า) (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-02",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p2244",
-   "name_th": "วัดพระมหาธาตุวรมหาวิหาร",
-   "name_en": "วัดพระมหาธาตุวรมหาวิหาร",
-   "category": "temple",
-   "area": "นครศรีธรรมราช",
-   "lat": 8.41147,
-   "lon": 99.96622,
-   "duration_min": 60,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "culture",
-    "photo"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "นครศรีธรรมราช",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
-     "title": "วัดพระมหาธาตุวรมหาวิหาร (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-02",
      "fields": [
       "lat",
@@ -10051,42 +9945,6 @@
     {
      "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%95%E0%B8%A3%E0%B8%B0%E0%B8%9E%E0%B8%B1%E0%B8%87%E0%B8%97%E0%B8%AD%E0%B8%87",
      "title": "วัดตระพังทอง (Wikipedia ภาษาไทย)",
-     "checked_on": "2026-11-02",
-     "fields": [
-      "lat",
-      "lon",
-      "name_th"
-     ]
-    }
-   ]
-  },
-  {
-   "id": "p6943",
-   "name_th": "ปราสาทศีขรภูมิ",
-   "name_en": "ปราสาทศีขรภูมิ",
-   "category": "museum",
-   "area": "สุรินทร์",
-   "lat": 14.94444,
-   "lon": 103.79806,
-   "duration_min": 120,
-   "cost_thb": null,
-   "open": null,
-   "tags": [
-    "history",
-    "culture",
-    "outdoors"
-   ],
-   "description": null,
-   "notes": [
-    "พบจากการค้นหาบทความที่มีพิกัดใกล้ตัวเมือง (Wikipedia ภาษาไทย) ยังไม่ได้ตรวจว่าเป็นที่เที่ยวเด่น"
-   ],
-   "province": "สุรินทร์",
-   "verified": true,
-   "matched_from_seed": "th-wiki",
-   "sources": [
-    {
-     "url": "https://th.wikipedia.org/wiki/%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%AA%E0%B8%B2%E0%B8%97%E0%B8%A8%E0%B8%B5%E0%B8%82%E0%B8%A3%E0%B8%A0%E0%B8%B9%E0%B8%A1%E0%B8%B4",
-     "title": "ปราสาทศีขรภูมิ (Wikipedia ภาษาไทย)",
      "checked_on": "2026-11-02",
      "fields": [
       "lat",

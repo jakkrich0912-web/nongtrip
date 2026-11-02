@@ -88,3 +88,15 @@ def test_new_place_with_same_name_in_same_province_is_skipped():
     rebuilt = [{**place("x", "u/en"), "name_th": "วัดซ้ำ"}, {**place("y", "u/th", th=True), "name_th": "วัดซ้ำ"}]
     out = keep_ids(rebuilt, previous)
     assert [p["id"] for p in out] == [f"p{IDX}01"]
+
+
+def test_drop_ids_win_over_keep_previous():
+    import build_places
+    from build_places import keep_previous
+    previous = [place(f"p{IDX}01", "u/a"), {**place(f"p{IDX}41", "u/a-th", th=True), "name_th": "u/a"}]
+    build_places.DROP_IDS.add(f"p{IDX}41")
+    try:
+        merged, kept = keep_previous([], previous)
+        assert [p["id"] for p in merged] == [f"p{IDX}01"]
+    finally:
+        build_places.DROP_IDS.discard(f"p{IDX}41")
