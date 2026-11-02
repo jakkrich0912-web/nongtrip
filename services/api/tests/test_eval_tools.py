@@ -162,3 +162,22 @@ def test_eval_rag_reads_dotenv(tmp_path, monkeypatch):
     assert eval_rag.main([], dotenv=f) == 2
     assert seen["LLM_PROVIDER"] == "anthropic" and seen["ANTHROPIC_API_KEY"] == "x"
     assert "LLM_PROVIDER" not in os.environ   # ไม่เขียนทับสภาพแวดล้อมของโปรเซส
+
+
+def test_rows_keep_rejected_text_and_guard_detail():
+    rag = sample_rag(Scripted(lambda user: "วัดนี้เก่าแก่มาก"))
+    rep = eval_rag.run(rag, [c for c in cases() if c["kind"] == "answer"][:1])
+    r = rep["rows"][0]
+    assert r["reason"] == "guard" and r["rejected"] == "วัดนี้เก่าแก่มาก" and r["guard_detail"]
+
+
+def test_only_failed_reruns_just_those_cases(tmp_path, capsys):
+    first = tmp_path / "first.json"
+    assert eval_rag.main(["--mock", "--out", str(first)]) == 0
+    data = json.loads(first.read_text(encoding="utf-8"))
+    data["rows"][0]["ok"] = False          # สมมุติว่าข้อแรกไม่ผ่านรอบก่อน
+    first.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    second = tmp_path / "second.json"
+    eval_rag.main(["--mock", "--only-failed", str(first), "--out", str(second)])
+    rows = json.loads(second.read_text(encoding="utf-8"))["rows"]
+    assert [r["q"] for r in rows] == [data["rows"][0]["q"]]

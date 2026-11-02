@@ -107,11 +107,13 @@ def run(rag: Rag, cases: list[dict], k: int = 3, sleep: float = 0.0) -> dict:
             res = rag.answer(c["q"], items)
         except LLMError as e:          # rag.answer จับเองอยู่แล้ว กันไว้เผื่อผู้เรียกส่งตัวเชื่อมอื่นมา
             rows.append({"q": c["q"], "kind": kind, "ok": False, "note": f"LLM ล้ม: {e}", "mode": "error",
-                         "reason": "llm_error", "retrieval_hit": hit, "text": ""})
+                         "reason": "llm_error", "retrieval_hit": hit, "text": "", "error": str(e)})
             continue
         ok, note = judge(c, res, rag.retriever)
         rows.append({"q": c["q"], "kind": kind, "ok": ok, "note": note, "mode": res.mode, "reason": res.reason,
-                     "retrieval_hit": hit, "guard": [p["rule"] for p in res.problems], "text": res.text[:300]})
+                     "retrieval_hit": hit, "guard": [p["rule"] for p in res.problems], "text": res.text[:300],
+                     "guard_detail": [p["detail"] for p in res.problems], "rejected": res.rejected[:1500],
+                     "error": res.error})
         if sleep:
             time.sleep(sleep)
     by: dict[str, list[dict]] = defaultdict(list)
@@ -142,12 +144,17 @@ def main(argv: list[str] | None = None, llm=None, dotenv: Path | None = ROOT / "
     ap.add_argument("--mock", action="store_true", help="ใช้ LLM จำลอง (ไม่ใช่ผลวัดจริง)")
     ap.add_argument("--out", help="บันทึกผลละเอียดเป็น JSON")
     ap.add_argument("--sleep", type=float, default=0.0, help="หน่วงระหว่างข้อ (วินาที) กันชนเพดานการเรียก")
+    ap.add_argument("--only-failed", metavar="ผลเดิม.json", help="รันเฉพาะข้อที่ไม่ผ่านในไฟล์ผลรอบก่อน (ประหยัดเครดิต)")
     ap.add_argument("-k", type=int, default=3)
     a = ap.parse_args(argv)
 
     p = Path(a.docs)
     retriever = Retriever(json.loads(p.read_text(encoding="utf-8")).get("docs", [])) if p.is_file() else Retriever.from_dir(p)
     cases = json.loads(Path(a.golden).read_text(encoding="utf-8"))["cases"]
+    if a.only_failed:
+        failed = {r["q"] for r in json.loads(Path(a.only_failed).read_text(encoding="utf-8"))["rows"] if not r["ok"]}
+        cases = [c for c in cases if c["q"] in failed]
+        print(f"รันเฉพาะ {len(cases)} ข้อที่ไม่ผ่านในผลรอบก่อน (ตัวเลขรอบนี้ไม่ใช่ผลรวมทั้งชุด)")
     if a.mock:
         llm = MockLLM()
     elif llm is None:
