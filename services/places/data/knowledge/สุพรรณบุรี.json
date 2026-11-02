@@ -1,0 +1,40 @@
+{
+ "_meta": {
+  "province": "สุพรรณบุรี",
+  "built_on": "2026-11-02",
+  "count": 3,
+  "source": "Wikipedia (CC BY-SA 4.0) ตัดทอนส่วนนำของบทความ"
+ },
+ "docs": [
+  {
+   "id": "k:p6701:0",
+   "place_id": "v:p6701",
+   "title": "วัดป่าเลไลยก์วรวิหาร",
+   "text": "วัดป่าเลไลยก์วรวิหาร ตั้งอยู่ที่ถนนมาลัยแมน ตำบลรั้วใหญ่ อำเภอเมืองสุพรรณบุรี จังหวัดสุพรรณบุรี อยู่ฝั่งตะวันตกของแม่น้ำสุพรรณบุรี ชาวบ้านนิยมเรียกว่า วัดป่า ภายในพระวิหารเป็นที่ประดิษฐานพระพุทธรูปปางป่าเลไลยก์ นิยมเรียกว่า หลวงพ่อโต หรือ หลวงพ่อวัดป่า",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9B%E0%B9%88%E0%B8%B2%E0%B9%80%E0%B8%A5%E0%B9%84%E0%B8%A5%E0%B8%A2%E0%B8%81%E0%B9%8C%E0%B8%A7%E0%B8%A3%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p6702:0",
+   "place_id": "v:p6702",
+   "title": "พิพิธภัณฑสถานแห่งชาติ อู่ทอง",
+   "text": "พิพิธภัณฑสถานแห่งชาติ อู่ทอง ตั้งอยู่ในบริเวณทิศใต้ของที่ว่าการอำเภออู่ทอง จังหวัดสุพรรณบุรี ประกอบด้วยธรรมจักรศิลา พระพุทธรูปสัมฤทธิ์ พระพุทธรูปดินเผา ประติมากรรมดินเผา ลูกปัด เครื่องประดับ เครื่องมือเครื่องใช้ ชิ้นส่วนสถาปัตยกรรม ลวดลายปูนปั้น ฯลฯ",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4_%E0%B8%AD%E0%B8%B9%E0%B9%88%E0%B8%97%E0%B8%AD%E0%B8%87",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p6703:0",
+   "place_id": "v:p6703",
+   "title": "Bueng Chawak",
+   "text": "Bueng Chawak (Thai: บึงฉวาก, pronounced [bɯ̄ŋ t͡ɕʰā.wàːk]) or full name Bueng Chawak Chaloem Phra Kiat (บึงฉวากเฉลิมพระเกียรติ, [bɯ̄ŋ t͡ɕʰā.wàːk t͡ɕʰā.lɤ̌ːm pʰráʔ kìa̯t]) is a natural freshwater lake in central Thailand. It has an area of 2,700 rais (1,067 acres), covering the area of the sub-districts Pak Nam, Doem Bang and Hua Khao of Doem Bang Nang Buat District, Suphan Buri Province all the way to the sub-district of Ban Chian, Hankha District, Chai Nat Province. The lake is approximately 64 km (39.8 mi) north of Suphan Buri City.",
+   "url": "https://en.wikipedia.org/wiki/Bueng_Chawak",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  }
+ ]
+}

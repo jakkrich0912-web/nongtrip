@@ -1,0 +1,50 @@
+{
+ "_meta": {
+  "province": "บึงกาฬ",
+  "built_on": "2026-11-02",
+  "count": 4,
+  "source": "Wikipedia (CC BY-SA 4.0) ตัดทอนส่วนนำของบทความ"
+ },
+ "docs": [
+  {
+   "id": "k:p2701:0",
+   "place_id": "v:p2701",
+   "title": "Phu Wua Wildlife Sanctuary",
+   "text": "Phu Wua (Thai: ภูวัว; Northeastern Thai: ภูงัว) is a wildlife sanctuary in northeastern Thailand, in Bueng Kan Province. It covers an area of 186.5 km2 of the districts Seka and Bung Khla.",
+   "url": "https://en.wikipedia.org/wiki/Phu_Wua_Wildlife_Sanctuary",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p2702:0",
+   "place_id": "v:p2702",
+   "title": "Phu Thok",
+   "text": "Phu Thok (ภูทอก, also spelled Phu Tok), meaning 'lonely mountain' in the Isan language, is a 359 m high isolated hill in the northeastern end of Isan, Thailand. It is in Na Sabaeng Subdistrict, Si Wilai District, at the centre of Bueng Kan Province.",
+   "url": "https://en.wikipedia.org/wiki/Phu_Thok",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p2743:0",
+   "place_id": "v:p2743",
+   "title": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ",
+   "text": "พิพิธภัณฑ์ชุมชนมีชีวิต จังหวัดบึงกาฬ เป็นพิพิธภัณฑ์ท้องถิ่นที่ตั้งอยู่ในตำบลหนองพันทา อำเภอโซ่พิสัย จังหวัดบึงกาฬ",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%8A%E0%B8%B8%E0%B8%A1%E0%B8%8A%E0%B8%99%E0%B8%A1%E0%B8%B5%E0%B8%8A%E0%B8%B5%E0%B8%A7%E0%B8%B4%E0%B8%95_%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%B6%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%AC",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p2742:0",
+   "place_id": "v:p2742",
+   "title": "อุทยานแห่งชาติภูลังกา",
+   "text": "อุทยานแห่งชาติภูลังกา ครอบคลุมพื้นที่อำเภอบ้านแพง อำเภอนาทม จังหวัดนครพนม และอำเภอเซกา อำเภอบึงโขงหลง จังหวัดบึงกาฬ มีเนื้อที่ประมาณ 31,250 ไร่ หรือประมาณ 50 ตารางกิโลเมตร จุดเด่นที่น่าสนใจ คือ น้ำตกตาดขาม (อำเภอบ้านแพง จังหวัดนครพนม), น้ำตกตาดโพธิ์ (อำเภอบ้านแพง จังหวัดนครพนม), น้ำตกตาดวิมานทิพย์ (อำเภอบึงโขงหลง จังหวัดบึงกาฬ), น้ำตกกินนรี (อำเภอบึงโขงหลง จังหวัดบึงกาฬ) ตามลำดับ",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%AD%E0%B8%B8%E0%B8%97%E0%B8%A2%E0%B8%B2%E0%B8%99%E0%B9%81%E0%B8%AB%E0%B9%88%E0%B8%87%E0%B8%8A%E0%B8%B2%E0%B8%95%E0%B8%B4%E0%B8%A0%E0%B8%B9%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%B2",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  }
+ ]
+}

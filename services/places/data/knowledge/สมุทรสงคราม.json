@@ -1,0 +1,40 @@
+{
+ "_meta": {
+  "province": "สมุทรสงคราม",
+  "built_on": "2026-11-02",
+  "count": 3,
+  "source": "Wikipedia (CC BY-SA 4.0) ตัดทอนส่วนนำของบทความ"
+ },
+ "docs": [
+  {
+   "id": "k:p6102:0",
+   "place_id": "v:p6102",
+   "title": "วัดบางกุ้ง",
+   "text": "วัดบางกุ้ง เป็นวัดเก่าแก่ตั้งอยู่ในเขตตำบลบางกุ้ง อำเภอบางคนที จังหวัดสมุทรสงคราม สร้างขึ้นตั้งแต่สมัยกรุงศรีอยุธยาเป็นราชธานี มีจุดเด่นที่พระอุโบสถ ซึ่งเป็นโบสถ์เก่าแก่ ถูกปกคลุมทั้งอาคารด้วยรากของต้นโพธิ์ ต้นกร่าง ต้นไกร จนได้รับยกให้เป็นสถานที่ที่ได้รับการส่งเสริมให้เป็นสถานที่ท่องเที่ยวแห่งใหม่แห่งหนึ่งในจังหวัดสมุทรสงคราม\nพระอุโบสถเป็นอาคารเครื่องก่ออิฐถือปูน ไม่มีช่อฟ้า ใบระกา ตามแบบวัดไทยทั่วๆไป ที่มักเป็นเครื่องลำยอง ภายในโบสถ์เป็นที่สถิตของ \"หลวงพ่อนิลมณี\" หรือ \"หลวงพ่อดำ\" ตามที่ชาวบ้านเรียกกัน ซึ่งเป็นพระพุทธรูปทรงปางมารวิชัยขนาดใหญ่ สมัยอยุธยาตอนปลาย นอกจากนี้ภายในยังมีภาพจิตรกรรมฝาผนัง ซึ่งเป็นเรื่องราวเกี่ยวกับพุทธประวัติ\nวัดแห่งนี้ยังมีจุดเด่นที่มีรูปปั้นนักมวยไทยเป็นจำนวนมาก เช่นเดียวกับเครื่องบินเก่าตั้งโชว์ และยังมีสวนสัตว์ขนาดเล็กๆ ที่มีทั้งกรงอูฐ กวาง ม้า ตั้งอยู่ริมท่าน้ำวัดบางกุ้งอีกด้วย",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B8%E0%B9%89%E0%B8%87",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p6103:0",
+   "place_id": "v:p6103",
+   "title": "King Rama II Memorial Park",
+   "text": "The King Rama II Memorial Park is in the Amphawa District of Thailand's Samut Songkhram Province. It serves as a memorial for King Phutthaloetla Naphalai (Rama II) and his patronage of Thai art and culture. The King Rama II Museum and a large traditional Thai house are located within the grounds of the park.",
+   "url": "https://en.wikipedia.org/wiki/King_Rama_II_Memorial_Park",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p6104:0",
+   "place_id": "v:p6104",
+   "title": "Don Hoi Lot",
+   "text": "Don Hoi Lot (Thai: ดอนหอยหลอด, pronounced [dɔ̄ːn hɔ̌j lɔ̀ːt]) is a sandbar off the coast of Samut Songkhram Province at the northwestern tip of the Bay of Bangkok. The sediments of the Mae Klong River together sediments from the sea form a system of mudflats, which are populated by razor clams (Solen regularis), which also gave the site its Thai name. The site has the largest population of this species, which is endemic to the northern Gulf of Thailand. Also 18 bird and 42 invertebrate species are recorded at the mudflats and the adjoining coastal mangrove forests. The mudflat Don Nai is on the coast. Nearby, the highly revered shrine of Prince Chumphon Khet-Udomsak attracts Thai visitors.\nSince 5 July 2001 the site has been registered as Ramsar site number 1099. Don Hoi Lot is named after the tubular shellfish, known as razor clams or \"worm shells\" in English. the area covers three kilometres in width and five kilometres long in Tambon Bang Chakreng.",
+   "url": "https://en.wikipedia.org/wiki/Don_Hoi_Lot",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  }
+ ]
+}
