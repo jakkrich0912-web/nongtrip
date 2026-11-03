@@ -86,7 +86,8 @@ python scripts/eval_retrieval.py --docs services/places/data/knowledge --golden 
 
 ## เปิดโหมด LLM
 
-1. ใน `.env` ตั้ง `LLM_PROVIDER=anthropic` (หรือ `openai`) ใส่ `ANTHROPIC_API_KEY` (หรือ `OPENAI_API_KEY`) และ `LLM_MODEL` ให้ครบ
+1. ใน `.env` ตั้ง `LLM_PROVIDER=anthropic` (หรือ `openai` `gemini` `xai`) ใส่ `ANTHROPIC_API_KEY` (หรือ `OPENAI_API_KEY` `GEMINI_API_KEY` `XAI_API_KEY`) และ `LLM_MODEL` ให้ครบ
+   ตัวสำรองถ้าตัวหลักล่มหรือเครดิตหมด (ไม่บังคับ): `LLM_FALLBACK=gemini,xai` แล้วใส่คีย์และรุ่นของแต่ละตัว (`GEMINI_MODEL`, `XAI_MODEL`) `check_llm.py` จะลองเรียกทุกตัว ผลวัด 200 ข้อใน `docs/RAG_EVAL.md` วัดกับ Claude เท่านั้น ถ้าเดโมด้วยเจ้าอื่นต้องวัดใหม่ก่อนอ้างตัวเลข
 2. มีคลังความรู้ที่ `services/places/data/knowledge/` (สร้างด้วย `python scripts/build_knowledge.py` ต้องเข้า Wikipedia ได้)
 3. รัน API แล้วเปิด `/api/health` ดู `rag`: `{"docs": จำนวนก้อน, "llm": true}` ถ้า `llm` เป็น `false` แปลว่าตั้งค่าไม่ครบ ระบบอยู่โหมดกฎ
 4. ถามเรื่องที่ในคลังมี เช่น ประวัติวัด แล้วดู event สุดท้าย `done.mode` ต้องเป็น `llm` และมี event `sources` ถ้าเป็น `rule` ตลอด ดูว่าคลังมีก้อนของสถานที่นั้นไหม
