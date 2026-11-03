@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import MascotHead from '../components/MascotHead.jsx';
-import mascot from '../assets/mascot/front.webp';
+import Mascot from '../components/Mascot.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import '../auth-v2.css';
@@ -122,7 +122,7 @@ export default function Login({ mode = 'login' }) {
         <div className="nt-auth-mascot-scene">
           <span className="nt-auth-orbit nt-auth-orbit-one" /><span className="nt-auth-orbit nt-auth-orbit-two" />
           <span className="nt-auth-speech">{t('พร้อมออกไปสำรวจกันหรือยัง?', 'Ready for a little adventure?')}</span>
-          <img src={mascot} alt={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')} width="373" height="520" />
+          <Mascot mood="front" size={270} title={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')} />
           <span className="nt-auth-sticker" aria-hidden="true">LET’S<br />EXPLORE ↗</span>
         </div>
         <p className="nt-auth-story-foot">{t('เริ่มจากที่พัก แล้วออกไปเจอสิ่งใหม่ ๆ', 'Start with your stay. Discover what’s around.')}</p>
@@ -160,7 +160,7 @@ export default function Login({ mode = 'login' }) {
             </div>
             {!isLogin && <p id="nt-auth-password-hint" className="nt-auth-small">{t('ใช้รหัสผ่าน 8–200 ตัวอักษร', 'Use a password between 8 and 200 characters.')}</p>}
             {error && <p className="nt-auth-error" role="alert">{error}</p>}
-            <button className="nt-auth-submit" type="submit" disabled={busy}>{busy ? t('กำลังดำเนินการ…', 'Please wait…') : isLogin ? t('เข้าสู่ระบบ', 'Sign in') : t('สร้างบัญชี', 'Create account')}<Arrow /></button>
+            <button className="nt-auth-submit" type="submit" data-mascot-cheer disabled={busy}>{busy ? t('กำลังดำเนินการ…', 'Please wait…') : isLogin ? t('เข้าสู่ระบบ', 'Sign in') : t('สร้างบัญชี', 'Create account')}<Arrow /></button>
           </form>
           <p className="nt-auth-switch">{isLogin ? t('ยังไม่มีบัญชี?', 'New here?') : t('มีบัญชีแล้ว?', 'Already have an account?')} <Link to={isLogin ? '/signup' : '/login'}>{isLogin ? t('สมัครใช้งาน', 'Create an account') : t('เข้าสู่ระบบ', 'Sign in')}</Link></p>
           <div className="nt-auth-guest"><span aria-hidden="true">↗</span><p>{t('อยากลองดูก่อน?', 'Just looking around?')} <Link to="/search">{t('ค้นหาโดยไม่ต้องเข้าสู่ระบบ', 'Explore without an account')}</Link><small>{t('ค้นหาและแชตได้ แต่จะไม่บันทึกประวัติ', 'Search and chat without saving your history.')}</small></p></div>

@@ -287,6 +287,20 @@ main { min-height:calc(100vh - var(--chrome)); }
 /* ชุดสีหน้า v2: ผืน 420x540 วางตัว 373x520 ที่ (23,20) ใช้กรอบเท่าภาพเดิมแล้วให้ผืนยื่นออกพอดี ขนาดตัวและตำแหน่งจึงไม่เปลี่ยน */
 .mascot-frame { position:relative; display:block; aspect-ratio:373/520; }
 .mascot .mascot-frame img { position:absolute; left:-6.166%; top:-3.846%; width:112.601%; max-width:none; height:auto; }
+/* เล่นกับมาสคอต: canvas WebGL วางทับภาพนิ่งตรงตำแหน่งเดียวกัน (กว้าง 170% เผื่อให้ยืดออกนอกกรอบ) */
+.mascot-sheet { position:absolute; display:block; pointer-events:none; }
+.mascot .mascot-sheet canvas.mascot-gl { position:absolute; left:-35%; top:-35%; width:170%; height:170%; max-width:none; pointer-events:none; filter:drop-shadow(0 6px 10px rgba(34,48,31,.12)); }
+.mascot.is-play { touch-action:pan-y; -webkit-user-select:none; user-select:none; }
+.mascot.is-play.is-live { cursor:grab; }
+.mascot-fly, .mascot-hand { position:absolute; opacity:0; transition:opacity .2s; transform:translate(-50%,-50%); pointer-events:none; z-index:3; }
+.mascot-fly { width:6%; fill:#111; }
+.mascot-fly .wing { fill:rgba(220,235,255,.7); transform-origin:16px 15px; animation:fly-flap .05s linear infinite alternate; }
+.mascot-fly .wing.r { animation-direction:alternate-reverse; }
+@keyframes fly-flap { from { transform:rotate(-16deg); } to { transform:rotate(16deg); } }
+.mascot-hand { width:11%; fill:#fff; stroke:#22301f; stroke-width:1.4; stroke-linejoin:round; }
+.mascot-hand .grab { display:none; }
+.mascot-hand.shut .open { display:none; }
+.mascot-hand.shut .grab { display:block; }
 .mascot-shadow { position:absolute; left:22%; right:22%; bottom:-2px; height:9%; max-height:14px; border-radius:50%; background:radial-gradient(closest-side, rgba(34,48,31,.25), transparent); z-index:-1; }
 @media (prefers-reduced-motion:no-preference){
   .mascot-body { animation:wiggle 3.2s ease-in-out infinite; }
@@ -294,6 +308,7 @@ main { min-height:calc(100vh - var(--chrome)); }
   .mascot-wave .mascot-body { animation:wiggle-wave 2.4s ease-in-out infinite; }
   .mascot-think .mascot-body { animation:wiggle-think 4s ease-in-out infinite; }
   .mascot.is-live:hover .mascot-body { animation:boing .6s cubic-bezier(.3,1.6,.5,1) both; }
+  .mascot.is-play.is-live:hover .mascot-body { animation:none; } /* ตอนจับดึงอยู่ ไม่ให้ตัวเด้งซ้อนกับแผ่นผิว */
   .mascot.is-joy .mascot-body { animation:jump .9s cubic-bezier(.25,1.4,.5,1) both; }
   .mascot.is-joy .mascot-shadow { animation:shadow-jump .9s ease both; }
 }
