@@ -382,6 +382,10 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 if last and not intent.province and not ctx and not intent.lodging_query and not intent.greeting:
                     intent.province = last
                 use_rag = rag is not None and rag.enabled
+                if use_rag:
+                    # โหมด LLM ต้องได้ผลค้นรอบจุดเดิมไปเป็นบริบทเหมือนเดิม (คำถามข้อเท็จจริงอย่าง "พระธาตุพนมสูงกี่เมตร" ไม่มีคำค้น)
+                    # ให้ LLM กับด่านตรวจตัดสินว่านอกเรื่องหรือไม่ ตัวตัดสินแบบกฎใช้เฉพาะตอนไม่มี LLM
+                    intent.off_topic = False
                 held: list[str] = []          # ข้อความแบบกฎที่พักไว้จนรู้ว่า LLM ผ่านด่านตรวจหรือไม่
                 places_ev: dict | None = None
                 t0 = time.perf_counter()

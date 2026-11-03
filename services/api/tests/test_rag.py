@@ -259,3 +259,12 @@ def test_english_prompt_shows_english_names_and_keeps_injection_guard():
                                 [], "en")
     assert "1. Doi Suthep | straight-line 1.5 km" in user and "Answer in English" in system
     assert user.count("<places>") == 1 and user.count("</question>") == 1
+
+
+def test_factual_question_without_search_words_still_reaches_llm_with_places(tmp_path):
+    # ตัวตัดสินนอกเรื่องของโหมดกฎต้องไม่ตัดคำถามข้อเท็จจริงที่ไม่มีคำค้น ก่อนถึง LLM
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(ask(c, "พระธาตุดอยสุเทพสร้างเมื่อไร"))
+    assert [e for e, _ in evs][:2] == ["tool", "places"]
+    assert done(evs)["mode"] == "llm" and len(llm.calls) == 1
