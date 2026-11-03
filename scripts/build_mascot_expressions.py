@@ -136,13 +136,27 @@ def contact_sheet(entries):
 
 
 if __name__ == "__main__":
+    from mascot_pose_expressions import POSES, compose_pose, validate_all, validate_front, validate_pose
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--inputs", type=Path)
+    parser.add_argument("--pose", choices=["front", *POSES], default=None)
     parser.add_argument("--validate", action="store_true")
     args = parser.parse_args()
     if args.inputs:
-        compose(json.loads(args.inputs.read_text(encoding="utf-8-sig")))
+        inputs = json.loads(args.inputs.read_text(encoding="utf-8-sig"))
+        if args.pose in POSES:
+            print(json.dumps(compose_pose(args.pose, inputs), ensure_ascii=False))
+        else:
+            compose(inputs)
+            entries = inspect(require_complete=args.validate)
+            contact_sheet(entries)
+    if args.validate:
+        if args.pose in POSES:
+            print(json.dumps(validate_pose(args.pose), ensure_ascii=False))
+        elif args.pose == "front":
+            print(json.dumps(validate_front(), ensure_ascii=False))
+        else:
+            validate_all()
     if not args.inputs and not args.validate:
         parser.error("Pass --inputs or --validate")
-    entries = inspect(require_complete=args.validate)
-    contact_sheet(entries)
