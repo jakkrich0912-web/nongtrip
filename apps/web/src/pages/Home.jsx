@@ -11,7 +11,7 @@ function Hero() {
       <span className="nt-eyebrow"><span />{t('เพื่อนตัวเล็ก สำหรับทริปของคุณ', 'A LITTLE FRIEND FOR YOUR NEXT ADVENTURE')}</span>
       <h1>{t('จองที่พักแล้ว', 'Stay booked.')}<br /><span className="nt-highlight">{t('ไปไหนต่อดี?', 'What’s nearby?')}</span></h1>
       <p>{t('ให้น้องทริปพาไปรู้จักที่เที่ยวและคาเฟ่รอบที่พัก', 'Meet the places and cafés around your stay.')}<br className="nt-desktop-break" />{t('ดูบนแผนที่ เลือกที่ถูกใจ แล้วออกไปเที่ยวกัน', 'Find your favorites on the map. Then go explore.')}</p>
-      <div className="nt-hero-actions"><Link className="nt-button nt-button-amber" to="/search">{t('ค้นหารอบที่พัก', 'Explore around my stay')}<Icon /></Link><a className="nt-text-link" href="#try-it">{t('ลองเล่นตัวอย่าง', 'Try the demo')}<span>↘</span></a></div>
+      <div className="nt-hero-actions"><Link className="nt-button nt-button-amber" to="/search" data-mascot-cheer>{t('ค้นหารอบที่พัก', 'Explore around my stay')}<Icon /></Link><a className="nt-text-link" href="#try-it">{t('ลองเล่นตัวอย่าง', 'Try the demo')}<span>↘</span></a></div>
       <div className="nt-hero-note"><Icon name="check" size={16} />{t('เริ่มค้นหาได้เลย โดยไม่ต้องสมัครสมาชิก', 'Start exploring without an account')}</div>
     </div>
     <div className="nt-hero-art" aria-label={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, your orange explorer cat')}>
@@ -44,7 +44,7 @@ function TrustSection() {
 }
 function StartBanner() {
   const { t } = useLanguage();
-  return <section className="nt-start nt-container"><div className="nt-start-inner"><Mascot mood="wave" size={174} interactive={false} /><div><span className="nt-eyebrow">YOUR NEXT ADVENTURE IS JUST AROUND THE CORNER</span><h2>{t('ทริปหน้า ให้น้องทริปไปด้วยนะ', 'Take NongTrip on your next trip.')}</h2><p>{t('เริ่มจากที่พัก แล้วไปเจอที่ใหม่ ๆ ด้วยกัน', 'Start with your stay. Discover something new together.')}</p></div><Link to="/search" className="nt-button nt-button-amber">{t('เริ่มสำรวจเลย', 'Let’s explore')}<Icon /></Link></div></section>;
+  return <section className="nt-start nt-container"><div className="nt-start-inner"><Mascot mood="wave" size={174} /><div><span className="nt-eyebrow">YOUR NEXT ADVENTURE IS JUST AROUND THE CORNER</span><h2>{t('ทริปหน้า ให้น้องทริปไปด้วยนะ', 'Take NongTrip on your next trip.')}</h2><p>{t('เริ่มจากที่พัก แล้วไปเจอที่ใหม่ ๆ ด้วยกัน', 'Start with your stay. Discover something new together.')}</p></div><Link to="/search" className="nt-button nt-button-amber">{t('เริ่มสำรวจเลย', 'Let’s explore')}<Icon /></Link></div></section>;
 }
 export default function Home() {
   return <div className="nt-landing"><Hero /><ExploreDemo /><HowItWorks /><TrustSection /><StartBanner /></div>;
