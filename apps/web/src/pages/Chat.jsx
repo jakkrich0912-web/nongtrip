@@ -49,6 +49,7 @@ export default function Chat() {
   const [busy, setBusy] = useState(false);
   const controller = useRef(null);
   const chatId = useRef(null);
+  const lastProvince = useRef(null); // จังหวัดที่ถามไว้ล่าสุด (จาก event done)
   const serial = useRef(0);
   const input = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -65,7 +66,7 @@ export default function Chat() {
     setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching' }]);
     const update = (patch) => setMessages((items) => items.map((item) => item.id === id ? (typeof patch === 'function' ? patch(item) : { ...item, ...patch }) : item));
     try {
-      await sendChat({ message, context: context && { lat: context.lat, lon: context.lon }, chat_id: user ? chatId.current : null }, (event, data) => {
+      await sendChat({ message, context: context && { lat: context.lat, lon: context.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang }, (event, data) => {
         if (aborter.signal.aborted) return;
         if (event === 'token' && typeof data.text === 'string') update((item) => ({ ...item, text: item.text + data.text, status: 'answering' }));
         if (event === 'places') update({ places: data });
@@ -73,6 +74,7 @@ export default function Chat() {
         if (event === 'sources') update({ sources: Array.isArray(data.items) ? data.items : [] });
         if (event === 'done') {
           if (user && data.chat_id) chatId.current = data.chat_id;
+          if (typeof data.province === 'string') lastProvince.current = data.province;
           update({ status: 'done', mode: data.mode });
         }
       }, aborter.signal);
