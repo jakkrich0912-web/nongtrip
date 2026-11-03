@@ -173,7 +173,7 @@ export default function ChatCompanion({ hidden = false }) {
     if (hint?.lat != null) { setContext({ lat: hint.lat, lon: hint.lon, name: hint.name || '' }); fromHint.current = true; return; }
     if (fromHint.current) { setContext(null); fromHint.current = false; }
     if (hint?.province) lastProvince.current = hint.province;
-  }, [hint, setContext, lastProvince]);
+  }, [hint, setContext, lastProvince, user?.id]); // ผู้ใช้เปลี่ยนแล้วแชตถูกล้าง ใส่บริบทของหน้านี้กลับให้
 
   useEffect(() => { if (scroller.current) scroller.current.scrollTop = scroller.current.scrollHeight; }, [messages, open]);
 

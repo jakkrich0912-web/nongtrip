@@ -5,6 +5,9 @@ import { sendChat } from './chat.js';
 import { useLanguage } from './language.jsx';
 import { useAuth } from './auth.jsx';
 
+// ต้องล้างแชตไหม: เคยมีผู้ใช้ที่ล็อกอินอยู่ แล้วเปลี่ยนเป็นคนอื่นหรือออกจากระบบ
+export const userChanged = (prev, next) => prev != null && prev !== next;
+
 export function useChatSession({ initialContext = null } = {}) {
   const { lang } = useLanguage();
   const { user } = useAuth();
@@ -19,7 +22,23 @@ export function useChatSession({ initialContext = null } = {}) {
   const activeId = useRef(null);
   const input = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
-  useEffect(() => { chatId.current = null; }, [user?.id]);
+  // ผู้ใช้เปลี่ยน (ล็อกเอาต์ หรือล็อกอินเป็นคนอื่น): ล้างบทสนทนา จุดค้น และจังหวัดล่าสุด
+  // คนถัดไปที่ใช้เครื่องเดียวกันจะไม่เห็นแชตของคนก่อน ส่วนการล็อกอินจากสถานะไม่ล็อกอินยังคุยต่อได้ (คนเดิม)
+  const prevUser = useRef(user?.id ?? null);
+  useEffect(() => {
+    const next = user?.id ?? null;
+    const prev = prevUser.current;
+    prevUser.current = next;
+    chatId.current = null;
+    if (!userChanged(prev, next)) return;
+    controller.current?.abort();
+    controller.current = null;
+    setBusy(false);
+    setMessages([]);
+    setText('');
+    setContext(null);
+    lastProvince.current = null;
+  }, [user?.id]);
 
   // ctxOverride: ใช้จุดค้นนี้กับข้อความนี้ทันที (เช่น เพิ่งได้ตำแหน่งปัจจุบัน) โดยไม่ต้องรอ state รอบถัดไป
   const send = async (value, displayText = value, ctxOverride) => {
