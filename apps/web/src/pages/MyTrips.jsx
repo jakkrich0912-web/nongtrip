@@ -145,7 +145,7 @@ function MyTripsBody({ user }) {
                     {p.maps_url && <a href={p.maps_url} target="_blank" rel="noreferrer">{t('ดูรีวิวที่ Google Maps', 'Reviews on Google Maps')}</a>}
                   </span>
                 </div>
-                <button className="icon-btn" aria-label={t(`เอา ${p.name_th} ออกจากสถานที่โปรด`, `Remove ${p.name_th} from favourites`)}
+                <button className="icon-btn" aria-label={t(`เอา ${placeName(p, lang)} ออกจากสถานที่โปรด`, `Remove ${placeName(p, lang)} from favourites`)}
                   onClick={() => run(() => removeFavorite(p.id), () => setFavs((st) => {
                     const items = st.items.filter((x) => x.id !== p.id); syncFavIds(items); return { ...st, items };
                   }))}>×</button>

@@ -137,7 +137,7 @@ main { min-height:calc(100vh - var(--chrome)); }
 .chip[aria-pressed="true"] { background:var(--lagoon); border-color:var(--lagoon); color:#fff; }
 .hint-card { display:flex; gap:14px; align-items:center; margin:18px 20px 6px; padding:16px; border-radius:18px; background:var(--lagoon); color:#fff; }
 .hint-card strong { font:600 1.05rem var(--display); display:block; }
-.hint-card p { margin:2px 0 0; font-size:.88rem; color:#dfeadf; }
+.hint-card p { margin:2px 0 0; font-size:.88rem; color:#fff; }
 .pulse { flex:0 0 18px; height:18px; border-radius:50%; background:var(--mango); box-shadow:0 0 0 6px rgba(249,166,32,.3); }
 @media (prefers-reduced-motion:no-preference){ .pulse { animation:pulse 1.8s ease-out infinite; } }
 @keyframes pulse { 0% { box-shadow:0 0 0 0 rgba(249,166,32,.55); } 100% { box-shadow:0 0 0 16px rgba(249,166,32,0); } }
@@ -516,3 +516,6 @@ a.prov-n:hover { text-decoration:underline; }
 /* ขัดหน้าตา: ปุ่มที่เป็นลิงก์ไม่ขีดเส้นใต้ ปุ่มในหน้าว่างพอดีตัว */
 a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .empty .btn.small, .page-pad .empty .btn { width: auto; margin-top: 8px; }
+
+/* เครดิตแผนที่: ลิงก์ต้องแยกจากข้อความรอบข้างได้ (WCAG 1.4.1) และคอนทราสต์พอ */
+.leaflet-container .leaflet-control-attribution a { color:#005a80; text-decoration:underline; }
