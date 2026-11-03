@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../lib/language.jsx';
-import { BLINK_FRAMES, expressionUrl, nextBlinkDelay, preload, prefersReducedMotion, tapExpression } from '../lib/mascot.js';
+import { BLINK_FRAMES, POSE_SETS, nextBlinkDelay, poseFrame, poseUrl, preload, prefersReducedMotion } from '../lib/mascot.js';
 import front from '../assets/mascot/front.webp';
 import wave from '../assets/mascot/wave.webp';
 import happy from '../assets/mascot/happy.webp';
@@ -11,16 +11,20 @@ import think from '../assets/mascot/think.webp';
 // ขยับเองตลอด (โยกตัว หายใจ) เด้งเมื่อชี้ และกระโดดดีใจเมื่อแตะ
 // mood="front" ใช้ชุดสีหน้า v2 (23 แบบ บนภาพฐานเดียวกัน): กะพริบตาเอง ชี้แล้วตาเป็นดาว แตะแล้วยิ้ม
 // แตะรัว ๆ จะโอ๊ยแล้วโกรธ ว่างนานหาว และหน้าที่เรียกใช้กำหนดสีหน้าเองได้ด้วย prop expression
-// ท่าอื่น (wave happy think) เป็นท่าเต็มตัวคนละภาพ จึงไม่สลับสีหน้า
+// wave และ think มีชุดของตัวเอง (expressions-v2/<ท่า>): กะพริบตาเอง แตะแล้วยิ้มกว้าง
+// happy ตาหยียิ้มอยู่แล้วจึงไม่กะพริบเอง แตะแล้วลืมตามองครู่หนึ่ง
+// ทุกท่าสลับทั้งภาพผ่าน src ภาพเต็มของท่าเดียวกันขนาดผืนเท่ากัน กรอบจึงไม่ขยับ
 // ถ้าผู้ใช้ตั้งลดการเคลื่อนไหว จะไม่กะพริบ/หาวเอง (สีหน้าตอบสนองการกดยังทำงาน)
-const POSES = { front, wave, happy, think };
+const POSES = { front, wave, happy, think }; // ภาพสำรองเฉพาะ mood ที่ไม่รู้จัก
 const IDLE_YAWN_MS = 25000;
 const REACT_MS = 1100;
 
 export default function Mascot({ size = 120, mood = 'wave', className = '', title, interactive = true, expression }) {
   const { t } = useLanguage();
   const name = title ?? t('น้องทริป', 'NongTrip');
-  const expressive = mood === 'front';
+  const pose = POSE_SETS[mood] ? mood : null; // null = mood นอกชุด ใช้ภาพนิ่งเดิม
+  const set = pose ? POSE_SETS[pose] : null;
+  const expressive = pose !== null;
   const [joy, setJoy] = useState(false);
   const [face, setFace] = useState(null); // ชื่อสีหน้าชั่วคราวจากการกะพริบ/ตอบสนอง
   const timer = useRef(null);
@@ -28,6 +32,8 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
   const taps = useRef({ n: 0, at: 0 });
   const busyFace = useRef(false);
   useEffect(() => () => { clearTimeout(timer.current); clearTimeout(faceTimer.current); }, []);
+  // เปลี่ยนท่าระหว่างที่ยังมีสีหน้าชั่วคราวค้างอยู่ ให้เคลียร์ทิ้ง ไม่เอาชื่อสีหน้าของท่าเก่าไปใช้กับท่าใหม่
+  useEffect(() => { clearTimeout(faceTimer.current); busyFace.current = false; setFace(null); }, [pose]);
 
   const showFace = (next, ms) => {
     clearTimeout(faceTimer.current);
@@ -38,8 +44,8 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
 
   // กะพริบตา + หาวเมื่อว่างนาน
   useEffect(() => {
-    if (!expressive || prefersReducedMotion()) return undefined;
-    preload(BLINK_FRAMES.map(([n]) => n));
+    if (!set?.blink || prefersReducedMotion()) return undefined;
+    preload(BLINK_FRAMES.map(([n]) => n), pose);
     let stop = false;
     let blinkTimer;
     let yawnTimer;
@@ -58,11 +64,13 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
     })();
     const arm = () => {
       clearTimeout(yawnTimer);
-      yawnTimer = setTimeout(() => { preload(['yawn']); if (!busyFace.current && !document.hidden) showFace('yawn', 1800); arm(); }, IDLE_YAWN_MS);
+      yawnTimer = setTimeout(() => { preload(['yawn'], pose); if (!busyFace.current && !document.hidden) showFace('yawn', 1800); arm(); }, IDLE_YAWN_MS);
     };
-    arm();
-    window.addEventListener('pointerdown', arm);
-    window.addEventListener('keydown', arm);
+    if (set.yawn) {
+      arm();
+      window.addEventListener('pointerdown', arm);
+      window.addEventListener('keydown', arm);
+    }
     return () => {
       stop = true;
       clearTimeout(blinkTimer);
@@ -70,14 +78,14 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
       window.removeEventListener('pointerdown', arm);
       window.removeEventListener('keydown', arm);
     };
-  }, [expressive]);
+  }, [pose]);
 
   const cheer = () => {
     if (!interactive) return;
     if (expressive) {
       const now = Date.now();
       taps.current = { n: now - taps.current.at < 1500 ? taps.current.n + 1 : 1, at: now };
-      showFace(tapExpression(taps.current.n), REACT_MS);
+      showFace(set.tap(taps.current.n), REACT_MS);
     }
     if (timer.current !== null) return;
     setJoy(true);
@@ -85,12 +93,13 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
   };
   const warm = () => {
     if (!expressive || !interactive) return;
-    preload(['star-eyes', 'grin', 'ouch', 'angry']);
+    preload(pose === 'front' ? ['star-eyes', 'grin', 'ouch', 'angry'] : [set.tap(1)], pose);
   };
-  const hoverIn = () => { if (expressive && interactive && !busyFace.current) { warm(); showFace('star-eyes', 1600); } };
+  const hoverIn = () => { if (set?.hover && interactive && !busyFace.current) { warm(); showFace(set.hover, 1600); } };
   const src = expressive
-    ? expressionUrl(expression ?? face ?? 'front')
+    ? poseUrl(pose, expression ?? face ?? 'base')
     : (joy ? happy : (POSES[mood] ?? wave));
+  const geometry = expressive ? poseFrame(pose) : null;
   const Element = interactive ? 'button' : 'span';
 
   return (
@@ -99,13 +108,13 @@ export default function Mascot({ size = 120, mood = 'wave', className = '', titl
       className={`mascot mascot-${mood} ${joy ? 'is-joy' : ''} ${interactive ? 'is-live' : ''} ${className}`}
       style={{ width: size }}
       onClick={interactive ? cheer : undefined}
-      onPointerEnter={interactive && expressive ? hoverIn : undefined}
+      onPointerEnter={interactive && set?.hover ? hoverIn : undefined}
       onFocus={interactive && expressive ? warm : undefined}
       aria-label={interactive ? `${name || t('น้องทริป', 'NongTrip')} (${t('แตะเพื่อทักทาย', 'Say hello')})` : undefined}
     >
       <span className="mascot-body">
         {expressive
-          ? <span className="mascot-frame"><img src={src} alt={interactive ? '' : name} draggable="false" /></span>
+          ? <span className="mascot-frame" style={geometry.frame}><img src={src} style={geometry.image} alt={interactive ? '' : name} draggable="false" /></span>
           : <img src={src} alt={interactive ? '' : name} draggable="false" />}
       </span>
       <span className="mascot-shadow" aria-hidden="true" />
