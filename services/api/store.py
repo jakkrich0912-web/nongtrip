@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 import threading
@@ -57,6 +58,18 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+MAX_EXTRA_BYTES = 64_000
+
+
+def _message_out(row) -> dict:
+    m = dict(row)
+    try:
+        m["extra"] = json.loads(m["extra"]) if m.get("extra") else None
+    except ValueError:
+        m["extra"] = None
+    return m
+
+
 class EmailTaken(Exception):
     pass
 
@@ -74,6 +87,11 @@ class Store:
         if "google_sub" not in cols:
             c.execute("ALTER TABLE users ADD COLUMN google_sub TEXT")
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google ON users(google_sub)")
+        mcols = {r[1] for r in c.execute("PRAGMA table_info(chat_messages)")}
+        if "rating" not in mcols:      # 👍 = 1, 👎 = -1, ยังไม่ให้ = NULL (เฉพาะข้อความของน้องทริป)
+            c.execute("ALTER TABLE chat_messages ADD COLUMN rating INTEGER")
+        if "extra" not in mcols:       # การ์ดสถานที่ ที่พัก แหล่งที่มา และโหมด ของคำตอบนั้น (JSON) เปิดแชตเก่าแล้วเห็นเหมือนเดิม
+            c.execute("ALTER TABLE chat_messages ADD COLUMN extra TEXT")
         c.commit()
 
     @contextmanager
@@ -199,15 +217,43 @@ class Store:
             return c.execute("INSERT INTO chats(user_id, title, created_at, updated_at) VALUES (?,?,?,?)",
                              (user_id, title[:80] or "แชตใหม่", t, t)).lastrowid
 
-    def add_message(self, user_id: int, chat_id: int, role: str, content: str) -> bool:
+    def add_message(self, user_id: int, chat_id: int, role: str, content: str, extra: dict | None = None) -> int | bool:
+        """คืนรหัสข้อความที่เพิ่ม (แชตไม่ใช่ของผู้ใช้นี้ คืน False)"""
+        blob = None
+        if extra:
+            blob = json.dumps(extra, ensure_ascii=False, separators=(",", ":"))
+            if len(blob) > MAX_EXTRA_BYTES:   # ใหญ่เกิน: เก็บแค่ส่วนที่จำเป็น ไม่ให้ฐานข้อมูลบวม
+                blob = json.dumps({k: v for k, v in extra.items() if k in ("mode", "sources")}, ensure_ascii=False)
         with self._db() as c:
             if not c.execute("SELECT 1 FROM chats WHERE id = ? AND user_id = ?", (chat_id, user_id)).fetchone():
                 return False
             t = now_iso()
-            c.execute("INSERT INTO chat_messages(chat_id, role, content, created_at) VALUES (?,?,?,?)",
-                      (chat_id, role, content, t))
+            mid = c.execute("INSERT INTO chat_messages(chat_id, role, content, created_at, extra) VALUES (?,?,?,?,?)",
+                            (chat_id, role, content, t, blob)).lastrowid
             c.execute("UPDATE chats SET updated_at = ? WHERE id = ?", (t, chat_id))
+            return mid
+
+    def truncate_from(self, user_id: int, chat_id: int, message_id: int) -> bool:
+        """แก้คำถาม/ถามใหม่: ลบข้อความตั้งแต่ข้อความผู้ใช้นี้ลงไปในแชตของผู้ใช้คนนี้ (ไม่ใช่ของเขาหรือไม่ใช่ข้อความผู้ใช้ คืน False)"""
+        with self._db() as c:
+            ok = c.execute("SELECT 1 FROM chat_messages m JOIN chats ch ON ch.id = m.chat_id "
+                           "WHERE m.id = ? AND m.chat_id = ? AND m.role = 'user' AND ch.user_id = ?",
+                           (message_id, chat_id, user_id)).fetchone()
+            if not ok:
+                return False
+            c.execute("DELETE FROM chat_messages WHERE chat_id = ? AND id >= ?", (chat_id, message_id))
             return True
+
+    def set_rating(self, user_id: int, chat_id: int, message_id: int, rating: int | None) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE chat_messages SET rating = ? WHERE id = ? AND chat_id = ? AND role = 'assistant' "
+                             "AND chat_id IN (SELECT id FROM chats WHERE user_id = ?)",
+                             (rating, message_id, chat_id, user_id)).rowcount > 0
+
+    def rename_chat(self, user_id: int, chat_id: int, title: str) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE chats SET title = ? WHERE id = ? AND user_id = ?",
+                             (title[:80], chat_id, user_id)).rowcount > 0
 
     def list_chats(self, user_id: int) -> list[dict]:
         with self._db() as c:
@@ -223,9 +269,9 @@ class Store:
                            (chat_id, user_id)).fetchone()
             if not ch:
                 return None
-            msgs = c.execute("SELECT role, content, created_at FROM chat_messages WHERE chat_id = ? ORDER BY id",
+            msgs = c.execute("SELECT id, role, content, created_at, rating, extra FROM chat_messages WHERE chat_id = ? ORDER BY id",
                              (chat_id,)).fetchall()
-            return {**dict(ch), "messages": [dict(m) for m in msgs]}
+            return {**dict(ch), "messages": [_message_out(m) for m in msgs]}
 
     def delete_chat(self, user_id: int, chat_id: int) -> bool:
         with self._db() as c:
