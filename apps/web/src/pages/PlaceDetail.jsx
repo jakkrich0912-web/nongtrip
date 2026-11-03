@@ -124,7 +124,7 @@ export default function PlaceDetail() {
         <aside className="detail-side">
           <div className="detail-map">
             <MapContainer center={[p.lat, p.lon]} zoom={14} scrollWheelZoom={false} className="map">
-              <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution="© OpenStreetMap contributors © CARTO" />
+              <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
               <Marker position={[p.lat, p.lon]} icon={pin} />
             </MapContainer>
           </div>
