@@ -288,5 +288,383 @@
       "crop_matches": true,
       "sha256": "9ed7c6a74fad64b5c27fd05055a6dfad82071d95a8a3b7e5905128a11dcfb514"
     }
-  ]
+  ],
+  "gaze": {
+    "schema_version": 1,
+    "base": "front.png",
+    "base_sha256": "5ad413ca606258dd5665d823011e6c37b463e06903bbc97848f507e136715adf",
+    "canvas_size": [
+      420,
+      540
+    ],
+    "face_band_canvas_xyxy_exclusive": [
+      83,
+      160,
+      363,
+      320
+    ],
+    "eye_apertures_cx_cy_rx_ry": [
+      [
+        158.5,
+        228.5,
+        30.5,
+        32.5
+      ],
+      [
+        300.0,
+        239.5,
+        28.0,
+        30.5
+      ]
+    ],
+    "method": "inverse smooth eye-texture displacement, w=(1-r^2)^2, fixed eye boundary",
+    "amplitude_xy": [
+      9.0,
+      8.0
+    ],
+    "direction_order": [
+      "e",
+      "ene",
+      "ne",
+      "nne",
+      "n",
+      "nnw",
+      "nw",
+      "wnw",
+      "w",
+      "wsw",
+      "sw",
+      "ssw",
+      "s",
+      "sse",
+      "se",
+      "ese"
+    ],
+    "expected_frame_count": 16,
+    "actual_frame_count": 16,
+    "complete": true,
+    "max_adjacent_displacement_px": 3.497572,
+    "frames": [
+      {
+        "name": "gaze-e",
+        "full": "gaze-e.png",
+        "angle_degrees": 0.0,
+        "eye_displacement_xy": [
+          9.0,
+          -0.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          198,
+          328,
+          269
+        ],
+        "changed_pixels": 4978,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "df186cec48a3808b31d535c558abd62a024aedda9faaa69689072183e78f2bd4"
+      },
+      {
+        "name": "gaze-ene",
+        "full": "gaze-ene.png",
+        "angle_degrees": 22.5,
+        "eye_displacement_xy": [
+          8.314916,
+          -3.061467
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          199,
+          328,
+          270
+        ],
+        "changed_pixels": 5170,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "ec8ff56d6138476a5b4dad9394a4b241e4f8a75624eb12a1fd62ad270f660a25"
+      },
+      {
+        "name": "gaze-ne",
+        "full": "gaze-ne.png",
+        "angle_degrees": 45.0,
+        "eye_displacement_xy": [
+          6.363961,
+          -5.656854
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          198,
+          328,
+          270
+        ],
+        "changed_pixels": 5203,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "185155ab6cb9746fad7ed0d0fae927617b82199c9dd0e6566e4b324f3b646b28"
+      },
+      {
+        "name": "gaze-nne",
+        "full": "gaze-nne.png",
+        "angle_degrees": 67.5,
+        "eye_displacement_xy": [
+          3.444151,
+          -7.391036
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          198,
+          327,
+          270
+        ],
+        "changed_pixels": 5158,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "d31fcdc95a8057c0e70c4d1b93f20a23b388814a82b2c66c57d9b3e02e756393"
+      },
+      {
+        "name": "gaze-n",
+        "full": "gaze-n.png",
+        "angle_degrees": 90.0,
+        "eye_displacement_xy": [
+          0.0,
+          -8.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          198,
+          326,
+          270
+        ],
+        "changed_pixels": 5047,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "c140b23ee3fa9204b0cbbe090a2143f191ed511a5d1232a3cba00c446aa66c06"
+      },
+      {
+        "name": "gaze-nnw",
+        "full": "gaze-nnw.png",
+        "angle_degrees": 112.5,
+        "eye_displacement_xy": [
+          -3.444151,
+          -7.391036
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          198,
+          328,
+          270
+        ],
+        "changed_pixels": 5234,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "5eea382456b97bd1ab16e4071c82c2e9bfc5c4317d861a80c784b5c1d54b8c62"
+      },
+      {
+        "name": "gaze-nw",
+        "full": "gaze-nw.png",
+        "angle_degrees": 135.0,
+        "eye_displacement_xy": [
+          -6.363961,
+          -5.656854
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          198,
+          328,
+          270
+        ],
+        "changed_pixels": 5266,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "250c5bf4432c234c916c4a6564aed219b9d51271103a35ddcc9d8b1c6e5740b1"
+      },
+      {
+        "name": "gaze-wnw",
+        "full": "gaze-wnw.png",
+        "angle_degrees": 157.5,
+        "eye_displacement_xy": [
+          -8.314916,
+          -3.061467
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          198,
+          328,
+          270
+        ],
+        "changed_pixels": 5205,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "0b6988a44590581bb4aba6ca15e89920ece25d6b2398dd978ace4adf8a019cc8"
+      },
+      {
+        "name": "gaze-w",
+        "full": "gaze-w.png",
+        "angle_degrees": 180.0,
+        "eye_displacement_xy": [
+          -9.0,
+          -0.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          198,
+          328,
+          269
+        ],
+        "changed_pixels": 5020,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "a09aa43ea63974736909f9a81d6c67bc6d2a33123d03547113e726f148aa2a86"
+      },
+      {
+        "name": "gaze-wsw",
+        "full": "gaze-wsw.png",
+        "angle_degrees": 202.5,
+        "eye_displacement_xy": [
+          -8.314916,
+          3.061467
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          198,
+          328,
+          270
+        ],
+        "changed_pixels": 5180,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "fa3781fba8f4c8e42229c6f05e375f91c479c68ea8479bb365db67190b0af693"
+      },
+      {
+        "name": "gaze-sw",
+        "full": "gaze-sw.png",
+        "angle_degrees": 225.0,
+        "eye_displacement_xy": [
+          -6.363961,
+          5.656854
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          197,
+          328,
+          270
+        ],
+        "changed_pixels": 5185,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "8ee7d30e40993bbdc4f31a3ca24049b63091cd8fd6d2e09fdde5a182543a6b09"
+      },
+      {
+        "name": "gaze-ssw",
+        "full": "gaze-ssw.png",
+        "angle_degrees": 247.5,
+        "eye_displacement_xy": [
+          -3.444151,
+          7.391036
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          129,
+          197,
+          328,
+          270
+        ],
+        "changed_pixels": 5150,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "24e2c0b490e56220df9d15f6ee75c5fc2adb91a4ff4d6adb1070524d42b39312"
+      },
+      {
+        "name": "gaze-s",
+        "full": "gaze-s.png",
+        "angle_degrees": 270.0,
+        "eye_displacement_xy": [
+          -0.0,
+          8.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          197,
+          327,
+          270
+        ],
+        "changed_pixels": 4989,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "48aa395854750002f6437b6cb7edc8d1d114d681b4490dc08a7405a03419d8a0"
+      },
+      {
+        "name": "gaze-sse",
+        "full": "gaze-sse.png",
+        "angle_degrees": 292.5,
+        "eye_displacement_xy": [
+          3.444151,
+          7.391036
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          197,
+          327,
+          270
+        ],
+        "changed_pixels": 5179,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "5f2ac974dc874a25c5fbd85142fe2b674caa2a6c39342ce5824843eba3650bc3"
+      },
+      {
+        "name": "gaze-se",
+        "full": "gaze-se.png",
+        "angle_degrees": 315.0,
+        "eye_displacement_xy": [
+          6.363961,
+          5.656854
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          197,
+          328,
+          270
+        ],
+        "changed_pixels": 5212,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "55e9f4cc31397ff1415dcd6dc44d1af784fb13b8090ff80316c979d091c8f6c7"
+      },
+      {
+        "name": "gaze-ese",
+        "full": "gaze-ese.png",
+        "angle_degrees": 337.5,
+        "eye_displacement_xy": [
+          8.314916,
+          3.061467
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          130,
+          198,
+          328,
+          269
+        ],
+        "changed_pixels": 5170,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "ab1807ba120d518a45b52fba5e95f6b1965a9b0c75cc9542ab73595f26128322"
+      }
+    ]
+  }
 }

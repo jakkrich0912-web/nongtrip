@@ -200,8 +200,8 @@ def compose_pose(pose, inputs, root=ROOT):
 
 
 def validate_front(root=ROOT):
-    # Legacy geometry and manifest format are retained exactly; never call its
-    # inspect()/contact_sheet(), because those are writing build operations.
+    # Legacy geometry and expression metadata remain exact; gaze is validated
+    # separately. Never call inspect()/contact_sheet(), which write files.
     import build_mascot_expressions as front
     source = root / ASSETS / "front.webp"
     original = Image.open(source).convert("RGBA")
@@ -221,10 +221,17 @@ def validate_front(root=ROOT):
                 "face_band_canvas_xyxy_exclusive": list(band), "face_crop_size": [280,160], "base": "front.png",
                 "expected_expression_count": len(front.LABELS), "actual_expression_count": len(entries),
                 "complete": True, "expressions": entries}
-    if json.loads((out / "manifest.json").read_text(encoding="utf-8")) != expected:
+    saved_manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    if not isinstance(saved_manifest, dict) or {
+        key: value for key, value in saved_manifest.items() if key != "gaze"
+    } != expected:
         raise ValueError("front: manifest is stale or inconsistent")
-    return {"pose": "front", "expressions": len(entries), "complete": True,
-            "outside_changed_pixels": 0, "alpha_and_crop_checks": "passed", "manifest_check": "passed"}
+    report = {"pose": "front", "expressions": len(entries), "complete": True,
+              "outside_changed_pixels": 0, "alpha_and_crop_checks": "passed", "manifest_check": "passed"}
+    if "gaze" in saved_manifest or any(out.glob("gaze-*.png")):
+        from build_mascot_gaze import validate as validate_gaze
+        report["gaze"] = validate_gaze(out=out)
+    return report
 
 
 def validate_all(root=ROOT):

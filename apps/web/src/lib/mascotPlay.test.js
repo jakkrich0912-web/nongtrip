@@ -118,7 +118,7 @@ describe('other poses fall back to the pictures they have', () => {
   });
 });
 
-describe('gaze (waits for the 16 gaze pictures)', () => {
+describe('gaze (requires all 16 gaze pictures)', () => {
   it('picks one of sixteen directions and none near the centre', () => {
     expect(gazeFor(0.5, 0)).toBe('gaze-e');
     expect(gazeFor(-0.5, 0)).toBe('gaze-w');
@@ -128,8 +128,12 @@ describe('gaze (waits for the 16 gaze pictures)', () => {
     expect(gazeFor(0.01, 0.01)).toBe(null);
     expect(GAZE_NAMES).toHaveLength(16);
   });
-  it('is off until every direction has a picture', () => {
-    expect(hasGaze(POSE_SETS.front.images)).toBe(false);
-    expect(hasGaze(Object.fromEntries(GAZE_NAMES.map((n) => [n, 'x'])))).toBe(true);
+  it('enables the complete front set and disables it if any direction is missing', () => {
+    expect(hasGaze(POSE_SETS.front.images)).toBe(true);
+    for (const missing of GAZE_NAMES) {
+      const partial = { ...POSE_SETS.front.images };
+      delete partial[missing];
+      expect(hasGaze(partial), missing).toBe(false);
+    }
   });
 });

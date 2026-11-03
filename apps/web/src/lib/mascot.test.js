@@ -5,8 +5,12 @@ import { BLINK_FRAMES, EXPRESSIONS, EXPRESSION_NAMES, POSE_SETS, expressionUrl, 
 const manifest = (pose) => JSON.parse(readFileSync(new URL(`../assets/mascot/expressions-v2/${pose === 'front' ? '' : `${pose}/`}manifest.json`, import.meta.url), 'utf8'));
 
 describe('mascot expressions', () => {
-  it('loads all 23 expressions plus the base', () => {
-    expect(EXPRESSION_NAMES).toHaveLength(23);
+  it('loads the original 23 expressions and all 16 gaze frames plus the base', () => {
+    const legacy = EXPRESSION_NAMES.filter((name) => !name.startsWith('gaze-'));
+    const gaze = EXPRESSION_NAMES.filter((name) => name.startsWith('gaze-'));
+    expect(legacy).toHaveLength(23);
+    expect(gaze).toHaveLength(16);
+    expect(gaze.sort()).toEqual(manifest('front').gaze.frames.map((frame) => frame.name).sort());
     expect(EXPRESSIONS.front).toBeTruthy();
   });
   it('every blink frame exists', () => {
