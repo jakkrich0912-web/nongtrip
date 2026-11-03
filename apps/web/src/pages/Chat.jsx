@@ -105,7 +105,7 @@ export default function Chat() {
   ];
   return <section className="nt-chat" aria-labelledby="chat-title">
     <header className="nt-chat-header">
-      <Mascot size={76} mood="front" interactive={false} />
+      <Mascot size={76} mood="front" interactive={false} expression={messages[messages.length - 1]?.status === 'error' ? 'crying' : undefined} />
       <div><p className="nt-chat-eyebrow">YOUR LITTLE TRAVEL COMPANION</p><h1 id="chat-title">{t('คุยกับน้องทริป', 'Chat with NongTrip')}</h1><p>{t('เริ่มจากชื่อที่พักหรือจังหวัด แล้วค่อย ๆ หาที่ที่อยากไป', 'Start with your accommodation or province. Let’s find your next stop.')}</p></div>
       <Link to={context ? `/search?${new URLSearchParams({ lat: context.lat, lon: context.lon, name: context.name || '' })}` : '/search'} className="nt-chat-map-link">{t('เปิดแผนที่', 'Open map')} ↗</Link>
     </header>
