@@ -268,3 +268,15 @@ def test_factual_question_without_search_words_still_reaches_llm_with_places(tmp
     evs = events(ask(c, "พระธาตุดอยสุเทพสร้างเมื่อไร"))
     assert [e for e, _ in evs][:2] == ["tool", "places"]
     assert done(evs)["mode"] == "llm" and len(llm.calls) == 1
+
+
+def test_offtopic_with_llm_on_shows_offtopic_text_and_no_place_cards(tmp_path):
+    # "กินข้าวยัง": ไม่มีก้อนความรู้ตรงคำถาม LLM จึงไม่ถูกเรียก ต้องไม่แสดงรายชื่อ/การ์ดสถานที่ที่ไม่เกี่ยว
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(ask(c, "กินข้าวยัง"))
+    names = [e for e, _ in evs]
+    assert "places" not in names and "tool" not in names
+    text = text_of(evs)
+    assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "1. " not in text
+    assert done(evs)["mode"] == "rule" and not llm.calls

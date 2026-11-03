@@ -197,6 +197,13 @@ def _notes(notices: list[str], lang: str = "th") -> list[str]:
     return [f"หมายเหตุ: {n}" for n in notices]
 
 
+def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
+    """ข้อความตอบเมื่อข้อความไม่เกี่ยวกับที่เที่ยว/คาเฟ่/ที่พัก ถ้าถามเรื่องอาหารบอกด้วยว่ายังไม่มีข้อมูลร้านอาหาร"""
+    food = _t(lang, "ตอนนี้ระบบยังไม่มีข้อมูลร้านอาหาร มีเฉพาะที่เที่ยว คาเฟ่ และที่พัก",
+              "The system has no restaurant data yet, only attractions, cafés and stays.") if it.asks_food else ""
+    return [_t(lang, OFF_TOPIC, OFF_TOPIC_EN), food, _t(lang, HELP_HINT, HELP_HINT_EN)]
+
+
 def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
            lang: str = "th") -> Iterator[tuple[str, dict]]:
     """สร้าง event ทีละขั้น (tool, places/lodgings, token) lang = th/en เฉพาะข้อความที่ระบบสร้างเอง"""
@@ -212,9 +219,7 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
         return
 
     if it.off_topic:
-        food = L("ตอนนี้ระบบยังไม่มีข้อมูลร้านอาหาร มีเฉพาะที่เที่ยว คาเฟ่ และที่พัก",
-                 "The system has no restaurant data yet, only attractions, cafés and stays.") if it.asks_food else ""
-        yield from say(L(OFF_TOPIC, OFF_TOPIC_EN), food, L(HELP_HINT, HELP_HINT_EN))
+        yield from say(*_off_topic_parts(it, lang))
         return
 
     notes = list(it.notes)
@@ -382,18 +387,24 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 if last and not intent.province and not ctx and not intent.lodging_query and not intent.greeting:
                     intent.province = last
                 use_rag = rag is not None and rag.enabled
+                off_topic = intent.off_topic
                 if use_rag:
                     # โหมด LLM ต้องได้ผลค้นรอบจุดเดิมไปเป็นบริบทเหมือนเดิม (คำถามข้อเท็จจริงอย่าง "พระธาตุพนมสูงกี่เมตร" ไม่มีคำค้น)
-                    # ให้ LLM กับด่านตรวจตัดสินว่านอกเรื่องหรือไม่ ตัวตัดสินแบบกฎใช้เฉพาะตอนไม่มี LLM
+                    # จึงไม่ตัดก่อนถึง LLM แต่ถ้า LLM ไม่ได้ตอบ (ไม่มีก้อนความรู้ตรงคำถาม ฯลฯ) และเป็นข้อความนอกเรื่อง
+                    # จะบอกว่านอกเรื่องแทนการแสดงรายชื่อที่ไม่เกี่ยวกับคำถาม
                     intent.off_topic = False
                 held: list[str] = []          # ข้อความแบบกฎที่พักไว้จนรู้ว่า LLM ผ่านด่านตรวจหรือไม่
                 places_ev: dict | None = None
+                pending: list[tuple[str, dict]] = []
                 t0 = time.perf_counter()
                 for ev, data in answer(intent, ctx, svc, known, body.lang):
                     if ev == "places":
                         places_ev = data
                     if ev == "token" and use_rag:
                         held.append(data["text"])
+                        continue
+                    if ev != "token" and off_topic and use_rag:
+                        pending.append((ev, data))        # นอกเรื่อง: ยังไม่ส่งการ์ดสถานที่จนกว่า LLM จะตอบจริง
                         continue
                     if ev == "token":
                         parts.append(data["text"])
@@ -405,9 +416,13 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang)
                     if res.mode == "llm":
                         mode = "llm"
+                        for ev, data in pending:
+                            yield _sse(ev, data)
                         yield _sse("sources", {"items": res.sources})
                         lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
                         lines += _footer(places_ev, intent, body.lang)
+                    elif off_topic:
+                        lines = [ln + "\n" for ln in _lines(_off_topic_parts(intent, body.lang)).split("\n") if ln.strip()]
                     else:
                         lines = held + ([_notes([GUARD_NOTICE], body.lang)[0] + "\n"] if res.guard_failed else [])
                     for ln in lines:
