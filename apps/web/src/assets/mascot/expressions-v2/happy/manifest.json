@@ -1,0 +1,167 @@
+{
+  "schema_version": 2,
+  "pose": "happy",
+  "source": "../../happy.webp",
+  "source_size": [
+    397,
+    517
+  ],
+  "source_sha256": "5d05bc48d1b5c9500c7b02e6cbbf689711fe556a513e2a0c668be4168f71e14d",
+  "canvas_size": [
+    417,
+    537
+  ],
+  "source_offset": [
+    10,
+    20
+  ],
+  "face_band_source_xyxy_exclusive": [
+    98,
+    145,
+    312,
+    230
+  ],
+  "face_band_canvas_xyxy_exclusive": [
+    108,
+    165,
+    322,
+    250
+  ],
+  "face_crop_size": [
+    214,
+    85
+  ],
+  "expression_masks_source": {
+    "blink-half": {
+      "polygons": [
+        [
+          [
+            103,
+            151
+          ],
+          [
+            155,
+            148
+          ],
+          [
+            181,
+            168
+          ],
+          [
+            181,
+            199
+          ],
+          [
+            106,
+            193
+          ]
+        ],
+        [
+          [
+            231,
+            170
+          ],
+          [
+            281,
+            175
+          ],
+          [
+            308,
+            194
+          ],
+          [
+            306,
+            224
+          ],
+          [
+            234,
+            217
+          ]
+        ]
+      ],
+      "feather_px": 3
+    },
+    "blink-closed": {
+      "polygons": [
+        [
+          [
+            103,
+            151
+          ],
+          [
+            155,
+            148
+          ],
+          [
+            181,
+            168
+          ],
+          [
+            181,
+            199
+          ],
+          [
+            106,
+            193
+          ]
+        ],
+        [
+          [
+            231,
+            170
+          ],
+          [
+            281,
+            175
+          ],
+          [
+            308,
+            194
+          ],
+          [
+            306,
+            224
+          ],
+          [
+            234,
+            217
+          ]
+        ]
+      ],
+      "feather_px": 3
+    }
+  },
+  "base": "base.png",
+  "base_sha256": "5b7d3571bf4aa213dfa7e23d8630da69077883328eef67ef654c33778611885b",
+  "expected_expressions": [
+    "blink-half",
+    "blink-closed"
+  ],
+  "expected_expression_count": 2,
+  "actual_expression_count": 2,
+  "complete": true,
+  "expressions": [
+    {
+      "name": "blink-half",
+      "expression_th": "ตาปิดครึ่ง",
+      "full": "blink-half.png",
+      "face": "faces/blink-half.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 8384,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "6e6bd7ca0452eb183afc434be059855ffa6e0563f3a97148e4030ee7241c6ba7"
+    },
+    {
+      "name": "blink-closed",
+      "expression_th": "ตาปิด",
+      "full": "blink-closed.png",
+      "face": "faces/blink-closed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 8397,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "9c84affe0e9eadf30fcb460fbdbb826b754199f860b5ac22aec159b6170cf54f"
+    }
+  ]
+}

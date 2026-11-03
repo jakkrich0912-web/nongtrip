@@ -1,0 +1,278 @@
+{
+  "schema_version": 2,
+  "pose": "wave",
+  "source": "../../wave.webp",
+  "source_size": [
+    400,
+    517
+  ],
+  "source_sha256": "f0cdcf2dbd333a49c00ef00560261a5eb6896fb9b69890ede6afee655632f2ca",
+  "canvas_size": [
+    420,
+    537
+  ],
+  "source_offset": [
+    10,
+    20
+  ],
+  "face_band_source_xyxy_exclusive": [
+    100,
+    112,
+    328,
+    260
+  ],
+  "face_band_canvas_xyxy_exclusive": [
+    110,
+    132,
+    338,
+    280
+  ],
+  "face_crop_size": [
+    228,
+    148
+  ],
+  "expression_masks_source": {
+    "blink-half": {
+      "polygons": [
+        [
+          [
+            116,
+            125
+          ],
+          [
+            171,
+            116
+          ],
+          [
+            195,
+            142
+          ],
+          [
+            184,
+            190
+          ],
+          [
+            140,
+            199
+          ],
+          [
+            113,
+            172
+          ]
+        ],
+        [
+          [
+            259,
+            157
+          ],
+          [
+            306,
+            161
+          ],
+          [
+            325,
+            184
+          ],
+          [
+            320,
+            224
+          ],
+          [
+            278,
+            238
+          ],
+          [
+            253,
+            211
+          ]
+        ]
+      ],
+      "feather_px": 3
+    },
+    "blink-closed": {
+      "polygons": [
+        [
+          [
+            116,
+            125
+          ],
+          [
+            171,
+            116
+          ],
+          [
+            195,
+            142
+          ],
+          [
+            184,
+            190
+          ],
+          [
+            140,
+            199
+          ],
+          [
+            113,
+            172
+          ]
+        ],
+        [
+          [
+            259,
+            157
+          ],
+          [
+            306,
+            161
+          ],
+          [
+            325,
+            184
+          ],
+          [
+            320,
+            224
+          ],
+          [
+            278,
+            238
+          ],
+          [
+            253,
+            211
+          ]
+        ]
+      ],
+      "feather_px": 3
+    },
+    "grin": {
+      "polygons": [
+        [
+          [
+            116,
+            125
+          ],
+          [
+            171,
+            116
+          ],
+          [
+            195,
+            142
+          ],
+          [
+            184,
+            190
+          ],
+          [
+            140,
+            199
+          ],
+          [
+            113,
+            172
+          ]
+        ],
+        [
+          [
+            259,
+            157
+          ],
+          [
+            306,
+            161
+          ],
+          [
+            325,
+            184
+          ],
+          [
+            320,
+            224
+          ],
+          [
+            278,
+            238
+          ],
+          [
+            253,
+            211
+          ]
+        ],
+        [
+          [
+            190,
+            181
+          ],
+          [
+            237,
+            189
+          ],
+          [
+            253,
+            216
+          ],
+          [
+            239,
+            244
+          ],
+          [
+            204,
+            252
+          ],
+          [
+            183,
+            232
+          ]
+        ]
+      ],
+      "feather_px": 3
+    }
+  },
+  "base": "base.png",
+  "base_sha256": "c4ed2dfffb2143941ce24f4dd9ee744e4e955b7fff1028a0fd8722e6a04af19a",
+  "expected_expressions": [
+    "blink-half",
+    "blink-closed",
+    "grin"
+  ],
+  "expected_expression_count": 3,
+  "actual_expression_count": 3,
+  "complete": true,
+  "expressions": [
+    {
+      "name": "blink-half",
+      "expression_th": "ตาปิดครึ่ง",
+      "full": "blink-half.png",
+      "face": "faces/blink-half.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 12059,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "0c9b45a6aea67db554814212d10b98f386ef1b8b1f5851eb38c53de7f5a7fe9b"
+    },
+    {
+      "name": "blink-closed",
+      "expression_th": "ตาปิด",
+      "full": "blink-closed.png",
+      "face": "faces/blink-closed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 12447,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "dbd845a4a3d0c39640a1bf6733dbafb8128fc2cb0ae90cdc4689d49b82a15324"
+    },
+    {
+      "name": "grin",
+      "expression_th": "ยิ้มกว้าง ตาโค้ง",
+      "full": "grin.png",
+      "face": "faces/grin.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 16611,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "456493ec8dec0d58c619274fec8df66b96f4acfc388b285c036fd96c0feaf550"
+    }
+  ]
+}
