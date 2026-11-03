@@ -24,6 +24,7 @@ export default function SiteHeader() {
     <nav id="nt-navigation" className={open ? 'is-open' : ''} aria-label={t('เมนูหลัก', 'Main navigation')} onClick={() => setOpen(false)}>
       <NavLink to="/" end>{t('หน้าแรก', 'Home')}</NavLink>
       <NavLink to="/search">{t('ค้นหารอบที่พัก', 'Search')}</NavLink>
+      <NavLink to="/provinces">{t('ทุกจังหวัด', 'Provinces')}</NavLink>
       <NavLink to="/chat">{t('คุยกับน้องทริป', 'Chat')}</NavLink>
       <a href="/#how-it-works">{t('ใช้งานอย่างไร', 'How it works')}</a>
       <Link className="nt-mobile-account" to={user ? '/me' : '/login'}>{user ? t('ทริปของฉัน', 'My trips') : t('เข้าสู่ระบบ', 'Log in')}</Link>

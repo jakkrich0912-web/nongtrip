@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { noticeText } from '../lib/notices.js';
-import { PROVINCES } from '../lib/provinces.js';
+import { PROVINCES, provinceLabel } from '../lib/provinces.js';
 import { subtypeLabel } from '../lib/data.js';
 import { lodgingsSearch } from '../lib/api.js';
 import { latestOnly } from '../lib/latest.js';
@@ -57,7 +57,7 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
           <label>{t('จังหวัด', 'Province')}
             <select value={province} onChange={(e) => setProvince(e.target.value)}>
               <option value="">{t('ทุกจังหวัด', 'All provinces')}</option>
-              {PROVINCES.map((p) => <option key={p}>{p}</option>)}
+              {PROVINCES.map((p) => <option key={p} value={p}>{provinceLabel(p, lang)}</option>)}
             </select>
           </label>
           <label>{t('ย่าน อำเภอ หรือถนน', 'Area, district or street')}
@@ -88,7 +88,7 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
                     <div>
                       <strong>{l.name}</strong>
                       <small>
-                        {[l.subtype && subtypeLabel(l.subtype, undefined, lang), l.province ?? t('ไม่ทราบจังหวัด', 'Unknown province'), l.address].filter(Boolean).join(' · ')}
+                        {[l.subtype && subtypeLabel(l.subtype, undefined, lang), (l.province ? provinceLabel(l.province, lang) : t('ไม่ทราบจังหวัด', 'Unknown province')), l.address].filter(Boolean).join(' · ')}
                       </small>
                     </div>
                     <button className="btn small" onClick={() => choose(l)}>{t('เลือก', 'Choose')}</button>
