@@ -52,6 +52,7 @@ export default function Chat() {
   const chatId = useRef(null);
   const lastProvince = useRef(null); // จังหวัดที่ถามไว้ล่าสุด (จาก event done)
   const serial = useRef(0);
+  const activeId = useRef(null);
   const input = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
   useEffect(() => { chatId.current = null; }, [user?.id]);
@@ -62,6 +63,7 @@ export default function Chat() {
     const id = ++serial.current;
     const aborter = new AbortController();
     controller.current = aborter;
+    activeId.current = id;
     setBusy(true);
     setText('');
     setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching' }]);
@@ -88,6 +90,16 @@ export default function Chat() {
         setBusy(false);
       }
     }
+  };
+  // หยุดรอคำตอบ: ยกเลิกคำขอที่ค้างอยู่ ข้อความที่ได้มาแล้วยังคงอยู่ และให้ถามใหม่ได้ทันที
+  const stop = () => {
+    const aborter = controller.current;
+    if (!aborter) return;
+    aborter.abort();
+    controller.current = null;
+    setBusy(false);
+    setMessages((items) => items.map((item) => item.id === activeId.current ? { ...item, status: 'stopped' } : item));
+    input.current?.focus();
   };
   const chooseLodging = (lodging) => {
     setContext({ lat: lodging.lat, lon: lodging.lon, name: lodging.name });
@@ -128,14 +140,15 @@ export default function Chat() {
               {message.lodgings.validation?.ok !== false && (message.lodgings.items ?? []).map((lodging) => <button key={lodging.id} type="button" onClick={() => chooseLodging(lodging)} disabled={busy || !Number.isFinite(lodging.lat) || !Number.isFinite(lodging.lon)}><strong>{lodging.name}</strong>{lodging.address && <small>{lodging.address}</small>}</button>)}
             </div>}
             <SourceCards sources={message.sources} t={t} />
+            {message.status === 'stopped' && <p className="nt-chat-waiting">{t('หยุดรอคำตอบแล้ว ถามใหม่ได้เลย', 'Stopped waiting. Feel free to ask again.')}</p>}
             {message.error && <p className="nt-chat-error" role="alert">{message.error}</p>}
           </div>
         </div>)}
       </div>
       <div className="nt-chat-suggestions" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>{suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => send(t(thai, english))}>{t(thai, english)} <span aria-hidden="true">↗</span></button>)}</div>
       <form className="nt-chat-composer" onSubmit={(event) => { event.preventDefault(); send(text); }}>
-        <label className="nt-chat-input-label" htmlFor="chat-message">{t('ข้อความถึงน้องทริป', 'Message NongTrip')}</label>
-        <div><input ref={input} id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={500} required placeholder={t('บอกชื่อที่พัก หรือพิมพ์คำถามได้เลย…', 'Your accommodation or question…')} autoComplete="off" /><button type="submit" disabled={busy || !text.trim()}>{busy ? t('กำลังตอบ…', 'Replying…') : t('ส่งข้อความ', 'Send')} <span aria-hidden="true">↑</span></button></div>
+        <label className="nt-chat-input-label" htmlFor="chat-message">{t('ข้อความถึงน้องทริป', 'Message NongTrip')}{text.length >= 400 && <small className="nt-chat-count"> · {text.length}/500</small>}</label>
+        <div><input ref={input} id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={500} required placeholder={t('บอกชื่อที่พัก หรือพิมพ์คำถามได้เลย…', 'Your accommodation or question…')} autoComplete="off" />{busy && <button type="button" className="nt-chat-stop" onClick={stop}>{t('หยุด', 'Stop')}</button>}<button type="submit" disabled={busy || !text.trim()}>{busy ? t('กำลังตอบ…', 'Replying…') : t('ส่งข้อความ', 'Send')} <span aria-hidden="true">↑</span></button></div>
       </form>
     </div>
   </section>;
