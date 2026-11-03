@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { noticeText } from '../lib/notices.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -192,7 +193,7 @@ export default function Search() {
           {mode === 'booked' && origin && near.status !== 'loading' && near.status !== 'error' && !check.ok && <p className="err">{t('ผลค้นไม่ผ่านการตรวจ จึงไม่แสดงผล ลองปักหมุดใหม่อีกครั้ง', 'These results failed our check, so they are hidden. Please drop the pin again.')}</p>}
           {mode === 'booked' && origin && (near.status === 'ok' || near.status === 'more') && check.ok && (
             <>
-              {near.notices?.map((n) => <p key={n} className="notice">{n}</p>)}
+              {near.notices?.map((n) => <p key={n} className="notice">{noticeText(n, lang)}</p>)}
               {saveNote && <p className="notice" role="alert">{saveNote}</p>}
               {!user && <p className="attr" style={{ padding: '8px 20px 0' }}><Link to="/login">{t('เข้าสู่ระบบ', 'Log in')}</Link> {t('เพื่อเก็บสถานที่โปรดและจำที่พักที่ค้นไว้', 'to save favourite places and remember your stays')}</p>}
               <p className="count">
