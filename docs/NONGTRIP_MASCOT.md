@@ -176,8 +176,43 @@ python -m unittest discover -s scripts -p test_mascot_pose_expressions.py
 
 ท่า wave / think / happy มีสีหน้าไม่ครบ สีหน้าที่ไม่มีจะถอยเป็น `blink-half` (ลบ) หรือ `grin` (บวก)
 
-### มองตามเคอร์เซอร์ (รอภาพจาก Codex)
+### มองตามเคอร์เซอร์ (ภาพครบ 16 ทิศ)
 
-เปิดอัตโนมัติเมื่อมีภาพครบทั้ง 16 ทิศใน `expressions-v2` และลงทะเบียนใน manifest (ถ้าไม่ครบจะไม่เปิด) ชื่อ: `gaze-e, gaze-ene, gaze-ne, gaze-nne, gaze-n, gaze-nnw, gaze-nw, gaze-wnw, gaze-w, gaze-wsw, gaze-sw, gaze-ssw, gaze-s, gaze-sse, gaze-se, gaze-ese` ผืน 420×540 ตรงพิกเซลกับ `front` เปลี่ยนเฉพาะแถบใบหน้า
+ชุดภาพอยู่ที่ `apps/web/src/assets/mascot/expressions-v2/` โค้ดจาก PR #56 ตรวจชื่อ PNG ทั้ง 16 ทิศและเปิด gaze อัตโนมัติเมื่อครบ โดยไม่ต้องแก้ runtime เพิ่ม รายการภาพและผลเทียบพิกเซลบันทึกใน `manifest.json` หัวข้อ `gaze` แยกจาก `expressions` เดิม 23 สีหน้า
+
+| ไฟล์ | ทิศบนจอ | ไฟล์ | ทิศบนจอ |
+|---|---|---|---|
+| gaze-e.png | ขวา | gaze-w.png | ซ้าย |
+| gaze-ene.png | ขวาเฉียงขึ้นเล็กน้อย | gaze-wsw.png | ซ้ายเฉียงลงเล็กน้อย |
+| gaze-ne.png | ขวาบน | gaze-sw.png | ซ้ายล่าง |
+| gaze-nne.png | บนเฉียงขวาเล็กน้อย | gaze-ssw.png | ล่างเฉียงซ้ายเล็กน้อย |
+| gaze-n.png | บน | gaze-s.png | ล่าง |
+| gaze-nnw.png | บนเฉียงซ้ายเล็กน้อย | gaze-sse.png | ล่างเฉียงขวาเล็กน้อย |
+| gaze-nw.png | ซ้ายบน | gaze-se.png | ขวาล่าง |
+| gaze-wnw.png | ซ้ายเฉียงขึ้นเล็กน้อย | gaze-ese.png | ขวาเฉียงลงเล็กน้อย |
+
+ทุกภาพเป็น PNG RGBA **420×540** ใช้พิกเซลจาก `front.png` เท่านั้น แปลงพิกัดเนื้อภาพภายในดวงตาเดิมด้วย Pillow โดยระยะเลื่อนลดลงอย่างราบรื่นจนเป็นศูนย์ที่ขอบตา ไม่สร้างตาหรือประกายใหม่ ไม่มีภาพจากงานอื่น ปากยิ้ม จมูก แก้ม หนวด หมวก หู กล้องและตัว รวมถึงค่า alpha ทุกพิกเซล คงเดิมทั้งหมด
+
+วงรีที่อนุญาตให้เปลี่ยนอยู่ที่ `(cx,cy,rx,ry)` = `(158.5,228.5,30.5,32.5)` และ `(300,239.5,28,30.5)` ใช้ระยะเลื่อนสูงสุดแนวนอน 9 px และแนวตั้ง 8 px โดยลดน้ำหนักตาม `w=(1-r²)²` จึงคงขอบตาและไม่ทำให้ลูกตาทะลุขอบ มุมเพิ่มครั้งละ 22.5° เริ่มขวาแล้ววนขึ้น รอบสมบูรณ์เชื่อม `ese → e` ด้วยสูตรเดียวกัน ระยะเลื่อนที่ศูนย์ตาระหว่างทิศติดกันมากสุด **3.497572 px**
+
+ผลเทียบกับฐาน: กรอบรวมของพิกเซลที่เปลี่ยนคือ **[129,197,328,270)** แบบปลาย exclusive อยู่ภายในแถบใบหน้าเดิม `[83,160,363,320)` แต่เปลี่ยนจริงเฉพาะภายในวงรีดวงตาสองข้าง จำนวน 4,978–5,266 พิกเซลต่อภาพ; นอกดวงตาเปลี่ยน **0 พิกเซล**, alpha ตรงทุกภาพ ขนาดไฟล์ภาพ 259,778–260,224 bytes ต่อไฟล์
+
+```powershell
+# สร้าง 16 ภาพ + manifest.gaze + contact sheets จาก front.png เดิม
+python scripts/build_mascot_gaze.py --build
+
+# ตรวจ gaze อย่างเดียว หรือรวมสีหน้าเดิมและทุกท่า
+python scripts/build_mascot_gaze.py --validate
+python scripts/build_mascot_expressions.py --validate
+
+# ทดสอบตัวตรวจและทิศทางจากรายละเอียดภาพจริง
+python -m unittest discover -s scripts -p test_mascot_gaze.py
+```
+
+ตัวตรวจ gaze เป็นแบบอ่านอย่างเดียว และล้มเมื่อชื่อไม่ครบ/เกิน, รูปแบบหรือขนาดผิด, alpha เปลี่ยน, มีพิกเซลนอกดวงตาเปลี่ยน, ภาพไม่ตรงทิศที่ระบุ หรือ manifest/แฮชไม่ตรง ตัวตรวจเดิมรวมผล gaze และตัวสร้าง manifest เดิมเก็บข้อมูล gaze ไว้ ภาพสีหน้าเดิมไม่ถูกเขียนทับ
+
+![ภาพรวม gaze ทั้ง 16 ทิศ](../apps/web/src/assets/mascot/expressions-v2/gaze-contact-sheet.jpg)
+
+![ภาพขยายดวงตาทั้ง 16 ทิศ](../apps/web/src/assets/mascot/expressions-v2/gaze-eye-contact-sheet.jpg)
 
 ไฟล์: `lib/mascotSheet.js` (ฟิสิกส์), `lib/mascotGl.js` (วาด), `lib/mascotPlay.js` (กติกา/โซน/ท่า), `lib/mascotInput.js` (ติดตามการขยับ), `components/MascotSheet.jsx` (เอนจิน)
