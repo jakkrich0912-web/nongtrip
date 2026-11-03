@@ -33,6 +33,61 @@ GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "ร�
 FOOD_WORDS = ("กินข้าว", "ร้านอาหาร", "อาหาร", "หิว", "อร่อย", "ข้าว", "กินอะไร", "ของกิน", "เมนู")
 GREETING_WORDS = ("สวัสดี", "หวัดดี", "hello", "hi ", "ช่วยอะไรได้", "ทำอะไรได้", "ใช้ยังไง", "วิธีใช้")
 
+# คุยเล่นสั้นๆ ที่ตอบได้ตรงๆ โดยไม่ต้องเดาและไม่ต้องใช้ LLM (ชื่อ ทักทายสบายดีไหม ขอบคุณ ลาก่อน ฯลฯ)
+# ใช้เฉพาะข้อความสั้นที่ไม่มีชื่อจังหวัด/ประเภทสถานที่ปนมา ("ขอบคุณ แล้วคาเฟ่ล่ะ" ยังค้นตามปกติ)
+SMALLTALK_MAX_CHARS = 40
+SMALLTALK_TH = {
+    "bot": ("เป็นคนหรือ", "เป็นคนรึ", "เป็นเอไอ", "เป็น ai", "เป็นบอท", "บอทหรือ", "คนหรือบอท", "คนหรือเปล่า", "หุ่นยนต์หรือ"),
+    "wellbeing": ("สบายดีไหม", "สบายดีมั้ย", "สบายดีป่าว", "สบายดีหรือเปล่า", "เป็นไงบ้าง", "เป็นยังไงบ้าง"),
+    "thanks": ("ขอบคุณ", "ขอบใจ", "แต๊งกิ้ว"),
+    "bye": ("บ๊ายบาย", "บายนะ", "ลาก่อน", "ไว้เจอกัน", "ไปแล้วนะ"),
+    "praise": ("เก่งจัง", "เก่งมาก", "น่ารักจัง", "น่ารักมาก", "เจ๋งมาก", "เจ๋งจัง", "ดีมาก", "สุดยอด"),
+    "weather": ("ฝนตก", "อากาศ", "พยากรณ์"),
+    "bored": ("เบื่อ", "เหงา"),
+}
+# ถามชื่อ/ผู้สร้าง "ของน้องทริป" จับเฉพาะทั้งข้อความที่เป็นคำถามนั้นจริง ๆ ไม่จับ "เขื่อนภูมิพลเดิมชื่ออะไร" หรือ "ชื่อไร่เลย์มาจากไหน"
+_ADDRESS = r"(?:สวัสดี\S*\s*)?(?:คุณ|เธอ|เรา|น้อง(?:ทริป)?|ตัวเอง|แก|ท่าน)?\s*"
+_END = r"(?:\s*(?:หน่อย|เหรอ|หรอ|ครับ|ค่ะ|คะ|นะ|จ๊ะ|จ้ะ|ล่ะ|อะ|ฮะ|เนี่ย))*\s*[?？]*$"
+_NAME_TH = re.compile("^" + _ADDRESS + r"(?:ชื่ออะไร|ชื่อไร|ชื่อว่าอะไร|คือใคร|เป็นใคร|แนะนำตัว)" + _END)
+_MAKER_TH = re.compile("^" + _ADDRESS + r"(?:ใคร(?:เป็นคน)?(?:สร้าง|ทำ|พัฒนา)(?:ขึ้นมา)?(?:เธอ|เรา|คุณ|น้องทริป)?)" + _END)
+_WEATHER_MAX_CHARS = 20  # ข้อความยาว ("พยากรณ์อากาศโตเกียวพรุ่งนี้") ปล่อยให้ผู้ตอบหลักตัดสิน
+SMALLTALK_EN = {
+    "bot": re.compile(r"\bare you (?:a |an )?(?:human|real|robot|bot|ai|person)\b", re.I),
+    "name": re.compile(r"\b(?:your name|who are you|what are you called|introduce yourself)\b", re.I),
+    "maker": re.compile(r"\bwho (?:made|built|created|developed) you\b", re.I),
+    "wellbeing": re.compile(r"\bhow are you|how(?:'s| is) it going\b", re.I),
+    "thanks": re.compile(r"\bthank(?:s| you)\b|\bthx\b", re.I),
+    "bye": re.compile(r"\b(?:bye|goodbye|see you|good night)\b", re.I),
+    "praise": re.compile(r"\b(?:you(?:'re| are) (?:great|awesome|smart|cute|amazing)|well done|good job)\b", re.I),
+    "weather": re.compile(r"\b(?:weather|forecast|will it rain|is it raining)\b", re.I),
+    "bored": re.compile(r"\b(?:i(?:'m| am) bored|so bored|i(?:'m| am) lonely)\b", re.I),
+}
+
+
+_BYE_EXACT = re.compile(r"^(?:บ๊?าย|บ๊ายบาย)(?:บาย)?\s*(?:ค่ะ|คะ|ครับ|นะ|จ้า|จ้ะ)*$")  # "บาย" อยู่ในคำว่า "สบาย" จึงจับเฉพาะทั้งข้อความ
+
+
+def smalltalk_kind(text: str) -> str | None:
+    """ชนิดของการคุยเล่นสั้นๆ ที่ตอบสำเร็จรูปได้ หรือ None ถ้าไม่ใช่"""
+    if len(text) > SMALLTALK_MAX_CHARS:
+        return None
+    t = text.strip()
+    if _BYE_EXACT.match(t):
+        return "bye"
+    if _NAME_TH.match(t):
+        return "name"
+    if _MAKER_TH.match(t):
+        return "maker"
+    for kind, words in SMALLTALK_TH.items():
+        if any(w in text for w in words):
+            if kind == "weather" and len(text) > _WEATHER_MAX_CHARS:
+                continue
+            return kind
+    for kind, pattern in SMALLTALK_EN.items():
+        if pattern.search(text) and not (kind == "weather" and len(text) > _WEATHER_MAX_CHARS):
+            return kind
+    return None
+
 # ชื่อเรียกอื่นของจังหวัด
 ALIASES = {
     "กรุงเทพ": "กรุงเทพมหานคร", "กทม": "กรุงเทพมหานคร", "โคราช": "นครราชสีมา", "อยุธยา": "พระนครศรีอยุธยา",
@@ -108,6 +163,7 @@ class Intent:
     lodging_query: str | None = None
     want_lodgings: bool = False          # อยากได้รายชื่อที่พักรอบจุด
     greeting: bool = False
+    smalltalk: str | None = None         # คุยเล่นสั้นๆ (ชื่อ/ขอบคุณ/ลาก่อน …) ตอบสำเร็จรูปตามชนิด
     anchor: str | None = None            # ชื่อสถานที่ที่ถูกเอ่ย ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น (ไม่มีหมุด/จังหวัด)
     off_topic: bool = False              # ไม่มีคำที่ระบบรู้จักเลย (เช่น "กินข้าวยัง") อย่าเดาว่าให้ค้นรายชื่อ
     asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
@@ -287,4 +343,9 @@ def parse(message: str) -> Intent:
     known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
              or it.asks_booking or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
     it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))
+    if not (it.province or cafe or attr or lodging or has_number):
+        it.smalltalk = smalltalk_kind(text)
+        if it.smalltalk:
+            it.off_topic = False
+            it.greeting = False
     return it

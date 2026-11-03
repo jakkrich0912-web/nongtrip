@@ -425,7 +425,7 @@ def test_multiline_osm_name_cannot_forge_reply_lines(tmp_path):
 def test_offtopic_message_is_not_answered_with_a_places_list():
     # "กินข้าวยัง" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม
     assert parse("กินข้าวยัง").off_topic
-    assert parse("ขอบคุณ").off_topic
+    assert parse("ขอบคุณ").smalltalk == "thanks" and not parse("ขอบคุณ").off_topic
     assert parse("hello").greeting and not parse("hello").off_topic
     # ข้อความสั้นๆ ที่ยังหมายถึงการค้น ต้องไม่ถูกตีเป็นนอกเรื่อง
     for ok in ("คาเฟ่ใกล้ๆ", "10 แห่ง", "มีอะไรบ้าง", "แนะนำหน่อย", "เชียงใหม่", "ใกล้ๆ 5 กม.", "show more", "ราคาเท่าไหร่"):
@@ -465,3 +465,35 @@ def test_named_place_without_pin_searches_around_that_place(env):
     assert [d["name"] for e, d in evs if e == "tool"] == ["places_nearby"]
     assert "รอบวัดพระธาตุดอยสุเทพ" in text_of(evs) and "ปักหมุด" not in text_of(evs)
     assert dict(evs)["done"]["province"] == "เชียงใหม่"
+
+
+def test_smalltalk_kinds_and_guards():
+    for text, kind in [("ชื่ออะไร", "name"), ("คุณชื่ออะไรเหรอ", "name"), ("เป็นคนหรือเปล่า", "bot"), ("ใครสร้างเธอ", "maker"),
+                       ("สบายดีไหม", "wellbeing"), ("ขอบคุณค่ะ", "thanks"), ("บาย", "bye"), ("บ๊ายบายค่ะ", "bye"),
+                       ("เก่งจัง", "praise"), ("พรุ่งนี้ฝนตกไหม", "weather"), ("เบื่อจัง", "bored"),
+                       ("what's your name?", "name"), ("who are you", "name"), ("thank you!", "thanks"), ("how are you", "wellbeing")]:
+        it = parse(text)
+        assert it.smalltalk == kind and not it.off_topic and not it.greeting, text
+    # ต้องไม่จับผิด: "สบาย" มี "บาย" อยู่ในคำ, ชื่อสถานที่, ข้อความที่มีจังหวัด/ประเภทสถานที่/ยาวเกิน
+    for text in ["สบายๆ", "วัดนี้ชื่ออะไร", "ขอบคุณ แล้วคาเฟ่ล่ะ", "ที่เที่ยวเชียงใหม่ ขอบคุณ", "คาเฟ่ใกล้ๆ", "สวัสดี", "กินข้าวยัง",
+                 "ขอบคุณที่ช่วยหาที่เที่ยวให้ ตอนนี้ขอรบกวนถามเรื่องอื่นต่ออีกนิดนะ",
+                 "เขื่อนภูมิพลเดิมชื่ออะไร", "ชื่อไร่เลย์มาจากคำว่าอะไร", "พยากรณ์อากาศโตเกียวพรุ่งนี้",
+                 "อุทยานแห่งชาติแจ้ซ้อนมีบ่อน้ำร้อนไหม"]:   # คำถามข้อเท็จจริงในชุดทดสอบทอง ต้องไปถึงผู้ตอบหลักเหมือนเดิม
+        assert parse(text).smalltalk is None, text
+
+
+def test_smalltalk_chat_answers_directly_without_search(env):
+    c, *_ = env
+    evs = events(ask(c, "ชื่ออะไร", context={"lat": LAT, "lon": LON}))
+    assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
+    text = text_of(evs)
+    assert "น้องทริป" in text and "ช่วยไม่ได้" not in text and "แถวไหน" in text and "ที่เที่ยวในเชียงใหม่" in text
+    assert "ยินดี" in text_of(events(ask(c, "ขอบคุณค่ะ")))
+    assert "NongTrip" in text_of(events(ask(c, "what's your name?", lang="en")))
+    assert "ไม่ใช่คนจริง" in text_of(events(ask(c, "เป็นคนหรือเปล่า")))
+
+
+def test_smalltalk_does_not_borrow_last_province_or_named_place(env):
+    c, *_ = env
+    evs = events(ask(c, "ขอบคุณ", last_province="เชียงใหม่"))
+    assert not [1 for e, _ in evs if e in ("tool", "places")] and "province" not in dict(evs)["done"]

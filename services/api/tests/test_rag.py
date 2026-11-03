@@ -288,3 +288,11 @@ def test_question_naming_a_place_reaches_llm_without_a_pin(tmp_path):
     c, _ = make(tmp_path, llm)
     evs = events(c.post("/api/chat", json={"message": "พระธาตุดอยสุเทพสร้างเมื่อไร"}))
     assert done(evs)["mode"] == "llm" and len(llm.calls) == 1 and done(evs)["province"] == "เชียงใหม่"
+
+
+def test_smalltalk_never_reaches_the_llm(tmp_path):
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(c.post("/api/chat", json={"message": "ชื่ออะไร", "context": {"lat": 18.8, "lon": 98.9}}))
+    assert llm.calls == [] and done(evs)["mode"] == "rule"
+    assert "น้องทริป" in text_of(evs) and "sources" not in dict(evs) and not [1 for e, _ in evs if e in ("tool", "places")]

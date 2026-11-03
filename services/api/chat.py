@@ -45,6 +45,32 @@ HELP = ("สวัสดีค่ะ น้องทริปช่วยหา�
         "ระบบไม่มีราคา ค่าเข้า รีวิว หรือคะแนน และไม่จองหรือชำระเงินให้")
 OFF_TOPIC = "เรื่องนี้น้องทริปช่วยไม่ได้นะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล"
 HELP_HINT = ("ลองพิมพ์ เช่น \"คาเฟ่ใกล้ๆ\" (ถ้าปักหมุดไว้แล้ว) \"ที่เที่ยวในเชียงใหม่ 5 แห่ง\" หรือ \"ที่พักแถวภูเก็ต\"")
+# คุยเล่นสั้นๆ: ตอบสำเร็จรูปตามชนิด (ไม่ค้น ไม่ใช้ LLM จึงไม่เดาและไม่ใช้เครดิต) ปิดท้ายชวนกลับมาเรื่องที่เที่ยวเสมอ
+SMALLTALK_TH = {
+    "name": ["เราชื่อน้องทริปค่ะ เป็นผู้ช่วยหาที่เที่ยว คาเฟ่ และที่พักรอบ ๆ ที่คุณอยู่ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล"],
+    "bot": ["น้องทริปเป็นผู้ช่วยในแชตค่ะ ไม่ใช่คนจริง ๆ แต่ข้อมูลสถานที่ทุกแห่งที่แสดงมาจากแหล่งที่ตรวจสอบได้ และมีลิงก์ให้กดดูต้นทาง"],
+    "maker": ["น้องทริปเป็นโครงงานของนักศึกษา มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี (RMUTT) ค่ะ"],
+    "wellbeing": ["สบายดีค่ะ พร้อมพาไปเที่ยวเสมอ"],
+    "thanks": ["ยินดีค่ะ"],
+    "bye": ["ไว้เจอกันใหม่นะคะ เที่ยวให้สนุกค่ะ"],
+    "praise": ["ขอบคุณค่ะ ดีใจที่ชอบ"],
+    "weather": ["น้องทริปยังไม่มีข้อมูลสภาพอากาศค่ะ ก่อนออกเดินทางลองดูพยากรณ์จากกรมอุตุนิยมวิทยาอีกที"],
+    "bored": ["เบื่อใช่ไหมคะ ไปเที่ยวเปลี่ยนบรรยากาศกันดีกว่า"],
+}
+SMALLTALK_ASK = "วันนี้อยากไปเที่ยวแถวไหนดีคะ บอกชื่อจังหวัดหรือที่พักได้เลย"
+SMALLTALK_EN = {
+    "name": ["I'm NongTrip, an assistant that finds attractions, cafés and stays around where you are, within 30 km, nearest first."],
+    "bot": ["I'm a chat assistant, not a real person. Every place I show comes from a checked source, with a link to the original."],
+    "maker": ["NongTrip is a student project at Rajamangala University of Technology Thanyaburi (RMUTT)."],
+    "wellbeing": ["I'm doing well and always ready to plan a trip."],
+    "thanks": ["You're welcome!"],
+    "bye": ["See you next time. Have a great trip!"],
+    "praise": ["Thank you, I'm glad you like it."],
+    "weather": ["NongTrip has no weather data yet. Please check the Thai Meteorological Department forecast before you travel."],
+    "bored": ["Bored? Let's find somewhere new to go."],
+}
+SMALLTALK_ASK_EN = "Where would you like to go? Tell me a province or your stay."
+
 ASK_LOCATION = ("ยังไม่รู้ว่าให้ค้นรอบไหน กรุณาปักหมุดที่พักบนแผนที่ พิมพ์ชื่อจังหวัด (เช่น \"คาเฟ่ในเชียงใหม่\") "
                 "หรือพิมพ์ชื่อที่พัก (เช่น \"ที่เที่ยวใกล้โรงแรมชื่อนี้\")")
 
@@ -204,6 +230,16 @@ def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
     return [_t(lang, OFF_TOPIC, OFF_TOPIC_EN), food, _t(lang, HELP_HINT, HELP_HINT_EN)]
 
 
+def _smalltalk_parts(kind: str, lang: str = "th") -> list[str]:
+    """คำตอบคุยเล่นตามชนิด ปิดท้ายด้วยคำชวนกลับมาเรื่องที่เที่ยว (ชนิด name/bot/maker มีคำแนะนำวิธีใช้ต่อท้ายด้วย)"""
+    table = SMALLTALK_EN if lang == "en" else SMALLTALK_TH
+    body = table.get(kind) or table["name"]
+    out = list(body) + [_t(lang, SMALLTALK_ASK, SMALLTALK_ASK_EN)]
+    if kind in ("name", "bot", "maker"):
+        out.append(_t(lang, HELP_HINT, HELP_HINT_EN))
+    return out
+
+
 def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
            lang: str = "th") -> Iterator[tuple[str, dict]]:
     """สร้าง event ทีละขั้น (tool, places/lodgings, token) lang = th/en เฉพาะข้อความที่ระบบสร้างเอง"""
@@ -213,6 +249,10 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
     def say(*parts: str) -> Iterator[tuple[str, dict]]:
         for line in _lines(list(parts)).split("\n"):
             yield "token", {"text": line + "\n"}
+
+    if it.smalltalk:
+        yield from say(*_smalltalk_parts(it.smalltalk, lang))
+        return
 
     if it.greeting:
         yield from say(L(HELP, HELP_EN))
@@ -385,7 +425,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 # ข้อความใหม่ไม่ระบุที่ (ไม่มีจังหวัด ไม่มีหมุด ไม่มีชื่อที่พัก): ใช้จังหวัดที่ถามไว้ล่าสุด
                 eff_ctx = ctx
                 remember = None
-                if not ctx and not intent.province and not intent.lodging_query and not intent.greeting:
+                if not ctx and not intent.province and not intent.lodging_query and not intent.greeting and not intent.smalltalk:
                     # ไม่มีหมุด/จังหวัด แต่เอ่ยชื่อสถานที่ที่ตรวจแล้ว: ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น ไม่ต้องถามหาหมุดก่อน
                     # (ไม่ถือว่าเป็นหมุดของผู้ใช้ จึงไม่ย้ายหมุดบนหน้าเว็บ)
                     hit = find_place(text, svc.verified)
@@ -395,9 +435,9 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         intent.off_topic = False
                         remember = hit.province if hit.province in PROVINCES else None
                 last = body.last_province if body.last_province in PROVINCES else None
-                if last and not intent.province and not eff_ctx and not intent.lodging_query and not intent.greeting:
+                if last and not intent.province and not eff_ctx and not intent.lodging_query and not intent.greeting and not intent.smalltalk:
                     intent.province = last
-                use_rag = rag is not None and rag.enabled
+                use_rag = rag is not None and rag.enabled and not intent.smalltalk  # คุยเล่นตอบสำเร็จรูป ไม่ส่งให้ LLM
                 off_topic = intent.off_topic
                 if use_rag:
                     # โหมด LLM ต้องได้ผลค้นรอบจุดเดิมไปเป็นบริบทเหมือนเดิม (คำถามข้อเท็จจริงอย่าง "พระธาตุพนมสูงกี่เมตร" ไม่มีคำค้น)
