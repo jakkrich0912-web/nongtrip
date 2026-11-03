@@ -285,7 +285,7 @@ def test_follow_up_without_place_uses_last_province(tmp_path):
     first = events(ask(c, "ที่เที่ยวในเชียงใหม่"))
     assert first[-1] == ("done", {"chat_id": None, "mode": "rule", "province": "เชียงใหม่"})
     evs = events(ask(c, "แล้วคาเฟ่ล่ะ", last_province="เชียงใหม่"))
-    assert "ยังไม่รู้ว่าให้ค้นรอบไหน" not in text_of(evs) and "เชียงใหม่" in text_of(evs)
+    assert "บอกน้องทริปหน่อยว่าแถวไหน" not in text_of(evs) and "เชียงใหม่" in text_of(evs)
     assert evs[-1][1]["province"] == "เชียงใหม่"
 
 
@@ -300,8 +300,8 @@ def test_last_province_never_overrides_pin_or_new_province(tmp_path):
 def test_unknown_last_province_is_ignored_and_done_has_no_province(tmp_path):
     c = _snap_client(tmp_path)
     evs = events(ask(c, "แล้วคาเฟ่ล่ะ", last_province="ไม่ใช่จังหวัด"))
-    assert "ยังไม่รู้ว่าให้ค้นรอบไหน" in text_of(evs)
-    assert evs[-1] == ("done", {"chat_id": None, "mode": "rule"})
+    assert "อยากหาคาเฟ่ใช่ไหมคะ บอกน้องทริปหน่อยว่าแถวไหน" in text_of(evs)
+    assert evs[-1] == ("done", {"chat_id": None, "mode": "rule", "ask": "location"})
     assert ask(c, "คาเฟ่", last_province="x" * 61).status_code == 400
 
 
@@ -444,7 +444,7 @@ def test_offtopic_chat_runs_no_search_even_with_a_pin(env):
     evs = events(ask(c, "กินข้าวยัง", context={"lat": LAT, "lon": LON}))
     assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
     text = text_of(evs)
-    assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "คาเฟ่" in text
+    assert "ยังไม่มีข้อมูลร้านอาหาร" in text and "คาเฟ่" in text
 
 
 def test_find_place_uses_a_named_verified_place_and_ignores_chitchat():
@@ -487,7 +487,7 @@ def test_smalltalk_chat_answers_directly_without_search(env):
     evs = events(ask(c, "ชื่ออะไร", context={"lat": LAT, "lon": LON}))
     assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
     text = text_of(evs)
-    assert "น้องทริป" in text and "ช่วยไม่ได้" not in text and "แถวไหน" in text and "ที่เที่ยวในเชียงใหม่" in text
+    assert "น้องทริป" in text and "ตอบไม่ได้" not in text and "แถวไหน" in text and "ที่เที่ยวในเชียงใหม่" in text
     assert "ยินดี" in text_of(events(ask(c, "ขอบคุณค่ะ")))
     assert "NongTrip" in text_of(events(ask(c, "what's your name?", lang="en")))
     assert "ไม่ใช่คนจริง" in text_of(events(ask(c, "เป็นคนหรือเปล่า")))
@@ -497,3 +497,29 @@ def test_smalltalk_does_not_borrow_last_province_or_named_place(env):
     c, *_ = env
     evs = events(ask(c, "ขอบคุณ", last_province="เชียงใหม่"))
     assert not [1 for e, _ in evs if e in ("tool", "places")] and "province" not in dict(evs)["done"]
+
+
+def test_off_topic_reply_matches_the_topic(env):
+    c, *_ = env
+    cases = {"คอมช้าแก้ยังไง": "คอมพิวเตอร์", "ปวดหัวทำไงดี": "1669", "การบ้านเลขยากมาก": "การบ้าน",
+             "หุ้นตัวไหนดี": "การเงิน", "อกหักทำไงดี": "หัวใจ", "สรุปข่าววันนี้": "ข่าว", "2+2 เท่ากับเท่าไร": "ตอบไม่ได้"}
+    for text, expected in cases.items():
+        evs = events(ask(c, text, context={"lat": LAT, "lon": LON}))
+        assert not [1 for e, _ in evs if e in ("tool", "places")], text
+        out = text_of(evs)
+        assert expected in out and "ที่เที่ยว คาเฟ่ และที่พัก" in out, (text, out)
+    assert "1669" in text_of(events(ask(c, "I have a headache", lang="en")))
+
+
+def test_ask_location_echoes_what_was_asked_and_flags_done(env):
+    c, *_ = env
+    evs = events(ask(c, "วัดไหนคนไปบ่อย"))
+    out = text_of(evs)
+    assert "อยากหาวัดใช่ไหมคะ" in out and "วัดในเชียงใหม่" in out
+    assert "รีวิว" in out                       # บอกตรง ๆ ว่าไม่มีข้อมูลความนิยม
+    assert dict(evs)["done"]["ask"] == "location"
+    en = events(ask(c, "popular temples?", lang="en"))
+    assert "Looking for temples?" in text_of(en) and dict(en)["done"]["ask"] == "location"
+    # มีหมุดแล้วไม่ต้องถาม
+    pinned = events(ask(c, "วัดไหนคนไปบ่อย", context={"lat": LAT, "lon": LON}))
+    assert "ask" not in dict(pinned)["done"]

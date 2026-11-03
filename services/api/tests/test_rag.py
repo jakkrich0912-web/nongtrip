@@ -278,7 +278,7 @@ def test_offtopic_with_llm_on_shows_offtopic_text_and_no_place_cards(tmp_path):
     names = [e for e, _ in evs]
     assert "places" not in names and "tool" not in names
     text = text_of(evs)
-    assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "1. " not in text
+    assert "ยังไม่มีข้อมูลร้านอาหาร" in text and "1. " not in text
     assert done(evs)["mode"] == "rule" and not llm.calls
 
 

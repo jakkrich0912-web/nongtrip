@@ -43,7 +43,6 @@ INVALID_NOTICE_EN = "These results failed the independent check. Please do not r
 HELP = ("สวัสดีค่ะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณได้ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล\n"
         "ลองพิมพ์ เช่น \"คาเฟ่ใกล้ๆ\" (ถ้าปักหมุดไว้แล้ว) \"ที่เที่ยวในเชียงใหม่ 5 แห่ง\" หรือ \"ที่พักแถวภูเก็ต\"\n"
         "ระบบไม่มีราคา ค่าเข้า รีวิว หรือคะแนน และไม่จองหรือชำระเงินให้")
-OFF_TOPIC = "เรื่องนี้น้องทริปช่วยไม่ได้นะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล"
 HELP_HINT = ("ลองพิมพ์ เช่น \"คาเฟ่ใกล้ๆ\" (ถ้าปักหมุดไว้แล้ว) \"ที่เที่ยวในเชียงใหม่ 5 แห่ง\" หรือ \"ที่พักแถวภูเก็ต\"")
 # คุยเล่นสั้นๆ: ตอบสำเร็จรูปตามชนิด (ไม่ค้น ไม่ใช้ LLM จึงไม่เดาและไม่ใช้เครดิต) ปิดท้ายชวนกลับมาเรื่องที่เที่ยวเสมอ
 SMALLTALK_TH = {
@@ -71,17 +70,12 @@ SMALLTALK_EN = {
 }
 SMALLTALK_ASK_EN = "Where would you like to go? Tell me a province or your stay."
 
-ASK_LOCATION = ("ยังไม่รู้ว่าให้ค้นรอบไหน กรุณาปักหมุดที่พักบนแผนที่ พิมพ์ชื่อจังหวัด (เช่น \"คาเฟ่ในเชียงใหม่\") "
-                "หรือพิมพ์ชื่อที่พัก (เช่น \"ที่เที่ยวใกล้โรงแรมชื่อนี้\")")
 
 
 HELP_EN = ("Hi! NongTrip finds attractions and cafés around your stay, within 30 km, nearest first.\n"
            "Try: \"cafés nearby\" (once you have pinned your stay), \"attractions in Chiang Mai, 5 places\" or \"stays around Phuket\".\n"
            "The system has no prices, entry fees, reviews or scores, and does not book or take payment.")
-OFF_TOPIC_EN = "NongTrip cannot help with that. It finds attractions and cafés around your stay, within 30 km, nearest first."
 HELP_HINT_EN = "Try: \"cafés nearby\" (once you have pinned your stay), \"attractions in Chiang Mai, 5 places\" or \"stays around Phuket\"."
-ASK_LOCATION_EN = ("I do not know where to search yet. Pin your stay on the map, type a province "
-                   "(for example \"cafés in Chiang Mai\") or type your stay's name.")
 
 # ข้อความสำเร็จรูปที่ระบบสร้างเอง (ภาษาไทย -> อังกฤษ) ใช้เมื่อผู้ใช้เลือกหน้าเว็บภาษาอังกฤษ
 # หมายเหตุที่มาจากบริการค้นที่ไม่อยู่ในรายการนี้ ยังเป็นภาษาไทย
@@ -223,11 +217,52 @@ def _notes(notices: list[str], lang: str = "th") -> list[str]:
     return [f"หมายเหตุ: {n}" for n in notices]
 
 
+OFF_TOPIC_TH = {
+    "health": "เรื่องสุขภาพน้องทริปให้คำแนะนำไม่ได้ค่ะ ถ้าไม่สบาย ปรึกษาแพทย์หรือเภสัชกรจะดีที่สุด ถ้าอาการหนักโทร 1669 ได้ทันที",
+    "tech": "เรื่องคอมพิวเตอร์และมือถือ น้องทริปไม่ถนัดเลยค่ะ ลองถามช่างหรือศูนย์บริการของยี่ห้อนั้นดูนะ",
+    "study": "เรื่องเรียนกับการบ้าน น้องทริปช่วยไม่ได้ค่ะ แต่ถ้าสอบเสร็จแล้วอยากไปเที่ยวพักสมอง บอกได้เลย",
+    "money": "เรื่องการเงินและการลงทุน น้องทริปให้คำแนะนำไม่ได้ค่ะ ลองปรึกษาผู้เชี่ยวชาญด้านการเงินดูนะ",
+    "love": "เรื่องหัวใจน้องทริปไม่ถนัดเลยค่ะ แต่ถ้าอยากไปเที่ยวเปลี่ยนบรรยากาศ น้องทริปหาที่สวย ๆ ให้ได้นะ",
+    "news": "น้องทริปไม่มีข้อมูลข่าวค่ะ ลองติดตามจากสำนักข่าวที่เชื่อถือได้นะ",
+    "food": "ตอนนี้น้องทริปยังไม่มีข้อมูลร้านอาหารค่ะ มีเฉพาะที่เที่ยว คาเฟ่ และที่พัก ถ้าอยากนั่งคาเฟ่ใกล้ ๆ หาให้ได้นะ",
+}
+OFF_TOPIC_EN_KIND = {
+    "health": "I can't give health advice. If you feel unwell, please see a doctor or pharmacist. In an emergency in Thailand, call 1669.",
+    "tech": "Computers and phones aren't my thing. A technician or the brand's service centre can help you better.",
+    "study": "I can't help with study or homework, but if you need a break after exams, I can find you somewhere to go.",
+    "money": "I can't give financial or investment advice. Please talk to a financial professional.",
+    "love": "Matters of the heart aren't my thing, but if you need a change of scene, I can find somewhere lovely.",
+    "news": "I don't have news. Please check a trusted news source.",
+    "food": "I don't have restaurant data yet, only attractions, cafés and stays. I can find a café nearby, though.",
+}
+OFF_TOPIC_SHORT = "อันนี้น้องทริปตอบไม่ได้จริง ๆ ค่ะ"
+OFF_TOPIC_SHORT_EN = "Sorry, that's outside what I know."
+CAN_DO = "น้องทริปช่วยได้เรื่องที่เที่ยว คาเฟ่ และที่พักรอบตัวคุณ ลองพิมพ์ เช่น \"ที่เที่ยวในเชียงใหม่\" หรือ \"คาเฟ่ใกล้ๆ\""
+CAN_DO_EN = "I can help with attractions, cafés and stays around you. Try \"attractions in Chiang Mai\" or \"cafés nearby\"."
+
+
 def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
-    """ข้อความตอบเมื่อข้อความไม่เกี่ยวกับที่เที่ยว/คาเฟ่/ที่พัก ถ้าถามเรื่องอาหารบอกด้วยว่ายังไม่มีข้อมูลร้านอาหาร"""
-    food = _t(lang, "ตอนนี้ระบบยังไม่มีข้อมูลร้านอาหาร มีเฉพาะที่เที่ยว คาเฟ่ และที่พัก",
-              "The system has no restaurant data yet, only attractions, cafés and stays.") if it.asks_food else ""
-    return [_t(lang, OFF_TOPIC, OFF_TOPIC_EN), food, _t(lang, HELP_HINT, HELP_HINT_EN)]
+    """ข้อความตอบเมื่อข้อความไม่เกี่ยวกับที่เที่ยว/คาเฟ่/ที่พัก ตอบให้ตรงหัวข้อที่ถาม (สุขภาพ คอม อาหาร …) แล้วชวนกลับมาเรื่องเที่ยว"""
+    kind = "food" if it.asks_food else it.off_topic_kind
+    table = OFF_TOPIC_EN_KIND if lang == "en" else OFF_TOPIC_TH
+    first = table.get(kind) if kind else None
+    return [first or _t(lang, OFF_TOPIC_SHORT, OFF_TOPIC_SHORT_EN), _t(lang, CAN_DO, CAN_DO_EN)]
+
+
+def _ask_location(it: Intent, lang: str = "th") -> list[str]:
+    """ถามว่าให้ค้นแถวไหน โดยพูดทวนสิ่งที่ผู้ใช้อยากหา ("อยากหาวัดใช่ไหมคะ")"""
+    if it.subject:
+        th, en = it.subject
+    elif it.kinds == ("cafe",):
+        th, en = "คาเฟ่", "cafés"
+    elif it.kinds == ("attraction",):
+        th, en = "ที่เที่ยว", "attractions"
+    else:
+        th, en = "ที่เที่ยวกับคาเฟ่", "attractions and cafés"
+    return [_t(lang, f"อยากหา{th}ใช่ไหมคะ บอกน้องทริปหน่อยว่าแถวไหน",
+               f"Looking for {en}? Tell me where."),
+            _t(lang, f"พิมพ์ชื่อจังหวัด (เช่น \"{th}ในเชียงใหม่\") ชื่อที่พัก หรือปักหมุดบนแผนที่ก็ได้ค่ะ",
+               f"Type a province (for example \"{en} in Chiang Mai\"), your stay's name, or pin the map.")]
 
 
 def _smalltalk_parts(kind: str, lang: str = "th") -> list[str]:
@@ -297,7 +332,8 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
         where = L(f"ที่พัก {_one_line(lod['name'])}", f"the stay {_one_line(lod['name'])}")
         notes += res["notices"]
     else:
-        yield from say(L(ASK_LOCATION, ASK_LOCATION_EN), *tail)
+        yield "ask", {"what": "location"}       # ภายในเท่านั้น: บอกหน้าเว็บผ่าน done.ask ให้แสดงปุ่มเลือกตำแหน่ง
+        yield from say(*_ask_location(it, lang), *tail)
         return
 
     if it.want_lodgings:
@@ -448,7 +484,11 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 places_ev: dict | None = None
                 pending: list[tuple[str, dict]] = []
                 t0 = time.perf_counter()
+                ask = None
                 for ev, data in answer(intent, eff_ctx, svc, known, body.lang):
+                    if ev == "ask":
+                        ask = data["what"]
+                        continue
                     if ev == "places":
                         places_ev = data
                     if ev == "token" and use_rag:
@@ -484,7 +524,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 logging.getLogger("uvicorn.error").info(
                     "chat timing: ค้นสถานที่ %.1f วินาที, ขั้น RAG/LLM %.1f วินาที, โหมด %s",
                     t_search, time.perf_counter() - t1, mode)
-                yield _sse("done", {"chat_id": chat_id, "mode": mode, **({"province": intent.province or remember} if (intent.province or remember) else {})})
+                yield _sse("done", {"chat_id": chat_id, "mode": mode, **({"province": intent.province or remember} if (intent.province or remember) else {}),
+                                   **({"ask": ask} if ask and mode == "rule" else {})})
             except SearchError as e:
                 yield _sse("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้

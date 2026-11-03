@@ -25,7 +25,7 @@ ATTRACTION_WORDS = ("ที่เที่ยว", "สถานที่เท�
 LODGING_WORDS = ("โรงแรม", "รีสอร์ท", "รีสอร์ต", "โฮสเทล", "โฮมสเตย์", "เกสต์เฮาส์", "วิลล่า", "บังกะโล", "ที่พัก")
 # หัวข้อที่ระบบไม่มีข้อมูล/ไม่ทำ (CONTRACT ข้อ 1) บอกผู้ใช้ตรงๆ แทนการเดา
 MONEY_WORDS = ("ราคา", "ค่าเข้า", "ค่าใช้จ่าย", "งบ", "บาท", "แพง", "ฟรี")
-REVIEW_WORDS = ("รีวิว", "คะแนน", "ยอดนิยม", "ดีที่สุด", "อันดับ")
+REVIEW_WORDS = ("รีวิว", "คะแนน", "ยอดนิยม", "ดีที่สุด", "อันดับ", "คนไปบ่อย", "คนไปเยอะ", "คนเยอะ", "ฮิต", "นิยม")
 BOOKING_WORDS = ("จอง", "ชำระ", "จ่ายเงิน", "ซื้อตั๋ว", "ซื้อบัตร")
 # คำถามกว้างๆ ที่ยังนับว่าอยากค้นรอบจุดเดิม ("มีอะไรบ้าง" "แนะนำหน่อย" "อีก") ถ้าไม่มีคำพวกนี้หรือคำอื่นที่ระบบรู้จักเลย ถือว่านอกเรื่อง
 GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "รอบ", "แถว", "หา", "ไหน", "บ้าง", "อีก", "ต่อ", "เพิ่ม", "สถานที่", "พาไป",
@@ -87,6 +87,59 @@ def smalltalk_kind(text: str) -> str | None:
         if pattern.search(text) and not (kind == "weather" and len(text) > _WEATHER_MAX_CHARS):
             return kind
     return None
+
+# สิ่งที่ผู้ใช้อยากหาแบบเจาะจง ใช้พูดทวนตอนถามว่าให้ค้นแถวไหน ("อยากหาวัดใช่ไหม")
+SUBJECTS = (("วัด", "วัด", "temples"), ("น้ำตก", "น้ำตก", "waterfalls"), ("ทะเล", "ทะเล", "beaches"), ("หาด", "ชายหาด", "beaches"),
+            ("ดอย", "ดอยและภูเขา", "mountains"), ("ภูเขา", "ดอยและภูเขา", "mountains"), ("พิพิธภัณฑ์", "พิพิธภัณฑ์", "museums"),
+            ("ตลาด", "ตลาด", "markets"), ("อุทยาน", "อุทยาน", "national parks"), ("จุดชมวิว", "จุดชมวิว", "viewpoints"),
+            ("เกาะ", "เกาะ", "islands"))
+_EN_SUBJECTS = ((re.compile(r"\btemples?\b", re.I), "วัด", "temples"), (re.compile(r"\bwaterfalls?\b", re.I), "น้ำตก", "waterfalls"),
+                (re.compile(r"\bbeach(?:es)?\b", re.I), "ชายหาด", "beaches"), (re.compile(r"\bmuseums?\b", re.I), "พิพิธภัณฑ์", "museums"),
+                (re.compile(r"\bmarkets?\b", re.I), "ตลาด", "markets"), (re.compile(r"\bviewpoints?\b", re.I), "จุดชมวิว", "viewpoints"),
+                (re.compile(r"\bnational parks?\b", re.I), "อุทยาน", "national parks"), (re.compile(r"\bislands?\b", re.I), "เกาะ", "islands"),
+                (re.compile(r"\bmountains?\b", re.I), "ดอยและภูเขา", "mountains"))
+
+# หัวข้อนอกเรื่องที่พบบ่อย ตอบให้ตรงหัวข้อแทนข้อความกลาง ๆ (เรียงตามลำดับที่ตรวจ)
+OFF_TOPIC_KINDS = {
+    "health": ("ปวดหัว", "ปวดท้อง", "ปวด", "ป่วย", "เป็นไข้", "ไม่สบาย", "กินยา", "ยาอะไร", "หาหมอ", "โรค", "เจ็บคอ", "ท้องเสีย"),
+    "tech": ("คอม", "โน้ตบุ๊ก", "โน๊ตบุ๊ค", "โน้ตบุ๊ค", "มือถือ", "โทรศัพท์", "ไวไฟ", "wifi", "เน็ตช้า", "เน็ตหลุด", "อินเทอร์เน็ต",
+             "โปรแกรม", "เขียนโค้ด", "โค้ด", "ปริ้น", "แบตเตอรี่", "แบตหมด", "ไอโฟน", "แอนดรอยด์"),
+    "study": ("การบ้าน", "ข้อสอบ", "สอบตก", "สอบเข้า", "อ่านหนังสือสอบ", "สอบปลายภาค", "สอบกลางภาค", "ทำรายงาน", "วิทยานิพนธ์",
+              "เรียนต่อ", "ติวหนังสือ"),
+    "money": ("หุ้น", "ลงทุน", "คริปโต", "บิตคอยน์", "กู้เงิน", "ภาษี", "ดอกเบี้ย"),
+    "love": ("แฟน", "อกหัก", "จีบ", "เลิกกัน", "คนที่ชอบ"),
+    "news": ("ข่าว", "การเมือง", "เลือกตั้ง", "นายก"),
+}
+_EN_OFF_TOPIC = {
+    "health": re.compile(r"\b(?:headache|sick|fever|medicine|doctor|illness|pain|cough|flu)\b", re.I),
+    "tech": re.compile(r"\b(?:computer|laptop|phone|wi-?fi|internet|code|coding|program(?:ming)?|printer|battery|iphone|android|windows)\b", re.I),
+    "study": re.compile(r"\b(?:homework|exam|essay|thesis|assignment)\b", re.I),
+    "money": re.compile(r"\b(?:stocks?|invest\w*|crypto|bitcoin|loan|tax(?:es)?|interest rate)\b", re.I),
+    "love": re.compile(r"\b(?:girlfriend|boyfriend|crush|break ?up|dating)\b", re.I),
+    "news": re.compile(r"\b(?:news|politics|election|prime minister)\b", re.I),
+}
+
+
+def off_topic_kind(text: str) -> str | None:
+    for kind, words in OFF_TOPIC_KINDS.items():
+        if any(w in text for w in words):
+            return kind
+    for kind, pattern in _EN_OFF_TOPIC.items():
+        if pattern.search(text):
+            return kind
+    return None
+
+
+def find_subject(text: str) -> tuple[str, str] | None:
+    """สิ่งที่อยากหาแบบเจาะจง คืน (คำไทย, คำอังกฤษ) หรือ None"""
+    for word, th, en in SUBJECTS:
+        if word in text:
+            return th, en
+    for pattern, th, en in _EN_SUBJECTS:
+        if pattern.search(text):
+            return th, en
+    return None
+
 
 # ชื่อเรียกอื่นของจังหวัด
 ALIASES = {
@@ -167,6 +220,8 @@ class Intent:
     anchor: str | None = None            # ชื่อสถานที่ที่ถูกเอ่ย ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น (ไม่มีหมุด/จังหวัด)
     off_topic: bool = False              # ไม่มีคำที่ระบบรู้จักเลย (เช่น "กินข้าวยัง") อย่าเดาว่าให้ค้นรายชื่อ
     asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
+    off_topic_kind: str | None = None    # หัวข้อนอกเรื่อง (health/tech/study/money/love/news) ตอบให้ตรงหัวข้อ
+    subject: tuple[str, str] | None = None  # สิ่งที่อยากหาแบบเจาะจง (เช่น วัด) ใช้พูดทวนตอนถามว่าแถวไหน
     asks_money: bool = False
     asks_review: bool = False
     asks_booking: bool = False
@@ -343,6 +398,12 @@ def parse(message: str) -> Intent:
     known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
              or it.asks_booking or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
     it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))
+    it.subject = find_subject(scan)
+    if not it.asks_food and not (it.province or cafe or attr or lodging or has_number):
+        # หัวข้อนอกเรื่องชัด ๆ ("หุ้นตัวไหนดี" "คอมช้าแก้ยังไง") นับเป็นนอกเรื่องแม้มีคำกว้าง ๆ อย่าง "ไหน" "แนะนำ"
+        it.off_topic_kind = off_topic_kind(text)
+        if it.off_topic_kind:
+            it.off_topic = True
     if not (it.province or cafe or attr or lodging or has_number):
         it.smalltalk = smalltalk_kind(text)
         if it.smalltalk:
