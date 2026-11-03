@@ -56,3 +56,6 @@
   .nt-chat-composer button { padding:9px; font-size:.8rem; }
   .nt-chat-context { flex-wrap:wrap; }
 }
+
+.nt-chat-composer button.nt-chat-stop { background:#fff; color:#3d6a4b; border:1.5px solid #3d6a4b; }
+.nt-chat-count { font-weight:500; color:#52634a; }
