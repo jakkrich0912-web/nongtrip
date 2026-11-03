@@ -59,3 +59,12 @@
 
 .nt-chat-composer button.nt-chat-stop { background:#fff; color:#3d6a4b; border:1.5px solid #3d6a4b; }
 .nt-chat-count { font-weight:500; color:#52634a; }
+
+.nt-chat-ask { margin-top:12px; display:grid; gap:8px; }
+.nt-chat-ask button { font:500 .84rem var(--body); cursor:pointer; border-radius:999px; }
+.nt-chat-ask-here { justify-self:start; display:inline-flex; gap:8px; align-items:center; border:0; background:#3d6a4b; color:#fff; padding:8px 15px; }
+.nt-chat-ask-provinces { display:flex; flex-wrap:wrap; gap:6px; }
+.nt-chat-ask-provinces button { border:1px solid #b9c6b1; background:#fffefb; color:#3d6a4b; padding:6px 12px; }
+.nt-chat-ask-provinces button:hover:not(:disabled) { background:#e4ecdf; }
+.nt-chat-ask button:disabled { opacity:.6; cursor:default; }
+.nt-chat-ask-error { color:#655315; font-size:.8rem; margin:0; }

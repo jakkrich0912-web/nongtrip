@@ -8,6 +8,8 @@ import MyTrips from './pages/MyTrips.jsx';
 import PlaceDetail from './pages/PlaceDetail.jsx';
 import ProvincePage from './pages/ProvincePage.jsx';
 import SiteHeader, { Brand } from './components/landing/SiteHeader.jsx';
+import ChatCompanion from './components/ChatCompanion.jsx';
+import { CompanionHintProvider } from './lib/companionContext.jsx';
 import { useLanguage } from './lib/language.jsx';
 import './landing.css';
 
@@ -16,7 +18,7 @@ export default function App() {
   const { t } = useLanguage();
   useEffect(() => { if (!hash) window.scrollTo(0, 0); }, [pathname]);
   const auth = pathname === '/login' || pathname === '/signup';
-  return <div className={`nt-app ${auth ? 'nt-auth-route' : ''}`}>
+  return <CompanionHintProvider><div className={`nt-app ${auth ? 'nt-auth-route' : ''}`}>
     {!auth && <><a className="nt-skip" href="#main-content">{t('ข้ามไปเนื้อหา', 'Skip to content')}</a><SiteHeader /></>}
     <main id="main-content" className={pathname === '/' || auth ? '' : 'nt-workspace'}>
       <Routes>
@@ -32,5 +34,6 @@ export default function App() {
       </Routes>
     </main>
     {!auth && <footer className="nt-footer nt-container"><div><Brand /><p>{t('โครงงานมหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี', 'A project by Rajamangala University of Technology Thanyaburi')}</p></div><div><p>{t('ระยะทางเป็นเส้นตรง ไม่ใช่ระยะขับรถ', 'Distances are straight-line, not driving distances.')}</p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map data © OpenStreetMap contributors (ODbL)</a></div></footer>}
-  </div>;
+    <ChatCompanion hidden={auth || pathname === '/chat'} />
+  </div></CompanionHintProvider>;
 }

@@ -7,6 +7,7 @@ import { provincePlaces } from '../lib/api.js';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { latestOnly } from '../lib/latest.js';
 import { useLanguage } from '../lib/language.jsx';
+import { useShareCompanionHint } from '../lib/companionContext.jsx';
 
 const PAGE = 50;
 
@@ -20,6 +21,7 @@ export default function ProvincePage() {
 
 function ProvinceBody({ name }) {
   const { t, lang } = useLanguage();
+  useShareCompanionHint({ province: name });
   const [category, setCategory] = useState('');
   const [state, setState] = useState({ status: 'loading', items: [] });
   const [note, setNote] = useState('');
