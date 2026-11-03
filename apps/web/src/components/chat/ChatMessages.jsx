@@ -46,10 +46,10 @@ function AskLocation({ message, busy, session, t, lang }) {
   </div>;
 }
 
-export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38, session = null }) {
+export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38, session = null, greeting = true }) {
   const lastId = messages[messages.length - 1]?.id;
   return <div className="nt-chat-messages" role="log" aria-label={t('บทสนทนา', 'Conversation')} aria-live="polite" aria-relevant="additions text" aria-busy={busy}>
-    <div className="nt-chat-row nt-chat-row-bot"><MascotHead size={headSize} /><div className="nt-chat-bubble"><p>{t('สวัสดี! วันนี้พักแถวไหนเอ่ย? บอกชื่อที่พักหรือจังหวัด แล้วเราช่วยหาที่เที่ยวกับคาเฟ่รอบ ๆ ให้ได้เลย', 'Hello! Where are you staying? Tell me your accommodation or province, and I’ll help you find nearby attractions and cafés.')}</p></div></div>
+    {greeting && <div className="nt-chat-row nt-chat-row-bot"><MascotHead size={headSize} /><div className="nt-chat-bubble"><p>{t('สวัสดี! วันนี้พักแถวไหนเอ่ย? บอกชื่อที่พักหรือจังหวัด แล้วเราช่วยหาที่เที่ยวกับคาเฟ่รอบ ๆ ให้ได้เลย', 'Hello! Where are you staying? Tell me your accommodation or province, and I’ll help you find nearby attractions and cafés.')}</p></div></div>}
     {messages.map((message) => <div key={message.id} className={`nt-chat-row nt-chat-row-${message.role}`}>
       {message.role === 'bot' && <MascotHead size={headSize} />}
       <div className="nt-chat-bubble">

@@ -1,0 +1,71 @@
+/* หน้าแชตเต็มจอ: แถบประวัติซ้าย บทสนทนาเป็นคอลัมน์กลางจอ ช่องพิมพ์ติดล่าง (ความสูงหักแถบหัวเว็บที่ติดด้านบน) */
+.nt-chatspace { padding:0; }
+.ntg { --side:268px; --col:780px; display:flex; height:calc(100dvh - 91px); min-height:420px; background:#f8f7f1; position:relative; }
+.ntg-side { width:var(--side); flex-shrink:0; display:flex; flex-direction:column; gap:6px; padding:16px 12px; background:#eef1e8; border-right:1px solid #dde3d6; overflow-y:auto; }
+.ntg-new { display:flex; align-items:center; gap:10px; width:100%; padding:11px 14px; border:1px solid #c6d0bf; border-radius:12px; background:#fffefb; color:#22301f; font:600 .92rem var(--body); cursor:pointer; }
+.ntg-new:hover { background:#fff; border-color:#3d6a4b; }
+.ntg-side-link { display:flex; align-items:center; gap:10px; padding:9px 14px; border-radius:10px; color:#3d6a4b; font-size:.88rem; font-weight:600; text-decoration:none; }
+.ntg-side-link:hover { background:#e1e8da; }
+.ntg-side-title { margin:14px 14px 4px; font:600 .72rem var(--body); letter-spacing:.06em; color:#5f6e59; text-transform:uppercase; }
+.ntg-side-note { margin:4px 14px; font-size:.82rem; color:#53604d; line-height:1.6; }
+.ntg-history { list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+.ntg-history button { width:100%; text-align:left; padding:9px 14px; border:0; border-radius:10px; background:transparent; color:#22301f; font:400 .88rem var(--body); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ntg-history button:hover:not(:disabled) { background:#e1e8da; }
+.ntg-history button[aria-current=true] { background:#d6e1cf; font-weight:600; }
+.ntg-history button:disabled { opacity:.6; cursor:default; }
+.ntg-side-manage { margin:auto 14px 2px; padding-top:12px; font-size:.76rem; color:#53604d; }
+.ntg-scrim { display:none; }
+
+.ntg-main { flex:1; min-width:0; display:flex; flex-direction:column; }
+.ntg-top { display:none; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #e3e7dc; }
+.ntg-top h1 { flex:1; margin:0; font:600 1rem var(--display); text-align:center; }
+.ntg-menu, .ntg-top-new { width:38px; height:38px; border:0; border-radius:10px; background:transparent; color:#22301f; font-size:1.25rem; cursor:pointer; }
+.ntg-menu:hover, .ntg-top-new:hover { background:#eef1e8; }
+/* หัวข้อหน้าให้โปรแกรมอ่านหน้าจอยังเจอบนจอกว้าง */
+@media (min-width:861px) { .ntg-top { display:block; position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); padding:0; border:0; } }
+
+.ntg-scroll { flex:1; overflow-y:auto; overscroll-behavior:contain; }
+.ntg-col { width:100%; max-width:var(--col); margin:0 auto; padding:0 24px; box-sizing:border-box; }
+.ntg-scroll .ntg-col { padding-top:28px; padding-bottom:24px; min-height:100%; display:flex; flex-direction:column; }
+.ntg-banner { margin:0 0 16px; }
+
+.ntg-empty { margin:auto 0; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; padding:24px 0 40px; }
+.ntg-empty h2 { margin:8px 0 2px; font:600 clamp(1.5rem,3vw,2rem)/1.35 var(--display); color:#22301f; }
+.ntg-empty p { margin:0 0 18px; color:#53604d; max-width:520px; }
+.ntg-suggest { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; width:100%; }
+.ntg-suggest button { padding:14px 16px; border:1px solid #d3dccb; border-radius:14px; background:#fffefb; color:#22301f; font:500 .88rem/1.5 var(--body); text-align:left; cursor:pointer; }
+.ntg-suggest button:hover:not(:disabled) { border-color:#3d6a4b; background:#fff; }
+
+/* ข้อความ: ฝั่งผู้ใช้เป็นฟองชิดขวา ฝั่งน้องทริปเป็นข้อความเต็มคอลัมน์ไม่มีฟอง */
+.ntg .nt-chat-messages { gap:26px; min-height:0; }
+.ntg .nt-chat-row-bot .nt-chat-bubble { background:transparent; padding:4px 0 0; border-radius:0; max-width:calc(100% - 44px); line-height:1.75; }
+.ntg .nt-chat-row-user .nt-chat-bubble { background:#e2eadc; color:#22301f; border-radius:20px; padding:11px 18px; max-width:min(75%, 560px); }
+.ntg .nt-chat-row .mascot-head { margin-top:2px; }
+
+.ntg-bottom { flex-shrink:0; padding:10px 0 12px; background:linear-gradient(to bottom, rgba(248,247,241,0), #f8f7f1 18px); }
+.ntg-context { display:inline-flex; align-items:center; gap:8px; margin:0 0 8px; padding:6px 8px 6px 14px; border-radius:999px; background:#e4ecdf; font-size:.82rem; }
+.ntg-context button { width:24px; height:24px; border:0; border-radius:50%; background:transparent; color:#3d6a4b; font-size:1.1rem; line-height:1; cursor:pointer; }
+.ntg-context button:hover:not(:disabled) { background:#d6e1cf; }
+.ntg-composer { display:flex; align-items:flex-end; gap:8px; padding:8px 8px 8px 18px; border:1px solid #c6d0bf; border-radius:26px; background:#fff; box-shadow:0 4px 18px rgba(34,48,31,.07); }
+.ntg-composer:focus-within { border-color:#3d6a4b; }
+.ntg-composer textarea { flex:1; min-width:0; resize:none; border:0; outline:none; padding:9px 0; max-height:220px; font:400 1rem/1.5 var(--body); color:#22301f; background:transparent; }
+.ntg-send { flex-shrink:0; width:40px; height:40px; border:0; border-radius:50%; background:#3d6a4b; color:#fff; font:700 1.1rem var(--body); cursor:pointer; display:grid; place-items:center; }
+.ntg-send:disabled { background:#c6d0bf; cursor:default; }
+.ntg-stop { background:#22301f; font-size:.8rem; }
+.ntg-foot { margin:8px 0 0; text-align:center; font-size:.72rem; color:#5f6e59; }
+.ntg-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+@media (max-width:950px) { .ntg { height:calc(100dvh - 79px); } }
+@media (max-width:860px) {
+  .ntg-top { display:flex; }
+  .ntg-side { position:absolute; inset:0 auto 0 0; z-index:30; width:min(84vw, 300px); transform:translateX(-100%); transition:transform .2s ease; box-shadow:4px 0 24px rgba(34,48,31,.15); }
+  .ntg.is-side-open .ntg-side { transform:none; }
+  .ntg.is-side-open .ntg-scrim { display:block; position:absolute; inset:0; z-index:20; border:0; background:rgba(34,48,31,.3); }
+  .ntg-col { padding:0 14px; }
+}
+@media (max-width:700px) {
+  .ntg { height:calc(100dvh - 77px); }
+  .ntg .nt-chat-row-user .nt-chat-bubble { max-width:85%; }
+  .ntg-suggest { grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion:reduce) { .ntg-side { transition:none; } }

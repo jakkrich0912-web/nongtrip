@@ -2,11 +2,21 @@
 // ย้ายมาจาก pages/Chat.jsx: ส่งข้อความ รับสตรีม หยุดรอ เลือกที่พัก และตอบปุ่มเลือกตำแหน่งเมื่อน้องทริปถามกลับ (done.ask)
 import { useEffect, useRef, useState } from 'react';
 import { sendChat } from './chat.js';
+import { getChat } from './api.js';
 import { useLanguage } from './language.jsx';
 import { useAuth } from './auth.jsx';
 
 // ต้องล้างแชตไหม: เคยมีผู้ใช้ที่ล็อกอินอยู่ แล้วเปลี่ยนเป็นคนอื่นหรือออกจากระบบ
 export const userChanged = (prev, next) => prev != null && prev !== next;
+
+// แปลงแชตที่บันทึกไว้ (GET /api/me/chats/{id}) เป็นรายการข้อความของหน้าจอ เก็บไว้แค่ข้อความ (การ์ดสถานที่ไม่ได้บันทึก)
+export function historyToMessages(chat) {
+  return (chat?.messages ?? [])
+    .filter((m) => typeof m?.content === 'string' && m.content.trim())
+    .map((m, i) => (m.role === 'user'
+      ? { id: `h-user-${i}`, role: 'user', text: m.content }
+      : { id: `h-bot-${i}`, role: 'bot', text: m.content, sources: [], status: 'done', restored: true }));
+}
 
 export function useChatSession({ initialContext = null } = {}) {
   const { lang } = useLanguage();
@@ -15,6 +25,7 @@ export function useChatSession({ initialContext = null } = {}) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
+  const [currentChat, setCurrentChat] = useState(null); // รหัสแชตที่บันทึกอยู่ (ล็อกอินแล้วเท่านั้น) ไว้ไฮไลต์ในแถบประวัติ
   const controller = useRef(null);
   const chatId = useRef(null);
   const lastProvince = useRef(null); // จังหวัดที่ถามไว้ล่าสุด (จาก event done)
@@ -30,6 +41,7 @@ export function useChatSession({ initialContext = null } = {}) {
     const prev = prevUser.current;
     prevUser.current = next;
     chatId.current = null;
+    setCurrentChat(null);
     if (!userChanged(prev, next)) return;
     controller.current?.abort();
     controller.current = null;
@@ -61,13 +73,13 @@ export function useChatSession({ initialContext = null } = {}) {
         if (event === 'lodgings') update({ lodgings: data });
         if (event === 'sources') update({ sources: Array.isArray(data.items) ? data.items : [] });
         if (event === 'done') {
-          if (user && data.chat_id) chatId.current = data.chat_id;
+          if (user && data.chat_id) { chatId.current = data.chat_id; setCurrentChat(data.chat_id); }
           if (typeof data.province === 'string') lastProvince.current = data.province;
           update({ status: 'done', mode: data.mode, ask: typeof data.ask === 'string' ? data.ask : null });
         }
       }, aborter.signal);
     } catch (error) {
-      if (error?.status === 404) chatId.current = null; // แชตเดิมถูกลบไปแล้ว รอบหน้าเริ่มแชตใหม่
+      if (error?.status === 404) { chatId.current = null; setCurrentChat(null); } // แชตเดิมถูกลบไปแล้ว รอบหน้าเริ่มแชตใหม่
       if (!aborter.signal.aborted) update({ status: 'error', error: error.message });
     } finally {
       if (controller.current === aborter) {
@@ -106,7 +118,35 @@ export function useChatSession({ initialContext = null } = {}) {
       send(question, question, here);
     }, () => { setLocating(false); setLocateError('denied'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
   };
-  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince, askInProvince, askHere, locating, locateError };
+  // เริ่มแชตใหม่: หยุดคำตอบที่ค้าง ล้างบทสนทนา จุดค้น และจังหวัดล่าสุด
+  const newChat = () => {
+    controller.current?.abort();
+    controller.current = null;
+    setBusy(false);
+    setMessages([]);
+    setText('');
+    setContext(null);
+    chatId.current = null;
+    setCurrentChat(null);
+    lastProvince.current = null;
+    input.current?.focus();
+  };
+  // เปิดแชตเก่าที่บันทึกไว้ แล้วคุยต่อในแชตเดิม (ข้อความใหม่บันทึกต่อท้ายแชตนั้น)
+  const openChat = async (id) => {
+    if (!user) return false;
+    controller.current?.abort();
+    controller.current = null;
+    setBusy(false);
+    const chat = await getChat(id);
+    setMessages(historyToMessages(chat));
+    setText('');
+    setContext(null);
+    chatId.current = chat.id;
+    setCurrentChat(chat.id);
+    lastProvince.current = null;
+    return true;
+  };
+  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince, askInProvince, askHere, locating, locateError, newChat, openChat, currentChat };
 }
 
 // คำถามแนะนำ ส่งตามภาษาที่เลือก (ตัวแยกคำถามเข้าใจทั้งไทยและอังกฤษ)
