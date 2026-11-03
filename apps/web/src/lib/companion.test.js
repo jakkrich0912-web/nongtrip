@@ -175,3 +175,13 @@ describe('ย้าย/ปรับขนาดหน้าต่างแชต
     expect(() => saveRect(start, { setItem() { throw new Error('x'); } })).not.toThrow();
   });
 });
+
+describe('canWander', () => {
+  it('walks on its own only on screens at least NARROW wide', async () => {
+    const { canWander, NARROW } = await import('./companion.js');
+    expect(canWander(390)).toBe(false);
+    expect(canWander(NARROW - 1)).toBe(false);
+    expect(canWander(NARROW)).toBe(true);
+    expect(canWander(1366)).toBe(true);
+  });
+});
