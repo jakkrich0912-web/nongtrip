@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { noticeText } from '../lib/notices.js';
 import { PROVINCES } from '../lib/provinces.js';
 import { subtypeLabel } from '../lib/data.js';
 import { lodgingsSearch } from '../lib/api.js';
@@ -75,7 +76,7 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
       {state.status === 'error' && <p className="notice" role="alert">{state.message}</p>}
       {state.status === 'ok' && (
         <div className="lsearch-results" aria-live="polite">
-          {(state.data.notices ?? []).map((n) => <p key={n} className="notice">{n}</p>)}
+          {(state.data.notices ?? []).map((n) => <p key={n} className="notice">{noticeText(n, lang)}</p>)}
           {items.length > 0 && (
             <>
               <p className="count">

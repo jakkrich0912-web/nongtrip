@@ -75,7 +75,7 @@ def _num(s: str) -> float:
 
 def check_answer(text: str, *, places: Iterable[dict] = (), chunks: Iterable[dict] = (),
                  known_names: Iterable[str] = (), question: str = "",
-                 radius_km: float | None = None, require_citation: bool | None = None) -> dict:
+                 radius_km: float | None = None, require_citation: bool | None = None, lang: str = "th") -> dict:
     """ตรวจคำตอบหนึ่งก้อน คืน {"ok": bool, "problems": [{"rule","detail"}], "problem_count": int}
 
     places: รายการที่ผ่านตัวตรวจผลค้นแล้ว (name_th/name_en/name, distance_km หรือ distance_from_pin_km, lat, lon)
@@ -83,6 +83,7 @@ def check_answer(text: str, *, places: Iterable[dict] = (), chunks: Iterable[dic
     known_names: ชื่อที่รู้จักทั้งระบบ (ชื่อสถานที่ที่ตรวจแล้ว ชื่อเรื่องของคลังความรู้) ไว้จับชื่อที่ LLM เอามาจากที่อื่น
     question: ข้อความของผู้ใช้ (คำที่ผู้ใช้พิมพ์เองใส่เครื่องหมายเน้นได้)
     require_citation: บังคับให้มีรหัสที่มา (ค่าเริ่มต้น: เมื่อมีก้อนความรู้)
+    lang: th/en ภาษาที่คาดหวังของคำตอบ (กฎอื่นทุกข้อเหมือนกัน ตรวจคำต้องห้ามทั้งไทยและอังกฤษอยู่แล้ว)
     """
     places, chunks = list(places), list(chunks)
     problems: list[dict] = []
@@ -163,7 +164,10 @@ def check_answer(text: str, *, places: Iterable[dict] = (), chunks: Iterable[dic
         bad("รูปแบบ", "มีโค้ดบล็อก")
     thai = len(re.findall(r"[฀-๿]", t))
     latin = len(re.findall(r"[A-Za-z]", t))
-    if thai + latin >= 30 and thai / (thai + latin) < MIN_THAI_SHARE:
-        bad("ภาษา", "ไม่ใช่ภาษาไทยเป็นหลัก")
+    if thai + latin >= 30:
+        if lang == "en" and latin / (thai + latin) < MIN_THAI_SHARE:
+            bad("ภาษา", "ไม่ใช่ภาษาอังกฤษเป็นหลัก")
+        elif lang != "en" and thai / (thai + latin) < MIN_THAI_SHARE:
+            bad("ภาษา", "ไม่ใช่ภาษาไทยเป็นหลัก")
 
     return {"ok": not problems, "problems": problems[:20], "problem_count": len(problems)}

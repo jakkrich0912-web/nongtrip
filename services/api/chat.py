@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 
 from services.places import PlacesService, SearchError
 from services.places.geo import in_thailand
-from services.places.provinces import PROVINCES
+from services.places.provinces import PROVINCES, province_en
 
 from . import auth
 from .accounts import COOKIE, MAX_ID
@@ -64,6 +64,17 @@ NOTE_EN = {
     "ระบบไม่เก็บรีวิวหรือคะแนน กดลิงก์ Google Maps ที่การ์ดสถานที่เพื่อดูรีวิวจริง":
         "The system does not hold reviews or scores. Use the Google Maps link on a place card to see real reviews.",
     "ระบบไม่จองหรือชำระเงินแทนผู้ใช้": "The system does not book or pay on your behalf.",
+    GUARD_NOTICE: "The automatic answer check failed, so a basic result is shown instead.",
+    "พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง": "Several stays match. Please choose the one you booked.",
+    "ไม่พบที่พักที่ตรงตัวกรอง ลองเอาตัวกรองออกบางข้อ หรือปักหมุดบนแผนที่":
+        "No stay matches the filters. Try removing some filters or pin the map.",
+    "ไม่พบที่พักชื่อนี้ ลองพิมพ์ชื่ออื่น หรือปักหมุดบนแผนที่": "No stay with this name. Try another name or pin the map.",
+    "ข้อมูลที่บันทึกไว้ยังกรองตามย่านไม่ได้ ผลที่เห็นไม่ได้ถูกกรองด้วยย่าน":
+        "Saved data cannot be filtered by area yet, so the results are not filtered by area.",
+    "ใช้ค่าเฉลี่ยพิกัดสถานที่ที่ตรวจแล้ว เพราะหาจุดกลางจังหวัดจาก OpenStreetMap ไม่ได้":
+        "Used the average of verified places because the province centre could not be found on OpenStreetMap.",
+    "ยังหาจุดกลางของจังหวัดนี้ไม่ได้ ให้ค้นด้วยชื่อที่พักหรือปักหมุดแทน":
+        "Cannot find this province's centre yet. Search by a stay's name or pin the map instead.",
 }
 
 
@@ -143,15 +154,36 @@ def _lines(parts: list[str]) -> str:
     return "\n".join(p for p in parts if p)
 
 
+# หมายเหตุจากบริการค้น (รูปแบบมีตัวเลข) -> อังกฤษ
+_NOTE_EN_PATTERNS = (
+    (r"ค้นได้ไกลสุด ([\d.]+) กม\. จึงใช้ ([\d.]+) กม\. แทน", "The maximum search radius is {0} km, so {1} km was used."),
+    (r"แสดงได้ครั้งละไม่เกิน (\d+) แห่ง", "At most {0} places are shown at a time."),
+    (r"แสดงผลในรัศมี ([\d.]+) กม\. เท่านั้น", "Results are shown within {0} km only."),
+    (r"ไม่พบที่พักในรัศมี ([\d.]+) กม\. จึงขยายเป็น ([\d.]+) กม\.", "No stays within {0} km, so the search was widened to {1} km."),
+    (r"ไม่พบที่พักในรัศมี ([\d.]+) กม\. จากหมุดนี้", "No stays within {0} km of this pin."),
+    (r"พบที่พัก (\d+) แห่ง แสดง (\d+) แห่งที่ใกล้หมุดที่สุด", "Found {0} stays; showing the {1} nearest to the pin."),
+    (r"พื้นที่หนาแน่นมาก ข้อมูลจาก OpenStreetMap จึงครอบคลุมแค่ ([\d.]+) กม\.",
+     "This area is very dense, so OpenStreetMap data covers only {0} km."),
+    (r"(.+) แสดงเฉพาะสถานที่ที่ตรวจที่มาแล้ว", "{r} Only places with a verified source are shown."),
+    (r"(.+) ให้ปักหมุดบนแผนที่แทน", "{r} Please pin your stay on the map instead."),
+)
+_REASON_EN = {
+    "ปิดการค้นหาจาก OpenStreetMap อยู่": "OpenStreetMap search is switched off.",
+    "ค้นชื่อที่พักออนไลน์ไม่ได้ในตอนนี้": "Cannot search stay names online right now.",
+    "เชื่อมต่อ OpenStreetMap ไม่ได้ในตอนนี้": "Cannot reach OpenStreetMap right now.",
+    "ดึงข้อมูลจาก OpenStreetMap ไม่สำเร็จ": "Could not fetch data from OpenStreetMap.",
+}
+
+
 def _note_en(n: str) -> str:
     if n in NOTE_EN:
         return NOTE_EN[n]
-    m = re.fullmatch(r"ค้นได้ไกลสุด ([\d.]+) กม\. จึงใช้ ([\d.]+) กม\. แทน", n)
-    if m:
-        return f"The maximum search radius is {m[1]} km, so {m[2]} km was used."
-    m = re.fullmatch(r"แสดงได้ครั้งละไม่เกิน (\d+) แห่ง", n)
-    if m:
-        return f"At most {m[1]} places are shown at a time."
+    for rx, tpl in _NOTE_EN_PATTERNS:
+        m = re.fullmatch(rx, n)
+        if m:
+            if "{r}" in tpl:
+                return tpl.format(r=_REASON_EN.get(m[1], m[1]))
+            return tpl.format(*m.groups())
     return n
 
 
@@ -185,7 +217,7 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
                              "Cannot find the centre of this province right now. Please pin your stay on the map or type its name."), *tail)
             return
         lat, lon = pc["lat"], pc["lon"]
-        where = L(f"จุดกลางจังหวัด{it.province}", f"the centre of {it.province}")
+        where = L(f"จุดกลางจังหวัด{it.province}", f"the centre of {province_en(it.province)}")
         notes.append("ค้นรอบจุดกลางจังหวัด ไม่ใช่รอบที่พักของคุณ ปักหมุดที่พักเพื่อให้ตรงขึ้น")
         # จุดกลางจากค่าเฉลี่ยพิกัดเป็นทางเลือกปกติของโหมดสแนปช็อต ไม่ต้องบอกผู้ใช้ด้วยศัพท์เทคนิค (ข้อความข้างบนบอกอยู่แล้วว่าไม่ใช่รอบที่พัก)
         if pc.get("notice") and pc.get("source") != "verified_centroid":
@@ -356,7 +388,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 t_search = time.perf_counter() - t0
                 t1 = time.perf_counter()
                 if use_rag:
-                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"))
+                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang)
                     if res.mode == "llm":
                         mode = "llm"
                         yield _sse("sources", {"items": res.sources})
