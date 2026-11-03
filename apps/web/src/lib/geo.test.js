@@ -21,3 +21,22 @@ describe('placesAround', () => {
     expect(Math.round(haversineKm(o, places[2]) / 10)).toBe(58);
   });
 });
+
+import { RADIUS_OPTIONS, radiusComplete, withinRadius } from './geo.js';
+
+describe('radius filter', () => {
+  const items = [{ id: 'a', distance_km: 3 }, { id: 'b', distance_km: 9.9 }, { id: 'c', distance_km: 10 }, { id: 'd', distance_km: 21 }];
+  it('กรองตามรัศมีแบบรวมขอบ และคงลำดับเดิม', () => {
+    expect(withinRadius(items, 10).map((p) => p.id)).toEqual(['a', 'b', 'c']);
+    expect(withinRadius(items, 5).map((p) => p.id)).toEqual(['a']);
+  });
+  it('ตัวเลือกไม่เกิน 30 กม.', () => {
+    expect(Math.max(...RADIUS_OPTIONS)).toBe(30);
+    expect(RADIUS_OPTIONS.every((r) => r <= 30)).toBe(true);
+  });
+  it('รู้ว่าโหลดครบในรัศมีหรือยัง', () => {
+    expect(radiusComplete(items, 4, 30)).toBe(true);        // โหลดครบทั้งหมด
+    expect(radiusComplete(items, 50, 15)).toBe(true);       // แห่งสุดท้าย (21) เลย 15 ไปแล้ว
+    expect(radiusComplete(items, 50, 30)).toBe(false);      // ยังมีอีก และอาจยังอยู่ในรัศมี
+  });
+});

@@ -12,7 +12,7 @@ import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch } from '../lib/a
 import FavButton from '../components/FavButton.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { useLanguage } from '../lib/language.jsx';
-import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM } from '../lib/geo.js';
+import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM, RADIUS_OPTIONS, radiusComplete, withinRadius } from '../lib/geo.js';
 
 const dot = (color, size) => L.divIcon({
   className: '',
@@ -59,6 +59,7 @@ export default function Search() {
   // ถ้าเปิด API ไม่ได้ ใช้สถานที่ที่ตรวจที่มาแล้วในเครื่องแทน และบอกผู้ใช้
   const [near, setNear] = useState({ status: 'idle', items: [] });
   const [kind, setKind] = useState('');
+  const [radius, setRadius] = useState(MAX_RADIUS_KM); // รัศมีที่เลือกกรอง (กม.) ไม่เกิน 30
   const PAGE = 100;
 
   // กันผลเก่าทับผลใหม่: ทุกคำขอได้เลขลำดับ ผลที่กลับมาไม่ตรงเลขล่าสุดจะถูกทิ้ง
@@ -101,22 +102,25 @@ export default function Search() {
       .catch((e) => seq === lodgeSeq.current && setLodging({ status: 'error', message: e.message }));
   };
   const chooseLodging = (l) => {
-    cancelPending(); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setCands([]);
+    cancelPending(); setRadius(MAX_RADIUS_KM); setMode('booked'); setPin(null); setLodging({ status: 'idle' }); setCands([]);
     setActive({ lat: l.lat, lon: l.lon }); setOrigin({ lat: l.lat, lon: l.lon, name: l.name });
     // ล็อกอินอยู่: จำที่พักที่เลือกไว้ใน "ทริปของฉัน" (ไม่ล็อกอินไม่บันทึกอะไร)
     if (user && l.name) saveSearch({ name: l.name, lat: l.lat, lon: l.lon }).catch(() => {});
   };
-  const switchMode = (m) => { cancelPending(); setKind(''); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
+  const switchMode = (m) => { cancelPending(); setKind(''); setRadius(MAX_RADIUS_KM); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
   const results = origin ? near.items : [];
   const check = validateResults(results);
+  // กรองรัศมีฝั่งหน้าเว็บจากผลที่ได้มาแล้ว (เรียงใกล้ไปไกลอยู่แล้ว) ไม่เปลี่ยนข้อมูลจาก API
+  const shown = withinRadius(results, radius);
+  const radiusDone = radiusComplete(results, near.total ?? results.length, radius);
   const mixOf = (list) => Object.entries(list.reduce((m, p) => ({ ...m, [iconGroup(p)]: (m[iconGroup(p)] ?? 0) + 1 }), {})).sort((x, y) => y[1] - x[1]);
   const provMix = mixOf(inProv);
   const KINDS = [['', t('ทั้งหมด', 'All')], ['attraction', t('ที่เที่ยว', 'Attractions')], ['cafe', t('คาเฟ่', 'Cafés')]];
   const kindCount = (k) => (k ? near.counts?.[k] : Object.values(near.counts ?? {}).reduce((a, b) => a + b, 0));
   // แบ่งกลุ่มตามระยะ (ลำดับยังเรียงใกล้ไปไกลเหมือนเดิม)
   const groups = [[0, 5, t('ใน 5 กม.', 'Within 5 km')], [5, 15, t('5–15 กม.', '5–15 km')], [15, 30.01, t('15–30 กม.', '15–30 km')]]
-    .map(([lo, hi, label]) => ({ label, items: results.filter((p) => p.distance_km >= lo && p.distance_km < hi) }))
+    .map(([lo, hi, label]) => ({ label, items: shown.filter((p) => p.distance_km >= lo && p.distance_km < hi) }))
     .filter((g) => g.items.length);
 
   return (
@@ -148,7 +152,16 @@ export default function Search() {
             <div className="chips" role="group" aria-label={t('ประเภท', 'Type')}>
               {KINDS.map(([k, label]) => (
                 <button key={k} className="chip" aria-pressed={kind === k} onClick={() => setKind(k)}>
-                  {k && <CatIcon cat={k === 'cafe' ? 'cafe' : 'temple'} size={14} />} {label}{near.counts && kind === '' ? ` ${kindCount(k) ?? 0}` : ''}
+                  {k && <CatIcon cat={k === 'cafe' ? 'cafe' : 'temple'} size={14} />} {label}{near.counts && kind === '' && radius === MAX_RADIUS_KM ? ` ${kindCount(k) ?? 0}` : ''}
+                </button>
+              ))}
+            </div>
+          )}
+          {mode === 'booked' && origin && (
+            <div className="chips chips-wrap" role="group" aria-label={t('รัศมีจากที่พัก (ระยะเส้นตรง)', 'Radius from your stay (straight-line)')}>
+              {RADIUS_OPTIONS.map((r) => (
+                <button key={r} className="chip" aria-pressed={radius === r} onClick={() => setRadius(r)}>
+                  {t(`ไม่เกิน ${r} กม.`, `Within ${r} km`)}
                 </button>
               ))}
             </div>
@@ -198,9 +211,21 @@ export default function Search() {
               {!user && <p className="attr" style={{ padding: '8px 20px 0' }}><Link to="/login">{t('เข้าสู่ระบบ', 'Log in')}</Link> {t('เพื่อเก็บสถานที่โปรดและจำที่พักที่ค้นไว้', 'to save favourite places and remember your stays')}</p>}
               <p className="count">
                 {origin.name ? <>{t('รอบ', 'Around')} <b>{origin.name}</b> · </> : null}
-                <b>{near.total}</b> {t('แห่งใน 30 กม. วัดเป็นระยะเส้นตรง', 'places within 30 km, straight-line distance')}
-                {results.length < near.total ? t(` (แสดง ${results.length} แห่งที่ใกล้สุด)`, ` (showing the nearest ${results.length})`) : ''}
+                {radius === MAX_RADIUS_KM ? (
+                  <>
+                    <b>{near.total}</b> {t('แห่งใน 30 กม. วัดเป็นระยะเส้นตรง', 'places within 30 km, straight-line distance')}
+                    {results.length < near.total ? t(` (แสดง ${results.length} แห่งที่ใกล้สุด)`, ` (showing the nearest ${results.length})`) : ''}
+                  </>
+                ) : (
+                  <>
+                    <b>{shown.length}</b> {t(`แห่งไม่เกิน ${radius} กม. วัดเป็นระยะเส้นตรง`, `places within ${radius} km, straight-line distance`)}
+                    {radiusDone ? '' : t(' (แสดงเท่าที่โหลดแล้ว)', ' (loaded so far)')}
+                  </>
+                )}
               </p>
+              {shown.length === 0 && results.length > 0 && radiusDone && (
+                <div className="empty"><Mascot size={84} mood="think" /><strong>{t(`ไม่มีสถานที่ไม่เกิน ${radius} กม.`, `No places within ${radius} km`)}</strong>{t('ลองเพิ่มรัศมี', 'Try a larger radius.')}</div>
+              )}
               {results.length === 0 && (
                 <div className="empty"><Mascot size={84} mood="think" /><strong>{t('ไม่พบสถานที่รอบจุดนี้', 'No places around this point')}</strong>{t('ลองปักหมุดใกล้ตัวเมืองหรือเปลี่ยนประเภท', 'Try a pin closer to town or another type.')}</div>
               )}
@@ -232,7 +257,7 @@ export default function Search() {
                   </ol>
                 </section>
               ))}
-              {results.length < near.total && (
+              {results.length < near.total && !radiusDone && (
                 <div className="more">
                   <button className="btn small" disabled={near.status === 'more'} onClick={() => loadNear(origin, kind, near.offset)}>
                     {near.status === 'more' ? t('กำลังโหลด', 'Loading…') : t(`โหลดเพิ่มอีก ${Math.min(PAGE, near.total - results.length)} แห่ง`, `Load ${Math.min(PAGE, near.total - results.length)} more`)}
@@ -251,7 +276,7 @@ export default function Search() {
         {mode === 'browse' && <span><i style={{ background: '#3D6A4B' }} />{t('ที่พัก', 'Stays')}</span>}
         {cands.length > 0 && <span><i style={{ background: '#7B5A2E' }} />{t('ที่พักที่ค้นเจอ', 'Stays found')}</span>}
         <span><i style={{ background: '#B7472A' }} />{t('สถานที่', 'Places')}</span>
-        <span><i style={{ background: 'transparent', border: '2px dashed #4A7C59' }} />{t('รัศมี', 'Radius')} {mode === 'booked' ? 30 : (lodging.data?.radius_km ?? 5)} {t('กม.', 'km')}</span>
+        <span><i style={{ background: 'transparent', border: '2px dashed #4A7C59' }} />{t('รัศมี', 'Radius')} {mode === 'booked' ? radius : (lodging.data?.radius_km ?? 5)} {t('กม.', 'km')}</span>
       </div>
       <MapContainer key={province} center={center} zoom={11} className="map">
         <TileLayer
@@ -262,7 +287,7 @@ export default function Search() {
         <FlyTo target={active} />
         {origin && (
           <>
-            <Circle center={[origin.lat, origin.lon]} radius={30000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
+            <Circle center={[origin.lat, origin.lon]} radius={radius * 1000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
             <Marker position={[origin.lat, origin.lon]} icon={homeIcon}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
           </>
         )}
@@ -282,7 +307,7 @@ export default function Search() {
             <Popup>{l.name} · {l.distance_from_pin_km} {t('กม.', 'km')}</Popup>
           </Marker>
         ))}
-        {check.ok && results.map((p) => (
+        {check.ok && shown.map((p) => (
           <span key={p.id}>
             <Polyline positions={[[origin.lat, origin.lon], [p.lat, p.lon]]}
               pathOptions={{ color: active?.id === p.id ? '#4A7C59' : '#B7472A', weight: active?.id === p.id ? 2.5 : 1, opacity: 0.6, dashArray: '3 5' }} />

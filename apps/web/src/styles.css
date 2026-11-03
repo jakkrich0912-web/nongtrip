@@ -133,6 +133,7 @@ main { min-height:calc(100vh - var(--chrome)); }
 .panel-body { flex:1; overflow:auto; padding-bottom:16px; }
 .chips { display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
 .chips::-webkit-scrollbar { display:none; }
+.chips-wrap { flex-wrap:wrap; overflow:visible; } /* แถวรัศมีมี 4 ปุ่มยาว ให้ขึ้นบรรทัดใหม่แทนการเลื่อนซ่อน */
 .chip { transition:background .2s; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; font:500 .84rem var(--body); border:1.5px solid var(--mist); background:#fff; color:var(--ink); padding:5px 12px; border-radius:999px; cursor:pointer; }
 .chip[aria-pressed="true"] { background:var(--lagoon); border-color:var(--lagoon); color:#fff; }
 .hint-card { display:flex; gap:14px; align-items:center; margin:18px 20px 6px; padding:16px; border-radius:18px; background:var(--lagoon); color:#fff; }
