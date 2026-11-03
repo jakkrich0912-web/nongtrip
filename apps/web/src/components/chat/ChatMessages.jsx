@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MascotHead from '../MascotHead.jsx';
 import SourceCards from './SourceCards.jsx';
 import { noticeText } from '../../lib/notices.js';
@@ -31,6 +32,37 @@ function ResultCards({ result, t, lang }) {
   </div>;
 }
 
+// แถบปุ่มใต้คำตอบ (หน้าแชตเต็มจอ): คัดลอก ถามใหม่ (เฉพาะคำตอบล่าสุด) และ 👍👎 (ล็อกอินแล้วและคำตอบถูกบันทึก)
+function BotActions({ message, isLast, busy, session, t }) {
+  const [copied, setCopied] = useState(false);
+  if (!session || !message.text || !['done', 'stopped', 'error'].includes(message.status)) return null;
+  const plain = message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n').trim();
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(plain); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch { /* คัดลอกไม่ได้ (สิทธิ์เบราว์เซอร์) ไม่ต้องทำอะไร */ }
+  };
+  const rated = (v) => message.rating === v;
+  return <div className="nt-chat-actions" role="group" aria-label={t('ตัวเลือกของคำตอบ', 'Answer options')}>
+    <button type="button" onClick={copy} aria-label={t('คัดลอกคำตอบ', 'Copy answer')} title={t('คัดลอก', 'Copy')}>{copied ? '✓' : '⧉'}<span>{copied ? t('คัดลอกแล้ว', 'Copied') : t('คัดลอก', 'Copy')}</span></button>
+    {isLast && <button type="button" onClick={session.regenerate} disabled={busy} aria-label={t('ถามใหม่อีกครั้ง', 'Regenerate')} title={t('ถามใหม่', 'Regenerate')}>↻<span>{t('ถามใหม่', 'Retry')}</span></button>}
+    {session.canRate && message.serverId && <>
+      <button type="button" aria-pressed={rated(1)} onClick={() => session.rate(message, 1)} aria-label={t('คำตอบนี้ดี', 'Good answer')} title={t('ดี', 'Good')}>👍</button>
+      <button type="button" aria-pressed={rated(-1)} onClick={() => session.rate(message, -1)} aria-label={t('คำตอบนี้ไม่ดี', 'Bad answer')} title={t('ไม่ดี', 'Bad')}>👎</button>
+    </>}
+  </div>;
+}
+
+// แก้คำถามที่ส่งไปแล้ว: กล่องแก้แทนฟองข้อความ บันทึกแล้วถามใหม่ (คำตอบหลังจากนั้นหายไป)
+function EditBox({ message, onCancel, onSave, t }) {
+  const [draft, setDraft] = useState(message.text);
+  const ok = draft.trim() && draft.trim().length <= 500;
+  return <form className="nt-chat-edit" onSubmit={(e) => { e.preventDefault(); if (ok) onSave(draft.trim()); }}>
+    <label className="ntg-sr" htmlFor={`edit-${message.id}`}>{t('แก้คำถาม', 'Edit question')}</label>
+    <textarea id={`edit-${message.id}`} value={draft} maxLength={500} rows={2} autoFocus onChange={(e) => setDraft(e.target.value)}
+      onKeyDown={(e) => { if (e.key === 'Escape') onCancel(); if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); if (ok) onSave(draft.trim()); } }} />
+    <div><button type="button" onClick={onCancel}>{t('ยกเลิก', 'Cancel')}</button><button type="submit" disabled={!ok}>{t('ส่ง', 'Send')}</button></div>
+  </form>;
+}
+
 // รายการข้อความทั้งหมด ใช้ทั้งหน้า /chat และหน้าต่างแชตของมาสคอต
 // ปุ่มตอบเมื่อน้องทริปถามว่าให้ค้นแถวไหน (done.ask = location): ใช้ตำแหน่งปัจจุบัน หรือเลือกจังหวัด
 function AskLocation({ message, busy, session, t, lang }) {
@@ -46,12 +78,17 @@ function AskLocation({ message, busy, session, t, lang }) {
   </div>;
 }
 
-export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38, session = null, greeting = true }) {
+export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38, session = null, greeting = true, actions = false }) {
   const lastId = messages[messages.length - 1]?.id;
+  const lastBotId = [...messages].reverse().find((m) => m.role === 'bot')?.id;
+  const [editing, setEditing] = useState(null);
   return <div className="nt-chat-messages" role="log" aria-label={t('บทสนทนา', 'Conversation')} aria-live="polite" aria-relevant="additions text" aria-busy={busy}>
     {greeting && <div className="nt-chat-row nt-chat-row-bot"><MascotHead size={headSize} /><div className="nt-chat-bubble"><p>{t('สวัสดี! วันนี้พักแถวไหนเอ่ย? บอกชื่อที่พักหรือจังหวัด แล้วเราช่วยหาที่เที่ยวกับคาเฟ่รอบ ๆ ให้ได้เลย', 'Hello! Where are you staying? Tell me your accommodation or province, and I’ll help you find nearby attractions and cafés.')}</p></div></div>}
-    {messages.map((message) => <div key={message.id} className={`nt-chat-row nt-chat-row-${message.role}`}>
+    {messages.map((message) => (actions && message.role === 'user' && editing === message.id)
+      ? <div key={message.id} className="nt-chat-row nt-chat-row-user"><EditBox message={message} t={t} onCancel={() => setEditing(null)} onSave={(v) => { setEditing(null); session.editAndResend(message, v); }} /></div>
+      : <div key={message.id} className={`nt-chat-row nt-chat-row-${message.role}`}>
       {message.role === 'bot' && <MascotHead size={headSize} />}
+      {actions && message.role === 'user' && !busy && <button type="button" className="nt-chat-edit-btn" onClick={() => setEditing(message.id)} aria-label={t('แก้คำถามนี้', 'Edit this question')} title={t('แก้คำถาม', 'Edit')}>✎</button>}
       <div className="nt-chat-bubble">
         {message.text && <p className="nt-chat-text">{message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n')}</p>}
         {message.status === 'searching' && !message.text && <p className="nt-chat-waiting">{t('กำลังค้นสถานที่ให้…', 'Looking for places…')}</p>}
@@ -66,6 +103,7 @@ export default function ChatMessages({ messages, busy, onChooseLodging, t, lang,
         {message.ask === 'location' && message.id === lastId && message.status === 'done' && <AskLocation message={message} busy={busy} session={session} t={t} lang={lang} />}
         {message.status === 'stopped' && <p className="nt-chat-waiting">{t('หยุดรอคำตอบแล้ว ถามใหม่ได้เลย', 'Stopped waiting. Feel free to ask again.')}</p>}
         {message.error && <p className="nt-chat-error" role="alert">{message.error}</p>}
+        {actions && message.role === 'bot' && <BotActions message={message} isLast={message.id === lastBotId} busy={busy} session={session} t={t} />}
       </div>
     </div>)}
   </div>;

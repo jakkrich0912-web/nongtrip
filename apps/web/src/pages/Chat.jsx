@@ -4,7 +4,8 @@ import Mascot from '../components/Mascot.jsx';
 import ChatMessages from '../components/chat/ChatMessages.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import { useAuth } from '../lib/auth.jsx';
-import { myChats } from '../lib/api.js';
+import { deleteChat, myChats, renameChat } from '../lib/api.js';
+import { groupChats } from '../lib/chatHistory.js';
 import { chatSuggestions, useChatSession } from '../lib/useChatSession.js';
 import './chat-v2.css';
 import './chat-gpt.css';
@@ -26,6 +27,9 @@ export default function Chat() {
   const [history, setHistory] = useState({ status: 'idle', items: [] });
   const [sideOpen, setSideOpen] = useState(false);
   const [openError, setOpenError] = useState('');
+  const [renaming, setRenaming] = useState(null);     // { id, title } ที่กำลังเปลี่ยนชื่อ
+  const [confirmDel, setConfirmDel] = useState(null); // รหัสแชตที่รอกดยืนยันลบ
+  const [atBottom, setAtBottom] = useState(true);
   const scroller = useRef(null);
   const stick = useRef(true); // อยู่ล่างสุดอยู่แล้วจึงเลื่อนตามข้อความใหม่ ถ้าผู้ใช้เลื่อนขึ้นไปอ่าน ไม่ดึงกลับ
 
@@ -42,6 +46,7 @@ export default function Chat() {
   const open = async (id) => {
     setOpenError('');
     setSideOpen(false);
+    stick.current = true;
     try {
       await openChat(id);
     } catch {
@@ -61,6 +66,21 @@ export default function Chat() {
 
   const fresh = () => { setOpenError(''); newChat(); setSideOpen(false); };
 
+  const saveTitle = async () => {
+    const r = renaming;
+    setRenaming(null);
+    const title = r?.title.trim();
+    if (!r || !title) return;
+    setHistory((h) => ({ ...h, items: h.items.map((c) => c.id === r.id ? { ...c, title } : c) }));
+    try { await renameChat(r.id, title); } catch { loadHistory(); }
+  };
+  const remove = async (id) => {
+    setConfirmDel(null);
+    setHistory((h) => ({ ...h, items: h.items.filter((c) => c.id !== id) }));
+    if (id === currentChat) newChat();
+    try { await deleteChat(id); } catch { loadHistory(); }
+  };
+
   // ช่องพิมพ์ขยายตามข้อความ (สูงสุดราว 8 บรรทัด)
   useLayoutEffect(() => {
     const el = input.current;
@@ -70,11 +90,22 @@ export default function Chat() {
   }, [text, input]);
   useEffect(() => {
     const el = scroller.current;
-    if (el && stick.current) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    if (stick.current) el.scrollTop = el.scrollHeight;
+    setAtBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 80);
   }, [messages]);
   const onScroll = () => {
     const el = scroller.current;
-    if (el) stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (!el) return;
+    stick.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    setAtBottom(stick.current);
+  };
+  const toBottom = () => {
+    const el = scroller.current;
+    if (!el) return;
+    stick.current = true;
+    setAtBottom(true);
+    el.scrollTo({ top: el.scrollHeight, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
   const submit = (value) => { stick.current = true; send(value); };
   const onKeyDown = (event) => {
@@ -96,11 +127,30 @@ export default function Chat() {
       {user && history.status === 'loading' && history.items.length === 0 && <p className="ntg-side-note">{t('กำลังโหลด…', 'Loading…')}</p>}
       {user && history.status === 'error' && <p className="ntg-side-note">{t('โหลดประวัติไม่ได้', 'Could not load history.')}</p>}
       {user && history.status === 'ok' && history.items.length === 0 && <p className="ntg-side-note">{t('ยังไม่มีแชต เริ่มถามได้เลย', 'No chats yet. Ask away!')}</p>}
-      {user && history.items.length > 0 && <ul className="ntg-history">
-        {history.items.map((c) => <li key={c.id}>
-          <button type="button" aria-current={c.id === currentChat ? 'true' : undefined} onClick={() => open(c.id)} disabled={busy} title={c.title}>{c.title}</button>
-        </li>)}
-      </ul>}
+      {user && groupChats(history.items).map((g) => <div key={g.key} className="ntg-group">
+        <h3 className="ntg-group-title">{t(g.th, g.en)}</h3>
+        <ul className="ntg-history">
+          {g.items.map((c) => <li key={c.id} className={confirmDel === c.id ? 'is-confirm' : ''}>
+            {renaming?.id === c.id
+              ? <input className="ntg-rename" aria-label={t('ชื่อแชตใหม่', 'New chat name')} value={renaming.title} maxLength={80} autoFocus
+                  onChange={(e) => setRenaming({ ...renaming, title: e.target.value })} onBlur={saveTitle}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveTitle(); } if (e.key === 'Escape') setRenaming(null); }} />
+              : confirmDel === c.id
+                ? <div className="ntg-confirm" role="group" aria-label={t('ยืนยันการลบ', 'Confirm delete')}>
+                    <span>{t('ลบแชตนี้?', 'Delete this chat?')}</span>
+                    <button type="button" className="ntg-yes" onClick={() => remove(c.id)}>{t('ลบ', 'Delete')}</button>
+                    <button type="button" onClick={() => setConfirmDel(null)}>{t('ไม่', 'No')}</button>
+                  </div>
+                : <>
+                    <button type="button" className="ntg-open" aria-current={c.id === currentChat ? 'true' : undefined} onClick={() => open(c.id)} disabled={busy} title={c.title}>{c.title}</button>
+                    <span className="ntg-item-tools">
+                      <button type="button" onClick={() => setRenaming({ id: c.id, title: c.title })} aria-label={t(`เปลี่ยนชื่อแชต ${c.title}`, `Rename chat ${c.title}`)} title={t('เปลี่ยนชื่อ', 'Rename')}>✎</button>
+                      <button type="button" onClick={() => setConfirmDel(c.id)} disabled={busy && c.id === currentChat} aria-label={t(`ลบแชต ${c.title}`, `Delete chat ${c.title}`)} title={t('ลบ', 'Delete')}>🗑</button>
+                    </span>
+                  </>}
+          </li>)}
+        </ul>
+      </div>)}
       {user && <Link className="ntg-side-manage" to="/me">{t('จัดการ/ลบประวัติในทริปของฉัน', 'Manage or delete in My trips')}</Link>}
     </aside>
     <button type="button" className="ntg-scrim" aria-label={t('ปิดแถบประวัติ', 'Close history')} tabIndex={sideOpen ? 0 : -1} onClick={() => setSideOpen(false)} />
@@ -122,11 +172,12 @@ export default function Chat() {
             <div className="ntg-suggest" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>
               {suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => submit(t(thai, english))}>{t(thai, english)}</button>)}
             </div>
-          </div> : <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} session={session} greeting={false} headSize={32} />}
+          </div> : <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} session={session} greeting={false} headSize={32} actions />}
         </div>
       </div>
 
       <div className="ntg-bottom">
+        {!empty && !atBottom && <button type="button" className="ntg-down" onClick={toBottom} aria-label={t('เลื่อนลงล่างสุด', 'Scroll to latest')} title={t('ข้อความล่าสุด', 'Latest')}>↓</button>}
         <div className="ntg-col">
           {context && <div className="ntg-context" role="status"><span>{t('ค้นรอบ: ', 'Searching around: ')}<strong>{context.name || t('หมุดที่เลือก', 'Selected pin')}</strong></span><button type="button" onClick={() => setContext(null)} disabled={busy} aria-label={t('ล้างจุดค้น', 'Clear location')}>×</button></div>}
           <form className="ntg-composer" onSubmit={(event) => { event.preventDefault(); if (!busy) submit(text); }}>

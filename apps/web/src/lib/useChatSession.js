@@ -2,7 +2,7 @@
 // ย้ายมาจาก pages/Chat.jsx: ส่งข้อความ รับสตรีม หยุดรอ เลือกที่พัก และตอบปุ่มเลือกตำแหน่งเมื่อน้องทริปถามกลับ (done.ask)
 import { useEffect, useRef, useState } from 'react';
 import { sendChat } from './chat.js';
-import { getChat } from './api.js';
+import { getChat, rateMessage } from './api.js';
 import { useLanguage } from './language.jsx';
 import { useAuth } from './auth.jsx';
 
@@ -13,9 +13,17 @@ export const userChanged = (prev, next) => prev != null && prev !== next;
 export function historyToMessages(chat) {
   return (chat?.messages ?? [])
     .filter((m) => typeof m?.content === 'string' && m.content.trim())
-    .map((m, i) => (m.role === 'user'
-      ? { id: `h-user-${i}`, role: 'user', text: m.content }
-      : { id: `h-bot-${i}`, role: 'bot', text: m.content, sources: [], status: 'done', restored: true }));
+    .map((m, i) => {
+      if (m.role === 'user') return { id: `h-user-${i}`, serverId: m.id ?? null, role: 'user', text: m.content };
+      const extra = m.extra && typeof m.extra === 'object' ? m.extra : {};
+      return {
+        id: `h-bot-${i}`, serverId: m.id ?? null, role: 'bot', text: m.content, status: 'done', restored: true,
+        rating: m.rating === 1 || m.rating === -1 ? m.rating : 0,
+        mode: typeof extra.mode === 'string' ? extra.mode : undefined,
+        places: extra.places ?? undefined, lodgings: extra.lodgings ?? undefined,
+        sources: Array.isArray(extra.sources?.items) ? extra.sources.items : [],
+      };
+    });
 }
 
 export function useChatSession({ initialContext = null } = {}) {
@@ -53,7 +61,8 @@ export function useChatSession({ initialContext = null } = {}) {
   }, [user?.id]);
 
   // ctxOverride: ใช้จุดค้นนี้กับข้อความนี้ทันที (เช่น เพิ่งได้ตำแหน่งปัจจุบัน) โดยไม่ต้องรอ state รอบถัดไป
-  const send = async (value, displayText = value, ctxOverride) => {
+  // opts.from = ข้อความผู้ใช้ที่จะแทน (แก้คำถาม/ถามใหม่): ตัดบทสนทนาตั้งแต่ข้อความนั้นลงไป และให้หลังบ้านลบตาม (edit_from)
+  const send = async (value, displayText = value, ctxOverride, opts = {}) => {
     const message = value.trim();
     const where = ctxOverride === undefined ? context : ctxOverride;
     if (!message || message.length > 500 || controller.current) return;
@@ -63,10 +72,16 @@ export function useChatSession({ initialContext = null } = {}) {
     activeId.current = id;
     setBusy(true);
     setText('');
-    setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching', question: message }]);
+    const from = opts.from ?? null;
+    const editFrom = from && user && chatId.current ? from.serverId ?? null : null;
+    setMessages((items) => {
+      const cut = from ? items.findIndex((m) => m.id === from.id) : -1;
+      const kept = cut >= 0 ? items.slice(0, cut) : items;
+      return [...kept, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching', question: message }];
+    });
     const update = (patch) => setMessages((items) => items.map((item) => item.id === id ? (typeof patch === 'function' ? patch(item) : { ...item, ...patch }) : item));
     try {
-      await sendChat({ message, context: where && { lat: where.lat, lon: where.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang }, (event, data) => {
+      await sendChat({ message, context: where && { lat: where.lat, lon: where.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang, edit_from: editFrom }, (event, data) => {
         if (aborter.signal.aborted) return;
         if (event === 'token' && typeof data.text === 'string') update((item) => ({ ...item, text: item.text + data.text, status: 'answering' }));
         if (event === 'places') update({ places: data });
@@ -75,7 +90,8 @@ export function useChatSession({ initialContext = null } = {}) {
         if (event === 'done') {
           if (user && data.chat_id) { chatId.current = data.chat_id; setCurrentChat(data.chat_id); }
           if (typeof data.province === 'string') lastProvince.current = data.province;
-          update({ status: 'done', mode: data.mode, ask: typeof data.ask === 'string' ? data.ask : null });
+          update({ status: 'done', mode: data.mode, ask: typeof data.ask === 'string' ? data.ask : null, serverId: data.message_id ?? null, rating: 0 });
+          if (data.user_message_id) setMessages((items) => items.map((item) => item.id === `user-${id}` ? { ...item, serverId: data.user_message_id } : item));
         }
       }, aborter.signal);
     } catch (error) {
@@ -118,6 +134,24 @@ export function useChatSession({ initialContext = null } = {}) {
       send(question, question, here);
     }, () => { setLocating(false); setLocateError('denied'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
   };
+  // ถามใหม่: ส่งคำถามของคำตอบล่าสุดซ้ำ แทนคำถาม/คำตอบเดิม
+  const regenerate = () => {
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    if (lastUser) send(lastUser.text, lastUser.text, undefined, { from: lastUser });
+  };
+  // แก้คำถามที่ส่งไปแล้ว: ตัดตั้งแต่คำถามนั้นลงไป แล้วถามด้วยข้อความใหม่
+  const editAndResend = (userMessage, newText) => send(newText, newText, undefined, { from: userMessage });
+  // ให้คะแนนคำตอบ (ล็อกอินแล้วและคำตอบถูกบันทึก) กดซ้ำค่าเดิม = ยกเลิก
+  const rate = async (message, value) => {
+    if (!user || !chatId.current || !message.serverId) return;
+    const next = message.rating === value ? 0 : value;
+    setMessages((items) => items.map((m) => m.id === message.id ? { ...m, rating: next } : m));
+    try {
+      await rateMessage(chatId.current, message.serverId, next);
+    } catch {
+      setMessages((items) => items.map((m) => m.id === message.id ? { ...m, rating: message.rating ?? 0 } : m));
+    }
+  };
   // เริ่มแชตใหม่: หยุดคำตอบที่ค้าง ล้างบทสนทนา จุดค้น และจังหวัดล่าสุด
   const newChat = () => {
     controller.current?.abort();
@@ -146,7 +180,7 @@ export function useChatSession({ initialContext = null } = {}) {
     lastProvince.current = null;
     return true;
   };
-  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince, askInProvince, askHere, locating, locateError, newChat, openChat, currentChat };
+  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince, askInProvince, askHere, locating, locateError, newChat, openChat, currentChat, regenerate, editAndResend, rate, canRate: Boolean(user) };
 }
 
 // คำถามแนะนำ ส่งตามภาษาที่เลือก (ตัวแยกคำถามเข้าใจทั้งไทยและอังกฤษ)
