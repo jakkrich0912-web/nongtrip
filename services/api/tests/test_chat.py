@@ -263,6 +263,19 @@ def test_snapshot_mode_shows_names_without_notice(tmp_path):
     assert "วัดในสแนปช็อต" in text_of(evs) and "ไม่ผ่านการตรวจอิสระ" not in text_of(evs)
 
 
+def test_snapshot_province_search_hides_centroid_jargon(tmp_path):
+    # โหมดสแนปช็อตไม่เรียก OSM จึงใช้ค่าเฉลี่ยพิกัดเป็นจุดกลางจังหวัดตามปกติ ไม่ต้องแสดงหมายเหตุศัพท์เทคนิคให้ผู้ใช้
+    write_province(tmp_path / "snap", "เชียงใหม่",
+                   [cand("osm:node/1", "วัดในสแนปช็อต", up(2), LON)], "2026-11-01")
+    svc = PlacesService(http=FakeHttp(), cache=TTLCache(None), verified=VERIFIED, osm_live=False,
+                        snapshot=Snapshot(tmp_path / "snap"))
+    app = create_app(svc, store=Store(tmp_path / "t.db"), session_secret="s", secure_cookie=False,
+                     chat_throttle=ChatThrottle(limit=1000))
+    evs = events(ask(TestClient(app), "ที่เที่ยวในเชียงใหม่"))
+    out = text_of(evs)
+    assert "ค่าเฉลี่ยพิกัด" not in out and "ไม่ใช่รอบที่พักของคุณ" in out
+
+
 def test_failed_validation_withholds_names(env, monkeypatch):
     c, *_ = env
     monkeypatch.setattr(chat_mod, "validate_nearby",

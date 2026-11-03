@@ -32,8 +32,21 @@ export const SUBTYPE_TH = {
   apartment: 'อพาร์ตเมนต์', chalet: 'บ้านพัก',
 };
 const KIND_TH = { attraction: 'ที่เที่ยว', cafe: 'คาเฟ่', lodging: 'ที่พัก' };
-// ไม่รู้จัก subtype ใช้ป้ายของ kind แทน ไม่โชว์คำภาษาอังกฤษดิบให้ผู้ใช้
-export const subtypeLabel = (s, kind) => SUBTYPE_TH[s] ?? KIND_TH[kind] ?? 'ไม่ทราบประเภท';
+export const SUBTYPE_EN = {
+  temple: 'Temple', museum: 'Museum', nature: 'Nature', activity: 'Activity', market: 'Market',
+  cafe: 'Café', craft: 'Crafts', waterfall: 'Waterfall', viewpoint: 'Viewpoint', beach: 'Beach', park: 'Park',
+  attraction: 'Attraction', gallery: 'Gallery', zoo: 'Zoo', theme_park: 'Theme park', aquarium: 'Aquarium',
+  monument: 'Monument', castle: 'Old palace', ruins: 'Ruins', archaeological_site: 'Archaeological site',
+  fort: 'Old fort', city_gate: 'City gate', peak: 'Peak', hot_spring: 'Hot spring', cave_entrance: 'Cave',
+  nature_reserve: 'Nature reserve', place_of_worship: 'Place of worship',
+  hotel: 'Hotel', guest_house: 'Guesthouse', hostel: 'Hostel', motel: 'Motel', resort: 'Resort',
+  apartment: 'Apartment', chalet: 'Chalet',
+};
+const KIND_EN = { attraction: 'Attraction', cafe: 'Café', lodging: 'Stay' };
+// ไม่รู้จัก subtype ใช้ป้ายของ kind แทน ไม่โชว์คำภาษาอังกฤษดิบให้ผู้ใช้ (lang = 'en' แสดงป้ายอังกฤษ)
+export const subtypeLabel = (s, kind, lang = 'th') => lang === 'en'
+  ? (SUBTYPE_EN[s] ?? KIND_EN[kind] ?? 'Unknown type')
+  : (SUBTYPE_TH[s] ?? KIND_TH[kind] ?? 'ไม่ทราบประเภท');
 
 // กลุ่มไอคอนและสี (มี 6 กลุ่ม) จาก subtype/kind
 const GROUP = {
@@ -45,3 +58,6 @@ const GROUP = {
   market: 'market', cafe: 'cafe',
 };
 export const iconGroup = (p) => GROUP[p.subtype] ?? (p.kind === 'cafe' ? 'cafe' : 'activity');
+
+// ชื่อสถานที่ตามภาษา: อังกฤษใช้ name_en ถ้ามี ไม่มีก็ใช้ชื่อไทย
+export const placeName = (p, lang = 'th') => (lang === 'en' && p?.name_en) ? p.name_en : p?.name_th;
