@@ -131,6 +131,10 @@ main { min-height:calc(100vh - var(--chrome)); }
 .seg.c-nature { background:#6f9c79; } .seg.c-temple { background:var(--mango); } .seg.c-museum { background:var(--hibiscus); }
 .seg.c-activity { background:#4f8a87; } .seg.c-market { background:#a7804a; } .seg.c-cafe { background:#8a5a3b; }
 .panel-body { flex:1; overflow:auto; padding-bottom:16px; }
+/* เปิดตัวกรองแล้วส่วนหัวสูงขึ้น: ให้ทั้งแผงเลื่อนเป็นก้อนเดียว ไม่บีบส่วนผลลัพธ์จนการ์ดถูกตัดครึ่ง */
+.panel { overflow-y:auto; }
+.panel-head { flex-shrink:0; }
+.panel-body { flex:1 0 auto; overflow:visible; }
 .chips { display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
 .chips::-webkit-scrollbar { display:none; }
 .chips-wrap { flex-wrap:wrap; overflow:visible; } /* แถวรัศมีมี 4 ปุ่มยาว ให้ขึ้นบรรทัดใหม่แทนการเลื่อนซ่อน */
