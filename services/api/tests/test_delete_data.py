@@ -128,7 +128,7 @@ def test_delete_account_removes_everything_and_clears_session(env):
 
 def test_deleted_user_cannot_login_and_cookie_is_dead(env):
     c, store, _ = env
-    uid = fill(c, store, "a@example.com")
+    fill(c, store, "a@example.com")
     old = c.cookies.get("nt_session")
     assert c.post("/api/me/delete", json={"email": "a@example.com"}).status_code == 204
     assert c.post("/api/auth/login", json={"email": "a@example.com", "password": PW}).status_code == 401
