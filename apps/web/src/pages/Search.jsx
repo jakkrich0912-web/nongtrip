@@ -288,22 +288,22 @@ export default function Search() {
         {origin && (
           <>
             <Circle center={[origin.lat, origin.lon]} radius={radius * 1000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
-            <Marker position={[origin.lat, origin.lon]} icon={homeIcon}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
+            <Marker position={[origin.lat, origin.lon]} icon={homeIcon} title={origin.name ?? t('ที่พักของคุณ', 'Your stay')}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
           </>
         )}
         {pin && (
           <>
             <Circle center={[pin.lat, pin.lon]} radius={(lodging.data?.radius_km ?? 5) * 1000} pathOptions={{ color: '#3D6A4B', weight: 1.5, dashArray: '4 6', fillOpacity: 0.06 }} />
-            <Marker position={[pin.lat, pin.lon]} icon={homeIcon}><Popup>{t('ย่านที่เลือก', 'Chosen area')}</Popup></Marker>
+            <Marker position={[pin.lat, pin.lon]} icon={homeIcon} title={t('ย่านที่เลือก', 'Chosen area')}><Popup>{t('ย่านที่เลือก', 'Chosen area')}</Popup></Marker>
           </>
         )}
         {cands.map((l) => (
-          <Marker key={`c-${l.id}`} position={[l.lat, l.lon]} icon={candIcon} eventHandlers={{ click: () => chooseLodging(l) }}>
+          <Marker key={`c-${l.id}`} position={[l.lat, l.lon]} icon={candIcon} title={l.name} eventHandlers={{ click: () => chooseLodging(l) }}>
             <Popup>{l.name}</Popup>
           </Marker>
         ))}
         {lodging.status === 'ok' && lodging.data.items.map((l) => (
-          <Marker key={l.id} position={[l.lat, l.lon]} icon={lodgeIcon} eventHandlers={{ click: () => chooseLodging(l) }}>
+          <Marker key={l.id} position={[l.lat, l.lon]} icon={lodgeIcon} title={l.name} eventHandlers={{ click: () => chooseLodging(l) }}>
             <Popup>{l.name} · {l.distance_from_pin_km} {t('กม.', 'km')}</Popup>
           </Marker>
         ))}
@@ -311,7 +311,7 @@ export default function Search() {
           <span key={p.id}>
             <Polyline positions={[[origin.lat, origin.lon], [p.lat, p.lon]]}
               pathOptions={{ color: active?.id === p.id ? '#4A7C59' : '#B7472A', weight: active?.id === p.id ? 2.5 : 1, opacity: 0.6, dashArray: '3 5' }} />
-            <Marker position={[p.lat, p.lon]} icon={active?.id === p.id ? activeIcon : placeIcon}
+            <Marker position={[p.lat, p.lon]} icon={active?.id === p.id ? activeIcon : placeIcon} title={placeName(p, lang)}
               eventHandlers={{ click: () => setActive(p) }}>
               <Popup>{placeName(p, lang)} · {p.distance_km} {t('กม.', 'km')}</Popup>
             </Marker>
