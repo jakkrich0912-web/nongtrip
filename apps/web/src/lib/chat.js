@@ -49,14 +49,21 @@ export function numberCitations(text, sources) {
 }
 
 // ส่งข้อความแล้วเรียก onEvent(event, data) ทีละขั้น จบเมื่อได้ done หรือ error
-export async function sendChat({ message, context, chat_id }, onEvent, signal) {
+export async function sendChat({ message, context, chat_id, last_province, lang }, onEvent, signal) {
   let res;
   try {
     res = await fetch('/api/chat', {
       method: 'POST',
       credentials: 'include',
       headers: { 'content-type': 'application/json', accept: 'text/event-stream' },
-      body: JSON.stringify({ message, ...(context ? { context } : {}), ...(chat_id ? { chat_id } : {}) }),
+      body: JSON.stringify({
+        message,
+        ...(context ? { context } : {}),
+        ...(chat_id ? { chat_id } : {}),
+        // จังหวัดที่ถามไว้ล่าสุด ให้ "แล้วคาเฟ่ล่ะ" ตอบต่อได้ (ใช้เมื่อไม่มีหมุด)
+        ...(last_province && !context ? { last_province } : {}),
+        ...(lang === 'en' ? { lang } : {}),
+      }),
       signal,
     });
   } catch (e) {
