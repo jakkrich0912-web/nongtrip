@@ -283,6 +283,9 @@ main { min-height:calc(100vh - var(--chrome)); }
 .mascot:focus-visible { outline:3px solid var(--mango); outline-offset:4px; border-radius:16px; }
 .mascot-body { display:block; transform-origin:50% 100%; }
 .mascot img { display:block; width:100%; height:auto; user-select:none; pointer-events:none; filter:drop-shadow(0 6px 10px rgba(34,48,31,.12)); }
+/* ชุดสีหน้า v2: ผืน 420x540 วางตัว 373x520 ที่ (23,20) ใช้กรอบเท่าภาพเดิมแล้วให้ผืนยื่นออกพอดี ขนาดตัวและตำแหน่งจึงไม่เปลี่ยน */
+.mascot-frame { position:relative; display:block; aspect-ratio:373/520; }
+.mascot .mascot-frame img { position:absolute; left:-6.166%; top:-3.846%; width:112.601%; max-width:none; height:auto; }
 .mascot-shadow { position:absolute; left:22%; right:22%; bottom:-2px; height:9%; max-height:14px; border-radius:50%; background:radial-gradient(closest-side, rgba(34,48,31,.25), transparent); z-index:-1; }
 @media (prefers-reduced-motion:no-preference){
   .mascot-body { animation:wiggle 3.2s ease-in-out infinite; }
