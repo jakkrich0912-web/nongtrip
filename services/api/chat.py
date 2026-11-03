@@ -51,6 +51,7 @@ SMALLTALK_TH = {
     "maker": ["น้องทริปเป็นโครงงานของนักศึกษา มหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี (RMUTT) ค่ะ"],
     "wellbeing": ["สบายดีค่ะ พร้อมพาไปเที่ยวเสมอ"],
     "thanks": ["ยินดีค่ะ"],
+    "ok": ["ได้เลยค่ะ"],
     "bye": ["ไว้เจอกันใหม่นะคะ เที่ยวให้สนุกค่ะ"],
     "praise": ["ขอบคุณค่ะ ดีใจที่ชอบ"],
     "weather": ["น้องทริปยังไม่มีข้อมูลสภาพอากาศค่ะ ก่อนออกเดินทางลองดูพยากรณ์จากกรมอุตุนิยมวิทยาอีกที"],
@@ -63,6 +64,7 @@ SMALLTALK_EN = {
     "maker": ["NongTrip is a student project at Rajamangala University of Technology Thanyaburi (RMUTT)."],
     "wellbeing": ["I'm doing well and always ready to plan a trip."],
     "thanks": ["You're welcome!"],
+    "ok": ["Sure!"],
     "bye": ["See you next time. Have a great trip!"],
     "praise": ["Thank you, I'm glad you like it."],
     "weather": ["NongTrip has no weather data yet. Please check the Thai Meteorological Department forecast before you travel."],
@@ -88,6 +90,10 @@ NOTE_EN = {
     "ระบบไม่เก็บรีวิวหรือคะแนน กดลิงก์ Google Maps ที่การ์ดสถานที่เพื่อดูรีวิวจริง":
         "The system does not hold reviews or scores. Use the Google Maps link on a place card to see real reviews.",
     "ระบบไม่จองหรือชำระเงินแทนผู้ใช้": "The system does not book or pay on your behalf.",
+    "ระบบยังไม่มีข้อมูลเวลาเปิดปิด กดลิงก์ Google Maps ที่การ์ดสถานที่เพื่อดูเวลาล่าสุด":
+        "The system has no opening hours yet. Open the Google Maps link on a place card for the latest hours.",
+    "ระบบไม่วางเส้นทางให้ กดปุ่ม \"นำทางด้วย Google Maps\" ที่การ์ดสถานที่เพื่อดูวิธีเดินทาง (ระยะที่แสดงเป็นเส้นตรง)":
+        "The system does not plan routes. Use \"Directions with Google Maps\" on a place card (distances shown are straight-line).",
     GUARD_NOTICE: "The automatic answer check failed, so a basic result is shown instead.",
     "พบหลายรายการ กรุณาเลือกที่พักที่ตรงกับที่จอง": "Several stays match. Please choose the one you booked.",
     "ไม่พบที่พักที่ตรงตัวกรอง ลองเอาตัวกรองออกบางข้อ หรือปักหมุดบนแผนที่":
@@ -171,6 +177,10 @@ def _tail(it: Intent, lang: str = "th") -> list[str]:
         out.append("ระบบไม่เก็บรีวิวหรือคะแนน กดลิงก์ Google Maps ที่การ์ดสถานที่เพื่อดูรีวิวจริง")
     if it.asks_booking:
         out.append("ระบบไม่จองหรือชำระเงินแทนผู้ใช้")
+    if it.asks_hours:
+        out.append("ระบบยังไม่มีข้อมูลเวลาเปิดปิด กดลิงก์ Google Maps ที่การ์ดสถานที่เพื่อดูเวลาล่าสุด")
+    if it.asks_directions:
+        out.append("ระบบไม่วางเส้นทางให้ กดปุ่ม \"นำทางด้วย Google Maps\" ที่การ์ดสถานที่เพื่อดูวิธีเดินทาง (ระยะที่แสดงเป็นเส้นตรง)")
     return [_note_en(x) for x in out] if lang == "en" else out
 
 
@@ -235,7 +245,7 @@ OFF_TOPIC_EN_KIND = {
     "news": "I don't have news. Please check a trusted news source.",
     "food": "I don't have restaurant data yet, only attractions, cafés and stays. I can find a café nearby, though.",
 }
-OFF_TOPIC_SHORT = "อันนี้น้องทริปตอบไม่ได้จริง ๆ ค่ะ"
+OFF_TOPIC_SHORT = "ขอโทษนะคะ อันนี้น้องทริปตอบไม่ได้จริง ๆ"
 OFF_TOPIC_SHORT_EN = "Sorry, that's outside what I know."
 CAN_DO = "น้องทริปช่วยได้เรื่องที่เที่ยว คาเฟ่ และที่พักรอบตัวคุณ ลองพิมพ์ เช่น \"ที่เที่ยวในเชียงใหม่\" หรือ \"คาเฟ่ใกล้ๆ\""
 CAN_DO_EN = "I can help with attractions, cafés and stays around you. Try \"attractions in Chiang Mai\" or \"cafés nearby\"."
@@ -246,6 +256,11 @@ def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
     kind = "food" if it.asks_food else it.off_topic_kind
     table = OFF_TOPIC_EN_KIND if lang == "en" else OFF_TOPIC_TH
     first = table.get(kind) if kind else None
+    sorry = _t(lang, "ขอโทษนะคะ ", "Sorry, ")
+    if first and lang == "en":
+        first = sorry + first[0].lower() + first[1:]
+    elif first:
+        first = sorry + first
     return [first or _t(lang, OFF_TOPIC_SHORT, OFF_TOPIC_SHORT_EN), _t(lang, CAN_DO, CAN_DO_EN)]
 
 

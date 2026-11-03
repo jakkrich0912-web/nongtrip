@@ -523,3 +523,35 @@ def test_ask_location_echoes_what_was_asked_and_flags_done(env):
     # มีหมุดแล้วไม่ต้องถาม
     pinned = events(ask(c, "วัดไหนคนไปบ่อย", context={"lat": LAT, "lon": LON}))
     assert "ask" not in dict(pinned)["done"]
+
+
+def test_review_feedback_words_are_not_off_topic():
+    # จากการรีวิว #57: คำเหล่านี้ยังหมายถึงการค้นต่อ ต้องไม่ถูกตีว่านอกเรื่อง
+    for text in ["ไกลกว่านี้", "ขอที่ถ่ายรูปสวยๆ", "ทั้งหมด", "what to see", "places to visit", "what to do", "farther please"]:
+        assert not parse(text).off_topic, text
+
+
+def test_ok_is_acknowledged_not_off_topic(env):
+    c, *_ = env
+    for text in ["โอเค", "ok", "ได้เลยครับ", "อ๋อ"]:
+        it = parse(text)
+        assert it.smalltalk == "ok" and not it.off_topic, text
+    assert "ได้เลยค่ะ" in text_of(events(ask(c, "โอเค")))
+    assert parse("โอเค ขอคาเฟ่ในเชียงใหม่").smalltalk is None
+
+
+def test_hours_and_directions_get_an_honest_note(env):
+    c, *_ = env
+    out = text_of(events(ask(c, "วัดแถวนี้เปิดกี่โมง", context={"lat": LAT, "lon": LON})))
+    assert "ไม่มีข้อมูลเวลาเปิดปิด" in out and "1. " in out          # ยังค้นให้ตามปกติ พร้อมบอกตรง ๆ
+    out = text_of(events(ask(c, "ไปยังไง", context={"lat": LAT, "lon": LON})))
+    assert "นำทางด้วย Google Maps" in out
+    en = text_of(events(ask(c, "what are the opening hours nearby", context={"lat": LAT, "lon": LON}, lang="en")))
+    assert "no opening hours" in en
+
+
+def test_off_topic_reply_starts_softly():
+    from services.api.chat import _off_topic_parts
+    assert _off_topic_parts(parse("คอมช้าแก้ยังไง"))[0].startswith("ขอโทษนะคะ ")
+    assert _off_topic_parts(parse("2+2 เท่ากับเท่าไร"))[0].startswith("ขอโทษนะคะ ")
+    assert _off_topic_parts(parse("my laptop is slow"), "en")[0].startswith("Sorry, ")

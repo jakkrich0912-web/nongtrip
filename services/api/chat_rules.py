@@ -26,10 +26,13 @@ LODGING_WORDS = ("โรงแรม", "รีสอร์ท", "รีสอร
 # หัวข้อที่ระบบไม่มีข้อมูล/ไม่ทำ (CONTRACT ข้อ 1) บอกผู้ใช้ตรงๆ แทนการเดา
 MONEY_WORDS = ("ราคา", "ค่าเข้า", "ค่าใช้จ่าย", "งบ", "บาท", "แพง", "ฟรี")
 REVIEW_WORDS = ("รีวิว", "คะแนน", "ยอดนิยม", "ดีที่สุด", "อันดับ", "คนไปบ่อย", "คนไปเยอะ", "คนเยอะ", "ฮิต", "นิยม")
+# เวลาเปิดปิด และวิธีเดินทาง: ระบบไม่มีข้อมูล บอกตรง ๆ ว่าดูได้ที่ไหน (ไม่ถือเป็นนอกเรื่อง ค้นตามปกติถ้ามีจุดค้น)
+HOURS_WORDS = ("เปิดกี่โมง", "ปิดกี่โมง", "เปิดกี่ทุ่ม", "ปิดกี่ทุ่ม", "เวลาเปิด", "เวลาปิด", "เปิดวันไหน", "เปิดทุกวัน", "เปิดถึงกี่โมง")
+DIRECTION_WORDS = ("ไปยังไง", "ไปยังงัย", "ไปไง", "เดินทางยังไง", "เดินทางไป", "ไปทางไหน", "นั่งรถ", "ขับรถไป", "เส้นทางไป")
 BOOKING_WORDS = ("จอง", "ชำระ", "จ่ายเงิน", "ซื้อตั๋ว", "ซื้อบัตร")
 # คำถามกว้างๆ ที่ยังนับว่าอยากค้นรอบจุดเดิม ("มีอะไรบ้าง" "แนะนำหน่อย" "อีก") ถ้าไม่มีคำพวกนี้หรือคำอื่นที่ระบบรู้จักเลย ถือว่านอกเรื่อง
 GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "รอบ", "แถว", "หา", "ไหน", "บ้าง", "อีก", "ต่อ", "เพิ่ม", "สถานที่", "พาไป",
-                 "ไปดี", "จุดเริ่ม", "ระยะ", "รัศมี", "เรียง", "เปลี่ยน")
+                 "ไปดี", "จุดเริ่ม", "ระยะ", "รัศมี", "เรียง", "เปลี่ยน", "ไกล", "ถ่ายรูป", "ทั้งหมด")
 FOOD_WORDS = ("กินข้าว", "ร้านอาหาร", "อาหาร", "หิว", "อร่อย", "ข้าว", "กินอะไร", "ของกิน", "เมนู")
 GREETING_WORDS = ("สวัสดี", "หวัดดี", "hello", "hi ", "ช่วยอะไรได้", "ทำอะไรได้", "ใช้ยังไง", "วิธีใช้")
 
@@ -64,6 +67,7 @@ SMALLTALK_EN = {
 }
 
 
+_ACK_EXACT = re.compile(r"^(?:โอเค|โอเคร|โอเช|ok|okay|okey|ได้เลย|เข้าใจแล้ว|รับทราบ|อืม+|อ๋อ|ครับ|ค่ะ|คะ|จ้า|ได้)\s*(?:ค่ะ|คะ|ครับ|นะ|จ้า|จ้ะ|เลย|!|\.)*$", re.I)
 _BYE_EXACT = re.compile(r"^(?:บ๊?าย|บ๊ายบาย)(?:บาย)?\s*(?:ค่ะ|คะ|ครับ|นะ|จ้า|จ้ะ)*$")  # "บาย" อยู่ในคำว่า "สบาย" จึงจับเฉพาะทั้งข้อความ
 
 
@@ -74,6 +78,8 @@ def smalltalk_kind(text: str) -> str | None:
     t = text.strip()
     if _BYE_EXACT.match(t):
         return "bye"
+    if _ACK_EXACT.match(t):
+        return "ok"
     if _NAME_TH.match(t):
         return "name"
     if _MAKER_TH.match(t):
@@ -173,7 +179,9 @@ _EN_REVIEW = re.compile(r"\b(?:reviews?|ratings?|rated|scores?|rankings?|ranked|
 _EN_BOOKING = re.compile(r"\b(?:book|booking|bookings|reserve|reservations?|pay|payments?)\b", re.I)
 _EN_GENERIC = re.compile(
     r"\b(?:near(?:by)?|around|recommend\w*|suggest\w*|show|find|search|more|another|other|what(?:'s| is)? (?:there|here|nearby)|"
-    r"where|any|radius|closest|nearest|distance)\b", re.I)
+    r"where|any|radius|closest|nearest|distance|farther|further|see|visit|what to do|photos?)\b", re.I)
+_EN_HOURS = re.compile(r"\b(?:opening hours|open(?:ing)? times?|what time .*open|open until|close at|when .*(?:open|close))\b", re.I)
+_EN_DIRECTIONS = re.compile(r"\b(?:how (?:do i|to|can i) get|directions?|how to go|route to)\b", re.I)
 _EN_FOOD = re.compile(r"\b(?:restaurants?|food|eat|eating|hungry|dinner|lunch|breakfast|meal|menu)\b", re.I)
 _EN_GREETING = re.compile(
     r"\b(?:hi|hello|hey)\b|what can you do|what do you do|how (?:do|can) i use|how to use|^help\b", re.I)
@@ -225,6 +233,8 @@ class Intent:
     asks_money: bool = False
     asks_review: bool = False
     asks_booking: bool = False
+    asks_hours: bool = False             # ถามเวลาเปิดปิด ระบบไม่มีข้อมูล
+    asks_directions: bool = False        # ถามวิธีเดินทาง ระบบไม่วางเส้นทาง แนะนำปุ่มนำทาง
     notes: list[str] = field(default_factory=list)   # หมายเหตุที่ต้องบอกผู้ใช้ เช่น ปรับรัศมีลงเหลือ 30
 
 
@@ -391,12 +401,14 @@ def parse(message: str) -> Intent:
     it.asks_money = _has(text, MONEY_WORDS) or bool(_EN_MONEY.search(text))
     it.asks_review = _has(text, REVIEW_WORDS) or bool(_EN_REVIEW.search(text))
     it.asks_booking = _has(text, BOOKING_WORDS) or bool(_EN_BOOKING.search(text))
+    it.asks_hours = _has(text, HOURS_WORDS) or bool(_EN_HOURS.search(text))
+    it.asks_directions = _has(text, DIRECTION_WORDS) or bool(_EN_DIRECTIONS.search(text))
     hello = _has(text, GREETING_WORDS) or bool(_EN_GREETING.search(text))
     it.greeting = hello and not (it.province or cafe or attr or lodging)
     has_number = bool(_RADIUS_RE.search(text) or _LIMIT_RE.search(text))
     it.asks_food = _has(text, FOOD_WORDS) or bool(_EN_FOOD.search(text))
     known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
-             or it.asks_booking or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
+             or it.asks_booking or it.asks_hours or it.asks_directions or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
     it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))
     it.subject = find_subject(scan)
     if not it.asks_food and not (it.province or cafe or attr or lodging or has_number):
