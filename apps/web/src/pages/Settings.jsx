@@ -59,6 +59,7 @@ function SettingsBody() {
       {!acct && !error && <p className="note" role="status">{t('กำลังโหลด', 'Loading…')}</p>}
       {acct && (
         <div className="st-grid">
+          <div className="st-col">
           <section className="mt-card st-card">
             <header><h2>{t('บัญชี', 'Account')}</h2></header>
             <dl className="st-facts">
@@ -69,7 +70,6 @@ function SettingsBody() {
             </dl>
           </section>
 
-          <PasswordCard acct={acct} onDone={load} onFail={fail} />
           <DevicesCard acct={acct} onDone={load} onFail={fail} />
 
           <section className="mt-card st-card">
@@ -77,6 +77,8 @@ function SettingsBody() {
             <p>{t('ดูหรือลบที่พักที่ค้น สถานที่โปรด และประวัติแชต รวมถึงลบบัญชีถาวร ได้ที่หน้าทริปของฉัน', 'See or delete your searches, favourites and chats, or delete the account for good, on My trips.')}</p>
             <p><Link to="/me">{t('ไปที่ทริปของฉัน →', 'Go to My trips →')}</Link> · <Link to="/privacy">{t('เราเก็บข้อมูลอะไรบ้าง', 'What we store')}</Link></p>
           </section>
+          </div>
+          <div className="st-col"><PasswordCard acct={acct} onDone={load} onFail={fail} /></div>
         </div>
       )}
     </div>

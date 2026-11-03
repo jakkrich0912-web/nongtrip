@@ -23,6 +23,7 @@
 .nti-section li+li{margin-top:4px}
 .nti-section a{color:var(--nt-green);font-weight:500;text-underline-offset:3px}
 .nti-section code{font-size:.88em;background:#eceee4;padding:1px 6px;border-radius:6px}
+.nti-section .nti-cards,.nti-section .nti-team{padding:0}.nti-section .nti-cards>li,.nti-section .nti-team>li{margin:0}
 .nti-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:4px 0 8px;padding:0;list-style:none}
 .nti-cards>li{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--nt-line);border-radius:18px;padding:20px 22px;margin:0}
 .nti-cards>li>span{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--nt-sage);color:var(--nt-green);margin-bottom:4px}
@@ -75,7 +76,7 @@
 .nti-404-links{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:22px}
 .nti-404-links a{text-decoration:none}
 /* ตั้งค่าบัญชี */
-.st-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;align-items:start}
+.st-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}.st-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .st-facts{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:10px 0 0;font-size:.95rem}
 .st-facts dt{color:var(--muted)}
 .st-facts dd{margin:0;font-weight:500;overflow-wrap:anywhere}
