@@ -20,6 +20,7 @@ COOKIE = "nt_session"
 MAX_ID = 2 ** 31 - 1  # เกินนี้ SQLite รับไม่ได้ (เคยทำให้ตอบ 500)
 KINDS = {"attraction", "cafe"}
 OSM_ID_RE = re.compile(r"^osm:(node|way|relation)/\d+$")
+REGISTER_PER_HOUR = 20  # สมัครได้ไม่เกินนี้ต่อ IP ต่อชั่วโมง (นับทุกครั้งที่ลอง)
 
 
 def _err(status: int, code: str, message: str) -> JSONResponse:
@@ -57,9 +58,12 @@ class FavoriteIn(BaseModel):
 
 
 def build_router(store: Store, secret: str, verified: list, secure_cookie: bool = True,
-                 throttle: auth.LoginThrottle | None = None, google: GoogleVerifier | None = None) -> APIRouter:
+                 throttle: auth.LoginThrottle | None = None, google: GoogleVerifier | None = None,
+                 register_throttle: auth.LoginThrottle | None = None) -> APIRouter:
     r = APIRouter()
     throttle = throttle or auth.LoginThrottle()
+    # กันสคริปต์สมัครบัญชีรัวๆ จาก IP เดียว (แต่ละครั้งแฮชรหัสผ่านด้วย scrypt ซึ่งกินเครื่อง และเพิ่มแถวในฐานข้อมูล)
+    register_throttle = register_throttle or auth.LoginThrottle(max_fails=REGISTER_PER_HOUR, window=3600)
     google = google or GoogleVerifier()
     google_throttle = auth.LoginThrottle(max_fails=30, window=60)  # กันคนยิงให้เราเรียก Google รัวๆ (นับทุกคำขอต่อ IP)
     verified_by_id = {c.id: c for c in verified}
@@ -81,7 +85,11 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
 
     # ---- ผู้ใช้ ----
     @r.post("/api/auth/register", status_code=201)
-    def register(body: Credentials, response: Response):
+    def register(body: Credentials, req: Request, response: Response):
+        ip = req.client.host if req.client else "?"
+        if register_throttle.blocked(ip):
+            return _err(429, "rate_limited", "สมัครบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่")
+        register_throttle.fail(ip)
         email = auth.normalize_email(body.email)
         if not auth.valid_email(email):
             return _err(400, "invalid_param", "รูปแบบอีเมลไม่ถูกต้อง")
