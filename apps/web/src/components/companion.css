@@ -47,3 +47,18 @@
 @media print { .nt-comp, .nt-comp-panel { display:none; } }
 .nt-comp-composer input:focus-visible { outline:none; }
 .nt-comp-composer>div:focus-within { border-color:#3d6a4b; box-shadow:0 0 0 3px rgba(249,166,32,.45); }
+/* ย้าย/ปรับขนาดหน้าต่าง */
+.nt-comp-panel.is-free .nt-comp-head { cursor:move; touch-action:none; user-select:none; -webkit-user-select:none; }
+.nt-comp-panel.is-moving { user-select:none; -webkit-user-select:none; }
+.nt-comp-panel.is-moving .nt-comp-scroll { pointer-events:none; }
+.nt-comp-max { flex-shrink:0; width:32px; height:32px; border:0; border-radius:50%; background:transparent; color:#3d6a4b; font-size:1.15rem; line-height:1; cursor:pointer; }
+.nt-comp-max:hover { background:#d8e4d0; }
+.nt-comp-rs { position:absolute; z-index:3; touch-action:none; }
+.nt-comp-rs-n, .nt-comp-rs-s { left:14px; right:14px; height:7px; cursor:ns-resize; }
+.nt-comp-rs-n { top:-3px; } .nt-comp-rs-s { bottom:-3px; }
+.nt-comp-rs-e, .nt-comp-rs-w { top:14px; bottom:14px; width:7px; cursor:ew-resize; }
+.nt-comp-rs-e { right:-3px; } .nt-comp-rs-w { left:-3px; }
+.nt-comp-rs-ne, .nt-comp-rs-nw, .nt-comp-rs-se, .nt-comp-rs-sw { width:16px; height:16px; }
+.nt-comp-rs-ne { top:-3px; right:-3px; cursor:nesw-resize; } .nt-comp-rs-sw { bottom:-3px; left:-3px; cursor:nesw-resize; }
+.nt-comp-rs-nw { top:-3px; left:-3px; cursor:nwse-resize; } .nt-comp-rs-se { bottom:-3px; right:-3px; cursor:nwse-resize; }
+.nt-comp-rs-se::after { content:""; position:absolute; right:7px; bottom:7px; width:9px; height:9px; border-right:2px solid #9fb196; border-bottom:2px solid #9fb196; border-radius:0 0 3px 0; opacity:.8; }

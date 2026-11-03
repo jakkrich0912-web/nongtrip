@@ -16,7 +16,8 @@ export default function Chat() {
     const lon = Number.parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || '' } : null;
   });
-  const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input } = useChatSession({ initialContext: initial });
+  const session = useChatSession({ initialContext: initial });
+  const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input } = session;
   const suggestions = chatSuggestions(Boolean(context));
   return <section className="nt-chat" aria-labelledby="chat-title">
     <header className="nt-chat-header">
@@ -28,7 +29,7 @@ export default function Chat() {
       <p className="nt-chat-privacy">{t('แต่ละคำถามค้นใหม่จากจังหวัดหรือจุดที่เลือกไว้', 'Each question searches again from the province or your selected location.')} {!user && t('เข้าสู่ระบบเพื่อเก็บประวัติแชต', 'Sign in to save your chat history.')}</p>
       {lang === 'en' && <p className="nt-chat-privacy">NongTrip currently understands Thai place names best. Replies may be in Thai.</p>}
       {context && <div className="nt-chat-context" role="status"><span>{t('ค้นรอบ: ', 'Search around: ')}<strong>{context.name || t('หมุดที่เลือก', 'Selected pin')}</strong></span><button type="button" onClick={() => setContext(null)} disabled={busy}>{t('ล้างจุดค้น', 'Clear location')}</button></div>}
-      <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} />
+      <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} session={session} />
       <div className="nt-chat-suggestions" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>{suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => send(t(thai, english))}>{t(thai, english)} <span aria-hidden="true">↗</span></button>)}</div>
       <form className="nt-chat-composer" onSubmit={(event) => { event.preventDefault(); send(text); }}>
         <label className="nt-chat-input-label" htmlFor="chat-message">{t('ข้อความถึงน้องทริป', 'Message NongTrip')}{text.length >= 400 && <small className="nt-chat-count"> · {text.length}/500</small>}</label>

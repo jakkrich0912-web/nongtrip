@@ -121,3 +121,50 @@ export function panelPlacement(pos, vw, vh, size = COMPANION_SIZE) {
 
 // คำทักตอนเข้าเว็บครั้งแรกของแต่ละแท็บ
 export const GREETING = ['สวัสดี! ถามน้องทริปเรื่องที่เที่ยวได้นะ', 'Hi! Ask NongTrip about places to go.'];
+
+// ---------- หน้าต่างแชตที่ลากย้าย/ปรับขนาดได้ ----------
+export const PANEL_MIN = { w: 300, h: 320 };
+
+// ให้หน้าต่างอยู่ในจอเสมอ ไม่เล็กกว่าขั้นต่ำ (ถ้าจอเล็กกว่าขั้นต่ำ ใช้เท่าจอ)
+export function clampRect(r, vw, vh) {
+  const maxW = Math.max(120, vw - EDGE * 2);
+  const maxH = Math.max(160, vh - EDGE * 2);
+  const width = clamp(r.width, Math.min(PANEL_MIN.w, maxW), maxW);
+  const height = clamp(r.height, Math.min(PANEL_MIN.h, maxH), maxH);
+  return { left: clamp(r.left, EDGE, vw - width - EDGE), top: clamp(r.top, EDGE, vh - height - EDGE), width, height };
+}
+
+export const moveRect = (start, dx, dy, vw, vh) => clampRect({ ...start, left: start.left + dx, top: start.top + dy }, vw, vh);
+
+// ลากขอบ/มุมตามทิศ dir (n s e w ne nw se sw) ฝั่งตรงข้ามอยู่กับที่
+export function resizeRect(start, dir, dx, dy, vw, vh) {
+  let { left, top, width, height } = start;
+  const right = left + width;
+  const bottom = top + height;
+  if (dir.includes('e')) width = clamp(width + dx, PANEL_MIN.w, vw - EDGE - left);
+  if (dir.includes('s')) height = clamp(height + dy, PANEL_MIN.h, vh - EDGE - top);
+  if (dir.includes('w')) { const l = clamp(left + dx, EDGE, right - PANEL_MIN.w); width = right - l; left = l; }
+  if (dir.includes('n')) { const tp = clamp(top + dy, EDGE, bottom - PANEL_MIN.h); height = bottom - tp; top = tp; }
+  return clampRect({ left, top, width, height }, vw, vh);
+}
+
+// ขยายเต็ม: กว้างสุด 760 สูงเกือบเต็มจอ ชิดขวา
+export function maximizedRect(vw, vh) {
+  const width = Math.min(760, vw - 32);
+  return clampRect({ left: vw - width - 16, top: 16, width, height: vh - 32 }, vw, vh);
+}
+
+const PANEL_KEY = 'nongtrip-companion-panel';
+export function loadRect(storage = globalThis.localStorage) {
+  try {
+    const r = JSON.parse(storage?.getItem(PANEL_KEY) ?? 'null');
+    if (r && ['left', 'top', 'width', 'height'].every((k) => Number.isFinite(r[k]))) return r;
+  } catch { /* ไม่เป็นไร */ }
+  return null;
+}
+export function saveRect(rect, storage = globalThis.localStorage) {
+  try {
+    if (rect) storage?.setItem(PANEL_KEY, JSON.stringify(rect));
+    else storage?.removeItem(PANEL_KEY);
+  } catch { /* ไม่เป็นไร */ }
+}

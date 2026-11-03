@@ -11,6 +11,7 @@ import { preload, prefersReducedMotion } from '../lib/mascot.js';
 import {
   COMPANION_SIZE, DRAG_THRESHOLD, EDGE, GREETING, bodyHeight, clampPos, companionFace, fromRatio, homePos, loadRatio,
   nextActDelay, nextRestDelay, panelPlacement, pickAct, pickWalkTarget, saveRatio, stepToward, toRatio,
+  clampRect, loadRect, maximizedRect, moveRect, resizeRect, saveRect,
 } from '../lib/companion.js';
 import './companion.css';
 import '../pages/chat-v2.css';
@@ -31,6 +32,10 @@ export default function ChatCompanion({ hidden = false }) {
   const hint = useCompanionHint();
   const session = useChatSession();
   const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince } = session;
+  const [rect, setRect] = useState(null); // null = วางติดตัวมาสคอต, มีค่า = ผู้ใช้ลากย้าย/ปรับขนาดเอง
+  const [maxed, setMaxed] = useState(null); // ขนาดก่อนขยายเต็ม (null = ไม่ได้ขยายอยู่)
+  const [moving, setMoving] = useState(false);
+  const panelDrag = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [vp, setVp] = useState(viewport);
@@ -174,7 +179,11 @@ export default function ChatCompanion({ hidden = false }) {
 
   const openChat = () => {
     setPos(posRef.current);
-    setVp(viewport());
+    const now = viewport();
+    setVp(now);
+    const saved = loadRect();
+    setRect(saved ? clampRect(saved, now.w, now.h) : null);
+    setMaxed(null);
     setOpen(true);
     setUnread(false);
     setHello(false);
@@ -225,13 +234,67 @@ export default function ChatCompanion({ hidden = false }) {
     remember();
   };
 
+  // ลากหัวหน้าต่างเพื่อย้าย / ลากขอบหรือมุมเพื่อปรับขนาด (จอแคบเป็นแผ่นติดล่างจอ ไม่ลาก)
+  const currentRect = (p) => ({ left: p.left, top: p.top, width: p.width, height: p.height });
+  const startPanel = (mode, dir) => (e) => {
+    if (e.button != null && e.button !== 0) return;
+    if (mode === 'move' && e.target.closest('button, a')) return;
+    const p = panelPlacement(posRef.current, window.innerWidth, window.innerHeight);
+    if (p.sheet) return;
+    e.preventDefault();
+    panelDrag.current = { id: e.pointerId, mode, dir, sx: e.clientX, sy: e.clientY, start: rect ? clampRect(rect, window.innerWidth, window.innerHeight) : currentRect(p) };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* ไม่เป็นไร */ }
+    setMoving(true);
+  };
+  const movePanel = (e) => {
+    const d = panelDrag.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.sx;
+    const dy = e.clientY - d.sy;
+    const next = d.mode === 'move' ? moveRect(d.start, dx, dy, window.innerWidth, window.innerHeight)
+      : resizeRect(d.start, d.dir, dx, dy, window.innerWidth, window.innerHeight);
+    d.last = next;
+    setRect(next);
+    if (maxed) setMaxed(null);
+  };
+  const endPanel = (e) => {
+    const d = panelDrag.current;
+    if (!d || d.id !== e.pointerId) return;
+    panelDrag.current = null;
+    setMoving(false);
+    if (d.last) saveRect(d.last);
+  };
+  const toggleMax = () => {
+    const { w, h } = viewport();
+    if (maxed) { const back = maxed.rect; setRect(back); setMaxed(null); saveRect(back); return; }
+    setMaxed({ rect });
+    setRect(maximizedRect(w, h));
+  };
+  const resetPanel = () => { setRect(null); setMaxed(null); saveRect(null); };
+  const panelKey = (e) => {
+    // Alt+ลูกศร ย้ายหน้าต่าง, Alt+Shift+ลูกศร ปรับขนาด (คีย์บอร์ดใช้แทนการลากได้)
+    if (!e.altKey) return;
+    const d = { ArrowLeft: [-24, 0], ArrowRight: [24, 0], ArrowUp: [0, -24], ArrowDown: [0, 24] }[e.key];
+    if (!d) return;
+    const p = panelPlacement(posRef.current, window.innerWidth, window.innerHeight);
+    if (p.sheet) return;
+    e.preventDefault();
+    const start = rect ? clampRect(rect, window.innerWidth, window.innerHeight) : currentRect(p);
+    const next = e.shiftKey ? resizeRect(start, 'se', d[0], d[1], window.innerWidth, window.innerHeight)
+      : moveRect(start, d[0], d[1], window.innerWidth, window.innerHeight);
+    setRect(next);
+    setMaxed(null);
+    saveRect(next);
+  };
+
   if (hidden) return null;
 
   const busyStatus = status === 'searching' || status === 'answering' ? status : react;
   const base = companionFace({ open, status: busyStatus, typing: text.length > 0, hover, pressed, dragging });
   const face = base.expression || base.mood !== 'front' ? base : (act ?? base);
-  const place = open ? panelPlacement(pos, vp.w, vp.h) : null;
-  const sheet = place?.sheet;
+  const anchored = open ? panelPlacement(pos, vp.w, vp.h) : null;
+  const sheet = anchored?.sheet;
+  const place = open && rect && !sheet ? { ...clampRect(rect, vp.w, vp.h), sheet: false, below: false } : anchored;
   const suggestions = chatSuggestions(Boolean(context));
   const fullHref = context ? `/chat?${new URLSearchParams({ lat: context.lat, lon: context.lon, name: context.name || '' })}` : '/chat';
   const side = pos.x > vp.w / 2 ? 'right' : 'left';
@@ -250,18 +313,25 @@ export default function ChatCompanion({ hidden = false }) {
         {unread && !open && <span className="nt-comp-dot" aria-hidden="true" />}
       </button>
     </div>
-    {open && <section className={`nt-comp-panel ${sheet ? 'is-sheet' : ''} ${place.below ? 'is-below' : ''}`} role="dialog" aria-label={t('แชตกับน้องทริป', 'Chat with NongTrip')}
-      style={{ left: place.left, top: place.top, width: place.width, height: place.height }}>
-      <header className="nt-comp-head">
+    {open && <section className={`nt-comp-panel ${sheet ? 'is-sheet' : 'is-free'} ${place.below ? 'is-below' : ''} ${moving ? 'is-moving' : ''}`} role="dialog" aria-label={t('แชตกับน้องทริป', 'Chat with NongTrip')}
+      style={{ left: place.left, top: place.top, width: place.width, height: place.height }} onKeyDown={panelKey}>
+      {!sheet && ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].map((dir) => <span key={dir} className={`nt-comp-rs nt-comp-rs-${dir}`} aria-hidden="true"
+        onPointerDown={startPanel('resize', dir)} onPointerMove={movePanel} onPointerUp={endPanel} onPointerCancel={endPanel} />)}
+      <header className="nt-comp-head" onPointerDown={startPanel('move')} onPointerMove={movePanel} onPointerUp={endPanel} onPointerCancel={endPanel}
+        onDoubleClick={(e) => { if (!e.target.closest('button, a')) resetPanel(); }}
+        title={sheet ? undefined : t('ลากเพื่อย้าย ดับเบิลคลิกเพื่อกลับไปข้างน้องทริป', 'Drag to move. Double-click to dock back next to NongTrip.')}>
         <MascotHead size={38} />
         <div><strong>{t('น้องทริป', 'NongTrip')}</strong><small>{busy ? t('กำลังค้นให้…', 'Looking for you…') : t('ถามเรื่องที่เที่ยว คาเฟ่ ที่พัก', 'Ask about places, cafés, stays')}</small></div>
         <Link to={fullHref} onClick={closeChat} className="nt-comp-full" aria-label={t('เปิดแชตเต็มหน้า', 'Open full chat page')}>{t('เต็มหน้า', 'Full page')} ↗</Link>
+        {!sheet && <button type="button" className="nt-comp-max" onClick={toggleMax} aria-pressed={Boolean(maxed)}
+          aria-label={maxed ? t('ย่อหน้าต่างแชต', 'Restore chat size') : t('ขยายหน้าต่างแชต', 'Enlarge chat window')}
+          title={maxed ? t('ย่อหน้าต่าง', 'Restore') : t('ขยายหน้าต่าง', 'Enlarge')}>{maxed ? '⤡' : '⤢'}</button>}
         <button type="button" className="nt-comp-close" onClick={closeChat} aria-label={t('ปิด', 'Close')}>×</button>
       </header>
       {context && <div className="nt-chat-context" role="status"><span>{t('ค้นรอบ: ', 'Search around: ')}<strong>{context.name || t('หมุดที่เลือก', 'Selected pin')}</strong></span><button type="button" onClick={() => setContext(null)} disabled={busy}>{t('ล้างจุดค้น', 'Clear location')}</button></div>}
       <div className="nt-comp-scroll" ref={scroller}>
         {lang === 'en' && <p className="nt-chat-privacy">NongTrip currently understands Thai place names best. Replies may be in Thai.</p>}
-        <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} headSize={30} />
+        <ChatMessages messages={messages} busy={busy} onChooseLodging={chooseLodging} t={t} lang={lang} headSize={30} session={session} />
         {!messages.length && <div className="nt-chat-suggestions" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>{suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => send(t(thai, english))}>{t(thai, english)} <span aria-hidden="true">↗</span></button>)}</div>}
         {!user && messages.length > 0 && <p className="nt-chat-privacy">{t('เข้าสู่ระบบเพื่อเก็บประวัติแชต', 'Sign in to save your chat history.')}</p>}
       </div>

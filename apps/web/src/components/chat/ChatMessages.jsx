@@ -2,6 +2,7 @@ import MascotHead from '../MascotHead.jsx';
 import SourceCards from './SourceCards.jsx';
 import { noticeText } from '../../lib/notices.js';
 import { numberCitations, safeUrl as safeSourceUrl } from '../../lib/chat.js';
+import { QUICK_PROVINCES } from '../../lib/useChatSession.js';
 
 function ResultCards({ result, t, lang }) {
   if (!result) return null;
@@ -31,7 +32,22 @@ function ResultCards({ result, t, lang }) {
 }
 
 // รายการข้อความทั้งหมด ใช้ทั้งหน้า /chat และหน้าต่างแชตของมาสคอต
-export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38 }) {
+// ปุ่มตอบเมื่อน้องทริปถามว่าให้ค้นแถวไหน (done.ask = location): ใช้ตำแหน่งปัจจุบัน หรือเลือกจังหวัด
+function AskLocation({ message, busy, session, t, lang }) {
+  if (!session) return null;
+  const { askHere, askInProvince, locating, locateError } = session;
+  const q = message.question || '';
+  return <div className="nt-chat-ask" role="group" aria-label={t('เลือกว่าจะค้นแถวไหน', 'Choose where to search')}>
+    <button type="button" className="nt-chat-ask-here" disabled={busy || locating} onClick={() => askHere(q, t('ตำแหน่งปัจจุบัน', 'Current location'))}>
+      <span aria-hidden="true">◎</span> {locating ? t('กำลังหาตำแหน่ง…', 'Finding you…') : t('ใช้ตำแหน่งปัจจุบันของฉัน', 'Use my current location')}
+    </button>
+    <div className="nt-chat-ask-provinces">{QUICK_PROVINCES.map(([th, en]) => <button key={th} type="button" disabled={busy} onClick={() => askInProvince(q, th, en)}>{lang === 'en' ? en : th}</button>)}</div>
+    {locateError && <p className="nt-chat-ask-error" role="status">{locateError === 'unsupported' ? t('เบราว์เซอร์นี้หาตำแหน่งไม่ได้ ลองเลือกจังหวัดหรือพิมพ์ชื่อจังหวัดแทน', 'This browser cannot share your location. Choose or type a province instead.') : t('ใช้ตำแหน่งไม่ได้ (อาจยังไม่อนุญาต) ลองเลือกจังหวัดหรือพิมพ์ชื่อจังหวัดแทน', 'Could not get your location (permission may be off). Choose or type a province instead.')}</p>}
+  </div>;
+}
+
+export default function ChatMessages({ messages, busy, onChooseLodging, t, lang, headSize = 38, session = null }) {
+  const lastId = messages[messages.length - 1]?.id;
   return <div className="nt-chat-messages" role="log" aria-label={t('บทสนทนา', 'Conversation')} aria-live="polite" aria-relevant="additions text" aria-busy={busy}>
     <div className="nt-chat-row nt-chat-row-bot"><MascotHead size={headSize} /><div className="nt-chat-bubble"><p>{t('สวัสดี! วันนี้พักแถวไหนเอ่ย? บอกชื่อที่พักหรือจังหวัด แล้วเราช่วยหาที่เที่ยวกับคาเฟ่รอบ ๆ ให้ได้เลย', 'Hello! Where are you staying? Tell me your accommodation or province, and I’ll help you find nearby attractions and cafés.')}</p></div></div>
     {messages.map((message) => <div key={message.id} className={`nt-chat-row nt-chat-row-${message.role}`}>
@@ -47,6 +63,7 @@ export default function ChatMessages({ messages, busy, onChooseLodging, t, lang,
           {message.lodgings.validation?.ok !== false && (message.lodgings.items ?? []).map((lodging) => <button key={lodging.id} type="button" onClick={() => onChooseLodging(lodging)} disabled={busy || !Number.isFinite(lodging.lat) || !Number.isFinite(lodging.lon)}><strong>{lodging.name}</strong>{lodging.address && <small>{lodging.address}</small>}</button>)}
         </div>}
         <SourceCards sources={message.sources} t={t} />
+        {message.ask === 'location' && message.id === lastId && message.status === 'done' && <AskLocation message={message} busy={busy} session={session} t={t} lang={lang} />}
         {message.status === 'stopped' && <p className="nt-chat-waiting">{t('หยุดรอคำตอบแล้ว ถามใหม่ได้เลย', 'Stopped waiting. Feel free to ask again.')}</p>}
         {message.error && <p className="nt-chat-error" role="alert">{message.error}</p>}
       </div>

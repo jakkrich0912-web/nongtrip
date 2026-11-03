@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   COMPANION_SIZE, EDGE, NARROW, bodyHeight, bounds, clampPos, companionFace, fromRatio, homePos, loadRatio,
   panelPlacement, pickAct, pickWalkTarget, saveRatio, stepToward, toRatio, IDLE_ACTS,
+  PANEL_MIN, clampRect, loadRect, maximizedRect, moveRect, resizeRect, saveRect,
 } from './companion.js';
 
 const memory = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v) }; };
@@ -119,5 +120,58 @@ describe('หน้าต่างแชต', () => {
     const p = panelPlacement({ x: 600, y: 200 }, 1000, 420);
     expect(p.height).toBeGreaterThanOrEqual(280);
     expect(p.top).toBeGreaterThanOrEqual(EDGE);
+  });
+});
+
+describe('ย้าย/ปรับขนาดหน้าต่างแชต', () => {
+  const start = { left: 500, top: 200, width: 380, height: 480 };
+  it('ย้ายแล้วไม่หลุดจอ', () => {
+    expect(moveRect(start, 100, 50, 1200, 800)).toMatchObject({ left: 600, top: 250, width: 380, height: 480 });
+    const far = moveRect(start, 5000, 5000, 1200, 800);
+    expect(far.left + far.width).toBeLessThanOrEqual(1200 - EDGE);
+    expect(far.top + far.height).toBeLessThanOrEqual(800 - EDGE);
+    expect(moveRect(start, -5000, -5000, 1200, 800)).toMatchObject({ left: EDGE, top: EDGE });
+  });
+  it('ลากมุมขวาล่างขยาย ลากมุมซ้ายบนแล้วมุมขวาล่างอยู่ที่เดิม', () => {
+    expect(resizeRect(start, 'se', 120, 60, 1200, 800)).toMatchObject({ left: 500, top: 200, width: 500, height: 540 });
+    const nw = resizeRect(start, 'nw', -100, -50, 1200, 800);
+    expect(nw.left + nw.width).toBe(start.left + start.width);
+    expect(nw.top + nw.height).toBe(start.top + start.height);
+    expect(nw.width).toBe(480);
+  });
+  it('ไม่เล็กกว่าขั้นต่ำ และไม่ใหญ่เกินจอ', () => {
+    const tiny = resizeRect(start, 'se', -1000, -1000, 1200, 800);
+    expect(tiny.width).toBe(PANEL_MIN.w);
+    expect(tiny.height).toBe(PANEL_MIN.h);
+    const huge = resizeRect(start, 'se', 5000, 5000, 1200, 800);
+    expect(huge.left + huge.width).toBeLessThanOrEqual(1200 - EDGE);
+    expect(huge.top + huge.height).toBeLessThanOrEqual(800 - EDGE);
+    const wTiny = resizeRect(start, 'w', 1000, 0, 1200, 800);
+    expect(wTiny.width).toBe(PANEL_MIN.w);
+    expect(wTiny.left + wTiny.width).toBe(start.left + start.width);
+  });
+  it('จอเปลี่ยนเล็กลง หน้าต่างหดตามและยังอยู่ในจอ', () => {
+    const r = clampRect({ left: 900, top: 500, width: 700, height: 700 }, 640, 480);
+    expect(r.left).toBeGreaterThanOrEqual(EDGE);
+    expect(r.left + r.width).toBeLessThanOrEqual(640 - EDGE);
+    expect(r.top + r.height).toBeLessThanOrEqual(480 - EDGE);
+  });
+  it('ขยายเต็มกว้างสุด 760 และอยู่ในจอ', () => {
+    expect(maximizedRect(1600, 900)).toMatchObject({ width: 760, height: 868, top: 16 });
+    const small = maximizedRect(700, 600);
+    expect(small.left).toBeGreaterThanOrEqual(EDGE);
+    expect(small.left + small.width).toBeLessThanOrEqual(700 - EDGE);
+  });
+  it('จำ/ลืมขนาดหน้าต่าง และทนค่าเสีย', () => {
+    const m = new Map();
+    const s = { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) };
+    expect(loadRect(s)).toBeNull();
+    saveRect(start, s);
+    expect(loadRect(s)).toEqual(start);
+    saveRect(null, s);
+    expect(loadRect(s)).toBeNull();
+    s.setItem('nongtrip-companion-panel', '{"left":"x"}');
+    expect(loadRect(s)).toBeNull();
+    expect(() => saveRect(start, { setItem() { throw new Error('x'); } })).not.toThrow();
   });
 });

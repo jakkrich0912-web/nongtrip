@@ -1,5 +1,5 @@
 // สถานะแชตที่ใช้ร่วมกันระหว่างหน้า /chat และหน้าต่างแชตของน้องทริปที่เดินอยู่ทุกหน้า
-// ย้ายมาจาก pages/Chat.jsx ไม่เปลี่ยนพฤติกรรม: ส่งข้อความ รับสตรีม หยุดรอ เลือกที่พัก
+// ย้ายมาจาก pages/Chat.jsx: ส่งข้อความ รับสตรีม หยุดรอ เลือกที่พัก และตอบปุ่มเลือกตำแหน่งเมื่อน้องทริปถามกลับ (done.ask)
 import { useEffect, useRef, useState } from 'react';
 import { sendChat } from './chat.js';
 import { useLanguage } from './language.jsx';
@@ -21,8 +21,10 @@ export function useChatSession({ initialContext = null } = {}) {
   useEffect(() => () => controller.current?.abort(), []);
   useEffect(() => { chatId.current = null; }, [user?.id]);
 
-  const send = async (value, displayText = value) => {
+  // ctxOverride: ใช้จุดค้นนี้กับข้อความนี้ทันที (เช่น เพิ่งได้ตำแหน่งปัจจุบัน) โดยไม่ต้องรอ state รอบถัดไป
+  const send = async (value, displayText = value, ctxOverride) => {
     const message = value.trim();
+    const where = ctxOverride === undefined ? context : ctxOverride;
     if (!message || message.length > 500 || controller.current) return;
     const id = ++serial.current;
     const aborter = new AbortController();
@@ -30,10 +32,10 @@ export function useChatSession({ initialContext = null } = {}) {
     activeId.current = id;
     setBusy(true);
     setText('');
-    setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching' }]);
+    setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching', question: message }]);
     const update = (patch) => setMessages((items) => items.map((item) => item.id === id ? (typeof patch === 'function' ? patch(item) : { ...item, ...patch }) : item));
     try {
-      await sendChat({ message, context: context && { lat: context.lat, lon: context.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang }, (event, data) => {
+      await sendChat({ message, context: where && { lat: where.lat, lon: where.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang }, (event, data) => {
         if (aborter.signal.aborted) return;
         if (event === 'token' && typeof data.text === 'string') update((item) => ({ ...item, text: item.text + data.text, status: 'answering' }));
         if (event === 'places') update({ places: data });
@@ -42,7 +44,7 @@ export function useChatSession({ initialContext = null } = {}) {
         if (event === 'done') {
           if (user && data.chat_id) chatId.current = data.chat_id;
           if (typeof data.province === 'string') lastProvince.current = data.province;
-          update({ status: 'done', mode: data.mode });
+          update({ status: 'done', mode: data.mode, ask: typeof data.ask === 'string' ? data.ask : null });
         }
       }, aborter.signal);
     } catch (error) {
@@ -69,7 +71,23 @@ export function useChatSession({ initialContext = null } = {}) {
     setContext({ lat: lodging.lat, lon: lodging.lon, name: lodging.name });
     input.current?.focus();
   };
-  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince };
+  // ตอบปุ่มที่ขึ้นตอนน้องทริปถามว่าให้ค้นแถวไหน: ถามคำถามเดิมซ้ำพร้อมจังหวัดที่เลือก
+  const askInProvince = (question, province, provinceEn) => send(lang === 'en' ? `${question} in ${provinceEn}` : `${question} ใน${province}`);
+  // ใช้ตำแหน่งปัจจุบันของเครื่อง (เบราว์เซอร์ถามสิทธิ์เอง) แล้วถามคำถามเดิมซ้ำรอบจุดนั้น
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState('');
+  const askHere = (question, label) => {
+    setLocateError('');
+    if (typeof navigator === 'undefined' || !navigator.geolocation) { setLocateError('unsupported'); return; }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setLocating(false);
+      const here = { lat: pos.coords.latitude, lon: pos.coords.longitude, name: label };
+      setContext(here);
+      send(question, question, here);
+    }, () => { setLocating(false); setLocateError('denied'); }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+  };
+  return { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince, askInProvince, askHere, locating, locateError };
 }
 
 // คำถามแนะนำ ส่งตามภาษาที่เลือก (ตัวแยกคำถามเข้าใจทั้งไทยและอังกฤษ)
@@ -84,3 +102,8 @@ export function chatSuggestions(hasContext) {
     ['ที่เที่ยวในกรุงเทพมหานคร', 'Attractions in Bangkok'],
   ];
 }
+
+// จังหวัดที่เสนอเป็นปุ่มเมื่อยังไม่รู้ว่าให้ค้นแถวไหน
+export const QUICK_PROVINCES = [
+  ['เชียงใหม่', 'Chiang Mai'], ['กรุงเทพมหานคร', 'Bangkok'], ['ภูเก็ต', 'Phuket'], ['ชลบุรี', 'Chon Buri'],
+];
