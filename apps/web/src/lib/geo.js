@@ -40,3 +40,17 @@ export const mapsDirUrl = (p) =>
   `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;
 export const mapsSearchUrl = (p) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name_th)}`;
+
+// ตัวเลือกรัศมีในหน้าค้นหา (กม. ไม่เกิน MAX_RADIUS_KM) และตัวกรองฝั่งหน้าเว็บจากผลที่ API ส่งมาแล้ว
+export const RADIUS_OPTIONS = [30, 5, 10, 15];
+
+export function withinRadius(items, radiusKm) {
+  return items.filter((p) => typeof p.distance_km === 'number' && p.distance_km <= radiusKm);
+}
+
+// ผลที่โหลดมาเรียงใกล้ไปไกลแล้ว รู้ครบทุกแห่งในรัศมีนี้หรือยัง: โหลดครบทั้งหมด หรือแห่งสุดท้ายที่โหลดอยู่เลยรัศมีไปแล้ว
+export function radiusComplete(items, total, radiusKm) {
+  if (items.length >= total) return true;
+  const last = items[items.length - 1];
+  return Boolean(last) && last.distance_km > radiusKm;
+}
