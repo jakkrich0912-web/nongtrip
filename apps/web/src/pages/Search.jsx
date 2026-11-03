@@ -280,8 +280,8 @@ export default function Search() {
       </div>
       <MapContainer key={province} center={center} zoom={11} className="map">
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          attribution="© OpenStreetMap contributors © CARTO"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="© OpenStreetMap contributors"
         />
         <PinPicker onPick={pick} />
         <FlyTo target={active} />
