@@ -174,7 +174,7 @@ export default function Search() {
                   <ul>
                     {inProv.slice(0, 6).map((p) => (
                       <li key={p.id}>
-                        <button onClick={() => setActive(p)} aria-label={t(`ดู ${p.name_th} บนแผนที่`, `Show ${placeName(p, lang)} on the map`)}>
+                        <button onClick={() => setActive(p)} aria-label={t(`ดู ${placeName(p, lang)} บนแผนที่`, `Show ${placeName(p, lang)} on the map`)}>
                           <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={16} /></span>
                           <span>{placeName(p, lang)}<small>{subtypeLabel(p.subtype, p.kind, lang)}</small></span>
                         </button>
