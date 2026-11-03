@@ -9,6 +9,7 @@ import { placeById, placesNearby } from '../lib/api.js';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { mapsDirUrl } from '../lib/geo.js';
 import { useLanguage } from '../lib/language.jsx';
+import { useShareCompanionHint } from '../lib/companionContext.jsx';
 
 const pin = L.divIcon({
   className: '',
@@ -29,6 +30,8 @@ export default function PlaceDetail() {
   const [state, setState] = useState({ status: 'loading' });
   const [near, setNear] = useState([]);
   const [note, setNote] = useState('');
+  const here = state.place;
+  useShareCompanionHint(here ? { lat: here.lat, lon: here.lon, name: here.name_th } : null);
 
   useEffect(() => {
     let alive = true;

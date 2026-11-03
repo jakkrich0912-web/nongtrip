@@ -11,6 +11,7 @@ import LodgingSearch from '../components/LodgingSearch.jsx';
 import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch } from '../lib/api.js';
 import FavButton from '../components/FavButton.jsx';
 import { useAuth } from '../lib/auth.jsx';
+import { useShareCompanionHint } from '../lib/companionContext.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM, RADIUS_OPTIONS, radiusComplete, withinRadius } from '../lib/geo.js';
 
@@ -47,6 +48,7 @@ export default function Search() {
     const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
   });
+  useShareCompanionHint(origin);
   const { user } = useAuth();
   const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');

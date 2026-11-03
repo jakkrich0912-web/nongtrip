@@ -1,0 +1,49 @@
+/* น้องทริปเพื่อนคู่ใจ: มาสคอตเดินทุกหน้า + หน้าต่างแชตลอย */
+.nt-comp { position:fixed; left:0; top:0; z-index:1200; pointer-events:none; will-change:transform; }
+.nt-comp.is-away { display:none; }
+.nt-comp-btn { position:absolute; inset:0; padding:0; border:0; background:transparent; cursor:grab; pointer-events:auto; touch-action:none; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+.nt-comp.is-dragging .nt-comp-btn { cursor:grabbing; }
+.nt-comp-btn:focus-visible { outline:3px solid var(--mango); outline-offset:3px; border-radius:18px; }
+.nt-comp-face, .nt-comp-sprite { display:block; width:100%; height:100%; transform-origin:50% 100%; }
+.nt-comp-sprite .mascot { display:block; pointer-events:none; }
+.nt-comp-sprite .mascot-shadow { left:18%; right:18%; }
+.nt-comp.is-dragging .nt-comp-sprite { transform:translateY(-8px) rotate(-5deg); transition:transform .15s; }
+.nt-comp-dot { position:absolute; right:6px; top:2px; width:16px; height:16px; border-radius:50%; background:var(--hibiscus); border:2.5px solid #fffefb; box-shadow:0 1px 4px rgba(34,48,31,.3); }
+.nt-comp-hello { position:absolute; bottom:calc(100% + 4px); margin:0; width:max-content; max-width:210px; padding:9px 13px; border-radius:14px 14px 14px 4px; background:#fffefb; color:var(--ink); font:500 .82rem/1.45 var(--body); border:1px solid #d3dccb; box-shadow:0 8px 24px rgba(34,48,31,.16); pointer-events:none; animation:comp-pop .35s cubic-bezier(.3,1.5,.5,1) both; }
+.nt-comp-hello-left { left:8px; }
+.nt-comp-hello-right { right:8px; border-radius:14px 14px 4px 14px; }
+@keyframes comp-pop { from { opacity:0; transform:translateY(8px) scale(.9); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion:no-preference) {
+  .nt-comp.is-walking .nt-comp-sprite { animation:comp-hop .46s ease-in-out infinite; }
+  .nt-comp.is-walking .mascot-body { animation:none; }
+}
+@keyframes comp-hop { 0%,100% { transform:translateY(0) rotate(-2.5deg); } 50% { transform:translateY(-7px) rotate(2.5deg); } }
+
+.nt-comp-panel { position:fixed; z-index:1201; display:flex; flex-direction:column; min-height:0; border:1px solid #cfd8c6; border-radius:20px; background:#fffefb; box-shadow:0 22px 60px rgba(34,48,31,.28), 0 2px 6px rgba(34,48,31,.08); overflow:hidden; animation:comp-open .22s cubic-bezier(.3,1.3,.5,1) both; transform-origin:50% 100%; }
+.nt-comp-panel.is-below { transform-origin:50% 0; }
+@keyframes comp-open { from { opacity:0; transform:translateY(10px) scale(.96); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion:reduce) { .nt-comp-panel, .nt-comp-hello { animation:none; } }
+.nt-comp-head { display:flex; align-items:center; gap:10px; padding:12px 14px; background:linear-gradient(180deg,#eef3e8,#e6eedf); border-bottom:1px solid #d3dccb; flex:0 0 auto; }
+.nt-comp-head div { min-width:0; flex:1; line-height:1.3; }
+.nt-comp-head strong { display:block; font:600 1rem var(--display); }
+.nt-comp-head small { display:block; color:#51604c; font-size:.74rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nt-comp-full { flex-shrink:0; font-size:.76rem; font-weight:600; color:#3d6a4b; text-decoration:none; padding:6px 9px; border-radius:8px; }
+.nt-comp-full:hover { background:#d8e4d0; }
+.nt-comp-close { flex-shrink:0; width:32px; height:32px; border:0; border-radius:50%; background:transparent; color:#3d6a4b; font-size:1.5rem; line-height:1; cursor:pointer; }
+.nt-comp-close:hover { background:#d8e4d0; }
+.nt-comp-panel .nt-chat-context { margin:10px 12px 0; padding:9px 12px; font-size:.82rem; flex:0 0 auto; }
+.nt-comp-scroll { flex:1 1 auto; min-height:0; overflow-y:auto; padding:14px 14px 4px; overscroll-behavior:contain; }
+.nt-comp-scroll .nt-chat-messages { gap:14px; min-height:0; }
+.nt-comp-scroll .nt-chat-bubble { padding:11px 14px; font-size:.9rem; max-width:calc(100% - 40px); }
+.nt-comp-scroll .nt-chat-privacy { margin:0 0 12px; }
+.nt-comp-scroll .nt-chat-suggestions { margin:16px 0 6px; flex-direction:column; align-items:stretch; }
+.nt-comp-composer { flex:0 0 auto; padding:10px 12px 12px; border-top:1px solid #e0e6d9; background:#fffefb; }
+.nt-comp-composer>div { padding:5px; }
+.nt-comp-composer input { padding:8px; font-size:16px; }
+.nt-comp-composer button { padding:9px 14px; }
+.nt-comp-panel button:disabled { cursor:default; opacity:.6; }
+.nt-comp-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.nt-comp-panel.is-sheet { border-radius:20px; }
+@media print { .nt-comp, .nt-comp-panel { display:none; } }
+.nt-comp-composer input:focus-visible { outline:none; }
+.nt-comp-composer>div:focus-within { border-color:#3d6a4b; box-shadow:0 0 0 3px rgba(249,166,32,.45); }
