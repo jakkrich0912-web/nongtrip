@@ -6,8 +6,9 @@ import Mascot from '../components/Mascot.jsx';
 import CatIcon from '../components/CatIcon.jsx';
 import FavButton from '../components/FavButton.jsx';
 import { placeById, placesNearby } from '../lib/api.js';
-import { subtypeLabel, iconGroup } from '../lib/data.js';
+import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { mapsDirUrl } from '../lib/geo.js';
+import { useLanguage } from '../lib/language.jsx';
 
 const pin = L.divIcon({
   className: '',
@@ -15,14 +16,15 @@ const pin = L.divIcon({
   iconSize: [30, 30], iconAnchor: [15, 15],
 });
 
-const thaiDate = (iso) => {
-  try { return new Date(`${iso}T00:00:00`).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); }
+const thaiDate = (iso, lang = 'th') => {
+  try { return new Date(`${iso}T00:00:00`).toLocaleDateString(lang === 'en' ? 'en-GB' : 'th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); }
   catch { return iso; }
 };
 
 // หน้ารายละเอียดสถานที่ GET /api/places/{id} (ข้อ 3.5)
 // ฟิลด์ที่เป็น null ซ่อนทั้งส่วน ไม่เติมคำอธิบายเอง (CONTRACT ข้อ 1)
 export default function PlaceDetail() {
+  const { t, lang } = useLanguage();
   const { id } = useParams();
   const [state, setState] = useState({ status: 'loading' });
   const [near, setNear] = useState([]);
@@ -44,14 +46,14 @@ export default function PlaceDetail() {
     return () => { alive = false; };
   }, [id]);
 
-  if (state.status === 'loading') return <p className="note page-pad" role="status">กำลังโหลด</p>;
+  if (state.status === 'loading') return <p className="note page-pad" role="status">{t('กำลังโหลด', 'Loading…')}</p>;
   if (state.status === 'error') {
     return (
       <div className="page-pad empty">
         <Mascot size={110} mood="think" />
-        <strong>{state.notFound ? 'ไม่พบสถานที่นี้' : 'เปิดหน้านี้ไม่ได้ตอนนี้'}</strong>
+        <strong>{state.notFound ? t('ไม่พบสถานที่นี้', 'Place not found') : t('เปิดหน้านี้ไม่ได้ตอนนี้', 'This page is unavailable right now')}</strong>
         <p>{state.message}</p>
-        <Link className="btn small" to="/search">กลับไปค้นหา</Link>
+        <Link className="btn small" to="/search">{t('กลับไปค้นหา', 'Back to search')}</Link>
       </div>
     );
   }
@@ -62,8 +64,8 @@ export default function PlaceDetail() {
 
   return (
     <article className="detail page-pad">
-      <nav className="crumbs" aria-label="ตำแหน่งหน้า">
-        <Link to="/">หน้าแรก</Link>
+      <nav className="crumbs" aria-label={t('ตำแหน่งหน้า', 'Breadcrumb')}>
+        <Link to="/">{t('หน้าแรก', 'Home')}</Link>
         {p.province && <><span aria-hidden="true">›</span><Link to={`/provinces/${encodeURIComponent(p.province)}`}>{p.province}</Link></>}
       </nav>
 
@@ -72,10 +74,10 @@ export default function PlaceDetail() {
           <header className="detail-head">
             <span className={`ico big c-${g}`}><CatIcon cat={g} size={26} /></span>
             <div>
-              <h1>{p.name_th}</h1>
-              {p.name_en && <p className="en">{p.name_en}</p>}
+              <h1>{placeName(p, lang)}</h1>
+              {p.name_en && p.name_en !== p.name_th && <p className="en">{lang === 'en' ? p.name_th : p.name_en}</p>}
               <p className="meta">
-                {subtypeLabel(p.subtype, p.kind)}
+                {subtypeLabel(p.subtype, p.kind, lang)}
                 {p.area && <> · {p.area}</>}
                 {p.province && <> · {p.province}</>}
               </p>
@@ -85,36 +87,36 @@ export default function PlaceDetail() {
           {note && <p className="notice" role="alert">{note}</p>}
 
           <div className="detail-actions">
-            <a className="btn" href={mapsDirUrl(p)} target="_blank" rel="noreferrer">นำทางด้วย Google Maps</a>
-            {p.maps_url && <a className="btn ghost" href={p.maps_url} target="_blank" rel="noreferrer">ดูรีวิวที่ Google Maps</a>}
-            <Link className="btn ghost" to={searchHere}>ดูที่เที่ยวรอบที่นี่</Link>
+            <a className="btn" href={mapsDirUrl(p)} target="_blank" rel="noreferrer">{t('นำทางด้วย Google Maps', 'Directions on Google Maps')}</a>
+            {p.maps_url && <a className="btn ghost" href={p.maps_url} target="_blank" rel="noreferrer">{t('ดูรีวิวที่ Google Maps', 'Reviews on Google Maps')}</a>}
+            <Link className="btn ghost" to={searchHere}>{t('ดูที่เที่ยวรอบที่นี่', 'See what is nearby')}</Link>
           </div>
 
           {p.description && (
             <section className="detail-block">
-              <h2>เกี่ยวกับที่นี่</h2>
+              <h2>{t('เกี่ยวกับที่นี่', 'About this place')}</h2>
               <p>{p.description}</p>
             </section>
           )}
 
           {p.notes?.length > 0 && (
             <section className="detail-block">
-              <h2>ควรรู้ก่อนไป</h2>
+              <h2>{t('ควรรู้ก่อนไป', 'Good to know')}</h2>
               <ul className="tips">{p.notes.map((n) => <li key={n}>{n}</li>)}</ul>
             </section>
           )}
 
           {(p.source_url || p.source_title) && (
             <section className="detail-block source">
-              <h2>ที่มาของข้อมูล</h2>
+              <h2>{t('ที่มาของข้อมูล', 'Data source')}</h2>
               <p>
-                ชื่อและพิกัดตรวจกับ{' '}
+                {t('ชื่อและพิกัดตรวจกับ', 'Name and location checked against')}{' '}
                 {p.source_url
                   ? <a href={p.source_url} target="_blank" rel="noreferrer">{p.source_title ?? p.source_url}</a>
                   : p.source_title}
-                {p.source_checked_on && <> เมื่อ {thaiDate(p.source_checked_on)}</>}
+                {p.source_checked_on && <> {t('เมื่อ', 'on')} {thaiDate(p.source_checked_on, lang)}</>}
               </p>
-              <p className="attr">ระบบไม่มีราคา ค่าเข้า หรือคะแนนรีวิว ดูรีวิวจริงได้ที่ Google Maps</p>
+              <p className="attr">{t('ระบบไม่มีราคา ค่าเข้า หรือคะแนนรีวิว ดูรีวิวจริงได้ที่ Google Maps', 'We do not hold prices, entry fees or review scores. See real reviews on Google Maps.')}</p>
             </section>
           )}
         </section>
@@ -129,15 +131,15 @@ export default function PlaceDetail() {
 
           {near.length > 0 && (
             <section className="detail-block">
-              <h2>ที่เที่ยวใกล้เคียง</h2>
+              <h2>{t('ที่เที่ยวใกล้เคียง', 'Nearby places')}</h2>
               <ul className="near-list">
                 {near.map((x) => {
                   const xg = iconGroup(x);
                   const inner = (
                     <>
                       <span className={`ico c-${xg}`}><CatIcon cat={xg} size={16} /></span>
-                      <span className="nl-name">{x.name_th}<small>{subtypeLabel(x.subtype, x.kind)}</small></span>
-                      <span className="nl-km">{x.distance_km} กม.<small>เส้นตรง</small></span>
+                      <span className="nl-name">{placeName(x, lang)}<small>{subtypeLabel(x.subtype, x.kind, lang)}</small></span>
+                      <span className="nl-km">{x.distance_km} {t('กม.', 'km')}<small>{t('เส้นตรง', 'straight-line')}</small></span>
                     </>
                   );
                   return (

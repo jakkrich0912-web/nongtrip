@@ -3,6 +3,7 @@ import { PROVINCES } from '../lib/provinces.js';
 import { subtypeLabel } from '../lib/data.js';
 import { lodgingsSearch } from '../lib/api.js';
 import { latestOnly } from '../lib/latest.js';
+import { useLanguage } from '../lib/language.jsx';
 
 // ประเภทที่พักที่ API รับ (CONTRACT v0.11)
 const LODGING_SUBTYPES = ['hotel', 'guest_house', 'hostel', 'motel', 'resort', 'apartment', 'chalet'];
@@ -10,6 +11,7 @@ const LODGING_SUBTYPES = ['hotel', 'guest_house', 'hostel', 'motel', 'resort', '
 // ค้นที่พักจากชื่อ GET /api/lodgings/search พร้อมตัวกรองจังหวัด ย่าน ประเภท
 // ผู้ใช้ต้องกดเลือกที่พักเองเสมอ แม้เจอแห่งเดียว (ชื่อกำกวมไม่เดา)
 export default function LodgingSearch({ province: initialProvince = '', onChoose, onResults }) {
+  const { t, lang } = useLanguage();
   const [q, setQ] = useState('');
   const [province, setProvince] = useState(initialProvince);
   const [area, setArea] = useState('');
@@ -45,31 +47,31 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
         <div className="lsearch-row">
           <input
             className="field" value={q} onChange={(e) => setQ(e.target.value)}
-            placeholder="ชื่อที่พักที่จองไว้" aria-label="ชื่อที่พัก" autoComplete="off"
+            placeholder={t('ชื่อที่พักที่จองไว้', 'Name of your booked stay')} aria-label={t('ชื่อที่พัก', 'Stay name')} autoComplete="off"
           />
-          <button className="btn small" disabled={!q.trim() || state.status === 'loading'}>ค้นหา</button>
+          <button className="btn small" disabled={!q.trim() || state.status === 'loading'}>{t('ค้นหา', 'Search')}</button>
         </div>
         <details className="lsearch-more">
-          <summary>ตัวกรองแยกชื่อซ้ำ{filtersOn ? ` (${filtersOn})` : ''}</summary>
-          <label>จังหวัด
+          <summary>{t('ตัวกรองแยกชื่อซ้ำ', 'Filters for similar names')}{filtersOn ? ` (${filtersOn})` : ''}</summary>
+          <label>{t('จังหวัด', 'Province')}
             <select value={province} onChange={(e) => setProvince(e.target.value)}>
-              <option value="">ทุกจังหวัด</option>
+              <option value="">{t('ทุกจังหวัด', 'All provinces')}</option>
               {PROVINCES.map((p) => <option key={p}>{p}</option>)}
             </select>
           </label>
-          <label>ย่าน อำเภอ หรือถนน
-            <input className="field" value={area} maxLength={100} onChange={(e) => setArea(e.target.value)} placeholder="เช่น นิมมานเหมินท์" />
+          <label>{t('ย่าน อำเภอ หรือถนน', 'Area, district or street')}
+            <input className="field" value={area} maxLength={100} onChange={(e) => setArea(e.target.value)} placeholder={t('เช่น นิมมานเหมินท์', 'e.g. Nimman')} />
           </label>
-          <label>ประเภทที่พัก
+          <label>{t('ประเภทที่พัก', 'Stay type')}
             <select value={subtype} onChange={(e) => setSubtype(e.target.value)}>
-              <option value="">ทุกประเภท</option>
-              {LODGING_SUBTYPES.map((s) => <option key={s} value={s}>{subtypeLabel(s)}</option>)}
+              <option value="">{t('ทุกประเภท', 'All types')}</option>
+              {LODGING_SUBTYPES.map((s) => <option key={s} value={s}>{subtypeLabel(s, undefined, lang)}</option>)}
             </select>
           </label>
         </details>
       </form>
 
-      {state.status === 'loading' && <p className="count" role="status">กำลังค้นที่พัก</p>}
+      {state.status === 'loading' && <p className="count" role="status">{t('กำลังค้นที่พัก', 'Looking for stays…')}</p>}
       {state.status === 'error' && <p className="notice" role="alert">{state.message}</p>}
       {state.status === 'ok' && (
         <div className="lsearch-results" aria-live="polite">
@@ -77,7 +79,7 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
           {items.length > 0 && (
             <>
               <p className="count">
-                {items.length > 1 ? <>พบ <b>{items.length}</b> แห่ง</> : 'ตรวจว่าใช่ที่พักที่จองไว้ แล้วกดเลือก'}
+                {items.length > 1 ? <>{t('พบ', 'Found')} <b>{items.length}</b> {t('แห่ง', 'places')}</> : t('ตรวจว่าใช่ที่พักที่จองไว้ แล้วกดเลือก', 'Check this is the stay you booked, then choose it')}
               </p>
               <ul className="cands">
                 {items.map((l) => (
@@ -85,14 +87,14 @@ export default function LodgingSearch({ province: initialProvince = '', onChoose
                     <div>
                       <strong>{l.name}</strong>
                       <small>
-                        {[l.subtype && subtypeLabel(l.subtype), l.province ?? 'ไม่ทราบจังหวัด', l.address].filter(Boolean).join(' · ')}
+                        {[l.subtype && subtypeLabel(l.subtype, undefined, lang), l.province ?? t('ไม่ทราบจังหวัด', 'Unknown province'), l.address].filter(Boolean).join(' · ')}
                       </small>
                     </div>
-                    <button className="btn small" onClick={() => choose(l)}>เลือก</button>
+                    <button className="btn small" onClick={() => choose(l)}>{t('เลือก', 'Choose')}</button>
                   </li>
                 ))}
               </ul>
-              <p className="attr">ไม่เจอที่พักของคุณ ลองใช้ตัวกรอง หรือแตะบนแผนที่ตรงที่พักแทน</p>
+              <p className="attr">{t('ไม่เจอที่พักของคุณ ลองใช้ตัวกรอง หรือแตะบนแผนที่ตรงที่พักแทน', 'Cannot find your stay? Try the filters, or tap its spot on the map.')}</p>
             </>
           )}
         </div>

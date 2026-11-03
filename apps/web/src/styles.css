@@ -509,3 +509,7 @@ a.prov-n:hover { text-decoration:underline; }
 .chat-sources small { opacity:.75; }
 .chat-ctx { margin:0 0 8px; }
 .linkish { background:none; border:none; padding:0; color:var(--lagoon); text-decoration:underline; cursor:pointer; font:inherit; }
+
+/* ขัดหน้าตา: ปุ่มที่เป็นลิงก์ไม่ขีดเส้นใต้ ปุ่มในหน้าว่างพอดีตัว */
+a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.empty .btn.small, .page-pad .empty .btn { width: auto; margin-top: 8px; }

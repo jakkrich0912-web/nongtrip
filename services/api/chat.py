@@ -139,7 +139,8 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str])
         lat, lon = pc["lat"], pc["lon"]
         where = f"จุดกลางจังหวัด{it.province}"
         notes.append("ค้นรอบจุดกลางจังหวัด ไม่ใช่รอบที่พักของคุณ ปักหมุดที่พักเพื่อให้ตรงขึ้น")
-        if pc.get("notice"):
+        # จุดกลางจากค่าเฉลี่ยพิกัดเป็นทางเลือกปกติของโหมดสแนปช็อต ไม่ต้องบอกผู้ใช้ด้วยศัพท์เทคนิค (ข้อความข้างบนบอกอยู่แล้วว่าไม่ใช่รอบที่พัก)
+        if pc.get("notice") and pc.get("source") != "verified_centroid":
             notes.append(pc["notice"])
     elif ctx:
         lat, lon = ctx.lat, ctx.lon
