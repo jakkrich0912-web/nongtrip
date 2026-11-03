@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "source": "../front.webp",
+  "source_size": [
+    373,
+    520
+  ],
+  "source_sha256": "8c3370fca7cf7829ff2de7a0d57521cdcd7638eb430ecc6ca5fd6925abb8aebc",
+  "canvas_size": [
+    420,
+    540
+  ],
+  "source_offset": [
+    23,
+    20
+  ],
+  "face_band_source_xyxy_exclusive": [
+    60,
+    140,
+    340,
+    300
+  ],
+  "face_band_canvas_xyxy_exclusive": [
+    83,
+    160,
+    363,
+    320
+  ],
+  "face_crop_size": [
+    280,
+    160
+  ],
+  "base": "front.png",
+  "expected_expression_count": 23,
+  "actual_expression_count": 23,
+  "complete": true,
+  "expressions": [
+    {
+      "name": "blink-half",
+      "expression_th": "กะพริบตาครึ่งหนึ่ง",
+      "full": "blink-half.png",
+      "face": "faces/blink-half.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31365,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "f82b7f8393ad43cd267bb27c179777cccf152c94b7156a98f7fe6baa2823eb3e"
+    },
+    {
+      "name": "blink-closed",
+      "expression_th": "กะพริบตาปิด",
+      "full": "blink-closed.png",
+      "face": "faces/blink-closed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31832,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "59004873a4d4a2626f732c6ff635669283ea68bee3e0cb1c66638066e103661c"
+    },
+    {
+      "name": "ouch",
+      "expression_th": "ตกใจ / โอ๊ย",
+      "full": "ouch.png",
+      "face": "faces/ouch.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31728,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "05192904941a10fa4c82fbe979d4c9ab22bca0e112c4c32f96dc8fb75eadb76d"
+    },
+    {
+      "name": "afraid",
+      "expression_th": "ตกใจกลัว",
+      "full": "afraid.png",
+      "face": "faces/afraid.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31943,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "c1bde3939843245437f2f7799293236e9df027b47a5f7cf4cfb5d581b51144b8"
+    },
+    {
+      "name": "squint",
+      "expression_th": "หน้าย่น ตาหยี",
+      "full": "squint.png",
+      "face": "faces/squint.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 32131,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "ee81fd7290aef698763596255586ef7eab66f1bcaa887770292a25e6cd53bed8"
+    },
+    {
+      "name": "dizzy",
+      "expression_th": "มึนหัว ตาหมุน",
+      "full": "dizzy.png",
+      "face": "faces/dizzy.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31299,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "6d37309b4b1ae3325c98d55eb0bc5a5606cb899701e92acddfe2ead05ac6334f"
+    },
+    {
+      "name": "angry",
+      "expression_th": "โกรธ",
+      "full": "angry.png",
+      "face": "faces/angry.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31863,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "47f0da3081c373b12e37f6cc022e24ce9390a8c9815d68a2da0d851631420ec1"
+    },
+    {
+      "name": "crying",
+      "expression_th": "ร้องไห้",
+      "full": "crying.png",
+      "face": "faces/crying.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31636,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "40855d719d4b5ea67e65ecab7e1b3115147cbf7f1dbffab107100a3f2787701e"
+    },
+    {
+      "name": "grin",
+      "expression_th": "ยิ้มกว้าง ตาโค้ง",
+      "full": "grin.png",
+      "face": "faces/grin.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 32319,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "49aac530c0f0c3d65587843ad5739a8d6f189e36fdf67da87a095b03a2be2d13"
+    },
+    {
+      "name": "shy",
+      "expression_th": "หลับตา ยิ้มเขิน",
+      "full": "shy.png",
+      "face": "faces/shy.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 32109,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "48f2eb09bc7eba361bf21e25cf8021b69452bf65581151254ad908fe0fc779e7"
+    },
+    {
+      "name": "wink-left",
+      "expression_th": "ขยิบตาซ้ายของตัวละคร",
+      "full": "wink-left.png",
+      "face": "faces/wink-left.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31678,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "d97e0572b02a3d95d5deffaa717cfb78e3c81496a375fd1231d4925c17f1c54b"
+    },
+    {
+      "name": "wink-right",
+      "expression_th": "ขยิบตาขวาของตัวละคร",
+      "full": "wink-right.png",
+      "face": "faces/wink-right.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31652,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "b4eeca27bc8ff0ff40ab3ebb7a0598438608a849e2f004b1b22c5111861541df"
+    },
+    {
+      "name": "cross-eyed",
+      "expression_th": "ตาเหล่ มองจมูก",
+      "full": "cross-eyed.png",
+      "face": "faces/cross-eyed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31885,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "89b2db8e666ecc193c65cc69151562ad1facd6c5eff8e218f79aed69f888da08"
+    },
+    {
+      "name": "tongue",
+      "expression_th": "แลบลิ้น",
+      "full": "tongue.png",
+      "face": "faces/tongue.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 30851,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "6d3439118666acd7a3c4fc3274ea9a6d1593e78f2a1f2a13b2572ebf6f07a69a"
+    },
+    {
+      "name": "kiss",
+      "expression_th": "จุ๊บปาก",
+      "full": "kiss.png",
+      "face": "faces/kiss.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31504,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "686f9d64ae6d0ba7e5bcab446f962e394cabe9ce6dd83885ff8534c8a6fd2803"
+    },
+    {
+      "name": "heart-eyes",
+      "expression_th": "ตารูปหัวใจ",
+      "full": "heart-eyes.png",
+      "face": "faces/heart-eyes.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31595,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "392cff079a57ecfc483f01d637b61141303c1e353e845f15dba1f11e4b42b00c"
+    },
+    {
+      "name": "star-eyes",
+      "expression_th": "ตารูปดาว",
+      "full": "star-eyes.png",
+      "face": "faces/star-eyes.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 32025,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "7983d2423049ffa172f7179e5c6755c273a3d37427e7ab8bb140ae46887ce764"
+    },
+    {
+      "name": "yawn",
+      "expression_th": "หาว",
+      "full": "yawn.png",
+      "face": "faces/yawn.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31626,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "16ce1b50d24cfe4c53e895b0efeddbe9eedcfe201e2cac9601a37cc7a24a1ee1"
+    },
+    {
+      "name": "pre-sneeze",
+      "expression_th": "ก่อนจาม",
+      "full": "pre-sneeze.png",
+      "face": "faces/pre-sneeze.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31859,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "ea5c0d0023778afc32a85e5aa416c395dffe5644cc679d9753e167634619939b"
+    },
+    {
+      "name": "sneeze",
+      "expression_th": "ขณะจาม",
+      "full": "sneeze.png",
+      "face": "faces/sneeze.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31678,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "c35c03ede95969a40e624a3a14e98c3a2d64755c3c93a00de399572aad6b981e"
+    },
+    {
+      "name": "whistle",
+      "expression_th": "เป่าปาก ผิวปาก",
+      "full": "whistle.png",
+      "face": "faces/whistle.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31571,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "613b62375d48a96dc3d05d38f75ea3be6be652653dd0c0ce71f85f416279be10"
+    },
+    {
+      "name": "neutral",
+      "expression_th": "ตาเฉย ไม่แสดงอารมณ์",
+      "full": "neutral.png",
+      "face": "faces/neutral.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31696,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "51265a672f02d0ecf4d94f8838c9e61144431cd396458640ff0fdff9f632130f"
+    },
+    {
+      "name": "smirk",
+      "expression_th": "แกล้งฉลาด ยิ้มมุมปาก",
+      "full": "smirk.png",
+      "face": "faces/smirk.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31245,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "9ed7c6a74fad64b5c27fd05055a6dfad82071d95a8a3b7e5905128a11dcfb514"
+    }
+  ]
+}

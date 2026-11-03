@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { authLogin, authLogout, authMe, authRegister, myFavorites } from './api.js';
+import { authGoogle, authLogin, authLogout, authMe, authRegister, myFavorites } from './api.js';
 
 // สถานะผู้ใช้ทั้งเว็บ: ใครล็อกอินอยู่ และรหัสสถานที่โปรด (ใช้แสดงหัวใจบนการ์ด)
 // ผู้ที่ไม่ล็อกอิน user = null และหน้าเว็บซ่อนปุ่มบันทึกทั้งหมด (ข้อ 3.3)
@@ -23,11 +23,12 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => { const d = await authLogin(email, password); setUser(d.user); loadFavs(); return d.user; };
   const register = async (email, password) => { const d = await authRegister(email, password); setUser(d.user); setFavIds(new Set()); return d.user; };
+  const googleLogin = async (credential) => { const d = await authGoogle(credential); setUser(d.user); loadFavs(); return d.user; };
   const logout = async () => { try { await authLogout(); } finally { setUser(null); setFavIds(new Set()); } };
   const forget = () => { setUser(null); setFavIds(new Set()); };
 
   return (
-    <AuthContext.Provider value={{ user, ready, login, register, logout, forget, favIds, setFavIds, loadFavs }}>
+    <AuthContext.Provider value={{ user, ready, login, register, googleLogin, logout, forget, favIds, setFavIds, loadFavs }}>
       {children}
     </AuthContext.Provider>
   );
