@@ -355,6 +355,10 @@ def keep_previous(places: list[dict], previous: list[dict]) -> tuple[list[dict],
     return places + kept, kept
 
 
+# ส่วนท้ายของ COVERAGE.md ตั้งแต่บรรทัดนี้เขียนด้วยมือ (ผลทดสอบค้นจริง) สร้างรายงานใหม่แล้วต้องคงไว้
+MANUAL_MARK = "<!-- ส่วนที่เขียนเอง: build_places.py คงทุกอย่างตั้งแต่บรรทัดนี้ไว้ -->"
+
+
 def write_report(places, skipped, today, kept=()):
     by = {}
     for p in places:
@@ -376,7 +380,9 @@ def write_report(places, skipped, today, kept=()):
     if kept:
         lines += ["", f"## คงไว้จากรอบก่อน ({len(kept)}) รอบนี้ดึงไม่เจอแต่ยังเก็บไว้เพื่อไม่ให้รหัสที่ผู้ใช้บันทึกไว้หาย", "| จังหวัด | ชื่อ | รหัส |", "|---|---|---|"]
         lines += [f"| {p['province']} | {p['name_th']} | {p['id']} |" for p in kept]
-    REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    old = REPORT.read_text(encoding="utf-8") if REPORT.exists() else ""
+    manual = old[old.index(MANUAL_MARK):] if MANUAL_MARK in old else ""
+    REPORT.write_text("\n".join(lines) + "\n" + ("\n" + manual if manual else ""), encoding="utf-8")
 
 
 def main():

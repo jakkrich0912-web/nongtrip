@@ -100,3 +100,15 @@ def test_drop_ids_win_over_keep_previous():
         assert [p["id"] for p in merged] == [f"p{IDX}01"]
     finally:
         build_places.DROP_IDS.discard(f"p{IDX}41")
+
+
+def test_write_report_keeps_manual_section(tmp_path, monkeypatch):
+    import build_places
+    report = tmp_path / "COVERAGE.md"
+    report.write_text("# เก่า\n\n" + build_places.MANUAL_MARK + "\n## ผลทดสอบค้นจริง\nบันทึกเอง\n", encoding="utf-8")
+    monkeypatch.setattr(build_places, "REPORT", report)
+    build_places.write_report([], [], "2026-11-03")
+    text = report.read_text(encoding="utf-8")
+    assert "# เก่า" not in text
+    assert text.count(build_places.MANUAL_MARK) == 1
+    assert text.endswith("## ผลทดสอบค้นจริง\nบันทึกเอง\n")
