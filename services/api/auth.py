@@ -1,7 +1,8 @@
 """รหัสผ่านและเซสชัน ใช้เฉพาะไลบรารีมาตรฐาน
 
 - รหัสผ่านแฮชด้วย scrypt พร้อม salt สุ่มต่อผู้ใช้ ไม่เก็บรหัสผ่านจริง
-- เซสชันเป็นคุกกี้ที่เซ็นด้วย HMAC-SHA256 (SESSION_SECRET) มีวันหมดอายุ ไม่มีข้อมูลอื่นนอกจากรหัสผู้ใช้
+- เซสชันเป็นคุกกี้ที่เซ็นด้วย HMAC-SHA256 (SESSION_SECRET) มีวันหมดอายุ บรรจุรหัสผู้ใช้และรหัสเซสชัน
+  รหัสเซสชันต้องยังอยู่ในตาราง sessions ด้วย ออกจากระบบหรือเปลี่ยนรหัสผ่านแล้วคุกกี้เก่าใช้ต่อไม่ได้
 """
 from __future__ import annotations
 
@@ -58,25 +59,42 @@ def resolve_secret(explicit: str | None = None) -> str:
     return explicit or os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
 
 
-def make_token(user_id: int, secret: str, now: float | None = None) -> str:
-    exp = int((now if now is not None else time.time()) + SESSION_DAYS * 86400)
-    payload = f"{user_id}.{exp}"
+def new_session_id() -> str:
+    """รหัสเซสชันสุ่ม 32 ไบต์ (ตัวอักษร A-Z a-z 0-9 - _ ไม่มีจุด จึงอยู่ในโทเคนได้)"""
+    return secrets.token_urlsafe(32)
+
+
+def session_expiry(now: float | None = None) -> int:
+    return int((now if now is not None else time.time()) + SESSION_DAYS * 86400)
+
+
+def make_token(user_id: int, secret: str, now: float | None = None, sid: str = "", exp: int | None = None) -> str:
+    """โทเคน = รหัสผู้ใช้.วันหมดอายุ.รหัสเซสชัน.ลายเซ็น"""
+    exp = exp if exp is not None else session_expiry(now)
+    payload = f"{user_id}.{exp}.{sid}"
     return f"{payload}.{_sign(payload, secret)}"
 
 
-def read_token(token: str | None, secret: str, now: float | None = None) -> int | None:
-    """คืนรหัสผู้ใช้ถ้าโทเคนถูกต้องและยังไม่หมดอายุ ไม่งั้น None"""
+def read_session(token: str | None, secret: str, now: float | None = None) -> tuple[int, str] | None:
+    """คืน (รหัสผู้ใช้, รหัสเซสชัน) ถ้าลายเซ็นถูกและยังไม่หมดอายุ ไม่งั้น None
+    ผู้เรียกต้องเช็กต่อว่ารหัสเซสชันยังอยู่ในฐานข้อมูล (Store.session_valid)"""
     if not token:
         return None
     try:
-        uid, exp, sig = token.split(".")
-        if not hmac.compare_digest(_sign(f"{uid}.{exp}", secret), sig):
+        uid, exp, sid, sig = token.split(".")
+        if not sid or not hmac.compare_digest(_sign(f"{uid}.{exp}.{sid}", secret), sig):
             return None
         if int(exp) < (now if now is not None else time.time()):
             return None
-        return int(uid)
+        return int(uid), sid
     except (ValueError, TypeError):  # TypeError: คุกกี้ที่มีอักขระนอก ASCII ทำให้ compare_digest ล้ม
         return None
+
+
+def read_token(token: str | None, secret: str, now: float | None = None) -> int | None:
+    """รหัสผู้ใช้จากโทเคน (เช็กแค่ลายเซ็นและวันหมดอายุ ไม่เช็กว่าเซสชันถูกยกเลิกหรือยัง)"""
+    got = read_session(token, secret, now)
+    return got[0] if got else None
 
 
 def _sign(payload: str, secret: str) -> str:

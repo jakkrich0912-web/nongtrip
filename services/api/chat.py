@@ -25,8 +25,7 @@ from services.places import PlacesService, SearchError
 from services.places.geo import in_thailand
 from services.places.provinces import PROVINCES, province_en
 
-from . import auth
-from .accounts import COOKIE, MAX_ID
+from .accounts import COOKIE, MAX_ID, session_user
 from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
 from .rag import Rag
@@ -434,8 +433,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
     throttle = throttle or ChatThrottle()
 
     def user_of(req: Request) -> dict | None:
-        uid = auth.read_token(req.cookies.get(COOKIE), secret)
-        return store.user_by_id(uid) if uid else None
+        return session_user(store, secret, req.cookies.get(COOKIE))
 
     @r.post("/api/chat")
     def chat(body: ChatIn, req: Request):

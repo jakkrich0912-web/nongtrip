@@ -120,7 +120,7 @@ def test_delete_account_removes_everything_and_clears_session(env):
     assert r.status_code == 204
     assert "nt_session" in r.headers.get("set-cookie", "") and "Max-Age=0" in r.headers["set-cookie"]
     assert c.get("/api/auth/me").status_code == 401
-    for t in ("users", "searches", "favorites", "chats"):
+    for t in ("users", "sessions", "searches", "favorites", "chats"):
         assert count(db, t, a) == 0, t
     assert rows(db, "chat_messages") == 2                      # เหลือแต่ของ b
     assert count(db, "users", b) == 1 and count(db, "searches", b) == 1 and count(db, "favorites", b) == 1
@@ -129,7 +129,7 @@ def test_delete_account_removes_everything_and_clears_session(env):
 def test_deleted_user_cannot_login_and_cookie_is_dead(env):
     c, store, _ = env
     uid = fill(c, store, "a@example.com")
-    old = auth.make_token(uid, "test-secret")
+    old = c.cookies.get("nt_session")
     assert c.post("/api/me/delete", json={"email": "a@example.com"}).status_code == 204
     assert c.post("/api/auth/login", json={"email": "a@example.com", "password": PW}).status_code == 401
     c.cookies.set("nt_session", old)                            # คุกกี้เก่ายังไม่หมดอายุ แต่ผู้ใช้ไม่มีแล้ว
@@ -148,7 +148,9 @@ def test_email_can_register_again_after_delete(env):
 def test_google_account_can_delete(env):
     c, store, db = env
     u = store.create_google_user("g@example.com", "sub-123")
-    c.cookies.set("nt_session", auth.make_token(u["id"], "test-secret"))
+    sid, exp = auth.new_session_id(), auth.session_expiry()
+    store.create_session(u["id"], sid, exp)
+    c.cookies.set("nt_session", auth.make_token(u["id"], "test-secret", sid=sid, exp=exp))
     assert c.post("/api/me/delete", json={"email": "g@example.com"}).status_code == 204
     assert store.user_by_google_sub("sub-123") is None
     assert count(db, "users", u["id"]) == 0

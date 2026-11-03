@@ -5,8 +5,10 @@
 """
 from __future__ import annotations
 
+import hashlib
 import os
 import sqlite3
+import time
 import threading
 from contextlib import closing, contextmanager
 from datetime import datetime, timezone
@@ -23,6 +25,13 @@ CREATE TABLE IF NOT EXISTS users (
   pw_hash TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS sessions (
+  id_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE TABLE IF NOT EXISTS searches (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -51,6 +60,11 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   content TEXT NOT NULL, created_at TEXT NOT NULL
 );
 """
+
+
+def _sid_hash(sid: str) -> str:
+    """เก็บแค่แฮชของรหัสเซสชัน ฐานข้อมูลหลุดไปก็เอารหัสไปสวมเซสชันไม่ได้"""
+    return hashlib.sha256(sid.encode()).hexdigest()
 
 
 def now_iso() -> str:
@@ -130,6 +144,55 @@ class Store:
         with self._db() as c:
             r = c.execute("SELECT id, email FROM users WHERE id = ?", (user_id,)).fetchone()
             return dict(r) if r else None
+
+    def account(self, user_id: int) -> dict | None:
+        """ข้อมูลบัญชีสำหรับหน้าตั้งค่า ไม่คืนค่าแฮชรหัสผ่าน"""
+        with self._db() as c:
+            r = c.execute("SELECT id, email, pw_hash, created_at, google_sub FROM users WHERE id = ?",
+                          (user_id,)).fetchone()
+            if not r:
+                return None
+            return {"id": r["id"], "email": r["email"], "created_at": r["created_at"],
+                    "has_password": r["pw_hash"].startswith("scrypt$"), "google": r["google_sub"] is not None}
+
+    def password_hash(self, user_id: int) -> str | None:
+        with self._db() as c:
+            r = c.execute("SELECT pw_hash FROM users WHERE id = ?", (user_id,)).fetchone()
+            return r["pw_hash"] if r else None
+
+    def set_password(self, user_id: int, pw_hash: str) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE users SET pw_hash = ? WHERE id = ?", (pw_hash, user_id)).rowcount > 0
+
+    # ---- เซสชัน (ออกจากระบบแล้วคุกกี้เดิมใช้ไม่ได้ทันที) ----
+    def create_session(self, user_id: int, sid: str, expires_at: int) -> None:
+        """บันทึกเซสชันใหม่ และล้างเซสชันที่หมดอายุแล้วของผู้ใช้คนนี้ไปด้วย"""
+        with self._db() as c:
+            c.execute("DELETE FROM sessions WHERE user_id = ? AND expires_at < ?", (user_id, int(time.time())))
+            c.execute("INSERT INTO sessions(id_hash, user_id, created_at, expires_at) VALUES (?,?,?,?)",
+                      (_sid_hash(sid), user_id, now_iso(), expires_at))
+
+    def session_valid(self, user_id: int, sid: str, now: float | None = None) -> bool:
+        with self._db() as c:
+            return c.execute("SELECT 1 FROM sessions WHERE id_hash = ? AND user_id = ? AND expires_at >= ?",
+                             (_sid_hash(sid), user_id, int(now if now is not None else time.time()))).fetchone() is not None
+
+    def delete_session(self, sid: str) -> bool:
+        with self._db() as c:
+            return c.execute("DELETE FROM sessions WHERE id_hash = ?", (_sid_hash(sid),)).rowcount > 0
+
+    def delete_sessions(self, user_id: int, keep: str | None = None) -> int:
+        """ยกเลิกทุกเซสชันของผู้ใช้ ยกเว้น keep (เซสชันที่กำลังใช้อยู่) คืนจำนวนที่ยกเลิก"""
+        with self._db() as c:
+            if keep:
+                return c.execute("DELETE FROM sessions WHERE user_id = ? AND id_hash != ?",
+                                 (user_id, _sid_hash(keep))).rowcount
+            return c.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,)).rowcount
+
+    def count_sessions(self, user_id: int, now: float | None = None) -> int:
+        with self._db() as c:
+            return c.execute("SELECT COUNT(*) FROM sessions WHERE user_id = ? AND expires_at >= ?",
+                             (user_id, int(now if now is not None else time.time()))).fetchone()[0]
 
     # ---- ประวัติที่พักที่เคยค้น ----
     def add_search(self, user_id: int, name: str, lat: float, lon: float) -> dict:
