@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { licenseLabel, numberCitations, parseSSE, safeUrl } from './chat.js';
+import { describe, expect, it, vi } from 'vitest';
+import { licenseLabel, numberCitations, parseSSE, safeUrl, sendChat } from './chat.js';
 
 describe('parseSSE', () => {
   it('แยก event ที่ครบ และเก็บเศษที่ยังไม่ครบไว้', () => {
@@ -44,5 +44,27 @@ describe('safeUrl', () => {
     expect(safeUrl('data:text/html,x')).toBeNull();
     expect(safeUrl('//evil.example')).toBeNull();
     expect(safeUrl(null)).toBeNull();
+  });
+});
+
+describe('sendChat body', () => {
+  const body = async (args) => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers({ 'content-type': 'text/event-stream' }),
+      body: { getReader: () => ({ read: async () => ({ done: true }) }) },
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await sendChat(args, () => {});
+    vi.unstubAllGlobals();
+    return JSON.parse(fetchMock.mock.calls[0][1].body);
+  };
+  it('ส่งจังหวัดล่าสุดเมื่อไม่มีหมุด และส่ง lang เฉพาะอังกฤษ', async () => {
+    expect(await body({ message: 'a', last_province: 'น่าน', lang: 'en' })).toEqual({ message: 'a', last_province: 'น่าน', lang: 'en' });
+    expect(await body({ message: 'a', last_province: 'น่าน', lang: 'th' })).toEqual({ message: 'a', last_province: 'น่าน' });
+  });
+  it('มีหมุดแล้วไม่ส่งจังหวัดล่าสุด', async () => {
+    const sent = await body({ message: 'a', context: { lat: 1, lon: 2 }, last_province: 'น่าน' });
+    expect(sent).toEqual({ message: 'a', context: { lat: 1, lon: 2 } });
   });
 });

@@ -1,4 +1,5 @@
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
+import { noticeText } from '../lib/notices.js';
 import CatIcon from './CatIcon.jsx';
 import Mascot from './Mascot.jsx';
 import { useLanguage } from '../lib/language.jsx';
@@ -31,7 +32,7 @@ export default function LodgingResults({ state, hasPin, onChoose }) {
   const { items = [], radius_km: radius, notices = [], osm_available: osmAvailable, attribution } = state.data;
   return (
     <>
-      {notices.map((n) => <p key={n} className="notice">{n}</p>)}
+      {notices.map((n) => <p key={n} className="notice">{noticeText(n, lang)}</p>)}
       {osmAvailable === false && <p className="notice">{t('ตอนนี้ดึงข้อมูลจาก OpenStreetMap ไม่ได้ แสดงเฉพาะข้อมูลที่ตรวจที่มาแล้ว', 'OpenStreetMap data is unavailable right now, so only verified data is shown.')}</p>}
       <p className="count"><b>{items.length}</b> {t('ที่พักในรัศมี', 'stays within')} {radius} {t('กม. วัดเป็นระยะเส้นตรง', 'km, straight-line distance')}</p>
       {items.length === 0 && <div className="empty"><Mascot size={84} mood="think" /><strong>{t('ไม่พบที่พักรอบหมุดนี้', 'No stays around this pin')}</strong>{t('ลองปักหมุดใกล้ตัวเมือง', 'Try a pin closer to town.')}</div>}

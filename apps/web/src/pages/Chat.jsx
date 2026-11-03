@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { noticeText } from '../lib/notices.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import Mascot from '../components/Mascot.jsx';
 import MascotHead from '../components/MascotHead.jsx';
@@ -13,7 +14,7 @@ function ResultCards({ result, t, lang }) {
   const valid = result.validation?.ok !== false;
   return <div className="nt-chat-results">
     {!valid && <p className="nt-chat-error" role="alert">{t('ผลค้นยังไม่ผ่านการตรวจสอบ จึงยังไม่แสดงสถานที่', 'These results could not be verified, so places are hidden.')}</p>}
-    {(result.notices ?? []).map((notice, index) => <p className="nt-chat-notice" key={index}>{notice}</p>)}
+    {(result.notices ?? []).map((notice, index) => <p className="nt-chat-notice" key={index}>{noticeText(notice, lang)}</p>)}
     {valid && (result.items ?? []).map((place) => {
       const source = safeSourceUrl(place.source_url);
       const maps = safeSourceUrl(place.maps_url);
@@ -49,6 +50,7 @@ export default function Chat() {
   const [busy, setBusy] = useState(false);
   const controller = useRef(null);
   const chatId = useRef(null);
+  const lastProvince = useRef(null); // จังหวัดที่ถามไว้ล่าสุด (จาก event done)
   const serial = useRef(0);
   const input = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -65,7 +67,7 @@ export default function Chat() {
     setMessages((items) => [...items, { id: `user-${id}`, role: 'user', text: displayText.trim() }, { id, role: 'bot', text: '', sources: [], status: 'searching' }]);
     const update = (patch) => setMessages((items) => items.map((item) => item.id === id ? (typeof patch === 'function' ? patch(item) : { ...item, ...patch }) : item));
     try {
-      await sendChat({ message, context: context && { lat: context.lat, lon: context.lon }, chat_id: user ? chatId.current : null }, (event, data) => {
+      await sendChat({ message, context: context && { lat: context.lat, lon: context.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang }, (event, data) => {
         if (aborter.signal.aborted) return;
         if (event === 'token' && typeof data.text === 'string') update((item) => ({ ...item, text: item.text + data.text, status: 'answering' }));
         if (event === 'places') update({ places: data });
@@ -73,6 +75,7 @@ export default function Chat() {
         if (event === 'sources') update({ sources: Array.isArray(data.items) ? data.items : [] });
         if (event === 'done') {
           if (user && data.chat_id) chatId.current = data.chat_id;
+          if (typeof data.province === 'string') lastProvince.current = data.province;
           update({ status: 'done', mode: data.mode });
         }
       }, aborter.signal);
@@ -90,7 +93,7 @@ export default function Chat() {
     setContext({ lat: lodging.lat, lon: lodging.lon, name: lodging.name });
     input.current?.focus();
   };
-  // Suggested questions have explicit Thai equivalents supported by the search service.
+  // Suggested questions are sent in the selected language; the chat parser understands both Thai and English.
   const suggestions = context ? [
     ['คาเฟ่ใกล้ที่พักมีที่ไหนบ้าง', 'Which cafés are near my accommodation?'],
     ['ที่เที่ยวในระยะเส้นตรง 10 กม.', 'Attractions within 10 km straight-line distance'],
@@ -121,7 +124,7 @@ export default function Chat() {
             {message.lodgings && <div className="nt-chat-lodgings">
               <h3>{t('เลือกที่พักของคุณ', 'Choose your accommodation')}</h3>
               {message.lodgings.validation?.ok === false && <p className="nt-chat-error" role="alert">{t('ผลค้นที่พักยังไม่ผ่านการตรวจสอบ จึงยังไม่แสดงรายการ', 'These accommodation results could not be verified, so they are hidden.')}</p>}
-              {(message.lodgings.notices ?? []).map((notice, index) => <p key={index}>{notice}</p>)}
+              {(message.lodgings.notices ?? []).map((notice, index) => <p key={index}>{noticeText(notice, lang)}</p>)}
               {message.lodgings.validation?.ok !== false && (message.lodgings.items ?? []).map((lodging) => <button key={lodging.id} type="button" onClick={() => chooseLodging(lodging)} disabled={busy || !Number.isFinite(lodging.lat) || !Number.isFinite(lodging.lon)}><strong>{lodging.name}</strong>{lodging.address && <small>{lodging.address}</small>}</button>)}
             </div>}
             <SourceCards sources={message.sources} t={t} />
@@ -129,7 +132,7 @@ export default function Chat() {
           </div>
         </div>)}
       </div>
-      <div className="nt-chat-suggestions" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>{suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => send(thai, t(thai, english))}>{t(thai, english)} <span aria-hidden="true">↗</span></button>)}</div>
+      <div className="nt-chat-suggestions" aria-label={t('คำถามแนะนำ', 'Suggested questions')}>{suggestions.map(([thai, english]) => <button key={thai} type="button" disabled={busy} onClick={() => send(t(thai, english))}>{t(thai, english)} <span aria-hidden="true">↗</span></button>)}</div>
       <form className="nt-chat-composer" onSubmit={(event) => { event.preventDefault(); send(text); }}>
         <label className="nt-chat-input-label" htmlFor="chat-message">{t('ข้อความถึงน้องทริป', 'Message NongTrip')}</label>
         <div><input ref={input} id="chat-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={500} required placeholder={t('บอกชื่อที่พัก หรือพิมพ์คำถามได้เลย…', 'Your accommodation or question…')} autoComplete="off" /><button type="submit" disabled={busy || !text.trim()}>{busy ? t('กำลังตอบ…', 'Replying…') : t('ส่งข้อความ', 'Send')} <span aria-hidden="true">↑</span></button></div>

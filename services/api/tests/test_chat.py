@@ -263,17 +263,54 @@ def test_snapshot_mode_shows_names_without_notice(tmp_path):
     assert "วัดในสแนปช็อต" in text_of(evs) and "ไม่ผ่านการตรวจอิสระ" not in text_of(evs)
 
 
-def test_snapshot_province_search_hides_centroid_jargon(tmp_path):
-    # โหมดสแนปช็อตไม่เรียก OSM จึงใช้ค่าเฉลี่ยพิกัดเป็นจุดกลางจังหวัดตามปกติ ไม่ต้องแสดงหมายเหตุศัพท์เทคนิคให้ผู้ใช้
+def _snap_client(tmp_path):
     write_province(tmp_path / "snap", "เชียงใหม่",
-                   [cand("osm:node/1", "วัดในสแนปช็อต", up(2), LON)], "2026-11-01")
+                   [cand("osm:node/1", "วัดในสแนปช็อต", up(2), LON, en="Snapshot Temple")], "2026-11-01")
     svc = PlacesService(http=FakeHttp(), cache=TTLCache(None), verified=VERIFIED, osm_live=False,
                         snapshot=Snapshot(tmp_path / "snap"))
     app = create_app(svc, store=Store(tmp_path / "t.db"), session_secret="s", secure_cookie=False,
                      chat_throttle=ChatThrottle(limit=1000))
-    evs = events(ask(TestClient(app), "ที่เที่ยวในเชียงใหม่"))
-    out = text_of(evs)
+    return TestClient(app)
+
+
+def test_snapshot_province_search_hides_centroid_jargon(tmp_path):
+    # โหมดสแนปช็อตไม่เรียก OSM จึงใช้ค่าเฉลี่ยพิกัดเป็นจุดกลางจังหวัดตามปกติ ไม่ต้องแสดงหมายเหตุศัพท์เทคนิคให้ผู้ใช้
+    out = text_of(events(ask(_snap_client(tmp_path), "ที่เที่ยวในเชียงใหม่")))
     assert "ค่าเฉลี่ยพิกัด" not in out and "ไม่ใช่รอบที่พักของคุณ" in out
+
+
+def test_follow_up_without_place_uses_last_province(tmp_path):
+    # "แล้วคาเฟ่ล่ะ" ไม่ระบุที่ ใช้จังหวัดที่ถามไว้ล่าสุด และบอกหน้าเว็บให้จำต่อ
+    c = _snap_client(tmp_path)
+    first = events(ask(c, "ที่เที่ยวในเชียงใหม่"))
+    assert first[-1] == ("done", {"chat_id": None, "mode": "rule", "province": "เชียงใหม่"})
+    evs = events(ask(c, "แล้วคาเฟ่ล่ะ", last_province="เชียงใหม่"))
+    assert "ยังไม่รู้ว่าให้ค้นรอบไหน" not in text_of(evs) and "เชียงใหม่" in text_of(evs)
+    assert evs[-1][1]["province"] == "เชียงใหม่"
+
+
+def test_last_province_never_overrides_pin_or_new_province(tmp_path):
+    c = _snap_client(tmp_path)
+    pinned = text_of(events(ask(c, "ที่เที่ยวใกล้ๆ", context={"lat": LAT, "lon": LON}, last_province="ภูเก็ต")))
+    assert "หมุดของคุณ" in pinned and "ภูเก็ต" not in pinned
+    evs = events(ask(c, "คาเฟ่ในเชียงใหม่", last_province="ภูเก็ต"))
+    assert evs[-1][1]["province"] == "เชียงใหม่"
+
+
+def test_unknown_last_province_is_ignored_and_done_has_no_province(tmp_path):
+    c = _snap_client(tmp_path)
+    evs = events(ask(c, "แล้วคาเฟ่ล่ะ", last_province="ไม่ใช่จังหวัด"))
+    assert "ยังไม่รู้ว่าให้ค้นรอบไหน" in text_of(evs)
+    assert evs[-1] == ("done", {"chat_id": None, "mode": "rule"})
+    assert ask(c, "คาเฟ่", last_province="x" * 61).status_code == 400
+
+
+def test_english_reply_uses_english_text_and_names(tmp_path):
+    c = _snap_client(tmp_path)
+    out = text_of(events(ask(c, "ที่เที่ยวในเชียงใหม่", lang="en")))
+    assert "Found" in out and "Snapshot Temple" in out and "Note:" in out and "พบ" not in out
+    assert "Hi!" in text_of(events(ask(c, "สวัสดี", lang="en")))
+    assert ask(c, "สวัสดี", lang="fr").status_code == 400
 
 
 def test_failed_validation_withholds_names(env, monkeypatch):
