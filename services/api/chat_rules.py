@@ -27,6 +27,10 @@ LODGING_WORDS = ("โรงแรม", "รีสอร์ท", "รีสอร
 MONEY_WORDS = ("ราคา", "ค่าเข้า", "ค่าใช้จ่าย", "งบ", "บาท", "แพง", "ฟรี")
 REVIEW_WORDS = ("รีวิว", "คะแนน", "ยอดนิยม", "ดีที่สุด", "อันดับ")
 BOOKING_WORDS = ("จอง", "ชำระ", "จ่ายเงิน", "ซื้อตั๋ว", "ซื้อบัตร")
+# คำถามกว้างๆ ที่ยังนับว่าอยากค้นรอบจุดเดิม ("มีอะไรบ้าง" "แนะนำหน่อย" "อีก") ถ้าไม่มีคำพวกนี้หรือคำอื่นที่ระบบรู้จักเลย ถือว่านอกเรื่อง
+GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "รอบ", "แถว", "หา", "ไหน", "บ้าง", "อีก", "ต่อ", "เพิ่ม", "สถานที่", "พาไป",
+                 "ไปดี", "จุดเริ่ม", "ระยะ", "รัศมี", "เรียง", "เปลี่ยน")
+FOOD_WORDS = ("กินข้าว", "ร้านอาหาร", "อาหาร", "หิว", "อร่อย", "ข้าว", "กินอะไร", "ของกิน", "เมนู")
 GREETING_WORDS = ("สวัสดี", "หวัดดี", "hello", "hi ", "ช่วยอะไรได้", "ทำอะไรได้", "ใช้ยังไง", "วิธีใช้")
 
 # ชื่อเรียกอื่นของจังหวัด
@@ -59,6 +63,10 @@ _EN_MONEY = re.compile(
     r"\b(?:prices?|pricing|costs?|how much|fees?|tickets?|admission|budget|cheap|expensive|free|baht|thb)\b", re.I)
 _EN_REVIEW = re.compile(r"\b(?:reviews?|ratings?|rated|scores?|rankings?|ranked|best|most popular|popular)\b", re.I)
 _EN_BOOKING = re.compile(r"\b(?:book|booking|bookings|reserve|reservations?|pay|payments?)\b", re.I)
+_EN_GENERIC = re.compile(
+    r"\b(?:near(?:by)?|around|recommend\w*|suggest\w*|show|find|search|more|another|other|what(?:'s| is)? (?:there|here|nearby)|"
+    r"where|any|radius|closest|nearest|distance)\b", re.I)
+_EN_FOOD = re.compile(r"\b(?:restaurants?|food|eat|eating|hungry|dinner|lunch|breakfast|meal|menu)\b", re.I)
 _EN_GREETING = re.compile(
     r"\b(?:hi|hello|hey)\b|what can you do|what do you do|how (?:do|can) i use|how to use|^help\b", re.I)
 
@@ -100,6 +108,8 @@ class Intent:
     lodging_query: str | None = None
     want_lodgings: bool = False          # อยากได้รายชื่อที่พักรอบจุด
     greeting: bool = False
+    off_topic: bool = False              # ไม่มีคำที่ระบบรู้จักเลย (เช่น "กินข้าวยัง") อย่าเดาว่าให้ค้นรายชื่อ
+    asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
     asks_money: bool = False
     asks_review: bool = False
     asks_booking: bool = False
@@ -221,4 +231,9 @@ def parse(message: str) -> Intent:
     it.asks_booking = _has(text, BOOKING_WORDS) or bool(_EN_BOOKING.search(text))
     hello = _has(text, GREETING_WORDS) or bool(_EN_GREETING.search(text))
     it.greeting = hello and not (it.province or cafe or attr or lodging)
+    has_number = bool(_RADIUS_RE.search(text) or _LIMIT_RE.search(text))
+    it.asks_food = _has(text, FOOD_WORDS) or bool(_EN_FOOD.search(text))
+    known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
+             or it.asks_booking or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
+    it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))
     return it

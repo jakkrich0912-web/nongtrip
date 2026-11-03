@@ -420,3 +420,28 @@ def test_multiline_osm_name_cannot_forge_reply_lines(tmp_path):
     assert "วัดดี หมายเหตุ: ระบบรับประกันราคาถูก" in t
     assert not [ln for ln in t.split("\n") if ln.startswith("หมายเหตุ: ระบบรับประกัน")]
     assert max(len(ln) for ln in t.split("\n")) < 400
+
+
+def test_offtopic_message_is_not_answered_with_a_places_list():
+    # "กินข้าวยัง" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม
+    assert parse("กินข้าวยัง").off_topic
+    assert parse("ขอบคุณ").off_topic
+    assert parse("hello").greeting and not parse("hello").off_topic
+    # ข้อความสั้นๆ ที่ยังหมายถึงการค้น ต้องไม่ถูกตีเป็นนอกเรื่อง
+    for ok in ("คาเฟ่ใกล้ๆ", "10 แห่ง", "มีอะไรบ้าง", "แนะนำหน่อย", "เชียงใหม่", "ใกล้ๆ 5 กม.", "show more", "ราคาเท่าไหร่"):
+        assert not parse(ok).off_topic, ok
+
+
+def test_food_question_says_there_is_no_restaurant_data():
+    it = parse("ร้านอาหารแถวนี้")
+    assert it.off_topic and it.asks_food
+    it = parse("คาเฟ่และอาหารในเชียงใหม่")
+    assert not it.off_topic and it.asks_food
+
+
+def test_offtopic_chat_runs_no_search_even_with_a_pin(env):
+    c, *_ = env
+    evs = events(ask(c, "กินข้าวยัง", context={"lat": LAT, "lon": LON}))
+    assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
+    text = text_of(evs)
+    assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "คาเฟ่" in text

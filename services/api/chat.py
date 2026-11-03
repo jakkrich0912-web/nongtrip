@@ -43,6 +43,8 @@ INVALID_NOTICE_EN = "These results failed the independent check. Please do not r
 HELP = ("สวัสดีค่ะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณได้ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล\n"
         "ลองพิมพ์ เช่น \"คาเฟ่ใกล้ๆ\" (ถ้าปักหมุดไว้แล้ว) \"ที่เที่ยวในเชียงใหม่ 5 แห่ง\" หรือ \"ที่พักแถวภูเก็ต\"\n"
         "ระบบไม่มีราคา ค่าเข้า รีวิว หรือคะแนน และไม่จองหรือชำระเงินให้")
+OFF_TOPIC = "เรื่องนี้น้องทริปช่วยไม่ได้นะ น้องทริปช่วยหาสถานที่เที่ยวและคาเฟ่รอบที่พักของคุณ ในรัศมีไม่เกิน 30 กม. เรียงจากใกล้ไปไกล"
+HELP_HINT = ("ลองพิมพ์ เช่น \"คาเฟ่ใกล้ๆ\" (ถ้าปักหมุดไว้แล้ว) \"ที่เที่ยวในเชียงใหม่ 5 แห่ง\" หรือ \"ที่พักแถวภูเก็ต\"")
 ASK_LOCATION = ("ยังไม่รู้ว่าให้ค้นรอบไหน กรุณาปักหมุดที่พักบนแผนที่ พิมพ์ชื่อจังหวัด (เช่น \"คาเฟ่ในเชียงใหม่\") "
                 "หรือพิมพ์ชื่อที่พัก (เช่น \"ที่เที่ยวใกล้โรงแรมชื่อนี้\")")
 
@@ -50,6 +52,8 @@ ASK_LOCATION = ("ยังไม่รู้ว่าให้ค้นรอบ
 HELP_EN = ("Hi! NongTrip finds attractions and cafés around your stay, within 30 km, nearest first.\n"
            "Try: \"cafés nearby\" (once you have pinned your stay), \"attractions in Chiang Mai, 5 places\" or \"stays around Phuket\".\n"
            "The system has no prices, entry fees, reviews or scores, and does not book or take payment.")
+OFF_TOPIC_EN = "NongTrip cannot help with that. It finds attractions and cafés around your stay, within 30 km, nearest first."
+HELP_HINT_EN = "Try: \"cafés nearby\" (once you have pinned your stay), \"attractions in Chiang Mai, 5 places\" or \"stays around Phuket\"."
 ASK_LOCATION_EN = ("I do not know where to search yet. Pin your stay on the map, type a province "
                    "(for example \"cafés in Chiang Mai\") or type your stay's name.")
 
@@ -205,6 +209,12 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
 
     if it.greeting:
         yield from say(L(HELP, HELP_EN))
+        return
+
+    if it.off_topic:
+        food = L("ตอนนี้ระบบยังไม่มีข้อมูลร้านอาหาร มีเฉพาะที่เที่ยว คาเฟ่ และที่พัก",
+                 "The system has no restaurant data yet, only attractions, cafés and stays.") if it.asks_food else ""
+        yield from say(L(OFF_TOPIC, OFF_TOPIC_EN), food, L(HELP_HINT, HELP_HINT_EN))
         return
 
     notes = list(it.notes)
