@@ -94,6 +94,14 @@ export default function Chat() {
     if (stick.current) el.scrollTop = el.scrollHeight;
     setAtBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 80);
   }, [messages]);
+  // ข้อความที่กำลังพิมพ์ทีละตัวทำให้เนื้อหาสูงขึ้นเรื่อย ๆ: ถ้าอยู่ล่างสุดอยู่แล้วให้เลื่อนตาม
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(() => { if (stick.current) el.scrollTop = el.scrollHeight; });
+    if (el.firstElementChild) ro.observe(el.firstElementChild);
+    return () => ro.disconnect();
+  }, []);
   const onScroll = () => {
     const el = scroller.current;
     if (!el) return;

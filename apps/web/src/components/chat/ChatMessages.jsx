@@ -4,6 +4,15 @@ import SourceCards from './SourceCards.jsx';
 import { noticeText } from '../../lib/notices.js';
 import { numberCitations, safeUrl as safeSourceUrl } from '../../lib/chat.js';
 import { QUICK_PROVINCES } from '../../lib/useChatSession.js';
+import { useTypewriter } from '../../lib/typewriter.js';
+
+// คำตอบของน้องทริปพิมพ์ทีละตัว คำถามของผู้ใช้และคำตอบที่เสร็จก่อนเปิดหน้า (รวมจากประวัติ) แสดงทันที
+function MessageText({ message }) {
+  const full = message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n');
+  const [instant] = useState(() => message.role !== 'bot' || message.restored || message.status === 'done' || message.status === 'stopped');
+  const [shown, typing] = useTypewriter(full, instant);
+  return <p className={`nt-chat-text${typing ? ' is-typing' : ''}`}>{shown}</p>;
+}
 
 function ResultCards({ result, t, lang }) {
   if (!result) return null;
@@ -90,7 +99,7 @@ export default function ChatMessages({ messages, busy, onChooseLodging, t, lang,
       {message.role === 'bot' && <MascotHead size={headSize} />}
       {actions && message.role === 'user' && !busy && <button type="button" className="nt-chat-edit-btn" onClick={() => setEditing(message.id)} aria-label={t('แก้คำถามนี้', 'Edit this question')} title={t('แก้คำถาม', 'Edit')}>✎</button>}
       <div className="nt-chat-bubble">
-        {message.text && <p className="nt-chat-text">{message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n')}</p>}
+        {message.text && <MessageText message={message} />}
         {message.status === 'searching' && !message.text && <p className="nt-chat-waiting">{t('กำลังค้นสถานที่ให้…', 'Looking for places…')}</p>}
         {message.mode === 'llm' && <ResultCards result={message.places} t={t} lang={lang} />}
         {message.lodgings && <div className="nt-chat-lodgings">
