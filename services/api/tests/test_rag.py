@@ -280,3 +280,11 @@ def test_offtopic_with_llm_on_shows_offtopic_text_and_no_place_cards(tmp_path):
     text = text_of(evs)
     assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "1. " not in text
     assert done(evs)["mode"] == "rule" and not llm.calls
+
+
+def test_question_naming_a_place_reaches_llm_without_a_pin(tmp_path):
+    # ไม่มีหมุด ไม่มีจังหวัด แต่เอ่ยชื่อสถานที่ที่ตรวจแล้ว: ค้นรอบสถานที่นั้นแล้วส่งให้ LLM ตอบจากคลังความรู้
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(c.post("/api/chat", json={"message": "พระธาตุดอยสุเทพสร้างเมื่อไร"}))
+    assert done(evs)["mode"] == "llm" and len(llm.calls) == 1 and done(evs)["province"] == "เชียงใหม่"

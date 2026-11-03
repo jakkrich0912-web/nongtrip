@@ -445,3 +445,23 @@ def test_offtopic_chat_runs_no_search_even_with_a_pin(env):
     assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
     text = text_of(evs)
     assert "ช่วยไม่ได้" in text and "ร้านอาหาร" in text and "คาเฟ่" in text
+
+
+def test_find_place_uses_a_named_verified_place_and_ignores_chitchat():
+    from services.api.chat_rules import find_place
+    from services.places.models import Candidate as C
+    mk = lambda i, n: C(id=i, name_th=n, name_en=None, kind="attraction", subtype="x", lat=18.8, lon=98.9, source="verified")  # noqa: E731
+    places = [mk("v:1", "วัดพระธาตุดอยสุเทพ"), mk("v:2", "ถนนข้าวสาร"), mk("v:3", "วัดพระธาตุพนมวรมหาวิหาร"),
+              mk("v:4", "วัดพระธาตุพนมน้อย")]
+    assert find_place("พระธาตุดอยสุเทพสร้างเมื่อไร", places).id == "v:1"     # ชื่อสั้น ไม่มี "วัด"
+    assert find_place("กินข้าวยัง", places) is None                           # "นข้าว" บังเอิญตรงกับ "ถนนข้าวสาร" ไม่นับ
+    assert find_place("ขอบคุณ", places) is None
+    assert find_place("พระธาตุพนมสูงกี่เมตร", places) is None                 # ตรงสองที่เท่ากัน ไม่ชัด ไม่เดา
+
+
+def test_named_place_without_pin_searches_around_that_place(env):
+    c, *_ = env
+    evs = events(ask(c, "พระธาตุดอยสุเทพสร้างเมื่อไร"))
+    assert [d["name"] for e, d in evs if e == "tool"] == ["places_nearby"]
+    assert "รอบวัดพระธาตุดอยสุเทพ" in text_of(evs) and "ปักหมุด" not in text_of(evs)
+    assert dict(evs)["done"]["province"] == "เชียงใหม่"

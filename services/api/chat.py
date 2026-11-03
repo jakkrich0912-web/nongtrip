@@ -28,7 +28,7 @@ from services.places.provinces import PROVINCES, province_en
 from . import auth
 from .accounts import COOKIE, MAX_ID
 from .answer_guard import GUARD_NOTICE
-from .chat_rules import MAX_MESSAGE, Intent, clean, parse
+from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
 from .rag import Rag
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
@@ -239,7 +239,7 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
             notes.append(pc["notice"])
     elif ctx:
         lat, lon = ctx.lat, ctx.lon
-        where = L("หมุดของคุณ", "your pin")
+        where = _one_line(it.anchor) if it.anchor else L("หมุดของคุณ", "your pin")
     elif it.lodging_query:
         yield "tool", {"name": "lodgings_search", "args": {"q": it.lodging_query}}
         res = svc.find_lodging(it.lodging_query)
@@ -383,8 +383,19 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
             try:
                 intent = parse(text)
                 # ข้อความใหม่ไม่ระบุที่ (ไม่มีจังหวัด ไม่มีหมุด ไม่มีชื่อที่พัก): ใช้จังหวัดที่ถามไว้ล่าสุด
+                eff_ctx = ctx
+                remember = None
+                if not ctx and not intent.province and not intent.lodging_query and not intent.greeting:
+                    # ไม่มีหมุด/จังหวัด แต่เอ่ยชื่อสถานที่ที่ตรวจแล้ว: ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น ไม่ต้องถามหาหมุดก่อน
+                    # (ไม่ถือว่าเป็นหมุดของผู้ใช้ จึงไม่ย้ายหมุดบนหน้าเว็บ)
+                    hit = find_place(text, svc.verified)
+                    if hit:
+                        eff_ctx = Context(lat=hit.lat, lon=hit.lon)
+                        intent.anchor = hit.name_th
+                        intent.off_topic = False
+                        remember = hit.province if hit.province in PROVINCES else None
                 last = body.last_province if body.last_province in PROVINCES else None
-                if last and not intent.province and not ctx and not intent.lodging_query and not intent.greeting:
+                if last and not intent.province and not eff_ctx and not intent.lodging_query and not intent.greeting:
                     intent.province = last
                 use_rag = rag is not None and rag.enabled
                 off_topic = intent.off_topic
@@ -397,7 +408,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 places_ev: dict | None = None
                 pending: list[tuple[str, dict]] = []
                 t0 = time.perf_counter()
-                for ev, data in answer(intent, ctx, svc, known, body.lang):
+                for ev, data in answer(intent, eff_ctx, svc, known, body.lang):
                     if ev == "places":
                         places_ev = data
                     if ev == "token" and use_rag:
@@ -433,7 +444,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 logging.getLogger("uvicorn.error").info(
                     "chat timing: ค้นสถานที่ %.1f วินาที, ขั้น RAG/LLM %.1f วินาที, โหมด %s",
                     t_search, time.perf_counter() - t1, mode)
-                yield _sse("done", {"chat_id": chat_id, "mode": mode, **({"province": intent.province} if intent.province else {})})
+                yield _sse("done", {"chat_id": chat_id, "mode": mode, **({"province": intent.province or remember} if (intent.province or remember) else {})})
             except SearchError as e:
                 yield _sse("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้

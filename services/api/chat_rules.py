@@ -108,6 +108,7 @@ class Intent:
     lodging_query: str | None = None
     want_lodgings: bool = False          # อยากได้รายชื่อที่พักรอบจุด
     greeting: bool = False
+    anchor: str | None = None            # ชื่อสถานที่ที่ถูกเอ่ย ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น (ไม่มีหมุด/จังหวัด)
     off_topic: bool = False              # ไม่มีคำที่ระบบรู้จักเลย (เช่น "กินข้าวยัง") อย่าเดาว่าให้ค้นรายชื่อ
     asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
     asks_money: bool = False
@@ -137,6 +138,56 @@ def find_province(text: str) -> str | None:
         if rx.search(low) and (not ambiguous or _NAN_OK.search(low)):
             return p
     return None
+
+
+# คำนำหน้าชนิดสถานที่ที่ซ้ำกันเยอะ ตัดออกก่อนเทียบชื่อ ไม่งั้น "วัด" "อุทยานแห่งชาติ" จะทำให้จับชื่อผิดที่
+_GENERIC_NAME = ("อุทยานแห่งชาติ", "อุทยานประวัติศาสตร์", "วนอุทยาน", "พิพิธภัณฑ์", "ปราสาทหิน", "ปราสาท", "น้ำตก", "เขื่อน",
+                 "วัด", "ถ้ำ", "เกาะ", "หาด", "ตลาด", "สวน")
+_PAREN = re.compile(r"\s*[(（].*?[)）]")
+PLACE_MIN_CHARS = 6
+PLACE_MIN_SHARE = 0.45
+
+
+def _core(name: str) -> str:
+    n = re.sub(r"\s+", "", _PAREN.sub("", name or "")).lower()
+    for g in sorted(_GENERIC_NAME, key=len, reverse=True):
+        if n.startswith(g) and len(n) > len(g) + 2:
+            n = n[len(g):]
+            break
+    return n
+
+
+def _longest_common(a: str, b: str) -> int:
+    best = 0
+    prev = [0] * (len(b) + 1)
+    for i in range(1, len(a) + 1):
+        cur = [0] * (len(b) + 1)
+        for j in range(1, len(b) + 1):
+            if a[i - 1] == b[j - 1]:
+                cur[j] = prev[j - 1] + 1
+                best = max(best, cur[j])
+        prev = cur
+    return best
+
+
+def find_place(text: str, places) -> object | None:
+    """หาสถานที่ที่ตรวจที่มาแล้วซึ่งถูกเอ่ยชื่อในข้อความ (ชื่อเต็มหรือชื่อสั้น) ใช้เป็นจุดค้นเมื่อไม่มีหมุด/จังหวัด
+    ต้องมีส่วนที่ตรงกันยาวพอและครอบคลุมชื่ออย่างน้อยครึ่งหนึ่ง ถ้ามีสองที่ที่ตรงเท่ากันถือว่าไม่ชัด คืน None"""
+    t = re.sub(r"\s+", "", (text or "")).lower()
+    best, best_len, tie = None, 0, False
+    for p in places:
+        for name in (p.name_th, p.name_en):
+            core = _core(name or "")
+            if len(core) < PLACE_MIN_CHARS:
+                continue
+            n = _longest_common(t, core)
+            if n < PLACE_MIN_CHARS or n / len(core) < PLACE_MIN_SHARE:
+                continue
+            if n > best_len:
+                best, best_len, tie = p, n, False
+            elif n == best_len and best is not None and best.id != p.id:
+                tie = True
+    return None if tie else best
 
 
 def _has(text: str, words) -> bool:
