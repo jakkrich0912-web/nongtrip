@@ -1,120 +1,51 @@
-import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { PROVINCES } from '../lib/provinces.js';
-import { PLACES, subtypeLabel, iconGroup } from '../lib/data.js';
-import { placesAround } from '../lib/geo.js';
-import CatIcon from '../components/CatIcon.jsx';
+import { Link } from 'react-router-dom';
+import { useLanguage } from '../lib/language.jsx';
 import Mascot from '../components/Mascot.jsx';
+import Icon from '../components/landing/Icon.jsx';
+import ExploreDemo from '../components/landing/ExploreDemo.jsx';
 
-// จุดตัวอย่าง: ย่านนิมมานฯ เชียงใหม่ ผลที่แสดงคำนวณจากข้อมูลจริงในระบบ
-const DEMO = { lat: 18.7965, lon: 98.9677, name: 'ย่านนิมมานเหมินท์ เชียงใหม่' };
-
+function Hero() {
+  const { t } = useLanguage();
+  return <section className="nt-hero nt-container">
+    <div className="nt-hero-copy">
+      <span className="nt-eyebrow"><span />{t('เพื่อนตัวเล็ก สำหรับทริปของคุณ', 'A LITTLE FRIEND FOR YOUR NEXT ADVENTURE')}</span>
+      <h1>{t('จองที่พักแล้ว', 'Stay booked.')}<br /><span className="nt-highlight">{t('ไปไหนต่อดี?', 'What’s nearby?')}</span></h1>
+      <p>{t('ให้น้องทริปพาไปรู้จักที่เที่ยวและคาเฟ่รอบที่พัก', 'Meet the places and cafés around your stay.')}<br className="nt-desktop-break" />{t('ดูบนแผนที่ เลือกที่ถูกใจ แล้วออกไปเที่ยวกัน', 'Find your favorites on the map. Then go explore.')}</p>
+      <div className="nt-hero-actions"><Link className="nt-button nt-button-amber" to="/search">{t('ค้นหารอบที่พัก', 'Explore around my stay')}<Icon /></Link><a className="nt-text-link" href="#try-it">{t('ลองเล่นตัวอย่าง', 'Try the demo')}<span>↘</span></a></div>
+      <div className="nt-hero-note"><Icon name="check" size={16} />{t('เริ่มค้นหาได้เลย โดยไม่ต้องสมัครสมาชิก', 'Start exploring without an account')}</div>
+    </div>
+    <div className="nt-hero-art" aria-label={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, your orange explorer cat')}>
+      <div className="nt-orbit nt-orbit-outer" /><div className="nt-orbit nt-orbit-middle" /><div className="nt-orbit nt-orbit-inner" />
+      <span className="nt-art-spark nt-spark-one">✦</span><span className="nt-art-spark nt-spark-two">✧</span>
+      <span className="nt-orbit-pin nt-pin-one"><Icon name="pin" size={24} /></span><span className="nt-orbit-pin nt-pin-two"><Icon name="cafe" size={25} /></span>
+      <span className="nt-speech">{t('แถวนี้มีอะไรน่าเที่ยวบ้างนะ?', 'Let’s see what’s around!')}</span>
+      <Mascot size={298} mood="front" className="nt-hero-mascot" />
+      <div className="nt-mascot-name"><span>สวัสดี! Hello!</span><strong>{t('เราชื่อน้องทริป', 'I’m NongTrip')}</strong><Icon name="compass" size={26} /></div>
+      <span className="nt-art-caption">A LITTLE CURIOUS. ALWAYS READY.</span>
+    </div>
+  </section>;
+}
+function HowItWorks() {
+  const { t } = useLanguage();
+  const steps = [
+    ['pin', t('เริ่มจากที่พักของคุณ', 'Start with your stay'), t('ค้นชื่อที่พัก หรือปักหมุดบนแผนที่ เลือกตำแหน่งที่ใช่ด้วยตัวเอง', 'Search for your stay or drop a pin, then choose the right location.')],
+    ['compass', t('มองหาที่ที่อยากไป', 'Find your next little adventure'), t('ดูที่เที่ยวและคาเฟ่ในรัศมีที่เลือก เรียงจากใกล้ไปไกล หรือถามน้องทริป', 'Browse attractions and cafés from nearest to farthest, or ask NongTrip.')],
+    ['arrow', t('พร้อมแล้ว ก็ออกไปกัน', 'And you’re ready to explore'), t('เปิดแหล่งข้อมูลเพื่อรู้จักสถานที่ แล้วใช้ Google Maps นำทางต่อได้เลย', 'Check the source to learn more, then open directions in Google Maps.')],
+  ];
+  return <section className="nt-how nt-container" id="how-it-works"><div className="nt-section-heading"><span className="nt-eyebrow">A SMALL START. A LOVELY TRIP.</span><h2>{t('ทริปดี ๆ เริ่มจากใกล้ตัว', 'Good trips begin nearby.')}</h2><p>{t('จากหมุดที่พัก สู่วันพักผ่อนที่เป็นคุณ', 'From your stay to a day that feels like you.')}</p></div><ol className="nt-steps">{steps.map(([icon, title, body], i) => <li key={icon}><div className="nt-step-top"><span className="nt-step-icon"><Icon name={icon} size={27} /></span><span>0{i + 1}</span></div><h3>{title}</h3><p>{body}</p></li>)}</ol></section>;
+}
+function TrustSection() {
+  const { t } = useLanguage();
+  return <section className="nt-trust"><div className="nt-container nt-trust-inner"><div><span className="nt-eyebrow">EXPLORE WITH A LITTLE MORE CONFIDENCE</span><h2>{t('เพื่อนเที่ยวที่บอก', 'A travel buddy')}<br />{t('ที่มาที่ไปเสมอ', 'with sources to share.')}</h2><p>{t('ให้คุณตัดสินใจจากข้อมูลที่ตรวจสอบต่อได้', 'Make your own choices with information you can check.')}</p></div><div className="nt-trust-list">{[
+    ['shield', t('ตรวจชื่อและพิกัดแล้ว', 'Names and coordinates checked'), t('ตัวอย่างนี้ใช้สถานที่ที่ผ่านการตรวจสอบจากชุดข้อมูลของโครงการ', 'This demo uses verified places from the project’s dataset.')],
+    ['link', t('มีที่มาให้เปิดอ่าน', 'Sources you can open'), t('เปิดดูแหล่งอ้างอิงของแต่ละสถานที่ และสัญญาอนุญาตเมื่อมีข้อมูล', 'Open place references and their licenses when provided.')],
+    ['compass', t('ระยะทางบอกตรง ๆ', 'Clear about distance'), t('ทุกระยะเป็นเส้นตรงจากที่พัก ไม่ใช่ระยะขับรถ', 'Every distance is straight-line from your stay, not driving distance.')],
+  ].map(([icon,title,body]) => <article key={icon}><span><Icon name={icon} size={24}/></span><div><h3>{title}</h3><p>{body}</p></div></article>)}</div></div></section>;
+}
+function StartBanner() {
+  const { t } = useLanguage();
+  return <section className="nt-start nt-container"><div className="nt-start-inner"><Mascot mood="wave" size={174} interactive={false} /><div><span className="nt-eyebrow">YOUR NEXT ADVENTURE IS JUST AROUND THE CORNER</span><h2>{t('ทริปหน้า ให้น้องทริปไปด้วยนะ', 'Take NongTrip on your next trip.')}</h2><p>{t('เริ่มจากที่พัก แล้วไปเจอที่ใหม่ ๆ ด้วยกัน', 'Start with your stay. Discover something new together.')}</p></div><Link to="/search" className="nt-button nt-button-amber">{t('เริ่มสำรวจเลย', 'Let’s explore')}<Icon /></Link></div></section>;
+}
 export default function Home() {
-  const [prov, setProv] = useState('');
-  const nav = useNavigate();
-  const go = (e) => { e.preventDefault(); if (prov) nav(`/search?province=${encodeURIComponent(prov)}`); };
-
-  const demo = useMemo(() => placesAround(DEMO, PLACES).slice(0, 4), []);
-  const topProv = useMemo(() => {
-    const c = {};
-    PLACES.forEach((p) => { c[p.province] = (c[p.province] ?? 0) + 1; });
-    return Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 8);
-  }, []);
-  const byCat = useMemo(() => {
-    const m = {};
-    PLACES.forEach((p) => { (m[p.subtype] ??= []).push(p); });
-    return Object.entries(m).sort((a, b) => b[1].length - a[1].length);
-  }, []);
-
-  return (
-    <>
-      <section className="hero">
-        <div className="hero-copy">
-          <h1>จองที่พักแล้ว<br />ไปไหนต่อดี</h1>
-          <p>ปักหมุดที่พักของคุณ แล้วดูที่เที่ยวในรัศมี 30 กม. เรียงจากใกล้ไปไกล พร้อมปุ่มนำทางไปทีละที่</p>
-          <form className="picker" onSubmit={go}>
-            <select value={prov} onChange={(e) => setProv(e.target.value)} aria-label="จังหวัดที่จะไป">
-              <option value="">จะไปจังหวัดไหน</option>
-              {PROVINCES.map((p) => <option key={p}>{p}</option>)}
-            </select>
-            <button className="btn" disabled={!prov}>ดูรอบที่พัก</button>
-          </form>
-          <div className="facts">
-            <div><strong>77</strong>จังหวัด</div>
-            <div><strong>{PLACES.length}</strong>สถานที่ที่ตรวจที่มาแล้ว</div>
-            <div><strong>30 กม.</strong>รัศมีรอบที่พัก</div>
-          </div>
-        </div>
-
-        <div className="demo-wrap">
-        <div className="buddy">
-          <Mascot size={96} />
-          <span className="bubble">ลองปักหมุดที่พักดูนะ!</span>
-        </div>
-        <div className="demo" aria-label="ตัวอย่างผลค้น">
-          <div className="demo-map" aria-hidden="true">
-            <span className="r r3" /><span className="r r2" /><span className="r r1" />
-            <i className="home" />
-            {demo.map((p, k) => {
-              const dx = (p.lon - DEMO.lon) * 900, dy = (DEMO.lat - p.lat) * 900;
-              return <em key={p.id} className="dpin" style={{ left: `calc(50% + ${Math.max(-46, Math.min(46, dx))}%)`, top: `calc(50% + ${Math.max(-40, Math.min(40, dy))}%)`, animationDelay: `${0.9 + k * 0.12}s` }} />;
-            })}
-          </div>
-          <div className="demo-list">
-            <p className="demo-from">ที่พักตัวอย่าง: {DEMO.name}</p>
-            {demo.map((p) => (
-              <div key={p.id} className="demo-row">
-                <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={18} /></span>
-                <span className="demo-name"><Link to={`/places/${encodeURIComponent(p.id)}`}>{p.name_th}</Link><small>{subtypeLabel(p.subtype, p.kind)}</small></span>
-                <span className="demo-km">{p.distance_km} กม.<small>เส้นตรง</small></span>
-              </div>
-            ))}
-          </div>
-        </div>
-        </div>
-      </section>
-
-      <section className="band how">
-        <h2>สามขั้นจากที่พักถึงที่เที่ยว</h2>
-        <ol className="steps">
-          <li><b>1</b><h3>ปักหมุดที่พัก</h3><p>เลือกจังหวัด แล้วแตะบนแผนที่ตรงที่พักของคุณ</p></li>
-          <li><b>2</b><h3>ดูรอบตัว 30 กม.</h3><p>สถานที่เรียงจากใกล้ไปไกล กรองตามประเภทได้</p></li>
-          <li><b>3</b><h3>กดนำทาง</h3><p>เปิด Google Maps นำทาง หรือไปอ่านรีวิวจริงก่อนไป</p></li>
-        </ol>
-      </section>
-
-      <section className="band">
-        <div className="band-head">
-          <h2>เที่ยวแบบไหนดี</h2>
-          <p>ทุกแห่งตรวจที่มาของพิกัดแล้ว</p>
-        </div>
-        <div className="cats">
-          {byCat.map(([c, list]) => (
-            <article key={c} className={`cat c-${c}`}>
-              <div className="cat-top">
-                <span className="ico big"><CatIcon cat={c} size={26} /></span>
-                <span className="cat-n">{list.length} แห่ง</span>
-              </div>
-              <h3>{subtypeLabel(c)}</h3>
-              <ul>{list.slice(0, 3).map((p) => <li key={p.id}><Link to={`/places/${encodeURIComponent(p.id)}`}>{p.name_th}</Link><small>{p.province}</small></li>)}</ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="band provs">
-        <div className="band-head">
-          <h2>จังหวัดที่มีข้อมูลมากที่สุด</h2>
-          <p>ข้อมูลจังหวัดอื่นกำลังทยอยเพิ่ม</p>
-        </div>
-        <div className="prov-grid">
-          {topProv.map(([p, n]) => (
-            <Link key={p} to={`/provinces/${encodeURIComponent(p)}`} className="prov">
-              <span>{p}</span><small>{n} แห่ง</small>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </>
-  );
+  return <div className="nt-landing"><Hero /><ExploreDemo /><HowItWorks /><TrustSection /><StartBanner /></div>;
 }

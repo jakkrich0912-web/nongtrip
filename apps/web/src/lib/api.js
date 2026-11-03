@@ -60,6 +60,7 @@ export const placesNearby = ({ lat, lon, radius_km = 30, kinds, limit, offset })
 export const authMe = () => request('GET', '/api/auth/me');
 export const authLogin = (email, password) => request('POST', '/api/auth/login', { email, password });
 export const authRegister = (email, password) => request('POST', '/api/auth/register', { email, password });
+export const authGoogle = (credential) => request('POST', '/api/auth/google', { credential });
 export const authLogout = () => request('POST', '/api/auth/logout');
 export const deleteAccount = (email) => request('POST', '/api/me/delete', { email });
 
