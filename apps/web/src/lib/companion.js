@@ -51,6 +51,10 @@ export function saveRatio(ratio, storage = globalThis.localStorage) {
   try { storage?.setItem(KEY, JSON.stringify(ratio)); } catch { /* ไม่เป็นไร */ }
 }
 
+// จอแคบ (มือถือ) ไม่เดินเอง: ตัวมาสคอตกว้างเกือบหนึ่งในสี่ของจอ เดินผ่านทีไรบังรายการ ระยะ และปุ่มนำทาง
+// ยังลากไปวางที่อื่นและกดเปิดแชตได้เหมือนเดิม
+export const canWander = (vw) => vw >= NARROW;
+
 // เลือกปลายทางเดินรอบถัดไป: ซ้ายหรือขวา ระยะ 120-360 พิกเซล ชนขอบแล้วกลับด้าน rand คือค่า 0..1
 export function pickWalkTarget(x, vw, size = COMPANION_SIZE, rand = Math.random, rand2 = Math.random) {
   const b = bounds(vw, 0, size);
