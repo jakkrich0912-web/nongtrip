@@ -31,6 +31,20 @@ make down
 - ค่าใน `.env` ส่งเข้าคอนเทนเนอร์ `api` ยกเว้น `DB_PATH` กับ `PLACES_CACHE_DIR` ที่ถูกบังคับให้ชี้ไป volume
 - ถ้ากด `make up` แล้วค้าง ดู log ด้วย `make logs` หรือ `make logs s=api`
 
+## Deploy บน VPS
+
+บนเครื่องเดโม พอร์ต 80/443 เป็นของ Caddy ในโปรเจค video-buddy ซึ่งออกใบรับรอง HTTPS ให้ nongtrip ด้วย web จึงไม่เปิดพอร์ตบนเครื่อง แต่เข้าไปอยู่ในเครือข่าย `video-buddy_default` ในชื่อ `nongtrip-web`
+
+1. DNS: ตั้ง A record `nongtrip.traineeai.tech` ชี้ไปที่ IP ของเครื่อง
+2. เปิด video-buddy ก่อน (เครือข่าย `video-buddy_default` เป็นของ video-buddy)
+3. ต่อบล็อกใน `deploy/Caddyfile.nongtrip` ท้าย Caddyfile ของ video-buddy แล้ว reload: `docker exec video-buddy-web-1 caddy reload --config /etc/caddy/Caddyfile`
+4. `cp .env.example .env` ใส่ `SESSION_SECRET`, `SESSION_SECURE=1`, `GOOGLE_CLIENT_ID`, `ADMIN_EMAILS` และคีย์ LLM
+5. `make deploy` (ใช้ `docker-compose.yml` คู่กับ `deploy/compose.server.yml`)
+6. เช็ก: `python3 scripts/smoke_test.py https://nongtrip.traineeai.tech` และ `curl -sI https://nongtrip.traineeai.tech/` ต้องเห็น security headers
+7. อัปเดต: `git pull && make deploy`
+
+ล็อกอินด้วย Google ต้องมี `https://nongtrip.traineeai.tech` ใน Authorized JavaScript origins
+
 ## รันตอนพัฒนา (ไม่ใช้ Docker)
 
 ```

@@ -1,0 +1,17 @@
+# ใช้คู่กับ docker-compose.yml ผ่าน make deploy
+# พอร์ต 80/443 เป็นของ Caddy ใน video-buddy web จึงไม่เปิดพอร์ต แต่เข้าเครือข่ายเดียวกับ Caddy แทน
+services:
+  web:
+    ports: !reset []
+    networks:
+      default:
+      edge:
+        aliases: [nongtrip-web]
+    volumes:
+      # ไม่มีไฟล์นี้ ทุกคนจะถูกนับเป็น IP ของ Caddy และใช้โควตาแชตร่วมกัน
+      - ./deploy/nginx-realip.conf:/etc/nginx/conf.d/realip.conf:ro
+
+networks:
+  edge:
+    external: true
+    name: video-buddy_default
