@@ -6,7 +6,8 @@ from fastapi.testclient import TestClient
 from services.api.answer_guard import GUARD_NOTICE
 from services.api.chat import ChatThrottle
 from services.api.main import create_app
-from services.api.rag import Rag, build_prompt, load_known_names
+from services.api.chat import TRAVEL_DISCLAIMER
+from services.api.rag import TRAVEL_PROMPT, Rag, build_prompt, check_travel, load_known_names
 from services.api.store import Store
 from services.places import PlacesService
 from services.places.cache import TTLCache
@@ -271,15 +272,15 @@ def test_factual_question_without_search_words_still_reaches_llm_with_places(tmp
 
 
 def test_offtopic_with_llm_on_shows_offtopic_text_and_no_place_cards(tmp_path):
-    # "กินข้าวยัง": ไม่มีก้อนความรู้ตรงคำถาม LLM จึงไม่ถูกเรียก ต้องไม่แสดงรายชื่อ/การ์ดสถานที่ที่ไม่เกี่ยว
+    # "กินข้าวยัง": ไม่แสดงรายชื่อ/การ์ดสถานที่ที่ไม่เกี่ยว คำตอบ LLM เอ่ยชื่อสถานที่ที่ไม่ได้ค้น (ด่านตรวจตีตก) จึงใช้คำตอบสำเร็จรูป
     llm = FakeLLM(GOOD)
     c, _ = make(tmp_path, llm)
-    evs = events(ask(c, "กินข้าวยัง"))
+    evs = events(ask(c, "หิวแล้ว อยากกินของอร่อย"))
     names = [e for e, _ in evs]
     assert "places" not in names and "tool" not in names
     text = text_of(evs)
     assert "ยังไม่มีข้อมูลร้านอาหาร" in text and "1. " not in text
-    assert done(evs)["mode"] == "rule" and not llm.calls
+    assert done(evs)["mode"] == "rule" and len(llm.calls) == 1
 
 
 def test_question_naming_a_place_reaches_llm_without_a_pin(tmp_path):
@@ -347,11 +348,15 @@ def test_offtopic_falls_back_when_llm_errors(tmp_path):
     assert "ไม่ถนัด" in text_of(evs) and done(evs)["mode"] == "rule"
 
 
-def test_food_question_keeps_canned_reply_without_calling_llm(tmp_path):
-    llm = FakeLLM(TECH_A)
+def test_food_question_answers_from_general_knowledge_with_warning(tmp_path):
+    # ถามเรื่องอาหาร: ตอบเรื่องอาหารท้องถิ่นจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือน ไม่มีการ์ดสถานที่ (ระบบไม่มีข้อมูลร้านอาหาร)
+    llm = FakeLLM("ลองข้าวซอยกับแกงฮังเลค่ะ เป็นอาหารเหนือที่ขึ้นชื่อ")
     c, _ = make(tmp_path, llm)
-    assert "ยังไม่มีข้อมูลร้านอาหาร" in text_of(events(c.post("/api/chat", json={"message": "กินข้าวยัง"})))
-    assert not llm.calls
+    evs = events(c.post("/api/chat", json={"message": "กินอะไรดีที่เชียงใหม่"}))
+    text = text_of(evs)
+    assert text.startswith(TRAVEL_DISCLAIMER) and "ข้าวซอย" in text
+    assert "places" not in [e for e, _ in evs] and done(evs)["mode"] == "llm"
+    assert llm.calls[-1][0] == TRAVEL_PROMPT
 
 
 def test_smalltalk_still_does_not_call_llm(tmp_path):
@@ -424,3 +429,64 @@ def test_general_answer_also_sees_history():
     assert "ผู้ใช้: ภูเขาไฟคืออะไร" in llm.calls[-1][1]
     rag.general("hi", "en", [("user", "what is a volcano")])
     assert "User: what is a volcano" in llm.calls[-1][1]
+
+
+# ---------- คำถามเรื่องเที่ยวทั่วไปที่ระบบไม่มีข้อมูลตรวจแล้ว ----------
+NO_INFO_REPLY = "ไม่มีข้อมูลเรื่องนี้ในคลังของระบบ [k:p01:0]"
+
+
+def test_no_info_answer_turns_into_general_travel_answer(tmp_path):
+    # คลังความรู้ไม่มีเรื่องฤดูกาล: แทนที่จะบอกว่าไม่มีข้อมูล ให้ตอบจากความรู้ทั่วไปพร้อมคำเตือน การ์ดสถานที่ยังแสดง
+    def reply(user):
+        return NO_INFO_REPLY if "<knowledge" in user else "ช่วงพฤศจิกายนถึงกุมภาพันธ์อากาศเย็นสบายค่ะ"
+    llm = FakeLLM(reply)
+    c, _ = make(tmp_path, llm)
+    evs = events(ask(c, "ไปดอยสุเทพช่วงไหนดี"))
+    text = text_of(evs)
+    assert text.startswith(TRAVEL_DISCLAIMER) and "พฤศจิกายน" in text and "ไม่มีข้อมูลเรื่องนี้" not in text
+    names = [e for e, _ in evs]
+    assert "places" in names and "sources" not in names and done(evs)["mode"] == "llm"
+    assert len(llm.calls) == 2 and llm.calls[1][0] == TRAVEL_PROMPT
+
+
+def test_general_answer_failing_guard_falls_back_to_previous_answer(tmp_path):
+    def reply(user):
+        return NO_INFO_REPLY if "<knowledge" in user else "ไปหาดป่าตองสิคะ ราคาไม่แพง"
+    c, _ = make(tmp_path, FakeLLM(reply))
+    evs = events(ask(c, "ไปดอยสุเทพช่วงไหนดี"))
+    assert "ไม่มีข้อมูลเรื่องนี้" in text_of(evs) and "sources" in [e for e, _ in evs]
+
+
+def test_general_travel_question_without_chunks_uses_llm(tmp_path):
+    # ไม่มีก้อนความรู้ (โหมดกฎเดิมจะยื่นรายชื่อ) แต่ถามแผนเที่ยว: ตอบจากความรู้ทั่วไป ยังอ้างได้เฉพาะชื่อในรายการ
+    llm = FakeLLM(lambda user: "วันแรกเริ่มที่ใกล้สุดค่ะ ใกล้สุด ระยะเส้นตรง 1 กม.")
+    c, _ = make(tmp_path, llm)
+    evs = events(ask(c, "จัดทริป 2 วันแถวนี้ให้หน่อย"))
+    assert done(evs)["mode"] == "llm" and text_of(evs).startswith(TRAVEL_DISCLAIMER)
+
+
+def test_plain_search_still_uses_rule_list(tmp_path):
+    llm = FakeLLM(lambda user: "ไม่ควรถูกเรียก")
+    c, _ = make(tmp_path, llm)
+    evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
+    assert done(evs)["mode"] == "rule" and not llm.calls and "1. " in text_of(evs)
+
+
+def test_check_travel_rules():
+    places = [{"name_th": NAME, "distance_km": 1.77}]
+    assert check_travel(f"ไป{NAME}ช่วงหน้าหนาวค่ะ ห่าง 1.77 กม. (เส้นตรง)", {NAME, "วัดของที่อื่น"}, places) == []
+    assert check_travel("ไปวัดของที่อื่นสิคะ", {NAME, "วัดของที่อื่น"}, places)[0]["rule"] == "place_name"
+    assert check_travel("ห่าง 3 กม.", set(), places)[0]["rule"] == "distance"
+    assert check_travel("ห่างราว 1.8 กม. หรือราว 2 กม. (เส้นตรง)", set(), places) == []      # ปัดเศษได้
+    assert check_travel("ค่าเข้า 50 บาทค่ะ", set(), [])[0]["rule"] == "forbidden"
+    assert check_travel("", set(), [])[0]["rule"] == "empty"
+
+
+def test_follow_up_without_place_uses_place_from_previous_question(tmp_path):
+    # ไม่มีหมุดและไม่เอ่ยชื่อที่ แต่คำถามก่อนหน้าเอ่ยถึงวัด: ค้นรอบสถานที่นั้น ไม่ต้องถามว่าแถวไหน
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(c.post("/api/chat", json={"message": "เล่าเพิ่มหน่อย", "history": HISTORY}))
+    assert done(evs)["mode"] == "llm" and "ask" not in done(evs)
+    evs = events(c.post("/api/chat", json={"message": "เล่าเพิ่มหน่อย"}))
+    assert done(evs).get("ask") == "location"
