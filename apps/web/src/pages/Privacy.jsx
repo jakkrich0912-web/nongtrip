@@ -82,7 +82,7 @@ export default function Privacy() {
                 </tbody>
               </table>
             </div>
-            <p>{t('ถ้าไม่ได้เข้าสู่ระบบ ระบบไม่บันทึกที่พักที่ค้น สถานที่โปรด หรือแชตไว้ที่ใดเลย ปิดหน้าเว็บแล้วหายไป', 'If you are not signed in, no searches, favourites or chats are saved anywhere. Close the page and they are gone.')}</p>
+            <p>{t('ถ้าไม่ได้เข้าสู่ระบบ ระบบไม่บันทึกที่พักที่ค้น สถานที่โปรด หรือแชตไว้ที่เซิร์ฟเวอร์เลย แชตที่คุยอยู่เก็บไว้ในแท็บนี้ของเบราว์เซอร์เท่านั้น (sessionStorage) เปลี่ยนหน้าหรือรีเฟรชแล้วยังอยู่ ปิดแท็บแล้วหายไป', 'If you are not signed in, no searches, favourites or chats are saved on the server. The chat you are having is kept only in this browser tab (sessionStorage): it survives page changes and refreshes, and is gone when you close the tab.')}</p>
           </section>
 
           <section id="outside" className="nti-section">
@@ -90,8 +90,8 @@ export default function Privacy() {
             <p>{t('น้องทริปไม่ได้ทำทุกอย่างเอง บางงานต้องใช้บริการภายนอก ข้างล่างคือทุกกรณี', 'Some jobs need outside services. These are all of them.')}</p>
             <h3>{t('ผู้ให้บริการโมเดลภาษา (เมื่อแชตใช้โมเดลภาษา)', 'Language-model provider (when chat uses one)')}</h3>
             <p>{t(
-              'เมื่อคุณถามในแชต ระบบส่งข้อความที่คุณพิมพ์ พร้อมข้อความจากบทความ Wikipedia ที่ค้นได้ ไปให้ผู้ให้บริการโมเดลภาษาที่ผู้ดูแลระบบตั้งไว้ (เช่น Anthropic) เรียบเรียงคำตอบ ระบบไม่ส่งอีเมลหรือข้อมูลบัญชีของคุณไปด้วย',
-              'When you ask in chat, the text you typed and passages from matching Wikipedia articles are sent to the language-model provider the operator configured (for example Anthropic) to write the answer. Your email and account details are not sent.',
+              'เมื่อคุณถามในแชต ระบบส่งข้อความที่คุณพิมพ์ คำถามและคำตอบก่อนหน้าในแชตเดียวกันไม่เกิน 6 ข้อความ (ให้เข้าใจคำถามต่อเนื่อง) พร้อมข้อความจากบทความ Wikipedia ที่ค้นได้ ไปให้ผู้ให้บริการโมเดลภาษาที่ผู้ดูแลระบบตั้งไว้ (เช่น Anthropic) เรียบเรียงคำตอบ ระบบไม่ส่งอีเมลหรือข้อมูลบัญชีของคุณไปด้วย',
+              'When you ask in chat, the text you typed, up to 6 earlier questions and answers from the same chat (to understand follow-up questions), and passages from matching Wikipedia articles are sent to the language-model provider the operator configured (for example Anthropic) to write the answer. Your email and account details are not sent.',
             )}</p>
             {llm === true && <div className="nti-callout"><span>!</span><p>{t('ตอนนี้แชตใช้โมเดลภาษาอยู่ ข้อความที่คุณพิมพ์ในแชตจึงถูกส่งออกไปภายนอก อย่าพิมพ์ข้อมูลส่วนตัว เช่น เบอร์โทร เลขบัตร หรือรหัสผ่าน', 'Chat is using a language model right now, so what you type in chat is sent outside. Please don’t type personal details such as phone numbers, ID numbers or passwords.')}</p></div>}
             {llm === false && <div className="nti-callout is-ok"><span>✓</span><p>{t('ตอนนี้แชตตอบด้วยกฎของระบบเอง ข้อความที่คุณพิมพ์ในแชตไม่ถูกส่งออกไปนอกระบบ', 'Chat is answering with built-in rules right now, so what you type in chat does not leave our system.')}</p></div>}
