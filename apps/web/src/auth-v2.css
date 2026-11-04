@@ -1,6 +1,13 @@
-.nt-auth-page { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; background:#f5f3ed; color:#22301f; }
+.nt-auth-page { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; background:#f5f3ed; color:#22301f; overflow:hidden; }
 .nt-auth-page a { text-underline-offset:4px; }
-.nt-auth-story { position:relative; padding:38px clamp(28px,5vw,80px) 26px; display:flex; flex-direction:column; overflow:hidden; background:#3d6a4b; color:#fff; }
+.nt-auth-story { position:relative; z-index:2; padding:38px clamp(28px,5vw,80px) 26px; display:flex; flex-direction:column; overflow:hidden; background:#3d6a4b; color:#fff; transition:transform .9s cubic-bezier(.7,0,.22,1), padding .9s cubic-bezier(.7,0,.22,1); }
+/* สลับฝั่ง: เข้าสู่ระบบ มาสคอตซ้าย ฟอร์มขวา / สมัครใช้งาน มาสคอตขวา ฟอร์มซ้าย (เลื่อนสองแผงสวนกัน) */
+.nt-auth-form-panel { position:relative; z-index:1; background:#f5f3ed; transition:transform .9s cubic-bezier(.7,0,.22,1); }
+.nt-auth-page.is-signup .nt-auth-story { transform:translateX(100%); }
+.nt-auth-page.is-signup .nt-auth-form-panel { transform:translateX(-100%); }
+.nt-auth-story > :not(.as-scene) { position:relative; z-index:2; }
+.nt-auth-story-copy h2 { animation:nt-auth-rise .7s .25s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes nt-auth-rise { from { opacity:0; transform:translateY(14px); } }
 .nt-auth-brand { display:inline-flex; align-items:center; gap:12px; width:fit-content; color:#fff!important; text-decoration:none; font:600 24px/1.25 var(--display); }
 .nt-auth-brand small { display:block; margin-top:5px; font:500 8px/1.4 var(--body); letter-spacing:1.8px; }
 .nt-auth-brand .mascot-head { background:#f5f3ed; }
@@ -10,11 +17,13 @@
 .nt-auth-story-copy h2 span { color:#ffdfa5; }
 .nt-auth-story-copy p { font-size:15px; max-width:380px; margin:0; color:#e4ecdf; line-height:1.8; }
 .nt-auth-mascot-scene { min-height:340px; flex:1; position:relative; display:flex; justify-content:center; align-items:flex-end; margin-top:22px; }
-.nt-auth-mascot-scene > img { position:relative; z-index:2; width:min(67%,270px); height:auto; object-fit:contain; filter:drop-shadow(0 20px 16px rgba(19,41,24,.2)); }
-.nt-auth-orbit { border:1px dashed #8da993; position:absolute; border-radius:50%; width:330px; height:330px; bottom:-55px; left:50%; transform:translateX(-50%); }
-.nt-auth-orbit-two { width:500px; height:500px; bottom:-140px; opacity:.65; }
-.nt-auth-speech { position:absolute; z-index:3; left:0; top:46px; padding:10px 16px; background:#f5f3ed; color:#22301f; border-radius:16px 16px 3px 16px; font-size:12px; transform:rotate(-5deg); box-shadow:0 5px 0 #294b34; }
-.nt-auth-sticker { position:absolute; z-index:3; right:-8px; bottom:55px; display:grid; place-content:center; width:90px; height:90px; border-radius:50%; background:#f9a620; color:#22301f; transform:rotate(13deg); font:700 14px/1.2 var(--display); text-align:center; border:5px solid #ffcf80; }
+.nt-auth-speech { position:absolute; z-index:3; bottom:91%; right:56%; width:max-content; max-width:230px; padding:10px 16px; background:#f5f3ed; color:#22301f; border-radius:16px 16px 3px 16px; font-size:12px; line-height:1.5; transform:rotate(-5deg); box-shadow:0 5px 0 #294b34; transform-origin:100% 100%; animation:nt-auth-pop .45s cubic-bezier(.3,1.6,.5,1) both; pointer-events:none; }
+/* มาสคอตเดินไปซีกซ้าย กล่องพูดย้ายไปขวาหัว (ไม่ล้นขอบแผง) */
+.ms-walker[data-bubble="right"] .nt-auth-speech { right:auto; left:56%; border-radius:16px 16px 16px 3px; transform:rotate(5deg); transform-origin:0 100%; animation-name:nt-auth-pop-r; }
+@keyframes nt-auth-pop { from { opacity:0; transform:rotate(-5deg) scale(.6); } }
+@keyframes nt-auth-pop-r { from { opacity:0; transform:rotate(5deg) scale(.6); } }
+.nt-auth-live { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.ms-walker { position:relative; }
 .nt-auth-story-foot { z-index:2; position:relative; font-size:12px; color:#e4ecdf; margin:26px 0 0; text-align:center; }
 .nt-auth-form-panel { padding:38px clamp(24px,4.5vw,72px) 26px; display:flex; flex-direction:column; }
 .nt-auth-topline { display:flex; align-items:center; justify-content:space-between; gap:20px; }
@@ -58,8 +67,7 @@
 .nt-auth-form-foot { font-size:10px; text-align:center; color:#53614f; margin:0; }
 .nt-auth-page :focus-visible { outline:3px solid #b56a00; outline-offset:4px; }
 .nt-auth-story :focus-visible { outline-color:#ffcf80; }
-@media (min-width:1500px) { .nt-auth-story { padding-left:max(80px,calc((100vw - 1200px)/2)); } }
-@media (max-width:1050px) { .nt-auth-story { padding-inline:30px; } .nt-auth-story-copy { margin-top:55px; } .nt-auth-speech { left:-5px; font-size:10px; } .nt-auth-sticker { width:74px; height:74px; font-size:11px; right:-12px; } }
-@media (max-width:760px) { .nt-auth-page { display:block; } .nt-auth-story { display:none; } .nt-auth-form-panel { min-height:100vh; padding:24px 24px 20px; } .nt-auth-form-content { padding:50px 0 35px; } .nt-auth-form-content h1 { font-size:30px; } }
+@media (min-width:1500px) { .nt-auth-story { padding-left:max(80px,calc((100vw - 1200px)/2)); } .nt-auth-page.is-signup .nt-auth-story { padding-left:80px; padding-right:max(80px,calc((100vw - 1200px)/2)); } }
+@media (max-width:1050px) { .nt-auth-story { padding-inline:30px; } .nt-auth-story-copy { margin-top:55px; } .nt-auth-speech { font-size:11px; max-width:190px; } }
+@media (max-width:760px) { .nt-auth-page { display:block; } .nt-auth-story { display:none; } .nt-auth-page.is-signup .nt-auth-form-panel { transform:none; } .nt-auth-form-panel { min-height:100vh; padding:24px 24px 20px; } .nt-auth-form-content { padding:50px 0 35px; } .nt-auth-form-content h1 { font-size:30px; } }
 @media (prefers-reduced-motion:reduce) { .nt-auth-page *, .nt-auth-page *::before, .nt-auth-page *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
-.nt-auth-mascot-scene .mascot { position:relative; z-index:2; width:min(67%,270px) !important; }

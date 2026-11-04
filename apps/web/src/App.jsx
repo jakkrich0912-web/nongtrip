@@ -32,8 +32,9 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/login" element={<Login key="login" mode="login" />} />
-        <Route path="/signup" element={<Login key="signup" mode="signup" />} />
+        {/* key เดียวกัน: สลับหน้าเข้าสู่ระบบ/สมัครแล้วเป็นหน้าเดิม แผงมาสคอตจึงเลื่อนข้ามฝั่งได้แบบต่อเนื่อง */}
+        <Route path="/login" element={<Login key="auth" mode="login" />} />
+        <Route path="/signup" element={<Login key="auth" mode="signup" />} />
         <Route path="/me" element={<MyTrips />} />
         <Route path="/places/:id" element={<PlaceDetail />} />
         <Route path="/settings" element={<Settings />} />
