@@ -60,7 +60,7 @@ export default function Privacy() {
             <h2>{t('สรุปสั้น ๆ', 'In short')}</h2>
             <ul className="nti-cards">
               <li><span><Icon name="search" size={20} /></span><strong>{t('ไม่สมัครก็ใช้ได้', 'No account needed')}</strong><p>{t('ค้นหาและแชตได้ครบ โดยระบบไม่บันทึกประวัติไว้ให้ใคร', 'Search and chat fully. Nothing is saved to any account.')}</p></li>
-              <li><span><Icon name="shield" size={20} /></span><strong>{t('เก็บเท่าที่จำเป็น', 'Only what is needed')}</strong><p>{t('ไม่มีโฆษณา ไม่มีตัวติดตาม ไม่มี analytics และไม่ขายหรือแบ่งปันข้อมูล', 'No ads, no trackers, no analytics. We never sell or share your data.')}</p></li>
+              <li><span><Icon name="shield" size={20} /></span><strong>{t('เก็บเท่าที่จำเป็น', 'Only what is needed')}</strong><p>{t('ไม่มีโฆษณา ไม่มีตัวติดตามรายคน และไม่ขายหรือแบ่งปันข้อมูล', 'No ads, no per-person tracking. We never sell or share your data.')}</p></li>
               <li><span><Icon name="check" size={20} /></span><strong>{t('ลบได้เองทั้งหมด', 'Delete it all yourself')}</strong><p>{t('ลบทีละรายการ ลบทั้งหมด หรือลบบัญชีทิ้งได้จากหน้าทริปของฉัน', 'Delete single items, everything, or the whole account from My trips.')}</p></li>
             </ul>
           </section>
@@ -123,6 +123,10 @@ export default function Privacy() {
             <p>{t(
               'เพื่อกันคนส่งคำขอรัว ๆ ระบบจำที่อยู่ IP ไว้ในหน่วยความจำชั่วคราว (เช่น แชตไม่เกิน 20 ครั้งต่อนาที) ไม่เขียนลงฐานข้อมูล และหายเมื่อระบบรีสตาร์ท เว็บเซิร์ฟเวอร์ยังบันทึก log การเข้าถึงตามค่าเริ่มต้น คือ ที่อยู่ IP เวลา และที่อยู่หน้าที่ขอ ซึ่งอาจมีพิกัดที่ค้นอยู่ในนั้น log นี้ใช้ดูแลระบบเท่านั้น',
               'To stop request floods, IP addresses are kept briefly in memory (for example, at most 20 chat messages a minute). They are not written to the database and vanish on restart. The web server also keeps standard access logs (IP address, time and requested address, which can include searched coordinates). These logs are used only to run the system.',
+            )}</p>
+            <p>{t(
+              'เพื่อดูแลคุณภาพระบบ เรานับยอดรวมรายวัน เช่น จำนวนการค้น จังหวัดที่ถูกค้น จำนวนแชตแยกตามวิธีตอบ และเหตุที่ด่านตรวจตีตกคำตอบ แต่ละแถวมีแค่ วัน ชนิด ค่า และจำนวน ไม่มีข้อความ ที่อยู่ IP หรือรหัสผู้ใช้ จึงย้อนกลับไปหาว่าใครทำอะไรไม่ได้ ผู้ดูแลระบบดูได้เฉพาะยอดรวมเหล่านี้',
+              'To keep the system healthy we count daily totals, such as searches, searched provinces, chats by answer type and why the checker rejected answers. Each row holds only a day, a type, a value and a count, with no text, IP address or user ID, so nothing can be traced back to a person. Administrators see only these totals.',
             )}</p>
           </section>
 

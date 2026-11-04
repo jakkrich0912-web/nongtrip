@@ -372,6 +372,16 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout, :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout svg { color:#deb5a9; }
 :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout:hover, :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout:focus-visible { background:#251a15; }
 
+/* จาก pages/admin.css */
+:where(html[data-theme=dark]) .adm-col:hover, :where(html[data-theme=dark]) .adm-col:focus-visible { background:rgba(61,106,75,0.06); }
+:where(html[data-theme=dark]) .adm-col:focus-visible { box-shadow:inset 0 0 0 2px #000000; }
+:where(html[data-theme=dark]) .adm-tip { box-shadow:0 8px 20px rgba(0,0,0,0.308); }
+:where(html[data-theme=dark]) .adm-table summary { color:#8cc79a; }
+:where(html[data-theme=dark]) b.is-good { color:#b1e1c2; }
+:where(html[data-theme=dark]) b.is-warn { color:#e3cfb5; }
+:where(html[data-theme=dark]) .adm-chips a:hover { border-color:#51574b; color:#8cc79a; }
+:where(html[data-theme=dark]) :where(html[data-theme=dark]) b.is-warn { color:#d1b587; }
+
 /* จาก components/companion.css */
 :where(html[data-theme=dark]) .nt-comp-dot { border:2.5px solid #3c341d; box-shadow:0 1px 4px rgba(0,0,0,0.66); }
 :where(html[data-theme=dark]) .nt-comp-hello { background:#1d190c; border:1px solid #43483f; box-shadow:0 8px 24px rgba(0,0,0,0.352); }

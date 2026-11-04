@@ -12,6 +12,7 @@ import About from './pages/About.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Settings from './pages/Settings.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Admin from './pages/Admin.jsx';
 import { Link } from 'react-router-dom';
 import SiteHeader, { Brand } from './components/landing/SiteHeader.jsx';
 import ChatCompanion from './components/ChatCompanion.jsx';
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/me" element={<MyTrips />} />
         <Route path="/places/:id" element={<PlaceDetail />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="/provinces" element={<Provinces />} />
         <Route path="/provinces/:name" element={<ProvincePage />} />
         <Route path="/about" element={<About />} />

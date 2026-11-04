@@ -15,7 +15,8 @@ from services.places import PlacesService, SearchError
 from services.places.provinces import REGION_ORDER, REGIONS
 from services.places.verified import coverage_by_province
 
-from . import auth
+from . import auth, metrics
+from .admin import build_admin_router
 from .accounts import build_router
 from .chat import ChatThrottle, build_chat_router
 from .google import GoogleVerifier
@@ -43,6 +44,8 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     secret = auth.resolve_secret(session_secret)
     app.include_router(build_router(store, secret, svc.verified, secure_cookie, throttle, google))
     app.include_router(build_chat_router(store, secret, svc, known, chat_throttle, rag))
+    app.include_router(build_admin_router(store, secret, svc, rag))
+    metrics.attach(store)
 
     @app.exception_handler(SearchError)
     async def _search_error(_: Request, e: SearchError):
@@ -79,6 +82,9 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     def places_nearby(lat: float, lon: float, radius_km: float = 30.0,
                       kinds: str = "attraction,cafe", limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
         res = svc.nearby(lat, lon, radius_km, [k.strip() for k in kinds.split(",") if k.strip()], limit, offset).to_dict()
+        if offset == 0:  # นับครั้งเดียวต่อการค้น ไม่นับตอนกดโหลดเพิ่ม
+            metrics.count("search", "nearby")
+            metrics.count("search_province", metrics.nearest_province(lat, lon, svc.verified) or "ไม่ทราบ")
         res["validation"] = validate_nearby(res, known)
         if not res["validation"]["ok"]:
             res["notices"] = res["notices"] + ["ผลค้นนี้ไม่ผ่านการตรวจอิสระ โปรดอย่าเชื่อถือจนกว่าจะตรวจสอบ"]
@@ -87,6 +93,7 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     @app.get("/api/lodgings/near")
     def lodgings_near(lat: float, lon: float):
         res = svc.lodgings_near(lat, lon)
+        metrics.count("search", "pin")
         res["validation"] = validate_lodgings_near(res, known)
         if not res["validation"]["ok"]:
             res["notices"] = res["notices"] + ["ผลค้นนี้ไม่ผ่านการตรวจอิสระ โปรดอย่าเชื่อถือจนกว่าจะตรวจสอบ"]

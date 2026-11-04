@@ -17,6 +17,8 @@ from services.places.geo import in_thailand, place_url
 from services.places.provinces import PROVINCES, REGION_ORDER, REGIONS, region_of
 from services.places.verified import DATA_DIR, FILES
 
+from . import metrics
+
 ID_RE = re.compile(r"^v:[A-Za-z0-9_-]{1,40}$")
 MAX_FEATURED = 50
 MAX_PAGE = 200
@@ -102,6 +104,8 @@ def build_guide_router(items: list[dict]) -> APIRouter:
         if name not in PROVINCES:
             return _err(400, "invalid_param", "ไม่รู้จักชื่อจังหวัดนี้ (ต้องเป็นหนึ่งใน 77 จังหวัด)")
         mine = [x for x in items if x["province"] == name]
+        if offset == 0 and not category:
+            metrics.count("province_view", name)
         shown = [x for x in mine if not category or x["subtype"] == category]
         return {"province": name, "region": region_of(name), "verified_count": len(mine),
                 "categories": _counts(mine), "total": len(shown), "items": shown[offset:offset + limit],

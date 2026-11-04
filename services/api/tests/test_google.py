@@ -70,7 +70,7 @@ def test_new_google_user_is_created_and_logged_in(tmp_path):
     c, _, db = make(tmp_path, g)
     r = go(c, "my-id-token")
     assert r.status_code == 201
-    assert r.json() == {"user": {"id": 1, "email": "guest@example.com"}}
+    assert r.json() == {"user": {"id": 1, "email": "guest@example.com", "is_admin": False}}
     assert g.calls == [{"id_token": "my-id-token"}]
     assert "pw_hash" not in r.text and "sub-1" not in r.text
     assert c.get("/api/auth/me").json()["user"]["email"] == "guest@example.com"
