@@ -27,8 +27,9 @@ DIRECTIONS = (
     "w", "wsw", "sw", "ssw", "s", "sse", "se", "ese",
 )
 FILENAMES = tuple(f"gaze-{direction}.png" for direction in DIRECTIONS)
-# Eye apertures measured on the unmodified front.png, independently of helpers.
-APERTURES = ((158.5, 228.5, 30.5, 32.5), (300.0, 239.5, 28.0, 30.5))
+# Eye interiors measured on fluffy front.webp, with (23, 20) padding added.
+# Keep these explicit so a generator-geometry change must be reviewed separately.
+APERTURES = ((155.5, 236.0, 25.0, 26.5), (280.0, 243.5, 23.5, 26.0))
 
 
 def load(path):
@@ -146,7 +147,7 @@ class CorruptGazeTests(unittest.TestCase):
 
     def test_rejects_edits_to_mouth_or_transparent_background(self):
         original = self.frame_path.read_bytes()
-        for point in ((230, 285), (0, 0)):
+        for point in ((218, 279), (0, 0)):
             with self.subTest(point=point):
                 self.frame_path.write_bytes(original)
                 current = load(self.frame_path)
@@ -157,8 +158,8 @@ class CorruptGazeTests(unittest.TestCase):
 
     def test_rejects_alpha_change_inside_eye(self):
         current = load(self.frame_path)
-        r, g, b, a = current.getpixel((158, 228))
-        current.putpixel((158, 228), (r, g, b, a ^ 1))
+        r, g, b, a = current.getpixel((155, 236))
+        current.putpixel((155, 236), (r, g, b, a ^ 1))
         current.save(self.frame_path)
         self.reject("alpha changed")
 

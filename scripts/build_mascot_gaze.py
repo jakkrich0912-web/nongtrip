@@ -13,8 +13,10 @@ from PIL import Image, ImageChops, ImageDraw
 
 OUT = Path(__file__).resolve().parents[1] / 'apps/web/src/assets/mascot/expressions-v2'
 RING = ('e','ene','ne','nne','n','nnw','nw','wnw','w','wsw','sw','ssw','s','sse','se','ese')
-EYES = ((158.5,228.5,30.5,32.5),(300.0,239.5,28.0,30.5))
-AMPLITUDE = (9.0,8.0)
+# Fluffy front.webp eye interiors measured at source coordinates, then padded
+# by (23, 20). Leave the dark aperture boundary and surrounding fur fixed.
+EYES = ((155.5,236.0,25.0,26.5),(280.0,243.5,23.5,26.0))
+AMPLITUDE = (7.5,7.0)
 BAND = (83,160,363,320)
 SIZE = (420,540)
 
