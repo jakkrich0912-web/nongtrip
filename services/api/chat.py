@@ -28,7 +28,7 @@ from services.places.provinces import PROVINCES, province_en
 from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
-from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
+from .chat_rules import MAX_MESSAGE, Intent, clean, drop_province, find_place, parse
 from .rag import MAX_HISTORY, Rag, is_no_info
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
@@ -513,7 +513,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     if not hit:
                         # คำถามต่อเนื่องที่ไม่เอ่ยชื่อที่ ("เล่าเพิ่มหน่อย"): ใช้สถานที่ที่เอ่ยในคำถามก่อนหน้าของแชตเดียวกัน
                         prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
-                        hit = find_place(clean(prev), svc.verified) if prev else None
+                        hit = find_place(drop_province(clean(prev)), svc.verified) if prev else None
                     if hit:
                         eff_ctx = Context(lat=hit.lat, lon=hit.lon)
                         intent.anchor = hit.name_th

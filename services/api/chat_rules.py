@@ -276,6 +276,18 @@ def find_province(text: str) -> str | None:
     return None
 
 
+def drop_province(text: str) -> str:
+    """ตัดชื่อจังหวัด (ไทย/อังกฤษ) ออกจากข้อความ ใช้ก่อนหาชื่อสถานที่ในคำถามก่อนหน้า
+    ไม่ให้ "cafes in Chiang Mai" ไปจับ "Chiang Mai Zoo" เป็นจุดค้น"""
+    out = text or ""
+    for p in sorted(PROVINCES, key=len, reverse=True):
+        out = out.replace(p, " ")
+    low = out.lower()
+    for rx, _p, _amb in _EN_PROVINCE:
+        low = rx.sub(" ", low)
+    return low
+
+
 # คำนำหน้าชนิดสถานที่ที่ซ้ำกันเยอะ ตัดออกก่อนเทียบชื่อ ไม่งั้น "วัด" "อุทยานแห่งชาติ" จะทำให้จับชื่อผิดที่
 _GENERIC_NAME = ("อุทยานแห่งชาติ", "อุทยานประวัติศาสตร์", "วนอุทยาน", "พิพิธภัณฑ์", "ปราสาทหิน", "ปราสาท", "น้ำตก", "เขื่อน",
                  "วัด", "ถ้ำ", "เกาะ", "หาด", "ตลาด", "สวน")

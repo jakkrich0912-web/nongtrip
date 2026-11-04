@@ -556,3 +556,10 @@ def test_off_topic_reply_starts_softly():
     assert _off_topic_parts(parse("คอมช้าแก้ยังไง"))[0].startswith("ขอโทษนะคะ ")
     assert _off_topic_parts(parse("2+2 เท่ากับเท่าไร"))[0].startswith("ขอโทษนะคะ ")
     assert _off_topic_parts(parse("my laptop is slow"), "en")[0].startswith("Sorry, ")
+
+
+def test_drop_province_keeps_place_names_but_removes_province():
+    from services.api.chat_rules import drop_province
+    assert "chiang mai" not in drop_province("cafes in Chiang Mai")
+    assert "เชียงใหม่" not in drop_province("ที่เที่ยวเชียงใหม่")
+    assert "ดอยสุเทพ" in drop_province("เล่าเรื่องวัดพระธาตุดอยสุเทพ เชียงใหม่")
