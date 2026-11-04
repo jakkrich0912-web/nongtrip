@@ -1,0 +1,2 @@
+/* ภาพเคลื่อนไหวทีละเฟรม: วางทับตำแหน่งมาสคอตนิ่ง (ผู้เรียกซ่อนมาสคอตนิ่งเอง) */
+.ms-sprite { position:absolute; max-width:none; pointer-events:none; user-select:none; -webkit-user-select:none; }

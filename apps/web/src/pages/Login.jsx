@@ -127,6 +127,15 @@ export default function Login({ mode = 'login' }) {
     travel: isLogin ? t('กลับมาแล้ว! ไปเที่ยวต่อกัน', 'Welcome back! Let’s go') : t('ไปเริ่มทริปแรกกัน!', 'Off to your first trip!'),
   };
   const speech = (cue && SPEECH[cue.name]) || (isLogin ? t('พร้อมออกไปสำรวจกันหรือยัง?', 'Ready for a little adventure?') : t('มาเริ่มทริปแรกด้วยกันนะ!', 'Let’s start your first trip!'));
+  // จอเล็กแสดงแผงเรื่องราวเป็นแถบด้านบน ไม่มีมาสคอต: ไม่ต้องสร้างเวทีและโหลดภาพเคลื่อนไหว
+  const [wide, setWide] = useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 761px)').matches);
+  useEffect(() => {
+    if (!window.matchMedia) return undefined;
+    const q = window.matchMedia('(min-width: 761px)');
+    const on = () => setWide(q.matches);
+    q.addEventListener?.('change', on);
+    return () => q.removeEventListener?.('change', on);
+  }, []);
   const parallax = (e) => {
     const b = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty('--px', (((e.clientX - b.left) / b.width) * 2 - 1).toFixed(3));
@@ -142,7 +151,7 @@ export default function Login({ mode = 'login' }) {
   return (
     <div className={`nt-auth-page ${isLogin ? 'is-login' : 'is-signup'}`}>
       <aside className="nt-auth-story" aria-label={t('เพื่อนร่วมทางของคุณ', 'Your travel companion')} onPointerMove={parallax}>
-        <AuthScene variant={isLogin ? 'day' : 'dusk'} />
+        <AuthScene variant={isLogin ? 'login' : 'signup'} />
         <Link to="/" className="nt-auth-brand"><MascotHead size={46} /><span>{t('น้องทริป', 'NongTrip')}<small>YOUR LITTLE TRAVEL BUDDY</small></span></Link>
         <div className="nt-auth-story-copy">
           <span className="nt-auth-eyebrow">{isLogin ? 'A LITTLE CURIOSITY. A NEW JOURNEY.' : 'EVERY JOURNEY STARTS WITH A PIN.'}</span>
@@ -151,9 +160,9 @@ export default function Login({ mode = 'login' }) {
         </div>
         <div className="nt-auth-mascot-scene">
           <span className="nt-auth-live" aria-live="polite">{speech}</span>
-          <MascotStage size={250} cue={cue} formSide={isLogin ? 'right' : 'left'} title={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')}>
+          {wide && <MascotStage size={250} cue={cue} formSide={isLogin ? 'right' : 'left'} title={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')}>
             <span className="nt-auth-speech" key={speech} aria-hidden="true">{speech}</span>
-          </MascotStage>
+          </MascotStage>}
         </div>
         <p className="nt-auth-story-foot">{t('เริ่มจากที่พัก แล้วออกไปเจอสิ่งใหม่ ๆ', 'Start with your stay. Discover what’s around.')}</p>
       </aside>
