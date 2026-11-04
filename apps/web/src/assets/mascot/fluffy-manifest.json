@@ -1,0 +1,230 @@
+{
+  "design": "fluffy-v2",
+  "source_images": {
+    "front": {
+      "raw_size": [
+        1062,
+        1480
+      ],
+      "visible_raw_bbox": [
+        67,
+        140,
+        992,
+        1337
+      ],
+      "crop": [
+        59,
+        132,
+        1000,
+        1345
+      ],
+      "resized": [
+        353,
+        455
+      ],
+      "offset": [
+        10,
+        32
+      ],
+      "size": [
+        373,
+        520
+      ],
+      "input_sha256": "2e534686ab774a172b57442b21e1ea7c67838c223427238492df5286a3734d37",
+      "output_sha256": "dbd9ab16d180229d9e55d9d1afcba117e7686ead40666b97580c0f01f237ab64"
+    },
+    "wave": {
+      "raw_size": [
+        1103,
+        1426
+      ],
+      "visible_raw_bbox": [
+        56,
+        47,
+        1040,
+        1336
+      ],
+      "crop": [
+        48,
+        39,
+        1048,
+        1344
+      ],
+      "resized": [
+        380,
+        496
+      ],
+      "offset": [
+        10,
+        10
+      ],
+      "size": [
+        400,
+        517
+      ],
+      "input_sha256": "02e247a0b846e26dbf5a760a44868d37bf40f89252dabc2e049319159eee6d45",
+      "output_sha256": "feb3c96258686ad39a8655f447c11440eb0bebda2c8d1b70200e25b8feda4140"
+    },
+    "think": {
+      "raw_size": [
+        1123,
+        1401
+      ],
+      "visible_raw_bbox": [
+        24,
+        9,
+        1103,
+        1372
+      ],
+      "crop": [
+        16,
+        1,
+        1111,
+        1380
+      ],
+      "resized": [
+        380,
+        479
+      ],
+      "offset": [
+        10,
+        10
+      ],
+      "size": [
+        400,
+        499
+      ],
+      "input_sha256": "6f8b25eeac6c79405af23ead0b7e916ca51b81e5d98f75e450a11131d58101f4",
+      "output_sha256": "c3d93826325f408dd470c1748ad536aad884dd228f473d39e2ebd0e366857870"
+    },
+    "happy": {
+      "raw_size": [
+        1099,
+        1431
+      ],
+      "visible_raw_bbox": [
+        40,
+        45,
+        1034,
+        1370
+      ],
+      "crop": [
+        32,
+        37,
+        1042,
+        1378
+      ],
+      "resized": [
+        374,
+        497
+      ],
+      "offset": [
+        11,
+        10
+      ],
+      "size": [
+        397,
+        517
+      ],
+      "input_sha256": "fcf36f7de7cef545d18b4d80f1998e40d491666572c4e1aa1ec88ba24ad263ff",
+      "output_sha256": "8209b5de2a1950d659d3a4b43802089ebf5e91cf7749da13e3f34dc45770c3ff"
+    },
+    "head": {
+      "raw_size": [
+        1254,
+        1254
+      ],
+      "visible_raw_bbox": [
+        55,
+        155,
+        1198,
+        1129
+      ],
+      "crop": [
+        47,
+        147,
+        1206,
+        1137
+      ],
+      "resized": [
+        236,
+        202
+      ],
+      "offset": [
+        10,
+        27
+      ],
+      "size": [
+        256,
+        256
+      ],
+      "input_sha256": "33f9ce3519a62191eae39e61bb52562cf4b550393d43f6955f35e33c231b8b78",
+      "output_sha256": "1fb543ee41167b587343e36ab1dddac9f360d285c43911e5a6545dfb1f8dc0f7"
+    },
+    "side": {
+      "raw_size": [
+        1003,
+        1568
+      ],
+      "visible_raw_bbox": [
+        44,
+        99,
+        959,
+        1477
+      ],
+      "crop": [
+        36,
+        91,
+        967,
+        1485
+      ],
+      "resized": [
+        312,
+        467
+      ],
+      "offset": [
+        10,
+        26
+      ],
+      "size": [
+        332,
+        519
+      ],
+      "input_sha256": "6e77ba13aa0df1c8212ad856d5be5a52a40046a7889760eb4fc0336eb9ae87b5",
+      "output_sha256": "52b24e17a466d5b34802cb94f3709c965cba3359bcd217284f76eead9e666465"
+    },
+    "back": {
+      "raw_size": [
+        1089,
+        1444
+      ],
+      "visible_raw_bbox": [
+        79,
+        68,
+        1006,
+        1359
+      ],
+      "crop": [
+        71,
+        60,
+        1014,
+        1367
+      ],
+      "resized": [
+        352,
+        488
+      ],
+      "offset": [
+        15,
+        10
+      ],
+      "size": [
+        383,
+        508
+      ],
+      "input_sha256": "488f95a46e491ed514a84ea04cfb7a3f8aaa419c41e101fdae537a998fa914b5",
+      "output_sha256": "dc148e4dc7c1bf4944e7545a7548c4566c57d775ba4be68f2fc8874edd8a26b4"
+    }
+  },
+  "all_edges_have_transparent_padding": true
+}

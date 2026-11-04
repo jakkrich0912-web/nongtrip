@@ -1,0 +1,11 @@
+{
+  "name": "nongtrip-e2e",
+  "private": true,
+  "description": "เทสต์ใช้งานจริงผ่านเบราว์เซอร์ (Playwright) รันกับระบบที่เปิดอยู่แล้ว",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

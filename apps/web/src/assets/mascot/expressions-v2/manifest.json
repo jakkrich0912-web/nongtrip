@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "source": "../front.webp",
+  "source_size": [
+    373,
+    520
+  ],
+  "source_sha256": "dbd9ab16d180229d9e55d9d1afcba117e7686ead40666b97580c0f01f237ab64",
+  "canvas_size": [
+    420,
+    540
+  ],
+  "source_offset": [
+    23,
+    20
+  ],
+  "face_band_source_xyxy_exclusive": [
+    60,
+    140,
+    340,
+    300
+  ],
+  "face_band_canvas_xyxy_exclusive": [
+    83,
+    160,
+    363,
+    320
+  ],
+  "face_crop_size": [
+    280,
+    160
+  ],
+  "base": "front.png",
+  "expected_expression_count": 23,
+  "actual_expression_count": 23,
+  "complete": true,
+  "expressions": [
+    {
+      "name": "blink-half",
+      "expression_th": "กะพริบตาครึ่งหนึ่ง",
+      "full": "blink-half.png",
+      "face": "faces/blink-half.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 11815,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "60c28fa50e28974e0471236c40e0a50d2e292a99f1879c96781c588c47f2de89"
+    },
+    {
+      "name": "blink-closed",
+      "expression_th": "กะพริบตาปิด",
+      "full": "blink-closed.png",
+      "face": "faces/blink-closed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 11995,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "9c2547297f37058313bddfce9926e377ea1933f306f3743b03fd4f2a35136ad5"
+    },
+    {
+      "name": "ouch",
+      "expression_th": "ตกใจ / โอ๊ย",
+      "full": "ouch.png",
+      "face": "faces/ouch.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31094,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "f7deaa9e0595c7c3e392a544215286dfbf7501ae20e2085fe2094645182fea26"
+    },
+    {
+      "name": "afraid",
+      "expression_th": "ตกใจกลัว",
+      "full": "afraid.png",
+      "face": "faces/afraid.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31319,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "c35156eba89b220204226084bc4b39a3b96af50d8a77f57a7efcb34a048447e1"
+    },
+    {
+      "name": "squint",
+      "expression_th": "หน้าย่น ตาหยี",
+      "full": "squint.png",
+      "face": "faces/squint.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31544,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "46cf52bca9bc807644f8ef42893e79ab5aaedb085c547255ed0c2e296dc0648b"
+    },
+    {
+      "name": "dizzy",
+      "expression_th": "มึนหัว ตาหมุน",
+      "full": "dizzy.png",
+      "face": "faces/dizzy.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 30897,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "661f481a931c8a5c10b827463cb0d0bd946725a9e71e85e1746d2d99c8347e9c"
+    },
+    {
+      "name": "angry",
+      "expression_th": "โกรธ",
+      "full": "angry.png",
+      "face": "faces/angry.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31239,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "6ec4ff82d35eb539557b05e55b3387a08e58078c88cd30c094dc2ab6f8507a4b"
+    },
+    {
+      "name": "crying",
+      "expression_th": "ร้องไห้",
+      "full": "crying.png",
+      "face": "faces/crying.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31332,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "c3374006d43a003197a12fd235fe520642636552bc3160a9a7f3eb8b51bdc246"
+    },
+    {
+      "name": "grin",
+      "expression_th": "ยิ้มกว้าง ตาโค้ง",
+      "full": "grin.png",
+      "face": "faces/grin.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31452,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "e0dacd3f207dbb7a53826acc8742c3b6a03ed60f73e32f597b4c163c5874cddb"
+    },
+    {
+      "name": "shy",
+      "expression_th": "หลับตา ยิ้มเขิน",
+      "full": "shy.png",
+      "face": "faces/shy.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31504,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "7d9c43342c7b93249f707a21e65bc3093542d4caa399773ce7e181cd655e2298"
+    },
+    {
+      "name": "wink-left",
+      "expression_th": "ขยิบตาซ้ายของตัวละคร",
+      "full": "wink-left.png",
+      "face": "faces/wink-left.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 5946,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "50febca4650368d31b42f8d5200e3d15878a30b71aeaf4e87146a400dfe147f2"
+    },
+    {
+      "name": "wink-right",
+      "expression_th": "ขยิบตาขวาของตัวละคร",
+      "full": "wink-right.png",
+      "face": "faces/wink-right.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 5960,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "1b3edb5a531d6f5ac55d405b951159fa6ad38efdbbdb1c6823549fb5614c70ee"
+    },
+    {
+      "name": "cross-eyed",
+      "expression_th": "ตาเหล่ มองจมูก",
+      "full": "cross-eyed.png",
+      "face": "faces/cross-eyed.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 11816,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "8d8adba78cb347772ec0fcfa6fa3fb180e47c66b34f2d6ad644a4b1fd62f094d"
+    },
+    {
+      "name": "tongue",
+      "expression_th": "แลบลิ้น",
+      "full": "tongue.png",
+      "face": "faces/tongue.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 30881,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "a5fc92d39dfe62e67eebbd8af944dd8e5514ed87038d68362bcd5e01eba868b2"
+    },
+    {
+      "name": "kiss",
+      "expression_th": "จุ๊บปาก",
+      "full": "kiss.png",
+      "face": "faces/kiss.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31190,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "ed781f52e621d8c3dc75fc4a4ca0f5b425176da4d6b6cce83b9c6d515cb02bc5"
+    },
+    {
+      "name": "heart-eyes",
+      "expression_th": "ตารูปหัวใจ",
+      "full": "heart-eyes.png",
+      "face": "faces/heart-eyes.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 11695,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "3b297db3024b27fedff3d2c81710d32d45afb6787f1d7ecf475f2048bd3b9c29"
+    },
+    {
+      "name": "star-eyes",
+      "expression_th": "ตารูปดาว",
+      "full": "star-eyes.png",
+      "face": "faces/star-eyes.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 11658,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "0c52f042c8c3203957f05b21fabb83dcca57c2d10157c76150183c6981408c1f"
+    },
+    {
+      "name": "yawn",
+      "expression_th": "หาว",
+      "full": "yawn.png",
+      "face": "faces/yawn.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31358,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "66a917b44a3ef8f866c325e8d793e7d8a9f459adbc2e69d65a93223da7218532"
+    },
+    {
+      "name": "pre-sneeze",
+      "expression_th": "ก่อนจาม",
+      "full": "pre-sneeze.png",
+      "face": "faces/pre-sneeze.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31656,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "bbded48f0e44a1d207e875d9295d36326919f46ec5220391ea743ab311ce0733"
+    },
+    {
+      "name": "sneeze",
+      "expression_th": "ขณะจาม",
+      "full": "sneeze.png",
+      "face": "faces/sneeze.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31626,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "b51855c4df697e27420b64d8e600521d645e7aa906f6405e8dd1ea392b1d78ec"
+    },
+    {
+      "name": "whistle",
+      "expression_th": "เป่าปาก ผิวปาก",
+      "full": "whistle.png",
+      "face": "faces/whistle.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31350,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "6909f100011f68250bbbdea2ac111a82078570842a71b1796ba2ac6fd86221a4"
+    },
+    {
+      "name": "neutral",
+      "expression_th": "ตาเฉย ไม่แสดงอารมณ์",
+      "full": "neutral.png",
+      "face": "faces/neutral.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31373,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "a46b5846aa3a1bb1e3b7b1044a583b991935df58e97ef96d08d8ac976ceb9daa"
+    },
+    {
+      "name": "smirk",
+      "expression_th": "แกล้งฉลาด ยิ้มมุมปาก",
+      "full": "smirk.png",
+      "face": "faces/smirk.png",
+      "outside_changed_pixels": 0,
+      "inside_changed_pixels": 31536,
+      "alpha_matches": true,
+      "crop_matches": true,
+      "sha256": "a188846df326f16487a99bf6f036396229f902d86bbeb91b831f47395911be7c"
+    }
+  ],
+  "gaze": {
+    "schema_version": 1,
+    "base": "front.png",
+    "base_sha256": "2953dab5a4aa11bb0b11ebcc944562d49103437c335280bd449c83394ba58a0b",
+    "canvas_size": [
+      420,
+      540
+    ],
+    "face_band_canvas_xyxy_exclusive": [
+      83,
+      160,
+      363,
+      320
+    ],
+    "eye_apertures_cx_cy_rx_ry": [
+      [
+        155.5,
+        236.0,
+        25.0,
+        26.5
+      ],
+      [
+        280.0,
+        243.5,
+        23.5,
+        26.0
+      ]
+    ],
+    "method": "inverse smooth eye-texture displacement, w=(1-r^2)^2, fixed eye boundary",
+    "amplitude_xy": [
+      7.5,
+      7.0
+    ],
+    "direction_order": [
+      "e",
+      "ene",
+      "ne",
+      "nne",
+      "n",
+      "nnw",
+      "nw",
+      "wnw",
+      "w",
+      "wsw",
+      "sw",
+      "ssw",
+      "s",
+      "sse",
+      "se",
+      "ese"
+    ],
+    "expected_frame_count": 16,
+    "actual_frame_count": 16,
+    "complete": true,
+    "max_adjacent_displacement_px": 2.919168,
+    "frames": [
+      {
+        "name": "gaze-e",
+        "full": "gaze-e.png",
+        "angle_degrees": 0.0,
+        "eye_displacement_xy": [
+          7.5,
+          -0.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          268
+        ],
+        "changed_pixels": 3473,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "72826bd2cd2a8cf7af92476edf807d1005db465e7747966170588f5a947c639d"
+      },
+      {
+        "name": "gaze-ene",
+        "full": "gaze-ene.png",
+        "angle_degrees": 22.5,
+        "eye_displacement_xy": [
+          6.929096,
+          -2.678784
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          269
+        ],
+        "changed_pixels": 3485,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "d5a344ea4f9bcc83895defe29c04619ff8828e0afca3fd691da85c4413d67809"
+      },
+      {
+        "name": "gaze-ne",
+        "full": "gaze-ne.png",
+        "angle_degrees": 45.0,
+        "eye_displacement_xy": [
+          5.303301,
+          -4.949747
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3504,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "16d664f9c10508ac6b076dca19d69d854627e6dcde4e9d510efa5342910f272f"
+      },
+      {
+        "name": "gaze-nne",
+        "full": "gaze-nne.png",
+        "angle_degrees": 67.5,
+        "eye_displacement_xy": [
+          2.870126,
+          -6.467157
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          270
+        ],
+        "changed_pixels": 3526,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "4668d8d22b6b092bf05b8217f830735975797b50e230c87612cabf30a7076cd7"
+      },
+      {
+        "name": "gaze-n",
+        "full": "gaze-n.png",
+        "angle_degrees": 90.0,
+        "eye_displacement_xy": [
+          0.0,
+          -7.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          132,
+          211,
+          303,
+          270
+        ],
+        "changed_pixels": 3484,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "46df490fc5e93679326dcbbb080beb5bb7ba2fd07a497bc22496d59dff46f753"
+      },
+      {
+        "name": "gaze-nnw",
+        "full": "gaze-nnw.png",
+        "angle_degrees": 112.5,
+        "eye_displacement_xy": [
+          -2.870126,
+          -6.467157
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          270
+        ],
+        "changed_pixels": 3523,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "bb05c7dedcdc19507d6ae1ad0a8acffedec6d2206ea74d56b3e236ecc3e22bb8"
+      },
+      {
+        "name": "gaze-nw",
+        "full": "gaze-nw.png",
+        "angle_degrees": 135.0,
+        "eye_displacement_xy": [
+          -5.303301,
+          -4.949747
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          270
+        ],
+        "changed_pixels": 3507,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "197542a2247e6beca5c718d69345e10b2261475b0a09f35bf6297365eebd5ce6"
+      },
+      {
+        "name": "gaze-wnw",
+        "full": "gaze-wnw.png",
+        "angle_degrees": 157.5,
+        "eye_displacement_xy": [
+          -6.929096,
+          -2.678784
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          269
+        ],
+        "changed_pixels": 3504,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "28dc48c1c3a549f4940ac96614cf2987ad788f6e992d801d8a0dba19dce002c5"
+      },
+      {
+        "name": "gaze-w",
+        "full": "gaze-w.png",
+        "angle_degrees": 180.0,
+        "eye_displacement_xy": [
+          -7.5,
+          -0.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          269
+        ],
+        "changed_pixels": 3466,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "94910d071724386f6fc9257c7611d3bcc5b2bd3c7c452d42d3fbdd6bf160a658"
+      },
+      {
+        "name": "gaze-wsw",
+        "full": "gaze-wsw.png",
+        "angle_degrees": 202.5,
+        "eye_displacement_xy": [
+          -6.929096,
+          2.678784
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          269
+        ],
+        "changed_pixels": 3515,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "3676ce43f29f34a10ec85cd328692e548f6206e35fa649f516c5c0a3f105b2ac"
+      },
+      {
+        "name": "gaze-sw",
+        "full": "gaze-sw.png",
+        "angle_degrees": 225.0,
+        "eye_displacement_xy": [
+          -5.303301,
+          4.949747
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          304,
+          269
+        ],
+        "changed_pixels": 3513,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "a5ff557c00d55ec56c1a580bae551d81df9be9e580f4d39881b07f7147b311f3"
+      },
+      {
+        "name": "gaze-ssw",
+        "full": "gaze-ssw.png",
+        "angle_degrees": 247.5,
+        "eye_displacement_xy": [
+          -2.870126,
+          6.467157
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3521,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "e085193cb7c01eabe814628b39ec1281d718feb487ccb2737119b8302fc9d77f"
+      },
+      {
+        "name": "gaze-s",
+        "full": "gaze-s.png",
+        "angle_degrees": 270.0,
+        "eye_displacement_xy": [
+          -0.0,
+          7.0
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          132,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3484,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "71648627c693b62ce78cdd1c7b0bcb68d4da25f463344c8b82b43d567e96f3dc"
+      },
+      {
+        "name": "gaze-sse",
+        "full": "gaze-sse.png",
+        "angle_degrees": 292.5,
+        "eye_displacement_xy": [
+          2.870126,
+          6.467157
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3508,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "76cd106c25f46ceb9d656420edb03b2f06accbc84f961d6d569fcdf14cfcdd65"
+      },
+      {
+        "name": "gaze-se",
+        "full": "gaze-se.png",
+        "angle_degrees": 315.0,
+        "eye_displacement_xy": [
+          5.303301,
+          4.949747
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3509,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "012dc342f9985a4cdbac7a00db151b9c27f52c0d35b963be6d524fb7c056ff68"
+      },
+      {
+        "name": "gaze-ese",
+        "full": "gaze-ese.png",
+        "angle_degrees": 337.5,
+        "eye_displacement_xy": [
+          6.929096,
+          2.678784
+        ],
+        "changed_bbox_xyxy_exclusive": [
+          131,
+          211,
+          303,
+          269
+        ],
+        "changed_pixels": 3492,
+        "outside_eye_changed_pixels": 0,
+        "outside_face_changed_pixels": 0,
+        "alpha_matches": true,
+        "sha256": "a49ad11bee21bcb36bd36fe9bc6930786f7448026b38615eb6c1988b23efdf06"
+      }
+    ]
+  }
+}

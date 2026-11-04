@@ -1,0 +1,47 @@
+/* พื้นหลังแผนที่ทริปของหน้าเข้าสู่ระบบ/สมัคร (AuthScene.jsx)
+   แยกไฟล์จาก auth-v2.css เพราะสีในภาพวาดคุมเองทั้งโหมดสว่างและมืด ไม่ให้สคริปต์สร้างโหมดมืดแปลงสีของภาพ */
+.as-scene { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.as-svg { display:block; width:100%; height:100%; }
+.as-sky, .as-dusk-glow, .as-sun, .as-moon, .as-stars { transition:opacity .9s ease; }
+.as-day .as-sky-dusk, .as-day .as-dusk-glow, .as-day .as-moon, .as-day .as-stars { opacity:0; }
+.as-dusk .as-sun { opacity:0; }
+.as-moon circle { fill:#fff3d6; }
+.as-moon .as-moon-cut { fill:#26432f; }
+.as-stars circle { fill:#fff6dc; }
+.as-dusk .as-stars circle { animation:as-twinkle 3.2s ease-in-out infinite; }
+.as-grid line { stroke:#f5f3ed; stroke-opacity:.06; stroke-width:1; stroke-dasharray:2 7; }
+.as-contours path { fill:none; stroke:#e4ecdf; stroke-opacity:.13; stroke-width:1.3; }
+.as-cloud { fill:#f5f3ed; opacity:.1; }
+.as-cloud-1 { animation:as-drift 78s linear infinite; animation-delay:-20s; }
+.as-cloud-2 { animation:as-drift-2 96s linear infinite; animation-delay:-60s; }
+.as-cloud-3 { animation:as-drift-3 64s linear infinite; animation-delay:-8s; }
+.as-rings ellipse { fill:none; stroke:#f5f3ed; stroke-opacity:.3; stroke-width:1.4; stroke-dasharray:4 8; }
+.as-ring-tags text { fill:#e4ecdf; fill-opacity:.75; font:600 13px var(--body); letter-spacing:.5px; }
+.as-route-shadow { fill:none; stroke:#173323; stroke-opacity:.28; stroke-width:7; stroke-linecap:round; }
+.as-route { fill:none; stroke:#ffdfa5; stroke-width:2.6; stroke-linecap:round; stroke-dasharray:2 11; animation:as-dash 2.2s linear infinite; }
+.as-plane path { fill:#fffaf0; }
+.as-plane .as-plane-fold { fill:none; stroke:#b9c9b0; stroke-width:1.2; }
+.as-stop-float { animation:as-float 4.6s ease-in-out infinite, as-pop .7s cubic-bezier(.3,1.5,.5,1) both; transform-box:fill-box; transform-origin:50% 50%; }
+.as-stop-halo { fill:#ffdfa5; opacity:.16; transform-box:fill-box; transform-origin:center; animation:as-pulse 3.4s ease-in-out infinite; }
+.as-stop-badge { fill:#f5f3ed; stroke:#ffdfa5; stroke-width:2.5; filter:drop-shadow(0 4px 0 rgba(23,51,35,.35)); }
+.as-stop-icon { fill:none; stroke:#3d6a4b; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.as-stop-label rect { fill:#173323; fill-opacity:.55; }
+.as-stop-label text { fill:#f5f3ed; font:600 12.5px var(--body); }
+.as-layer { transition:transform 1s cubic-bezier(.2,.7,.2,1); }
+.as-far { transform:translate(calc(var(--px, 0) * -6px), calc(var(--py, 0) * -4px)); }
+.as-mid { transform:translate(calc(var(--px, 0) * -11px), calc(var(--py, 0) * -7px)); }
+.as-near { transform:translate(calc(var(--px, 0) * -18px), calc(var(--py, 0) * -11px)); }
+@keyframes as-dash { to { stroke-dashoffset:-26; } }
+@keyframes as-twinkle { 0%, 100% { opacity:.25; } 50% { opacity:1; } }
+@keyframes as-pulse { 0%, 100% { transform:scale(.85); opacity:.1; } 50% { transform:scale(1.12); opacity:.22; } }
+@keyframes as-float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+@keyframes as-pop { from { transform:scale(0); opacity:0; } }
+@keyframes as-drift { from { transform:translate(-140px, 230px); } to { transform:translate(860px, 230px); } }
+@keyframes as-drift-2 { from { transform:translate(-120px, 330px); } to { transform:translate(860px, 330px); } }
+@keyframes as-drift-3 { from { transform:translate(-100px, 440px); } to { transform:translate(860px, 440px); } }
+:where(html[data-theme=dark]) .as-scene { filter:brightness(.8) saturate(.92); }
+@media (prefers-reduced-motion:reduce) {
+  .as-scene *, .as-layer { animation:none !important; transition:none !important; }
+  .as-far, .as-mid, .as-near { transform:none; }
+  .as-cloud-1 { transform:translate(120px, 230px); } .as-cloud-2 { transform:translate(420px, 330px); } .as-cloud-3 { transform:translate(260px, 440px); }
+}

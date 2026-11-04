@@ -1,0 +1,40 @@
+{
+ "_meta": {
+  "province": "ลพบุรี",
+  "built_on": "2026-11-02",
+  "count": 3,
+  "source": "Wikipedia (CC BY-SA 4.0) ตัดทอนส่วนนำของบทความ"
+ },
+ "docs": [
+  {
+   "id": "k:p5201:0",
+   "place_id": "v:p5201",
+   "title": "พระปรางค์สามยอด",
+   "text": "พระปรางค์สามยอด จังหวัดลพบุรี เป็นโบราณสถานและ แหล่งท่องเที่ยวทางประวัติศาสตร์และโบราณคดีที่สำคัญแห่งหนึ่งของจังหวัดลพบุรี ลักษณะเป็นปราสาทขอมในศิลปะบายน (พ.ศ. 1720 – 1773) โครงสร้างเป็นศิลาแลงประดับปูนปั้น สร้างขึ้นในรัชสมัยพระเจ้าชัยวรมันที่ 7 (ครองราชย์ พ.ศ. 1724 – ป. 1757) เพื่อเป็นพุทธสถานในลัทธิวัชรยานประจำเมืองละโว้หรือลพบุรี ซึ่งในขณะนั้นเป็นเมืองลูกหลวงของอาณาจักรขอม นับว่าเป็นปราสาทขอมโบราณที่เต็มเปี่ยมไปด้วยศิลปะและวัฒนธรรมแบบขอมโบราณที่ยังคงสมบูรณ์และเป็นแหล่งเรียนรู้ทางด้านประวัติศาสตร์มาจนถึงปัจจุบัน",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B9%8C%E0%B8%AA%E0%B8%B2%E0%B8%A1%E0%B8%A2%E0%B8%AD%E0%B8%94",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p5202:0",
+   "place_id": "v:p5202",
+   "title": "ศาลพระกาฬ (จังหวัดลพบุรี)",
+   "text": "ศาลพระกาฬ หรือเดิมเรียกว่า ศาลสูง เป็นโบราณสถานและศาสนสถานที่ตั้งอยู่กลางวงเวียนชื่อ วงเวียนศรีสุนทร บนถนนนารายณ์มหาราช ในเขตตำบลทะเลชุบศร อำเภอเมืองลพบุรี จังหวัดลพบุรี ตั้งอยู่ทางด้านทิศตะวันออกของพระปรางค์สามยอด และเส้นทางรถไฟสายเหนือ ภายในเป็นที่ประดิษฐาน เจ้าพ่อพระกาฬ เทวรูปโบราณยุคขอมเรืองอำนาจ",
+   "url": "https://th.wikipedia.org/wiki/%E0%B8%A8%E0%B8%B2%E0%B8%A5%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%AC_(%E0%B8%88%E0%B8%B1%E0%B8%87%E0%B8%AB%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%A5%E0%B8%9E%E0%B8%9A%E0%B8%B8%E0%B8%A3%E0%B8%B5)",
+   "lang": "th",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  },
+  {
+   "id": "k:p5203:0",
+   "place_id": "v:p5203",
+   "title": "Pa Sak Jolasid Dam",
+   "text": "The Pa Sak Jolasid Dam or Pa Sak Cholasit Dam (Thai: เขื่อนป่าสักชลสิทธิ์, RTGS: Khuean Pa Sak Chonlasit pronounced [kʰɯ̀a̯n pàː sàk t͡ɕʰōn.lā.sìt]) impounds the Pa Sak River at Ban Kaeng Suea Ten, Tambon Nong Bua, Phatthana Nikhom District, Lopburi Province, and Ban Kham Phran, Tambon Kham Phran, Wang Muang District, Saraburi Province, Thailand. It is the biggest reservoir in central Thailand.\nThe 4,860-meter (15,940 ft) wide and 36.5-meter (120 ft) high dam is earth-filled with an impervious core. The storage capacity is 785 million m3 of water at normal water level, with a maximum capacity of 960 million m3. The dam also supplies about 6.7 MW of hydro-electric power.",
+   "url": "https://en.wikipedia.org/wiki/Pa_Sak_Jolasid_Dam",
+   "lang": "en",
+   "license": "CC BY-SA 4.0",
+   "checked_on": "2026-11-02"
+  }
+ ]
+}

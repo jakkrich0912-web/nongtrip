@@ -1,0 +1,16 @@
+# ไม่ส่งสิ่งเหล่านี้เข้า build context
+.git
+.github
+.env
+.venv
+venv
+node_modules
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+.pytest_cache
+/data
+/docs
+**/tests
+*.db
