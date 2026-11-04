@@ -77,3 +77,11 @@ export const matchesInterest = (p, id) => {
   const it = interestById(id);
   return !it || it.subtypes.includes(p.subtype);
 };
+
+// วันที่ดึงข้อมูล OSM ที่เก็บไว้ (data_as_of จาก API รูปแบบ YYYY-MM-DD) เป็นข้อความสั้นตามภาษา รูปแบบผิดคืน null
+export function dataDateLabel(iso, lang = 'th') {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso ?? '')) return null;
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'th-TH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}

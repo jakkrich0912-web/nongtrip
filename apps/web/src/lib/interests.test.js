@@ -24,3 +24,13 @@ describe('ตัวกรองตามความสนใจ', () => {
     expect(inThailand({ lat: 35.68, lon: 139.69 })).toBe(false);
   });
 });
+
+describe('ป้ายความสดของข้อมูล', async () => {
+  const { dataDateLabel } = await import('./data.js');
+  it('แสดงวันที่ตามภาษา (ไทยเป็น พ.ศ.) และไม่แสดงเมื่อไม่มีวันที่', () => {
+    expect(dataDateLabel('2026-11-04', 'th')).toBe('4 พ.ย. 2569');
+    expect(dataDateLabel('2026-11-04', 'en')).toBe('4 Nov 2026');
+    expect(dataDateLabel(null)).toBe(null);
+    expect(dataDateLabel('4/11/2026')).toBe(null);
+  });
+});

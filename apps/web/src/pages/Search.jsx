@@ -3,7 +3,7 @@ import { noticeText } from '../lib/notices.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { PLACES, subtypeLabel, iconGroup, placeName, INTERESTS, matchesInterest } from '../lib/data.js';
+import { PLACES, subtypeLabel, iconGroup, placeName, INTERESTS, matchesInterest, dataDateLabel } from '../lib/data.js';
 import CatIcon from '../components/CatIcon.jsx';
 import PlaceCluster from '../components/PlaceCluster.jsx';
 import Mascot from '../components/Mascot.jsx';
@@ -85,7 +85,7 @@ export default function Search() {
       .then((d) => current() && setNear((n) => ({
         status: 'ok', source: 'api',
         items: offset ? [...n.items, ...d.items] : d.items,
-        total: d.total, counts: d.counts, notices: d.notices ?? [], attribution: d.attribution,
+        total: d.total, counts: d.counts, notices: d.notices ?? [], attribution: d.attribution, dataAsOf: d.data_as_of ?? null,
         offset: d.offset + d.items.length,
       })))
       .catch((e) => {
@@ -320,7 +320,10 @@ export default function Search() {
                   </button>
                 </div>
               )}
-              {near.attribution && <p className="attr" style={{ padding: '0 20px 12px' }}>{near.attribution}</p>}
+              {near.attribution && <p className="attr" style={{ padding: '0 20px 12px' }}>
+                {near.attribution}
+                {dataDateLabel(near.dataAsOf, lang) && <span className="data-date"> · {t('ข้อมูล OSM เมื่อ', 'OSM data from')} {dataDateLabel(near.dataAsOf, lang)}</span>}
+              </p>}
             </>
           )}
         </div>
