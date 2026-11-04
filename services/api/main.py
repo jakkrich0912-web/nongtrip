@@ -22,7 +22,9 @@ from .chat import ChatThrottle, build_chat_router
 from .google import GoogleVerifier
 from .guide import build_guide_router, load_guide
 from .rag import Rag, build_default
+from .reports import build_reports_router
 from .store import Store
+from .trip import build_trip_router
 from .validator import load_verified_ids, validate_lodgings_near, validate_nearby
 
 
@@ -45,6 +47,8 @@ def create_app(service: PlacesService | None = None, store: Store | None = None,
     app.include_router(build_router(store, secret, svc.verified, secure_cookie, throttle, google))
     app.include_router(build_chat_router(store, secret, svc, known, chat_throttle, rag))
     app.include_router(build_admin_router(store, secret, svc, rag))
+    app.include_router(build_trip_router(store, secret, svc, known, chat_throttle))
+    app.include_router(build_reports_router(store, secret, svc.verified))
     metrics.attach(store)
 
     @app.exception_handler(SearchError)

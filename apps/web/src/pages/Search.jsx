@@ -66,7 +66,7 @@ export default function Search() {
   // ความสนใจ (ธรรมชาติ/วัดและประวัติศาสตร์/...) กรองจากผลที่โหลดแล้วตาม subtype ค้นจาก API เฉพาะที่เที่ยว
   const [interest, setInterest] = useState('');
   useShareCompanionHint(origin ? { ...origin, interest } : null);
-  // ค้นรอบตัวฉันตอนนี้: ใช้ตำแหน่งจากเบราว์เซอร์ครั้งเดียว ไม่ส่งไปบันทึกที่เซิร์ฟเวอร์ (ไม่เรียก saveSearch)
+  // ค้นรอบตัวฉันตอนนี้: ใช้ตำแหน่งจากเบราว์เซอร์ครั้งเดียว ไม่บันทึกลงบัญชี (ไม่เรียก saveSearch)
   const [locate, setLocate] = useState({ status: 'idle' });
   const [radius, setRadius] = useState(MAX_RADIUS_KM); // รัศมีที่เลือกกรอง (กม.) ไม่เกิน 30
   const PAGE = 100;
@@ -177,7 +177,7 @@ export default function Search() {
               <button type="button" className="btn small ghost" onClick={useMyLocation} disabled={locate.status === 'loading'}>
                 {locate.status === 'loading' ? t('กำลังหาตำแหน่ง', 'Finding you…') : t('ค้นรอบตัวฉันตอนนี้', 'Search around me now')}
               </button>
-              <small>{t('ใช้ตำแหน่งจากเครื่องครั้งเดียว ไม่บันทึกไว้', 'Uses your device location once. Not saved.')}</small>
+              <small>{t('ใช้ตำแหน่งจากเครื่องครั้งเดียว ไม่บันทึกลงบัญชี', 'Uses your device location once. Not saved to your account.')}</small>
               {locate.status === 'error' && <p className="notice" role="alert">{locate.message}</p>}
             </div>
           )}

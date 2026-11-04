@@ -80,3 +80,31 @@ test('หน้าแรกแสดงที่พักที่ค้นล�
   await expect(page).toHaveURL(/\/search\?lat=18\.7883/);
   await expect(page.locator('p.count')).toContainText('ที่พักล่าสุดทดสอบ');
 });
+
+test('ทริปจากสถานที่โปรด: เรียงจากที่พัก ติ๊กแล้วจุดถัดไปเปลี่ยน ถามเรื่องทริป และเทียบที่พัก', async ({ page }) => {
+  await signUp(page);
+  const add = (body) => page.request.post('/api/me/favorites', { data: body });
+  await page.request.post('/api/me/searches', { data: { name: 'ที่พักเอ', lat: 18.7883, lon: 98.9853 } });
+  await page.request.post('/api/me/searches', { data: { name: 'ที่พักบี', lat: 18.80, lon: 98.92 } });
+  await add({ place_id: 'osm:node/9000001', name_th: 'จุดไกล', kind: 'attraction', subtype: 'viewpoint', lat: 18.86, lon: 98.98 });
+  await add({ place_id: 'osm:node/9000002', name_th: 'จุดใกล้', kind: 'attraction', subtype: 'temple', lat: 18.79, lon: 98.986 });
+  await add({ place_id: 'osm:node/9000003', name_th: 'จุดใกล้ด้วย', kind: 'attraction', subtype: 'museum', lat: 18.795, lon: 98.99 });
+  await page.goto('/me');
+  const trip = page.locator('.trip-plan');
+  await trip.getByLabel('เริ่มจากที่พัก').selectOption({ label: 'ที่พักเอ' });
+  await expect(trip.locator('.trip-stops li').first()).toContainText('จุดใกล้');
+  await expect(trip.locator('.trip-next')).toContainText('จุดใกล้');
+  await trip.getByRole('checkbox', { name: 'ไป จุดใกล้ แล้ว' }).check();
+  await expect(trip.locator('.trip-next')).toContainText('จุดใกล้ด้วย');
+  await expect(trip.locator('.trip-groups li')).toHaveCount(1);
+  await trip.getByRole('button', { name: 'ทริปนี้ขาดคาเฟ่ไหม' }).click();
+  await expect(trip.locator('.trip-answer')).toContainText('ยังไม่มีคาเฟ่');
+
+  const compare = page.locator('.compare');
+  await compare.getByRole('button', { name: 'ที่พักเอ' }).click();
+  await compare.getByRole('button', { name: 'ที่พักบี' }).click();
+  await expect(compare.locator('.compare-table tbody tr')).toHaveCount(3);
+  await expect(compare.locator('.compare-table td').first()).toHaveText(/^\d+$/);
+  await expect(compare).toContainText('ไม่ได้บอกว่าที่ไหนดีกว่า');
+  await expect(compare).not.toContainText('ดีที่สุด');
+});

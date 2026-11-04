@@ -125,6 +125,13 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .linkish { color:#8cc79a; }
 :where(html[data-theme=dark]) .leaflet-container .leaflet-control-attribution a { color:#bfdbe7; }
 :where(html[data-theme=dark]) .nt-cluster span { background:#b7472a; color:#ffffff; border:3px solid #2b2b2b; box-shadow:0 2px 8px rgba(0,0,0,0.77); }
+:where(html[data-theme=dark]) .report-note textarea { background:#131313; }
+:where(html[data-theme=dark]) .report-done { color:#8cc79a; }
+:where(html[data-theme=dark]) .trip-stay select { background:#131313; }
+:where(html[data-theme=dark]) .trip-finished { color:#8cc79a; }
+:where(html[data-theme=dark]) .trip-groups li { background:rgba(74,124,89,0.07); }
+:where(html[data-theme=dark]) .trip-ask input { background:#131313; }
+:where(html[data-theme=dark]) .trip-answer { background:#131313; }
 
 /* จาก landing.css */
 :where(html[data-theme=dark]) .nt-skip { background:#131313; }
@@ -384,6 +391,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) b.is-warn { color:#e3cfb5; }
 :where(html[data-theme=dark]) .adm-chips a:hover { border-color:#51574b; color:#8cc79a; }
 :where(html[data-theme=dark]) :where(html[data-theme=dark]) b.is-warn { color:#d1b587; }
+:where(html[data-theme=dark]) .adm-reports li { border-top:1px solid #44413a; }
+:where(html[data-theme=dark]) .adm-reports small { color:#c0c6bc; }
 
 /* จาก components/companion.css */
 :where(html[data-theme=dark]) .nt-comp-dot { border:2.5px solid #3c341d; box-shadow:0 1px 4px rgba(0,0,0,0.66); }

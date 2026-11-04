@@ -11,6 +11,7 @@ import { mapsDirUrl } from '../lib/geo.js';
 import { useLanguage } from '../lib/language.jsx';
 import { provinceLabel } from '../lib/provinces.js';
 import { useShareCompanionHint } from '../lib/companionContext.jsx';
+import ReportPlace from '../components/ReportPlace.jsx';
 
 const pin = L.divIcon({
   className: '',
@@ -123,6 +124,10 @@ export default function PlaceDetail() {
               <p className="attr">{t('ระบบไม่มีราคา ค่าเข้า หรือคะแนนรีวิว ดูรีวิวจริงได้ที่ Google Maps', 'We do not hold prices, entry fees or review scores. See real reviews on Google Maps.')}</p>
             </section>
           )}
+
+          <section className="detail-block report">
+            <ReportPlace place={p} name={p.name_th} />
+          </section>
         </section>
 
         <aside className="detail-side">

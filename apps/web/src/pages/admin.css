@@ -89,3 +89,12 @@ b.is-warn{color:#9a5b05}
 :where(html[data-theme=dark]) b.is-warn{color:#e3a94a}
 :where(html[data-theme=dark]) .adm-dot.is-good{background:#46a065}
 :where(html[data-theme=dark]) .adm-dot.is-warn{background:#c98418}
+
+/* แจ้งข้อมูลผิด */
+.adm-reports { list-style:none; margin:0; padding:0; }
+.adm-reports li { display:flex; gap:12px; align-items:flex-start; justify-content:space-between; padding:10px 0; border-top:1px solid #e4e0d4; }
+.adm-reports li:first-child { border-top:none; }
+.adm-reports strong { display:block; font-weight:600; }
+.adm-reports small { display:block; color:#66705F; font-size:.8rem; overflow-wrap:anywhere; }
+.adm-reports p { margin:4px 0 0; font-size:.88rem; overflow-wrap:anywhere; white-space:pre-wrap; }
+.adm-reports .btn.small { width:auto; padding:6px 12px; font-size:.82rem; flex:0 0 auto; }
