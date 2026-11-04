@@ -3,7 +3,8 @@
     python scripts/check_llm.py
 
 อ่านค่าจาก .env ในโฟลเดอร์โปรเจกต์ (ถ้ามี) และจากตัวแปรสภาพแวดล้อม โดยตัวแปรสภาพแวดล้อมมาก่อน
-ตัวแปรที่ใช้: LLM_PROVIDER, LLM_MODEL, ANTHROPIC_API_KEY หรือ OPENAI_API_KEY (ดู .env.example)
+ตัวแปรที่ใช้: LLM_PROVIDER, LLM_MODEL, คีย์ของผู้ให้บริการ และ LLM_FALLBACK ถ้ามีตัวสำรอง (ดู .env.example)
+มีตัวสำรอง: ลองเรียกทุกตัวทีละตัว รหัสออกดูจากตัวหลัก
 ไม่พิมพ์คีย์ออกหน้าจอ ไม่ว่ากรณีใด
 
 รหัสออก: 0 = เรียกสำเร็จ, 1 = ตั้งค่าครบแต่เรียกไม่สำเร็จ, 2 = ยังตั้งค่าไม่ครบ (ระบบจะใช้โหมดกฎ)
@@ -19,9 +20,7 @@ from typing import Callable, Mapping, MutableMapping
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from services.api.llm import PROVIDERS, LLMClient, LLMError, from_env  # noqa: E402
-
-KEY_VAR = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY"}
+from services.api.llm import KEY_VAR, PROVIDERS, LLMClient, LLMError, from_env  # noqa: E402
 
 
 def load_dotenv(path: Path, env: MutableMapping[str, str]) -> bool:
@@ -48,7 +47,7 @@ def diagnose(env: Mapping[str, str]) -> list[str]:
     provider = (env.get("LLM_PROVIDER") or "mock").strip().lower()
     out = [f"LLM_PROVIDER = {provider}"]
     if provider == "mock":
-        out.append("ตั้ง LLM_PROVIDER เป็น anthropic หรือ openai เพื่อเปิดโหมด LLM")
+        out.append(f"ตั้ง LLM_PROVIDER เป็น {' / '.join(PROVIDERS)} เพื่อเปิดโหมด LLM")
         return out
     if provider not in PROVIDERS:
         out.append(f"ไม่รู้จักผู้ให้บริการนี้ ใช้ได้: {', '.join(PROVIDERS)}")
@@ -70,18 +69,22 @@ def main(argv: list[str] | None = None, env: MutableMapping[str, str] | None = N
         for line in diagnose(env):
             print("  " + line)
         return 2
-    print(f"ผู้ให้บริการ {client.provider} รุ่น {client.model}")
-    start = time.monotonic()
-    try:
-        reply = client.complete("ตอบสั้นที่สุด", "ตอบคำว่า พร้อม เพียงคำเดียว", max_tokens=20)
-    except LLMError as e:
-        print(f"เรียกไม่สำเร็จ: {e}")
-        print("  ตรวจคีย์ ชื่อรุ่น เครดิต และการเชื่อมต่ออินเทอร์เน็ต")
-        return 1
-    ms = int((time.monotonic() - start) * 1000)
-    print(f"สำเร็จ ใช้เวลา {ms} ms ตอบกลับ {len(reply)} ตัวอักษร")
-    return 0
-
+    code = 0
+    for i, c in enumerate(getattr(client, "clients", [client])):
+        print(f"{'ตัวหลัก' if i == 0 else f'ตัวสำรอง {i}'}: ผู้ให้บริการ {c.provider} รุ่น {c.model}")
+        start = time.monotonic()
+        try:
+            # เพดาน 200 โทเคน: รุ่นที่คิดก่อนตอบ (thinking) ใช้โทเคนคิดด้วย เพดานต่ำไปจะได้ข้อความว่าง
+            reply = c.complete("ตอบสั้นที่สุด", "ตอบคำว่า พร้อม เพียงคำเดียว", max_tokens=200)
+        except LLMError as e:
+            print(f"  เรียกไม่สำเร็จ: {e}")
+            print("  ตรวจคีย์ ชื่อรุ่น เครดิต และการเชื่อมต่ออินเทอร์เน็ต")
+            if i == 0:
+                code = 1
+            continue
+        ms = int((time.monotonic() - start) * 1000)
+        print(f"  สำเร็จ ใช้เวลา {ms} ms ตอบกลับ {len(reply)} ตัวอักษร")
+    return code
 
 if __name__ == "__main__":
     raise SystemExit(main())
