@@ -128,17 +128,17 @@ def test_tampered_and_expired_tokens_rejected(env):
     c, _, _ = env
     signup(c)
     good = c.cookies.get("nt_session")
-    uid, exp, sig = good.split(".")
+    uid, exp, sid, sig = good.split(".")
     c.cookies.clear()
-    c.cookies.set("nt_session", f"2.{exp}.{sig}")          # สวมรอยผู้ใช้อื่น
+    c.cookies.set("nt_session", f"2.{exp}.{sid}.{sig}")          # สวมรอยผู้ใช้อื่น
     assert c.get("/api/auth/me").status_code == 401
     c.cookies.clear()
-    c.cookies.set("nt_session", f"{uid}.{exp}.{'0' * 64}")  # ลายเซ็นมั่ว
+    c.cookies.set("nt_session", f"{uid}.{exp}.{sid}.{'0' * 64}")  # ลายเซ็นมั่ว
     assert c.get("/api/auth/me").status_code == 401
     c.cookies.clear()
     c.cookies.set("nt_session", "garbage")
     assert c.get("/api/auth/me").status_code == 401
-    old = auth.make_token(int(uid), "test-secret", now=1_000_000)  # หมดอายุแล้ว
+    old = auth.make_token(int(uid), "test-secret", now=1_000_000, sid=sid)  # หมดอายุแล้ว
     c.cookies.clear()
     c.cookies.set("nt_session", old)
     assert c.get("/api/auth/me").status_code == 401
@@ -147,9 +147,9 @@ def test_tampered_and_expired_tokens_rejected(env):
 def test_token_signed_with_other_secret_rejected(env):
     c, _, _ = env
     signup(c)
-    uid = int(c.cookies.get("nt_session").split(".")[0])
+    uid, _, sid, _ = c.cookies.get("nt_session").split(".")
     c.cookies.clear()
-    c.cookies.set("nt_session", auth.make_token(uid, "other-secret"))
+    c.cookies.set("nt_session", auth.make_token(int(uid), "other-secret", sid=sid))
     assert c.get("/api/auth/me").status_code == 401
 
 
@@ -361,3 +361,13 @@ def test_out_of_range_ids_are_400_not_500(env, path, bad):
         r = getattr(c, method)(path.format(bad))
         assert r.status_code == 400, (method, path, bad, r.status_code)
         assert "พารามิเตอร์ไม่ถูกต้อง" in r.json()["error"]
+
+
+def test_register_is_rate_limited_per_ip(tmp_path):
+    from services.api.accounts import REGISTER_PER_HOUR
+    c, store, _ = make(tmp_path)
+    for i in range(REGISTER_PER_HOUR):
+        assert c.post("/api/auth/register", json={"email": f"u{i}@example.com", "password": PW}).status_code == 201
+    r = c.post("/api/auth/register", json={"email": "one-more@example.com", "password": PW})
+    assert r.status_code == 429 and r.json()["code"] == "rate_limited"
+    assert store.user_by_email("one-more@example.com") is None

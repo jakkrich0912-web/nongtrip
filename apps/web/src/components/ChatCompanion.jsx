@@ -9,7 +9,7 @@ import { chatSuggestions, useChatSession } from '../lib/useChatSession.js';
 import { useCompanionHint } from '../lib/companionContext.jsx';
 import { preload, prefersReducedMotion } from '../lib/mascot.js';
 import {
-  COMPANION_SIZE, DRAG_THRESHOLD, EDGE, GREETING, bodyHeight, clampPos, companionFace, fromRatio, homePos, loadRatio,
+  COMPANION_SIZE, DRAG_THRESHOLD, canWander, EDGE, GREETING, bodyHeight, clampPos, companionFace, fromRatio, homePos, loadRatio,
   nextActDelay, nextRestDelay, panelPlacement, pickAct, pickWalkTarget, saveRatio, stepToward, toRatio,
   clampRect, loadRect, maximizedRect, moveRect, resizeRect, saveRect,
 } from '../lib/companion.js';
@@ -98,6 +98,7 @@ export default function ChatCompanion({ hidden = false }) {
     function go() {
       if (!alive) return;
       if (blocked()) { rest(1200); return; }
+      if (!canWander(window.innerWidth)) { rest(); return; }
       target = pickWalkTarget(posRef.current.x, window.innerWidth);
       if (Math.abs(target - posRef.current.x) < 8) { rest(); return; }
       walkingRef.current = true;

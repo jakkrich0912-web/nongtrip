@@ -23,3 +23,21 @@ describe('ปุ่มและคำถามแนะนำ', () => {
     expect(chatSuggestions(false)[0][0]).toContain('เชียงใหม่');
   });
 });
+
+describe('historyToMessages', () => {
+  it('turns a saved chat into user and bot messages, skipping empty ones', async () => {
+    const { historyToMessages } = await import('./useChatSession.js');
+    const out = historyToMessages({ id: 3, messages: [
+      { role: 'user', content: 'คาเฟ่ในน่าน' },
+      { role: 'assistant', content: 'พบคาเฟ่ 12 แห่ง' },
+      { role: 'assistant', content: '   ' },
+    ] });
+    expect(out.map((m) => [m.role, m.text])).toEqual([['user', 'คาเฟ่ในน่าน'], ['bot', 'พบคาเฟ่ 12 แห่ง']]);
+    expect(out[1]).toMatchObject({ status: 'done', sources: [], restored: true });
+    expect(new Set(out.map((m) => m.id)).size).toBe(2);
+  });
+  it('handles a missing chat', async () => {
+    const { historyToMessages } = await import('./useChatSession.js');
+    expect(historyToMessages(null)).toEqual([]);
+  });
+});

@@ -6,6 +6,8 @@ import './styles.css';
 import App from './App.jsx';
 import { LanguageProvider } from './lib/language.jsx';
 import { AuthProvider } from './lib/auth.jsx';
+// โหมดมืดต้องโหลดหลัง CSS ทุกไฟล์ (รวมของแต่ละหน้า) กฎความเจาะจงเท่ากันจึงชนะ
+import './dark.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

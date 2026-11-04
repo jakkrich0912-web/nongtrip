@@ -159,6 +159,7 @@ export default function Login({ mode = 'login' }) {
               </button>
             </div>
             {!isLogin && <p id="nt-auth-password-hint" className="nt-auth-small">{t('ใช้รหัสผ่าน 8–200 ตัวอักษร', 'Use a password between 8 and 200 characters.')}</p>}
+            {!isLogin && <p className="nt-auth-small">{t('เราเก็บแค่อีเมล ประวัติค้น สถานที่โปรด และแชตของคุณ ลบเองได้ทุกเมื่อ ', 'We keep only your email, searches, favourites and chats, and you can delete them any time. ')}<Link to="/privacy">{t('อ่านรายละเอียด', 'Read the details')}</Link></p>}
             {error && <p className="nt-auth-error" role="alert">{error}</p>}
             <button className="nt-auth-submit" type="submit" data-mascot-cheer disabled={busy}>{busy ? t('กำลังดำเนินการ…', 'Please wait…') : isLogin ? t('เข้าสู่ระบบ', 'Sign in') : t('สร้างบัญชี', 'Create account')}<Arrow /></button>
           </form>
