@@ -60,6 +60,16 @@ def _variants(name: str) -> set[str]:
     return {v for v in out if v}
 
 
+def mentions_known_place(text: str, known_names: Iterable[str]) -> str | None:
+    """คืนชื่อสถานที่ที่ระบบรู้จักชื่อแรกที่พบในข้อความ (ไม่สนเว้นวรรคและตัวพิมพ์) ไม่พบคืน None"""
+    t = _norm(text)
+    for name in known_names:
+        for v in _variants(name):
+            if len(v) >= MIN_NAME_LEN and v in t:
+                return name
+    return None
+
+
 def _related(a: str, b: str) -> bool:
     """เทียบชื่อที่ตัดเว้นวรรคแล้ว: เท่ากัน หรืออันหนึ่งอยู่ในอีกอัน (ยอมให้เรียกชื่อสั้น/ชื่อเต็ม)"""
     return a == b or (len(a) >= MIN_NAME_LEN and a in b) or (len(b) >= MIN_NAME_LEN and b in a)
