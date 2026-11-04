@@ -247,6 +247,8 @@ OFF_TOPIC_EN_KIND = {
     "news": "I don't have news. Please check a trusted news source.",
     "food": "I don't have restaurant data yet, only attractions, cafés and stays. I can find a café nearby, though.",
 }
+GENERAL_DISCLAIMER = "เรื่องนี้ไม่ใช่งานหลักของน้องทริปนะคะ ตอบจากความรู้ทั่วไป ข้อมูลอาจไม่ถูกต้อง 100% ควรตรวจสอบกับแหล่งที่เชื่อถือได้อีกครั้ง"
+GENERAL_DISCLAIMER_EN = "This isn't my main job, so this is general knowledge and may not be 100% accurate. Please double-check with a reliable source."
 OFF_TOPIC_SHORT = "ขอโทษนะคะ อันนี้น้องทริปตอบไม่ได้จริง ๆ"
 OFF_TOPIC_SHORT_EN = "Sorry, that's outside what I know."
 CAN_DO = "น้องทริปช่วยได้เรื่องที่เที่ยว คาเฟ่ และที่พักรอบตัวคุณ ลองพิมพ์ เช่น \"ที่เที่ยวในเชียงใหม่\" หรือ \"คาเฟ่ใกล้ๆ\""
@@ -541,7 +543,16 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
                         lines += _footer(places_ev, intent, body.lang)
                     elif off_topic:
-                        lines = [ln + "\n" for ln in _lines(_off_topic_parts(intent, body.lang)).split("\n") if ln.strip()]
+                        # นอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนที่โค้ดใส่เอง ไม่ผ่านด่านตรวจใช้คำตอบสำเร็จรูปเดิม
+                        # ถามเรื่องอาหารยังตอบสำเร็จรูป (ระบบไม่มีข้อมูลร้านอาหาร ให้ LLM แนะนำร้านเองจะกลายเป็นการเดา)
+                        gen = rag.general(text, body.lang) if not intent.asks_food else None
+                        if gen is not None and gen.mode == "llm":
+                            mode = "llm"
+                            lines = [_t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN) + "\n"]
+                            lines += [ln + "\n" for ln in gen.text.split("\n") if ln.strip()]
+                            lines.append(_t(body.lang, CAN_DO, CAN_DO_EN) + "\n")
+                        else:
+                            lines = [ln + "\n" for ln in _lines(_off_topic_parts(intent, body.lang)).split("\n") if ln.strip()]
                     else:
                         lines = held + ([_notes([GUARD_NOTICE], body.lang)[0] + "\n"] if res.guard_failed else [])
                     for ln in lines:
