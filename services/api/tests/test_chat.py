@@ -423,8 +423,9 @@ def test_multiline_osm_name_cannot_forge_reply_lines(tmp_path):
 
 
 def test_offtopic_message_is_not_answered_with_a_places_list():
-    # "กินข้าวยัง" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม
-    assert parse("กินข้าวยัง").off_topic
+    # "หิวแล้ว" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม ("กินข้าวยัง" เป็นคุยเล่น ตอบสำเร็จรูป)
+    assert parse("หิวแล้ว").off_topic
+    assert parse("กินข้าวยัง").smalltalk == "eaten" and not parse("กินข้าวยัง").off_topic
     assert parse("ขอบคุณ").smalltalk == "thanks" and not parse("ขอบคุณ").off_topic
     assert parse("hello").greeting and not parse("hello").off_topic
     # ข้อความสั้นๆ ที่ยังหมายถึงการค้น ต้องไม่ถูกตีเป็นนอกเรื่อง
@@ -441,7 +442,7 @@ def test_food_question_says_there_is_no_restaurant_data():
 
 def test_offtopic_chat_runs_no_search_even_with_a_pin(env):
     c, *_ = env
-    evs = events(ask(c, "กินข้าวยัง", context={"lat": LAT, "lon": LON}))
+    evs = events(ask(c, "หิวแล้ว", context={"lat": LAT, "lon": LON}))
     assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
     text = text_of(evs)
     assert "ยังไม่มีข้อมูลร้านอาหาร" in text and "คาเฟ่" in text
@@ -470,12 +471,12 @@ def test_named_place_without_pin_searches_around_that_place(env):
 def test_smalltalk_kinds_and_guards():
     for text, kind in [("ชื่ออะไร", "name"), ("คุณชื่ออะไรเหรอ", "name"), ("เป็นคนหรือเปล่า", "bot"), ("ใครสร้างเธอ", "maker"),
                        ("สบายดีไหม", "wellbeing"), ("ขอบคุณค่ะ", "thanks"), ("บาย", "bye"), ("บ๊ายบายค่ะ", "bye"),
-                       ("เก่งจัง", "praise"), ("พรุ่งนี้ฝนตกไหม", "weather"), ("เบื่อจัง", "bored"),
+                       ("เก่งจัง", "praise"), ("พรุ่งนี้ฝนตกไหม", "weather"), ("เบื่อจัง", "bored"), ("กินข้าวยัง", "eaten"),
                        ("what's your name?", "name"), ("who are you", "name"), ("thank you!", "thanks"), ("how are you", "wellbeing")]:
         it = parse(text)
         assert it.smalltalk == kind and not it.off_topic and not it.greeting, text
     # ต้องไม่จับผิด: "สบาย" มี "บาย" อยู่ในคำ, ชื่อสถานที่, ข้อความที่มีจังหวัด/ประเภทสถานที่/ยาวเกิน
-    for text in ["สบายๆ", "วัดนี้ชื่ออะไร", "ขอบคุณ แล้วคาเฟ่ล่ะ", "ที่เที่ยวเชียงใหม่ ขอบคุณ", "คาเฟ่ใกล้ๆ", "สวัสดี", "กินข้าวยัง",
+    for text in ["สบายๆ", "วัดนี้ชื่ออะไร", "ขอบคุณ แล้วคาเฟ่ล่ะ", "ที่เที่ยวเชียงใหม่ ขอบคุณ", "คาเฟ่ใกล้ๆ", "สวัสดี", "หิวแล้ว",
                  "ขอบคุณที่ช่วยหาที่เที่ยวให้ ตอนนี้ขอรบกวนถามเรื่องอื่นต่ออีกนิดนะ",
                  "เขื่อนภูมิพลเดิมชื่ออะไร", "ชื่อไร่เลย์มาจากคำว่าอะไร", "พยากรณ์อากาศโตเกียวพรุ่งนี้",
                  "อุทยานแห่งชาติแจ้ซ้อนมีบ่อน้ำร้อนไหม"]:   # คำถามข้อเท็จจริงในชุดทดสอบทอง ต้องไปถึงผู้ตอบหลักเหมือนเดิม

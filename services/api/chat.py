@@ -56,6 +56,7 @@ SMALLTALK_TH = {
     "praise": ["ขอบคุณค่ะ ดีใจที่ชอบ"],
     "weather": ["น้องทริปยังไม่มีข้อมูลสภาพอากาศค่ะ ก่อนออกเดินทางลองดูพยากรณ์จากกรมอุตุนิยมวิทยาอีกที"],
     "bored": ["เบื่อใช่ไหมคะ ไปเที่ยวเปลี่ยนบรรยากาศกันดีกว่า"],
+    "eaten": ["น้องทริปไม่ได้กินข้าวค่ะ แต่ถ้าหิว ไปชิมอาหารพื้นถิ่นระหว่างเที่ยวกันดีกว่า"],
 }
 SMALLTALK_ASK = "วันนี้อยากไปเที่ยวแถวไหนดีคะ บอกชื่อจังหวัดหรือที่พักได้เลย"
 SMALLTALK_EN = {
@@ -69,6 +70,7 @@ SMALLTALK_EN = {
     "praise": ["Thank you, I'm glad you like it."],
     "weather": ["NongTrip has no weather data yet. Please check the Thai Meteorological Department forecast before you travel."],
     "bored": ["Bored? Let's find somewhere new to go."],
+    "eaten": ["I don't eat, but if you're hungry, local food on the road is part of the trip!"],
 }
 SMALLTALK_ASK_EN = "Where would you like to go? Tell me a province or your stay."
 
@@ -508,6 +510,10 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     # ไม่มีหมุด/จังหวัด แต่เอ่ยชื่อสถานที่ที่ตรวจแล้ว: ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น ไม่ต้องถามหาหมุดก่อน
                     # (ไม่ถือว่าเป็นหมุดของผู้ใช้ จึงไม่ย้ายหมุดบนหน้าเว็บ)
                     hit = find_place(text, svc.verified)
+                    if not hit:
+                        # คำถามต่อเนื่องที่ไม่เอ่ยชื่อที่ ("เล่าเพิ่มหน่อย"): ใช้สถานที่ที่เอ่ยในคำถามก่อนหน้าของแชตเดียวกัน
+                        prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
+                        hit = find_place(clean(prev), svc.verified) if prev else None
                     if hit:
                         eff_ctx = Context(lat=hit.lat, lon=hit.lon)
                         intent.anchor = hit.name_th
@@ -566,7 +572,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         lines += [ln + "\n" for ln in trav.text.split("\n") if ln.strip()]
                         if items:
                             lines += _footer(places_ev, intent, body.lang)
-                    elif res.mode == "llm":
+                    elif res.mode == "llm" and not (off_topic and no_info):
                         mode = "llm"
                         for ev, data in pending:
                             yield emit(ev, data)

@@ -275,7 +275,7 @@ def test_offtopic_with_llm_on_shows_offtopic_text_and_no_place_cards(tmp_path):
     # "กินข้าวยัง": ไม่แสดงรายชื่อ/การ์ดสถานที่ที่ไม่เกี่ยว คำตอบ LLM เอ่ยชื่อสถานที่ที่ไม่ได้ค้น (ด่านตรวจตีตก) จึงใช้คำตอบสำเร็จรูป
     llm = FakeLLM(GOOD)
     c, _ = make(tmp_path, llm)
-    evs = events(ask(c, "กินข้าวยัง"))
+    evs = events(ask(c, "หิวแล้ว อยากกินของอร่อย"))
     names = [e for e, _ in evs]
     assert "places" not in names and "tool" not in names
     text = text_of(evs)
@@ -479,3 +479,13 @@ def test_check_travel_rules():
     assert check_travel("ห่าง 3 กม.", set(), places)[0]["rule"] == "distance"
     assert check_travel("ค่าเข้า 50 บาทค่ะ", set(), [])[0]["rule"] == "forbidden"
     assert check_travel("", set(), [])[0]["rule"] == "empty"
+
+
+def test_follow_up_without_place_uses_place_from_previous_question(tmp_path):
+    # ไม่มีหมุดและไม่เอ่ยชื่อที่ แต่คำถามก่อนหน้าเอ่ยถึงวัด: ค้นรอบสถานที่นั้น ไม่ต้องถามว่าแถวไหน
+    llm = FakeLLM(GOOD)
+    c, _ = make(tmp_path, llm)
+    evs = events(c.post("/api/chat", json={"message": "เล่าเพิ่มหน่อย", "history": HISTORY}))
+    assert done(evs)["mode"] == "llm" and "ask" not in done(evs)
+    evs = events(c.post("/api/chat", json={"message": "เล่าเพิ่มหน่อย"}))
+    assert done(evs).get("ask") == "location"
