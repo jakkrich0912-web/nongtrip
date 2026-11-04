@@ -29,7 +29,7 @@ from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
-from .rag import Rag
+from .rag import MAX_HISTORY, Rag
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
 
@@ -113,6 +113,11 @@ class Context(BaseModel):
     lon: float
 
 
+class Turn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
 class ChatIn(BaseModel):
     message: str = Field(min_length=1, max_length=MAX_MESSAGE)
     context: Context | None = None
@@ -122,6 +127,8 @@ class ChatIn(BaseModel):
     lang: Literal["th", "en"] = "th"
     # แก้คำถาม/ถามใหม่ (ต้องล็อกอินและส่ง chat_id): รหัสข้อความผู้ใช้ในแชตนี้ ลบตั้งแต่ข้อความนั้นลงไปแล้วถามใหม่
     edit_from: int | None = Field(default=None, ge=1, le=MAX_ID)
+    # บทสนทนาก่อนหน้าในแชตเดียวกัน (หน้าเว็บส่งมา ใช้ไม่เกิน 6 ข้อความท้าย) ให้ LLM เข้าใจคำถามต่อเนื่อง ไม่ได้บันทึกเพิ่ม
+    history: list[Turn] | None = Field(default=None, max_length=20)
 
 
 class ChatThrottle:
@@ -464,6 +471,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 chat_id = store.create_chat(user["id"], text)
             user_msg_id = store.add_message(user["id"], chat_id, "user", text) or None
 
+        hist = [(t.role, t.content) for t in (body.history or [])][-MAX_HISTORY:]
+
         def stream():
             parts: list[str] = []
             saved = False
@@ -533,7 +542,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 t_search = time.perf_counter() - t0
                 t1 = time.perf_counter()
                 if use_rag:
-                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang)
+                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang, hist)
                     if res.mode == "llm":
                         mode = "llm"
                         for ev, data in pending:
@@ -544,7 +553,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     elif off_topic:
                         # นอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนที่โค้ดใส่เอง ไม่ผ่านด่านตรวจใช้คำตอบสำเร็จรูปเดิม
                         # ถามเรื่องอาหารยังตอบสำเร็จรูป (ระบบไม่มีข้อมูลร้านอาหาร ให้ LLM แนะนำร้านเองจะกลายเป็นการเดา)
-                        gen = rag.general(text, body.lang) if not intent.asks_food else None
+                        gen = rag.general(text, body.lang, hist) if not intent.asks_food else None
                         if gen is not None and gen.mode == "llm":
                             mode = "llm"
                             lines = [_t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN) + "\n"]

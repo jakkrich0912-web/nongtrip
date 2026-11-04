@@ -26,9 +26,51 @@ export function historyToMessages(chat) {
     });
 }
 
-export function useChatSession({ initialContext = null } = {}) {
+// ---------- จำบทสนทนา ----------
+// บทสนทนาก่อนหน้าที่ส่งให้บอท (CONTRACT v0.24): คำถามของผู้ใช้กับคำตอบที่เสร็จแล้ว ไม่เกิน 6 ข้อความท้าย ตัดแต่ละข้อความไว้ 400 ตัวอักษร
+export const HISTORY_TURNS = 6;
+export function historyFor(messages) {
+  return (messages ?? [])
+    .filter((m) => typeof m?.text === 'string' && m.text.trim() && (m.role === 'user' || (m.role === 'bot' && m.status === 'done')))
+    .slice(-HISTORY_TURNS)
+    .map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text.trim().slice(0, 400) }));
+}
+
+// เก็บแชตที่คุยอยู่ไว้ใน sessionStorage ของแท็บนี้: ไปหน้าอื่นหรือรีเฟรชแล้วกลับมายังอยู่ ปิดแท็บแล้วหายไป
+// ผูกกับผู้ใช้ (uid) คนอื่นที่ล็อกอินในแท็บเดียวกันจะไม่เห็น ข้อความที่ค้างตอบอยู่ตอนออกจากหน้า ถือว่าหยุดแล้ว
+export const KEEP_MESSAGES = 40;
+const FINAL = new Set(['done', 'error', 'stopped']);
+export function packChat({ uid, messages, context, chatId, lastProvince }) {
+  return { v: 1, uid: uid ?? null, messages: (messages ?? []).slice(-KEEP_MESSAGES), context: context ?? null, chatId: chatId ?? null, lastProvince: lastProvince ?? null };
+}
+export function unpackChat(raw, uid) {
+  let data = raw;
+  if (typeof raw === 'string') { try { data = JSON.parse(raw); } catch { return null; } }
+  if (!data || data.v !== 1 || (data.uid ?? null) !== (uid ?? null) || !Array.isArray(data.messages)) return null;
+  const messages = data.messages
+    .filter((m) => m && typeof m === 'object' && (m.role === 'user' || m.role === 'bot') && m.id != null)
+    .map((m) => (m.role === 'bot' && !FINAL.has(m.status) ? { ...m, status: 'stopped' } : m))
+    .filter((m) => m.role === 'user' || (typeof m.text === 'string' && m.text.trim()) || m.status === 'error');
+  const ctx = data.context;
+  const context = ctx && Number.isFinite(ctx.lat) && Number.isFinite(ctx.lon) ? { lat: ctx.lat, lon: ctx.lon, name: typeof ctx.name === 'string' ? ctx.name : '' } : null;
+  return { messages, context, chatId: Number.isInteger(data.chatId) ? data.chatId : null, lastProvince: typeof data.lastProvince === 'string' ? data.lastProvince : null };
+}
+function readKept(key) {
+  try { return globalThis.sessionStorage?.getItem(key) ?? null; } catch { return null; }
+}
+function writeKept(key, value) {
+  try {
+    if (value) globalThis.sessionStorage?.setItem(key, JSON.stringify(value));
+    else globalThis.sessionStorage?.removeItem(key);
+  } catch { /* เก็บไม่ได้ (โหมดส่วนตัว พื้นที่เต็ม) ก็แค่จำไม่ได้หลังรีเฟรช */ }
+}
+
+// persistKey: ชื่อที่ใช้เก็บใน sessionStorage (ไม่ใส่ = ไม่เก็บ)
+export function useChatSession({ initialContext = null, persistKey = null } = {}) {
   const { lang } = useLanguage();
-  const { user } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user ?? null;
+  const ready = auth?.ready ?? true;
   const [context, setContext] = useState(initialContext);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -40,6 +82,10 @@ export function useChatSession({ initialContext = null } = {}) {
   const serial = useRef(0);
   const activeId = useRef(null);
   const input = useRef(null);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+  const contextRef = useRef(context);
+  contextRef.current = context;
   useEffect(() => () => controller.current?.abort(), []);
   // ผู้ใช้เปลี่ยน (ล็อกเอาต์ หรือล็อกอินเป็นคนอื่น): ล้างบทสนทนา จุดค้น และจังหวัดล่าสุด
   // คนถัดไปที่ใช้เครื่องเดียวกันจะไม่เห็นแชตของคนก่อน ส่วนการล็อกอินจากสถานะไม่ล็อกอินยังคุยต่อได้ (คนเดิม)
@@ -60,6 +106,28 @@ export function useChatSession({ initialContext = null } = {}) {
     lastProvince.current = null;
   }, [user?.id]);
 
+  // กู้แชตที่คุยค้างไว้ในแท็บนี้ (รอรู้ก่อนว่าใครล็อกอินอยู่ จึงกู้ได้ถูกคน) ถ้าเริ่มคุยไปแล้วก่อนกู้ทัน ใช้ของใหม่
+  const hydrated = useRef(!persistKey);
+  useEffect(() => {
+    if (hydrated.current || !ready) return;
+    hydrated.current = true;
+    if (messagesRef.current.length) return;
+    const kept = unpackChat(readKept(persistKey), user?.id ?? null);
+    if (!kept || !kept.messages.length) return;
+    setMessages(kept.messages);
+    if (kept.context && !contextRef.current) setContext(kept.context);
+    chatId.current = kept.chatId;
+    setCurrentChat(kept.chatId);
+    lastProvince.current = kept.lastProvince;
+    serial.current = Math.max(serial.current, ...kept.messages.map((m) => (typeof m.id === 'number' ? m.id : 0)));
+  }, [ready, user?.id, persistKey]);
+  // บันทึกเมื่อแต่ละคำตอบจบ (ระหว่างสตรีมไม่เขียนทุกตัวอักษร)
+  useEffect(() => {
+    if (!persistKey || !hydrated.current || busy) return;
+    const keep = messages.length ? packChat({ uid: user?.id, messages, context, chatId: chatId.current, lastProvince: lastProvince.current }) : null;
+    writeKept(persistKey, keep);
+  }, [persistKey, messages, context, currentChat, busy, user?.id]);
+
   // ctxOverride: ใช้จุดค้นนี้กับข้อความนี้ทันที (เช่น เพิ่งได้ตำแหน่งปัจจุบัน) โดยไม่ต้องรอ state รอบถัดไป
   // opts.from = ข้อความผู้ใช้ที่จะแทน (แก้คำถาม/ถามใหม่): ตัดบทสนทนาตั้งแต่ข้อความนั้นลงไป และให้หลังบ้านลบตาม (edit_from)
   const send = async (value, displayText = value, ctxOverride, opts = {}) => {
@@ -74,6 +142,8 @@ export function useChatSession({ initialContext = null } = {}) {
     setText('');
     const from = opts.from ?? null;
     const editFrom = from && user && chatId.current ? from.serverId ?? null : null;
+    const cutAt = from ? messagesRef.current.findIndex((m) => m.id === from.id) : -1;
+    const history = historyFor(cutAt >= 0 ? messagesRef.current.slice(0, cutAt) : messagesRef.current);
     setMessages((items) => {
       const cut = from ? items.findIndex((m) => m.id === from.id) : -1;
       const kept = cut >= 0 ? items.slice(0, cut) : items;
@@ -81,7 +151,7 @@ export function useChatSession({ initialContext = null } = {}) {
     });
     const update = (patch) => setMessages((items) => items.map((item) => item.id === id ? (typeof patch === 'function' ? patch(item) : { ...item, ...patch }) : item));
     try {
-      await sendChat({ message, context: where && { lat: where.lat, lon: where.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang, edit_from: editFrom }, (event, data) => {
+      await sendChat({ message, context: where && { lat: where.lat, lon: where.lon }, chat_id: user ? chatId.current : null, last_province: lastProvince.current, lang, edit_from: editFrom, history }, (event, data) => {
         if (aborter.signal.aborted) return;
         if (event === 'token' && typeof data.text === 'string') update((item) => ({ ...item, text: item.text + data.text, status: 'answering' }));
         if (event === 'places') update({ places: data });
