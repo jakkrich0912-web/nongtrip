@@ -33,6 +33,19 @@ BOOKING_WORDS = ("จอง", "ชำระ", "จ่ายเงิน", "ซ�
 # คำถามกว้างๆ ที่ยังนับว่าอยากค้นรอบจุดเดิม ("มีอะไรบ้าง" "แนะนำหน่อย" "อีก") ถ้าไม่มีคำพวกนี้หรือคำอื่นที่ระบบรู้จักเลย ถือว่านอกเรื่อง
 GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "รอบ", "แถว", "หา", "ไหน", "บ้าง", "อีก", "ต่อ", "เพิ่ม", "สถานที่", "พาไป",
                  "ไปดี", "จุดเริ่ม", "ระยะ", "รัศมี", "เรียง", "เปลี่ยน", "ไกล", "ถ่ายรูป", "ทั้งหมด")
+# คำถามเรื่องเที่ยวทั่วไปที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู อากาศ การเดินทาง แผนเที่ยว ประเพณี เคล็ดลับ) โหมด LLM ตอบจากความรู้ทั่วไปได้
+GENERAL_TRAVEL_WORDS = ("อากาศ", "ฤดู", "หน้าฝน", "หน้าหนาว", "หน้าร้อน", "ช่วงไหน", "เดือนไหน", "เดือน", "ช่วงเวลา", "ควรไป",
+                        "เดินทาง", "ไปยังไง", "ไปอย่างไร", "รถทัวร์", "รถไฟ", "เครื่องบิน", "สนามบิน", "รถเมล์", "แท็กซี่",
+                        "แผนเที่ยว", "จัดทริป", "ทริป", "วางแผน", "กี่วัน", "วันเดียว", "เตรียม", "ของฝาก", "ประเพณี", "เทศกาล",
+                        "วัฒนธรรม", "ปลอดภัย", "แต่งตัว", "ข้อควร", "ห้าม", "สวยที่สุด", "ไหนสวย", "ไหนดี", "น่าสนใจ",
+                        "ประวัติ", "ความเป็นมา", "ขึ้นชื่อ", "มีชื่อเสียง", "เคล็ดลับ", "ทิป")
+_EN_GENERAL_TRAVEL = re.compile(
+    r"\b(?:weather|season|rain(?:y)?|when to (?:go|visit)|best time|month|get (?:there|to)|how to get|flights?|trains?|bus(?:es)?|"
+    r"airport|taxi|itinerary|plan(?:ning)?|trip|days?|tips?|prepare|souvenirs?|festivals?|traditions?|culture|safe(?:ty)?|"
+    r"what to wear|famous|history|worth)\b", re.I)
+# "ที่พักใกล้ X" = อยากได้ที่พักรอบสถานที่นั้น (ไม่ใช่ที่เที่ยวรอบ X แม้ X จะเป็นดอยหรือวัด)
+_LODGING_NEAR = re.compile(r"(?:ที่พัก|โรงแรม|รีสอร์ท|รีสอร์ต|โฮสเทล|โฮมสเตย์|เกสต์เฮาส์|บ้านพัก)\s*(?:ที่)?\s*(?:ใกล้|แถว|รอบ|ละแวก|ติด)")
+_EN_LODGING_NEAR = re.compile(r"\b(?:hotels?|resorts?|hostels?|homestays?|guest ?houses?|accommodations?|places? to stay)\s+(?:near|around|close to|by)\b", re.I)
 FOOD_WORDS = ("กินข้าว", "ร้านอาหาร", "อาหาร", "หิว", "อร่อย", "ข้าว", "กินอะไร", "ของกิน", "เมนู")
 GREETING_WORDS = ("สวัสดี", "หวัดดี", "hello", "hi ", "ช่วยอะไรได้", "ทำอะไรได้", "ใช้ยังไง", "วิธีใช้")
 
@@ -235,6 +248,7 @@ class Intent:
     asks_booking: bool = False
     asks_hours: bool = False             # ถามเวลาเปิดปิด ระบบไม่มีข้อมูล
     asks_directions: bool = False        # ถามวิธีเดินทาง ระบบไม่วางเส้นทาง แนะนำปุ่มนำทาง
+    asks_general: bool = False           # ถามเรื่องเที่ยวทั่วไปที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู การเดินทาง แผนเที่ยว ...) โหมด LLM ตอบจากความรู้ทั่วไปได้
     notes: list[str] = field(default_factory=list)   # หมายเหตุที่ต้องบอกผู้ใช้ เช่น ปรับรัศมีลงเหลือ 30
 
 
@@ -385,6 +399,8 @@ def parse(message: str) -> Intent:
     elif attr and not cafe:
         it.kinds = ("attraction",)
     it.want_lodgings = lodging and not cafe and not attr and not it.lodging_query
+    if lodging and not it.lodging_query and (_LODGING_NEAR.search(text) or _EN_LODGING_NEAR.search(text)):
+        it.want_lodgings = True
     m = _RADIUS_RE.search(text)
     if m:
         r = float(m.group(1))
@@ -407,6 +423,8 @@ def parse(message: str) -> Intent:
     it.greeting = hello and not (it.province or cafe or attr or lodging)
     has_number = bool(_RADIUS_RE.search(text) or _LIMIT_RE.search(text))
     it.asks_food = _has(text, FOOD_WORDS) or bool(_EN_FOOD.search(text))
+    it.asks_general = (_has(text, GENERAL_TRAVEL_WORDS) or bool(_EN_GENERAL_TRAVEL.search(text))
+                       or it.asks_directions or it.asks_food)
     known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
              or it.asks_booking or it.asks_hours or it.asks_directions or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
     it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))

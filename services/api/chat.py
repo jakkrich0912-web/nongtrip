@@ -29,7 +29,7 @@ from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
-from .rag import MAX_HISTORY, Rag
+from .rag import MAX_HISTORY, Rag, is_no_info
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
 
@@ -256,6 +256,9 @@ OFF_TOPIC_EN_KIND = {
 }
 GENERAL_DISCLAIMER = "เรื่องนี้ไม่ใช่งานหลักของน้องทริปนะคะ ตอบจากความรู้ทั่วไป ข้อมูลอาจไม่ถูกต้อง 100% ควรตรวจสอบกับแหล่งที่เชื่อถือได้อีกครั้ง"
 GENERAL_DISCLAIMER_EN = "This isn't my main job, so this is general knowledge and may not be 100% accurate. Please double-check with a reliable source."
+# คำถามเรื่องเที่ยวที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู การเดินทาง แผนเที่ยว อาหารท้องถิ่น) ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนนี้เสมอ
+TRAVEL_DISCLAIMER = "เรื่องนี้ระบบยังไม่มีข้อมูลที่ตรวจแล้ว น้องทริปตอบจากความรู้ทั่วไป อาจไม่ถูกต้อง 100% ควรตรวจสอบอีกครั้งนะคะ"
+TRAVEL_DISCLAIMER_EN = "The system has no verified data on this, so this is general knowledge and may not be 100% accurate. Please double-check."
 OFF_TOPIC_SHORT = "ขอโทษนะคะ อันนี้น้องทริปตอบไม่ได้จริง ๆ"
 OFF_TOPIC_SHORT_EN = "Sorry, that's outside what I know."
 CAN_DO = "น้องทริปช่วยได้เรื่องที่เที่ยว คาเฟ่ และที่พักรอบตัวคุณ ลองพิมพ์ เช่น \"ที่เที่ยวในเชียงใหม่\" หรือ \"คาเฟ่ใกล้ๆ\""
@@ -285,10 +288,12 @@ def _ask_location(it: Intent, lang: str = "th") -> list[str]:
         th, en = "ที่เที่ยว", "attractions"
     else:
         th, en = "ที่เที่ยวกับคาเฟ่", "attractions and cafés"
+    # ตัวอย่างจังหวัดให้เข้ากับสิ่งที่หา (ทะเล/เกาะ ยกตัวอย่างเชียงใหม่ไม่ได้)
+    ex_th, ex_en = ("ภูเก็ต", "Phuket") if en in ("beaches", "islands") else ("เชียงใหม่", "Chiang Mai")
     return [_t(lang, f"อยากหา{th}ใช่ไหมคะ บอกน้องทริปหน่อยว่าแถวไหน",
                f"Looking for {en}? Tell me where."),
-            _t(lang, f"พิมพ์ชื่อจังหวัด (เช่น \"{th}ในเชียงใหม่\") ชื่อที่พัก หรือปักหมุดบนแผนที่ก็ได้ค่ะ",
-               f"Type a province (for example \"{en} in Chiang Mai\"), your stay's name, or pin the map.")]
+            _t(lang, f"พิมพ์ชื่อจังหวัด (เช่น \"{th}ใน{ex_th}\") ชื่อที่พัก หรือปักหมุดบนแผนที่ก็ได้ค่ะ",
+               f"Type a province (for example \"{en} in {ex_en}\"), your stay's name, or pin the map.")]
 
 
 def _smalltalk_parts(kind: str, lang: str = "th") -> list[str]:
@@ -541,9 +546,27 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 mode = "rule"
                 t_search = time.perf_counter() - t0
                 t1 = time.perf_counter()
+                general_used = False
                 if use_rag:
-                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang, hist)
-                    if res.mode == "llm":
+                    items = (places_ev or {}).get("items") or []
+                    res = rag.answer(text, items, (places_ev or {}).get("radius_km"), body.lang, hist)
+                    # คลังความรู้ไม่มีเรื่องนี้ หรือเป็นคำถามเรื่องเที่ยวทั่วไป (ฤดู การเดินทาง แผนเที่ยว อาหารท้องถิ่น) ที่ค้นได้แค่รายชื่อ:
+                    # ให้ LLM ตอบจากความรู้ทั่วไปพร้อมคำเตือน ดีกว่าบอกว่าไม่มีข้อมูลแล้วยื่นรายชื่อที่ไม่ตรงคำถาม
+                    no_info = res.mode == "llm" and is_no_info(res.text)
+                    wants_general = (intent.asks_general or intent.asks_food) and not intent.smalltalk
+                    trav = None
+                    if not off_topic and (no_info or (wants_general and res.mode == "rule" and res.reason in ("no_places", "no_chunks"))):
+                        trav = rag.travel(text, items, body.lang, hist)
+                    if trav is not None and trav.mode == "llm":
+                        mode = "llm"
+                        general_used = True
+                        for ev, data in pending:
+                            yield emit(ev, data)
+                        lines = [_t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN) + "\n"]
+                        lines += [ln + "\n" for ln in trav.text.split("\n") if ln.strip()]
+                        if items:
+                            lines += _footer(places_ev, intent, body.lang)
+                    elif res.mode == "llm":
                         mode = "llm"
                         for ev, data in pending:
                             yield emit(ev, data)
@@ -552,11 +575,17 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         lines += _footer(places_ev, intent, body.lang)
                     elif off_topic:
                         # นอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนที่โค้ดใส่เอง ไม่ผ่านด่านตรวจใช้คำตอบสำเร็จรูปเดิม
-                        # ถามเรื่องอาหารยังตอบสำเร็จรูป (ระบบไม่มีข้อมูลร้านอาหาร ให้ LLM แนะนำร้านเองจะกลายเป็นการเดา)
-                        gen = rag.general(text, body.lang, hist) if not intent.asks_food else None
+                        # ถามเรื่องอาหาร: ตอบเรื่องอาหารท้องถิ่นแบบทั่วไป (ห้ามแนะนำร้านเฉพาะแห่ง ระบบไม่มีข้อมูลร้านอาหาร)
+                        if intent.asks_food:
+                            gen = rag.travel(text, [], body.lang, hist)
+                            head = _t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN)
+                        else:
+                            gen = rag.general(text, body.lang, hist)
+                            head = _t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN)
                         if gen is not None and gen.mode == "llm":
                             mode = "llm"
-                            lines = [_t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN) + "\n"]
+                            general_used = True
+                            lines = [head + "\n"]
                             lines += [ln + "\n" for ln in gen.text.split("\n") if ln.strip()]
                             lines.append(_t(body.lang, CAN_DO, CAN_DO_EN) + "\n")
                         else:
@@ -575,7 +604,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 yield emit("done", {"chat_id": chat_id, "mode": mode,
                                    **({"message_id": bot_msg_id} if bot_msg_id else {}),
                                    **({"user_message_id": user_msg_id} if user_msg_id else {}), **({"province": intent.province or remember} if (intent.province or remember) else {}),
-                                   **({"ask": ask} if ask and mode == "rule" else {})})
+                                   **({"ask": ask} if ask and (mode == "rule" or general_used) else {})})
             except SearchError as e:
                 yield emit("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้
