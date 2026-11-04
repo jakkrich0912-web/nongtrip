@@ -6,7 +6,7 @@
     397,
     517
   ],
-  "source_sha256": "5d05bc48d1b5c9500c7b02e6cbbf689711fe556a513e2a0c668be4168f71e14d",
+  "source_sha256": "8209b5de2a1950d659d3a4b43802089ebf5e91cf7749da13e3f34dc45770c3ff",
   "canvas_size": [
     417,
     537
@@ -132,7 +132,7 @@
     }
   },
   "base": "base.png",
-  "base_sha256": "5b7d3571bf4aa213dfa7e23d8630da69077883328eef67ef654c33778611885b",
+  "base_sha256": "fe2ff69c24be11a5c015594718ae6e951d946c6e30b070a259e8e6b64d5f4914",
   "expected_expressions": [
     "blink-half",
     "blink-closed"
@@ -147,10 +147,10 @@
       "full": "blink-half.png",
       "face": "faces/blink-half.png",
       "outside_changed_pixels": 0,
-      "inside_changed_pixels": 8384,
+      "inside_changed_pixels": 8170,
       "alpha_matches": true,
       "crop_matches": true,
-      "sha256": "6e6bd7ca0452eb183afc434be059855ffa6e0563f3a97148e4030ee7241c6ba7"
+      "sha256": "67726fef4a12dd8dfdeae33e959c82c184cb442b055fddc551c555eca81b1324"
     },
     {
       "name": "blink-closed",
@@ -158,10 +158,10 @@
       "full": "blink-closed.png",
       "face": "faces/blink-closed.png",
       "outside_changed_pixels": 0,
-      "inside_changed_pixels": 8397,
+      "inside_changed_pixels": 8317,
       "alpha_matches": true,
       "crop_matches": true,
-      "sha256": "9c84affe0e9eadf30fcb460fbdbb826b754199f860b5ac22aec159b6170cf54f"
+      "sha256": "38c6200fd52ace7c20e92c2963c981d1610cc62330227a1f109f7c8d3d2bde79"
     }
   ]
 }

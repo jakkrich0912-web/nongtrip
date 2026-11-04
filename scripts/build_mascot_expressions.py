@@ -40,19 +40,26 @@ def reference():
     return original, base, offset, band
 
 
-def face_mask(size):
+def face_mask(size, name=None):
     # Preserve silhouette, whiskers, hat, ears and camera. The soft transition is
     # strictly clipped to the requested original-coordinate face rectangle.
     mask = Image.new("L", size, 0)
-    ImageDraw.Draw(mask).polygon([
-        (96, 174), (141, 174), (272, 174), (311, 174), (329, 193),
-        (329, 265), (302, 289), (126, 289), (83, 266), (75, 218),
-    ], fill=255)
-    mask = mask.filter(ImageFilter.GaussianBlur(4))
+    draw = ImageDraw.Draw(mask)
+    # Remeasured on the fluffy front; blink/wink/symbolic eyes preserve the
+    # original muzzle, smile, nose and brows exactly.
+    eyes = [(94, 176, 171, 258), (220, 184, 295, 267)]
+    eye_only = {"blink-half", "blink-closed", "wink-left", "wink-right",
+                "heart-eyes", "star-eyes", "cross-eyed"}
+    if name in eye_only:
+        selected = eyes[1:] if name == "wink-left" else eyes[:1] if name == "wink-right" else eyes
+        for box in selected:
+            draw.ellipse(box, fill=255)
+    else:
+        draw.polygon([(95,145),(171,144),(223,150),(283,150),(300,181),
+                      (296,263),(270,286),(112,286),(87,259),(84,184)], fill=255)
+    mask = mask.filter(ImageFilter.GaussianBlur(3))
     clip = Image.new("L", size, 0)
-    # Original brows touch y=136, outside the editable y=140 boundary. Preserve
-    # the entire brow strip to avoid partial/double brows at that strict boundary.
-    ImageDraw.Draw(clip).rectangle((60, 166, 339, 299), fill=255)
+    ImageDraw.Draw(clip).rectangle((60, 140, 339, 299), fill=255)
     return ImageChops.multiply(mask, clip)
 
 
@@ -62,7 +69,6 @@ def compose(inputs):
     (OUT / "faces").mkdir(exist_ok=True)
     base.save(OUT / "front.png")
     base.crop(band).save(OUT / "faces/front.png")
-    mask = face_mask(original.size)
     for item in inputs:
         name = item["name"]
         if name not in LABELS:
@@ -70,7 +76,7 @@ def compose(inputs):
         edited = Image.open(item["path"]).convert("RGBA").resize(original.size, Image.Resampling.LANCZOS)
         # Keep original alpha exactly. Only RGB facial detail is taken from edit.
         edited.putalpha(original.getchannel("A"))
-        face = Image.composite(edited, original, mask)
+        face = Image.composite(edited, original, face_mask(original.size, name))
         full = base.copy()
         full.paste(face.crop(BAND_ORIGINAL), (band[0], band[1]))
         full.save(OUT / f"{name}.png", optimize=True)
