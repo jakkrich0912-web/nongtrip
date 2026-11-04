@@ -85,3 +85,7 @@ b.is-warn{color:#9a5b05}
 .adm-denied .btn{text-decoration:none}
 @media(max-width:950px){.adm-tiles{grid-template-columns:1fr 1fr}.adm-grid{grid-template-columns:1fr}.adm-kv{grid-template-columns:1fr 1fr}.adm-cover{grid-template-columns:1fr}}
 @media(max-width:560px){.adm-tiles{gap:10px}.adm-tile{padding:14px}.adm-tile b{font-size:26px}.adm-xlabels span{font-size:9px}.adm-card{padding:18px 16px}}
+:where(html[data-theme=dark]) b.is-good{color:#7cc896}
+:where(html[data-theme=dark]) b.is-warn{color:#e3a94a}
+:where(html[data-theme=dark]) .adm-dot.is-good{background:#46a065}
+:where(html[data-theme=dark]) .adm-dot.is-warn{background:#c98418}
