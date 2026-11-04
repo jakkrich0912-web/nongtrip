@@ -7,6 +7,8 @@ import { provincePlaces } from '../lib/api.js';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { latestOnly } from '../lib/latest.js';
 import { useLanguage } from '../lib/language.jsx';
+import { provinceLabel, regionLabel } from '../lib/provinces.js';
+import { useShareCompanionHint } from '../lib/companionContext.jsx';
 
 const PAGE = 50;
 
@@ -20,6 +22,7 @@ export default function ProvincePage() {
 
 function ProvinceBody({ name }) {
   const { t, lang } = useLanguage();
+  useShareCompanionHint({ province: name });
   const [category, setCategory] = useState('');
   const [state, setState] = useState({ status: 'loading', items: [] });
   const [note, setNote] = useState('');
@@ -66,11 +69,12 @@ function ProvinceBody({ name }) {
     <div className="prov-page page-pad">
       <nav className="crumbs" aria-label={t('ตำแหน่งหน้า', 'Breadcrumb')}>
         <Link to="/">{t('หน้าแรก', 'Home')}</Link>
-        {state.region && <><span aria-hidden="true">›</span><span>{lang === 'en' ? `${state.region} region` : `ภาค${state.region}`}</span></>}
+        <span aria-hidden="true">›</span><Link to="/provinces">{t('ทุกจังหวัด', 'All provinces')}</Link>
+        {state.region && <><span aria-hidden="true">›</span><span>{regionLabel(state.region, lang)}</span></>}
       </nav>
       <header className="prov-head">
         <div>
-          <h1>{name}</h1>
+          <h1>{provinceLabel(name, lang)}</h1>
           <p className="note">
             {state.status === 'loading' && !state.verified_count ? t('กำลังโหลด', 'Loading…') : t(`สถานที่ที่ตรวจที่มาแล้ว ${state.verified_count ?? 0} แห่ง`, `${state.verified_count ?? 0} places with verified sources`)}
           </p>

@@ -46,6 +46,21 @@ cd apps/web && npm install && npm run dev      # http://localhost:5173 (ส่�
 make test
 ```
 
+### เทสต์ใช้งานจริงผ่านเบราว์เซอร์ (Playwright)
+
+เปิดระบบด้วย Docker ก่อน แล้วรันจากโฟลเดอร์ `e2e/` (รายละเอียดใน `e2e/README.md`) CI รันชุดนี้ต่อจาก smoke test ทุก PR
+
+```bash
+cd e2e && npm ci && npx playwright install chromium
+E2E_ADMIN_EMAIL=<อีเมลที่อยู่ใน ADMIN_EMAILS> npx playwright test
+```
+
+## แดชบอร์ดผู้ดูแล
+
+ใส่อีเมลของผู้ดูแลใน `.env` เช่น `ADMIN_EMAILS=jakkrich0912@gmail.com` (คั่นหลายคนด้วยจุลภาค) แล้วรีสตาร์ท API บัญชีนั้นจะเห็นเมนู "แดชบอร์ดผู้ดูแล" ในเมนูบัญชี (หน้า `/admin`) แสดงยอดรวมของทั้งระบบเท่านั้น ไม่มีข้อมูลรายคน
+
+**สมัครบัญชีผู้ดูแลให้เรียบร้อยก่อนเปิดเว็บให้คนอื่นใช้** ระบบไม่ยืนยันอีเมลตอนสมัคร ถ้าอีเมลใน `ADMIN_EMAILS` ยังไม่มีบัญชี คนอื่นสมัครด้วยอีเมลนั้นก่อนแล้วจะได้สิทธิ์ผู้ดูแล (เห็นได้แค่ยอดรวม แต่ก็ไม่ควรเกิด)
+
 ## ลองค้นกับ OpenStreetMap จริง
 
 ```
@@ -86,7 +101,8 @@ python scripts/eval_retrieval.py --docs services/places/data/knowledge --golden 
 
 ## เปิดโหมด LLM
 
-1. ใน `.env` ตั้ง `LLM_PROVIDER=anthropic` (หรือ `openai`) ใส่ `ANTHROPIC_API_KEY` (หรือ `OPENAI_API_KEY`) และ `LLM_MODEL` ให้ครบ
+1. ใน `.env` ตั้ง `LLM_PROVIDER=anthropic` (หรือ `openai` `gemini` `xai`) ใส่ `ANTHROPIC_API_KEY` (หรือ `OPENAI_API_KEY` `GEMINI_API_KEY` `XAI_API_KEY`) และ `LLM_MODEL` ให้ครบ
+   ตัวสำรองถ้าตัวหลักล่มหรือเครดิตหมด (ไม่บังคับ): `LLM_FALLBACK=gemini,xai` แล้วใส่คีย์และรุ่นของแต่ละตัว (`GEMINI_MODEL`, `XAI_MODEL`) `check_llm.py` จะลองเรียกทุกตัว ผลวัด 200 ข้อใน `docs/RAG_EVAL.md` วัดกับ Claude เท่านั้น ถ้าเดโมด้วยเจ้าอื่นต้องวัดใหม่ก่อนอ้างตัวเลข
 2. มีคลังความรู้ที่ `services/places/data/knowledge/` (สร้างด้วย `python scripts/build_knowledge.py` ต้องเข้า Wikipedia ได้)
 3. รัน API แล้วเปิด `/api/health` ดู `rag`: `{"docs": จำนวนก้อน, "llm": true}` ถ้า `llm` เป็น `false` แปลว่าตั้งค่าไม่ครบ ระบบอยู่โหมดกฎ
 4. ถามเรื่องที่ในคลังมี เช่น ประวัติวัด แล้วดู event สุดท้าย `done.mode` ต้องเป็น `llm` และมี event `sources` ถ้าเป็น `rule` ตลอด ดูว่าคลังมีก้อนของสถานที่นั้นไหม

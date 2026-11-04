@@ -6,6 +6,7 @@ import { useAuth } from '../lib/auth.jsx';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { mapsDirUrl } from '../lib/geo.js';
 import { useLanguage } from '../lib/language.jsx';
+import { provinceLabel } from '../lib/provinces.js';
 import {
   mySearches, deleteSearch, deleteAllSearches,
   myFavorites, removeFavorite, deleteAllFavorites,
@@ -97,7 +98,10 @@ function MyTripsBody({ user }) {
           <h1>{t('ทริปของฉัน', 'My trips')}</h1>
           <p className="note">{user.email}</p>
         </div>
-        <button className="btn ghost" onClick={async () => { await logout(); nav('/'); }}>{t('ออกจากระบบ', 'Log out')}</button>
+        <div className="mt-actions">
+          <Link className="btn ghost" to="/settings">{t('ตั้งค่าบัญชี', 'Account settings')}</Link>
+          <button className="btn ghost" onClick={async () => { await logout(); nav('/'); }}>{t('ออกจากระบบ', 'Log out')}</button>
+        </div>
       </div>
       {error && <p className="auth-error" role="alert">{error}</p>}
 
@@ -139,7 +143,7 @@ function MyTripsBody({ user }) {
                 <span className={`ico c-${iconGroup(p)}`}><CatIcon cat={iconGroup(p)} size={16} /></span>
                 <div className="mt-main">
                   <strong>{p.source === 'verified' ? <Link to={`/places/${encodeURIComponent(p.id)}`}>{placeName(p, lang)}</Link> : placeName(p, lang)}</strong>
-                  <small>{[subtypeLabel(p.subtype, p.kind, lang), p.province].filter(Boolean).join(' · ')}</small>
+                  <small>{[subtypeLabel(p.subtype, p.kind, lang), p.province && provinceLabel(p.province, lang)].filter(Boolean).join(' · ')}</small>
                   <span className="links">
                     <a className="go" href={mapsDirUrl(p)} target="_blank" rel="noreferrer">{t('นำทาง', 'Directions')}</a>
                     {p.maps_url && <a href={p.maps_url} target="_blank" rel="noreferrer">{t('ดูรีวิวที่ Google Maps', 'Reviews on Google Maps')}</a>}
@@ -167,7 +171,7 @@ function MyTripsBody({ user }) {
             {chats.items.map((c) => (
               <li key={c.id}>
                 <div className="mt-main">
-                  <strong>{c.title}</strong>
+                  <strong><Link to={`/chat?chat=${encodeURIComponent(c.id)}`}>{c.title}</Link></strong>
                   <small>{c.message_count} {t('ข้อความ', 'messages')} · {t('ล่าสุด', 'latest')} {fmt(c.updated_at, lang)}</small>
                 </div>
                 <button className="icon-btn" aria-label={t(`ลบแชต ${c.title}`, `Delete chat ${c.title}`)}

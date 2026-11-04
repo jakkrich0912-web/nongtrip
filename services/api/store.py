@@ -5,9 +5,12 @@
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sqlite3
 import threading
+import time
 from contextlib import closing, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +25,17 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   pw_hash TEXT NOT NULL,
   created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sessions (
+  id_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE TABLE IF NOT EXISTS metrics (
+  day TEXT NOT NULL, kind TEXT NOT NULL, key TEXT NOT NULL, n INTEGER NOT NULL,
+  PRIMARY KEY (day, kind, key)
 );
 CREATE TABLE IF NOT EXISTS searches (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,8 +67,25 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 """
 
 
+def _sid_hash(sid: str) -> str:
+    """เก็บแค่แฮชของรหัสเซสชัน ฐานข้อมูลหลุดไปก็เอารหัสไปสวมเซสชันไม่ได้"""
+    return hashlib.sha256(sid.encode()).hexdigest()
+
+
 def now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+MAX_EXTRA_BYTES = 64_000
+
+
+def _message_out(row) -> dict:
+    m = dict(row)
+    try:
+        m["extra"] = json.loads(m["extra"]) if m.get("extra") else None
+    except ValueError:
+        m["extra"] = None
+    return m
 
 
 class EmailTaken(Exception):
@@ -74,6 +105,11 @@ class Store:
         if "google_sub" not in cols:
             c.execute("ALTER TABLE users ADD COLUMN google_sub TEXT")
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google ON users(google_sub)")
+        mcols = {r[1] for r in c.execute("PRAGMA table_info(chat_messages)")}
+        if "rating" not in mcols:      # 👍 = 1, 👎 = -1, ยังไม่ให้ = NULL (เฉพาะข้อความของน้องทริป)
+            c.execute("ALTER TABLE chat_messages ADD COLUMN rating INTEGER")
+        if "extra" not in mcols:       # การ์ดสถานที่ ที่พัก แหล่งที่มา และโหมด ของคำตอบนั้น (JSON) เปิดแชตเก่าแล้วเห็นเหมือนเดิม
+            c.execute("ALTER TABLE chat_messages ADD COLUMN extra TEXT")
         c.commit()
 
     @contextmanager
@@ -130,6 +166,95 @@ class Store:
         with self._db() as c:
             r = c.execute("SELECT id, email FROM users WHERE id = ?", (user_id,)).fetchone()
             return dict(r) if r else None
+
+    def account(self, user_id: int) -> dict | None:
+        """ข้อมูลบัญชีสำหรับหน้าตั้งค่า ไม่คืนค่าแฮชรหัสผ่าน"""
+        with self._db() as c:
+            r = c.execute("SELECT id, email, pw_hash, created_at, google_sub FROM users WHERE id = ?",
+                          (user_id,)).fetchone()
+            if not r:
+                return None
+            return {"id": r["id"], "email": r["email"], "created_at": r["created_at"],
+                    "has_password": r["pw_hash"].startswith("scrypt$"), "google": r["google_sub"] is not None}
+
+    def password_hash(self, user_id: int) -> str | None:
+        with self._db() as c:
+            r = c.execute("SELECT pw_hash FROM users WHERE id = ?", (user_id,)).fetchone()
+            return r["pw_hash"] if r else None
+
+    def set_password(self, user_id: int, pw_hash: str) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE users SET pw_hash = ? WHERE id = ?", (pw_hash, user_id)).rowcount > 0
+
+    # ---- เซสชัน (ออกจากระบบแล้วคุกกี้เดิมใช้ไม่ได้ทันที) ----
+    def create_session(self, user_id: int, sid: str, expires_at: int) -> None:
+        """บันทึกเซสชันใหม่ และล้างเซสชันที่หมดอายุแล้วของผู้ใช้คนนี้ไปด้วย"""
+        with self._db() as c:
+            c.execute("DELETE FROM sessions WHERE user_id = ? AND expires_at < ?", (user_id, int(time.time())))
+            c.execute("INSERT INTO sessions(id_hash, user_id, created_at, expires_at) VALUES (?,?,?,?)",
+                      (_sid_hash(sid), user_id, now_iso(), expires_at))
+
+    def session_valid(self, user_id: int, sid: str, now: float | None = None) -> bool:
+        with self._db() as c:
+            return c.execute("SELECT 1 FROM sessions WHERE id_hash = ? AND user_id = ? AND expires_at >= ?",
+                             (_sid_hash(sid), user_id, int(now if now is not None else time.time()))).fetchone() is not None
+
+    def delete_session(self, sid: str) -> bool:
+        with self._db() as c:
+            return c.execute("DELETE FROM sessions WHERE id_hash = ?", (_sid_hash(sid),)).rowcount > 0
+
+    def delete_sessions(self, user_id: int, keep: str | None = None) -> int:
+        """ยกเลิกทุกเซสชันของผู้ใช้ ยกเว้น keep (เซสชันที่กำลังใช้อยู่) คืนจำนวนที่ยกเลิก"""
+        with self._db() as c:
+            if keep:
+                return c.execute("DELETE FROM sessions WHERE user_id = ? AND id_hash != ?",
+                                 (user_id, _sid_hash(keep))).rowcount
+            return c.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,)).rowcount
+
+    def count_sessions(self, user_id: int, now: float | None = None) -> int:
+        with self._db() as c:
+            return c.execute("SELECT COUNT(*) FROM sessions WHERE user_id = ? AND expires_at >= ?",
+                             (user_id, int(now if now is not None else time.time()))).fetchone()[0]
+
+    # ---- ตัวนับรวมและสรุปสำหรับผู้ดูแล (ไม่มีข้อมูลรายคน) ----
+    def bump_metric(self, kind: str, key: str, n: int = 1, day: str | None = None) -> None:
+        with self._db() as c:
+            c.execute("INSERT INTO metrics(day, kind, key, n) VALUES (?,?,?,?) "
+                      "ON CONFLICT(day, kind, key) DO UPDATE SET n = n + excluded.n",
+                      (day or now_iso()[:10], kind, key, n))
+
+    def metric_rows(self, since_day: str) -> list[dict]:
+        with self._db() as c:
+            rows = c.execute("SELECT day, kind, key, n FROM metrics WHERE day >= ? ORDER BY day", (since_day,)).fetchall()
+            return [dict(r) for r in rows]
+
+    def admin_counts(self, since_iso: str, now: float | None = None) -> dict:
+        """จำนวนรวมของทั้งระบบ ไม่คืนอีเมลหรือข้อมูลของใครเป็นรายคน"""
+        with self._db() as c:
+            one = lambda sql, *a: c.execute(sql, a).fetchone()[0]  # noqa: E731
+            out = {
+                "users": one("SELECT COUNT(*) FROM users"),
+                "users_google": one("SELECT COUNT(*) FROM users WHERE google_sub IS NOT NULL"),
+                "users_new": one("SELECT COUNT(*) FROM users WHERE created_at >= ?", since_iso),
+                "active_sessions": one("SELECT COUNT(*) FROM sessions WHERE expires_at >= ?",
+                                       int(now if now is not None else time.time())),
+                "users_signed_in": one("SELECT COUNT(DISTINCT user_id) FROM sessions WHERE expires_at >= ?",
+                                       int(now if now is not None else time.time())),
+                "saved_searches": one("SELECT COUNT(*) FROM searches"),
+                "favorites": one("SELECT COUNT(*) FROM favorites"),
+                "chats": one("SELECT COUNT(*) FROM chats"),
+                "messages": one("SELECT COUNT(*) FROM chat_messages"),
+                "ratings": None,
+            }
+            cols = {r[1] for r in c.execute("PRAGMA table_info(chat_messages)")}
+            if "rating" in cols:  # มีเมื่อหน้าแชตแบบใหม่ (ให้คะแนน 👍👎) เข้ามาแล้ว
+                out["ratings"] = {"up": one("SELECT COUNT(*) FROM chat_messages WHERE rating = 1"),
+                                  "down": one("SELECT COUNT(*) FROM chat_messages WHERE rating = -1")}
+            # สถานที่ที่คนบันทึกเป็นโปรดมากสุด นับเฉพาะที่บันทึกตั้งแต่ 2 บัญชีขึ้นไป ดูไม่ได้ว่าใครคนเดียวชอบอะไร
+            fav = c.execute("SELECT name_th, province, COUNT(*) AS n FROM favorites GROUP BY place_id "
+                            "HAVING n >= 2 ORDER BY n DESC, name_th LIMIT 5").fetchall()
+            out["top_favorites"] = [dict(r) for r in fav]
+            return out
 
     # ---- ประวัติที่พักที่เคยค้น ----
     def add_search(self, user_id: int, name: str, lat: float, lon: float) -> dict:
@@ -199,15 +324,43 @@ class Store:
             return c.execute("INSERT INTO chats(user_id, title, created_at, updated_at) VALUES (?,?,?,?)",
                              (user_id, title[:80] or "แชตใหม่", t, t)).lastrowid
 
-    def add_message(self, user_id: int, chat_id: int, role: str, content: str) -> bool:
+    def add_message(self, user_id: int, chat_id: int, role: str, content: str, extra: dict | None = None) -> int | bool:
+        """คืนรหัสข้อความที่เพิ่ม (แชตไม่ใช่ของผู้ใช้นี้ คืน False)"""
+        blob = None
+        if extra:
+            blob = json.dumps(extra, ensure_ascii=False, separators=(",", ":"))
+            if len(blob) > MAX_EXTRA_BYTES:   # ใหญ่เกิน: เก็บแค่ส่วนที่จำเป็น ไม่ให้ฐานข้อมูลบวม
+                blob = json.dumps({k: v for k, v in extra.items() if k in ("mode", "sources")}, ensure_ascii=False)
         with self._db() as c:
             if not c.execute("SELECT 1 FROM chats WHERE id = ? AND user_id = ?", (chat_id, user_id)).fetchone():
                 return False
             t = now_iso()
-            c.execute("INSERT INTO chat_messages(chat_id, role, content, created_at) VALUES (?,?,?,?)",
-                      (chat_id, role, content, t))
+            mid = c.execute("INSERT INTO chat_messages(chat_id, role, content, created_at, extra) VALUES (?,?,?,?,?)",
+                            (chat_id, role, content, t, blob)).lastrowid
             c.execute("UPDATE chats SET updated_at = ? WHERE id = ?", (t, chat_id))
+            return mid
+
+    def truncate_from(self, user_id: int, chat_id: int, message_id: int) -> bool:
+        """แก้คำถาม/ถามใหม่: ลบข้อความตั้งแต่ข้อความผู้ใช้นี้ลงไปในแชตของผู้ใช้คนนี้ (ไม่ใช่ของเขาหรือไม่ใช่ข้อความผู้ใช้ คืน False)"""
+        with self._db() as c:
+            ok = c.execute("SELECT 1 FROM chat_messages m JOIN chats ch ON ch.id = m.chat_id "
+                           "WHERE m.id = ? AND m.chat_id = ? AND m.role = 'user' AND ch.user_id = ?",
+                           (message_id, chat_id, user_id)).fetchone()
+            if not ok:
+                return False
+            c.execute("DELETE FROM chat_messages WHERE chat_id = ? AND id >= ?", (chat_id, message_id))
             return True
+
+    def set_rating(self, user_id: int, chat_id: int, message_id: int, rating: int | None) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE chat_messages SET rating = ? WHERE id = ? AND chat_id = ? AND role = 'assistant' "
+                             "AND chat_id IN (SELECT id FROM chats WHERE user_id = ?)",
+                             (rating, message_id, chat_id, user_id)).rowcount > 0
+
+    def rename_chat(self, user_id: int, chat_id: int, title: str) -> bool:
+        with self._db() as c:
+            return c.execute("UPDATE chats SET title = ? WHERE id = ? AND user_id = ?",
+                             (title[:80], chat_id, user_id)).rowcount > 0
 
     def list_chats(self, user_id: int) -> list[dict]:
         with self._db() as c:
@@ -223,9 +376,9 @@ class Store:
                            (chat_id, user_id)).fetchone()
             if not ch:
                 return None
-            msgs = c.execute("SELECT role, content, created_at FROM chat_messages WHERE chat_id = ? ORDER BY id",
+            msgs = c.execute("SELECT id, role, content, created_at, rating, extra FROM chat_messages WHERE chat_id = ? ORDER BY id",
                              (chat_id,)).fetchall()
-            return {**dict(ch), "messages": [dict(m) for m in msgs]}
+            return {**dict(ch), "messages": [_message_out(m) for m in msgs]}
 
     def delete_chat(self, user_id: int, chat_id: int) -> bool:
         with self._db() as c:

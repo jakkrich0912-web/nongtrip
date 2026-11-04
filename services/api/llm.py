@@ -1,7 +1,9 @@
 """ตัวเชื่อม LLM (RAG ขั้น 4) ไม่ผูกกับผู้ให้บริการรายใด: เลือกด้วย LLM_PROVIDER ใน .env
 
 - mock หรือไม่ตั้งค่า/ไม่มีคีย์/ไม่ระบุ LLM_MODEL = ไม่มี LLM (แชตใช้โหมดกฎตามเดิม)
-- anthropic / openai เรียกผ่าน HTTPS ด้วย urllib ไม่เพิ่มไลบรารี
+- anthropic / openai / gemini / xai เรียกผ่าน HTTPS ด้วย urllib ไม่เพิ่มไลบรารี
+  (gemini กับ xai ใช้ endpoint แบบเดียวกับ OpenAI ของเจ้านั้นเอง)
+- LLM_FALLBACK (ไม่บังคับ) เช่น "gemini,xai" = ตัวสำรองตามลำดับ ตัวหลักล้มเหลวแล้วลองตัวถัดไป ทุกตัวล้มจึงถอยโหมดกฎ
 - timeout 30 วินาที ลองซ้ำไม่เกิน 1 ครั้ง (เฉพาะเน็ต/5xx/429) ล้มเหลวแล้วผู้เรียกถอยไปโหมดกฎ
 - ไม่บันทึกคีย์ ข้อความถาม หรือเนื้อคำตอบลง log
 """
@@ -23,7 +25,13 @@ MAX_TOKENS = 2000      # รวมโทเคนที่โมเดลใช�
 MAX_RESPONSE_BYTES = 200_000
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
-PROVIDERS = ("anthropic", "openai")
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+XAI_URL = "https://api.x.ai/v1/chat/completions"
+PROVIDERS = ("anthropic", "openai", "gemini", "xai")
+# ผู้ให้บริการที่ใช้รูปแบบคำขอ/คำตอบแบบ OpenAI chat completions
+OPENAI_STYLE_URL = {"openai": OPENAI_URL, "gemini": GEMINI_URL, "xai": XAI_URL}
+KEY_VAR = {"anthropic": "ANTHROPIC_API_KEY", "openai": "OPENAI_API_KEY", "gemini": "GEMINI_API_KEY", "xai": "XAI_API_KEY"}
+MODEL_VAR = {"anthropic": "ANTHROPIC_MODEL", "openai": "OPENAI_MODEL", "gemini": "GEMINI_MODEL", "xai": "XAI_MODEL"}
 
 
 class LLMError(Exception):
@@ -71,7 +79,7 @@ class LLMClient:
             return ANTHROPIC_URL, {"x-api-key": self._key, "anthropic-version": "2023-06-01"}, {
                 "model": self.model, "max_tokens": max_tokens, "system": system,
                 "messages": [{"role": "user", "content": user}]}
-        return OPENAI_URL, {"Authorization": f"Bearer {self._key}"}, {
+        return OPENAI_STYLE_URL[self.provider], {"Authorization": f"Bearer {self._key}"}, {
             "model": self.model, "max_tokens": max_tokens,
             "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
 
@@ -115,8 +123,49 @@ class LLMClient:
         raise last
 
 
-def from_env(env: Mapping[str, str] | None = None, **kw: Any) -> LLMClient | None:
-    """สร้างตัวเชื่อมจาก LLM_PROVIDER, LLM_MODEL และคีย์ของผู้ให้บริการ ไม่ครบ = None (ใช้โหมดกฎ)"""
+class FallbackLLM:
+    """ลอง LLM ตามลำดับ ตัวแรกล้มเหลว (ล่ม คีย์ผิด เครดิตหมด ตอบว่าง) ลองตัวถัดไป ทุกตัวล้มจึงส่ง LLMError ให้ผู้เรียกถอยโหมดกฎ"""
+
+    def __init__(self, clients: list[LLMClient]):
+        if not clients:
+            raise ValueError("ต้องมีอย่างน้อยหนึ่งตัว")
+        self.clients = list(clients)
+
+    @property
+    def provider(self) -> str:
+        return self.clients[0].provider
+
+    @property
+    def model(self) -> str:
+        return self.clients[0].model
+
+    def __repr__(self) -> str:
+        return "FallbackLLM(" + ", ".join(f"{c.provider}:{c.model}" for c in self.clients) + ")"
+
+    def complete(self, system: str, user: str, max_tokens: int = MAX_TOKENS) -> str:
+        last: LLMError | None = None
+        for c in self.clients:
+            try:
+                return c.complete(system, user, max_tokens)
+            except LLMError as e:
+                log.warning("LLM %s ล้มเหลว (%s) ลองตัวถัดไป", c.provider, e)
+                last = e
+        assert last is not None
+        raise last
+
+
+def _one(env: Mapping[str, str], provider: str, model: str, kw: dict) -> LLMClient | None:
+    key = (env.get(KEY_VAR[provider]) or "").strip()
+    if not key or not model:
+        return None
+    return LLMClient(provider, model, key, **kw)
+
+
+def from_env(env: Mapping[str, str] | None = None, **kw: Any) -> LLMClient | FallbackLLM | None:
+    """สร้างตัวเชื่อมจาก LLM_PROVIDER, LLM_MODEL และคีย์ของผู้ให้บริการ ไม่ครบ = None (ใช้โหมดกฎ)
+
+    LLM_FALLBACK = รายชื่อตัวสำรองคั่นด้วยจุลภาค แต่ละตัวต้องมีคีย์และรุ่นของตัวเอง (เช่น GEMINI_API_KEY + GEMINI_MODEL)
+    ตัวสำรองที่ตั้งไม่ครบถูกข้าม ไม่ทำให้ตัวหลักใช้ไม่ได้ ไม่ตั้ง LLM_FALLBACK = ทำงานเหมือนเดิมทุกอย่าง"""
     env = os.environ if env is None else env
     provider = (env.get("LLM_PROVIDER") or "mock").strip().lower()
     if provider == "mock":
@@ -124,9 +173,22 @@ def from_env(env: Mapping[str, str] | None = None, **kw: Any) -> LLMClient | Non
     if provider not in PROVIDERS:
         log.warning("LLM_PROVIDER=%r ไม่รู้จัก ใช้โหมดกฎ", provider)
         return None
-    key = (env.get("ANTHROPIC_API_KEY" if provider == "anthropic" else "OPENAI_API_KEY") or "").strip()
-    model = (env.get("LLM_MODEL") or "").strip()
-    if not key or not model:
+    model = (env.get("LLM_MODEL") or env.get(MODEL_VAR[provider]) or "").strip()
+    main = _one(env, provider, model, kw)
+    if main is None:
         log.warning("LLM_PROVIDER=%s แต่ยังไม่ตั้งคีย์หรือ LLM_MODEL ใช้โหมดกฎ", provider)
         return None
-    return LLMClient(provider, model, key, **kw)
+    backups: list[LLMClient] = []
+    for name in (env.get("LLM_FALLBACK") or "").split(","):
+        name = name.strip().lower()
+        if not name or name == provider or any(b.provider == name for b in backups):
+            continue
+        if name not in PROVIDERS:
+            log.warning("LLM_FALLBACK มี %r ที่ไม่รู้จัก ข้าม", name)
+            continue
+        b = _one(env, name, (env.get(MODEL_VAR[name]) or "").strip(), kw)
+        if b is None:
+            log.warning("ตัวสำรอง %s ยังไม่ตั้ง %s หรือ %s ข้าม", name, KEY_VAR[name], MODEL_VAR[name])
+            continue
+        backups.append(b)
+    return FallbackLLM([main, *backups]) if backups else main

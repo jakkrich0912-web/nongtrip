@@ -113,7 +113,16 @@ def inspect(require_complete=False):
                 "face_crop_size": [280, 160], "base": "front.png",
                 "expected_expression_count": len(LABELS), "actual_expression_count": len(entries),
                 "complete": len(entries) == len(LABELS), "expressions": entries}
-    (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    manifest_path = OUT / "manifest.json"
+    if manifest_path.is_file():
+        saved_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if "gaze" in saved_manifest or any(OUT.glob("gaze-*.png")):
+            # Rebuilding the legacy expressions must not erase the separate
+            # gaze set or silently retain metadata for invalid gaze images.
+            from build_mascot_gaze import validate as validate_gaze
+            validate_gaze(out=OUT)
+            manifest["gaze"] = saved_manifest["gaze"]
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"expressions": len(entries), "expected": len(LABELS),
                       "complete": manifest["complete"], "outside_changed_pixels": sum(x["outside_changed_pixels"] for x in entries),
                       "alpha_and_crop_checks": "passed"}, ensure_ascii=False))

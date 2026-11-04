@@ -11,7 +11,9 @@ import LodgingSearch from '../components/LodgingSearch.jsx';
 import { lodgingsNear, placesNearby, ApiUnavailable, saveSearch } from '../lib/api.js';
 import FavButton from '../components/FavButton.jsx';
 import { useAuth } from '../lib/auth.jsx';
+import { useShareCompanionHint } from '../lib/companionContext.jsx';
 import { useLanguage } from '../lib/language.jsx';
+import { provinceLabel } from '../lib/provinces.js';
 import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM, RADIUS_OPTIONS, radiusComplete, withinRadius } from '../lib/geo.js';
 
 const dot = (color, size) => L.divIcon({
@@ -47,6 +49,7 @@ export default function Search() {
     const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
   });
+  useShareCompanionHint(origin);
   const { user } = useAuth();
   const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');
@@ -128,7 +131,7 @@ export default function Search() {
       <aside className="panel">
         <div className="panel-head">
           <div className="title-row">
-            <h2>{province || t('รอบที่พัก', 'Around your stay')}</h2>
+            <h2>{province ? provinceLabel(province, lang) : t('รอบที่พัก', 'Around your stay')}</h2>
             {inProv.length > 0 && <Link className="prov-n" to={`/provinces/${encodeURIComponent(province)}`}>{t(`ดูทั้งจังหวัด ${inProv.length} แห่ง`, `See all ${inProv.length} in this province`)}</Link>}
           </div>
           {inProv.length > 0 && (

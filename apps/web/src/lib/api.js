@@ -63,6 +63,10 @@ export const authRegister = (email, password) => request('POST', '/api/auth/regi
 export const authGoogle = (credential) => request('POST', '/api/auth/google', { credential });
 export const authLogout = () => request('POST', '/api/auth/logout');
 export const deleteAccount = (email) => request('POST', '/api/me/delete', { email });
+// ตั้งค่าบัญชี (ข้อ 3.3): ข้อมูลบัญชี เปลี่ยนรหัสผ่าน ออกจากระบบอุปกรณ์อื่น
+export const myAccount = () => request('GET', '/api/me/account');
+export const changePassword = (current_password, new_password) => request('POST', '/api/me/password', { current_password, new_password });
+export const revokeOtherSessions = () => request('POST', '/api/me/sessions/revoke-others');
 
 // ประวัติ สถานที่โปรด แชต (ข้อ 3.4 ต้องล็อกอิน)
 export const mySearches = () => request('GET', '/api/me/searches');
@@ -80,6 +84,10 @@ export const removeFavorite = (id) => request('DELETE', `/api/me/favorites/${Str
 export const deleteAllFavorites = () => request('DELETE', '/api/me/favorites');
 
 export const myChats = () => request('GET', '/api/me/chats');
+export const getChat = (id) => request('GET', `/api/me/chats/${encodeURIComponent(id)}`);
+export const renameChat = (id, title) => request('PATCH', `/api/me/chats/${encodeURIComponent(id)}`, { title });
+export const rateMessage = (chatId, messageId, rating) =>
+  request('PUT', `/api/me/chats/${encodeURIComponent(chatId)}/messages/${encodeURIComponent(messageId)}/rating`, { rating });
 export const deleteChat = (id) => request('DELETE', `/api/me/chats/${encodeURIComponent(id)}`);
 export const deleteAllChats = () => request('DELETE', '/api/me/chats');
 
@@ -87,5 +95,11 @@ export const deleteAllChats = () => request('DELETE', '/api/me/chats');
 export const placeById = (id) => request('GET', `/api/places/${encodeURIComponent(id)}`);
 export const provincePlaces = (name, { category, limit = 50, offset = 0 } = {}) =>
   request('GET', `/api/provinces/${encodeURIComponent(name)}/places?${qs({ category, limit, offset })}`);
+// รายชื่อ 77 จังหวัดจัดตามภาค พร้อมจำนวนสถานที่ที่ตรวจแล้ว
+export const provincesList = () => get('/api/provinces');
+// สถานะระบบ: จำนวนสถานที่ที่ตรวจแล้ว และแชตใช้โมเดลภาษาอยู่หรือไม่
+export const systemHealth = () => get('/api/health');
+// แดชบอร์ดผู้ดูแล (ข้อ 3.6) ไม่ใช่ผู้ดูแลได้ 403
+export const adminOverview = () => get('/api/admin/overview');
 export const provinceCenter = (name) => request('GET', `/api/provinces/${encodeURIComponent(name)}/center`);
 export const guideFeatured = ({ limit = 12, category } = {}) => request('GET', `/api/guide/featured?${qs({ limit, category })}`);

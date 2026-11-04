@@ -175,3 +175,69 @@ def test_empty_openai_answer_reports_finish_reason():
     with pytest.raises(llm.LLMError) as e:
         c._extract({"choices": [{"message": {"content": ""}, "finish_reason": "length"}]})
     assert "finish_reason=length" in str(e.value)
+
+
+# ---------- Gemini / xAI และตัวสำรอง ----------
+from services.api.llm import FallbackLLM  # noqa: E402
+
+
+@pytest.mark.parametrize("provider,url", [("gemini", llm.GEMINI_URL), ("xai", llm.XAI_URL)])
+def test_openai_style_providers_use_their_own_endpoint(provider, url):
+    calls = []
+    c = LLMClient(provider, "m", KEY, post=fake_post([OPENAI_OK], calls))
+    assert c.complete("SYS", "USER") == "คำตอบ"
+    u, headers, body, _ = calls[0]
+    assert u == url and u.startswith("https://") and headers["Authorization"] == f"Bearer {KEY}"
+    assert body["messages"][0] == {"role": "system", "content": "SYS"} and body["model"] == "m"
+
+
+@pytest.mark.parametrize("env,expect", [
+    ({"LLM_PROVIDER": "gemini", "GEMINI_API_KEY": KEY, "LLM_MODEL": "g1"}, ("gemini", "g1")),
+    ({"LLM_PROVIDER": "xai", "XAI_API_KEY": KEY, "XAI_MODEL": "x1"}, ("xai", "x1")),       # รุ่นจาก XAI_MODEL ได้
+    ({"LLM_PROVIDER": "gemini", "OPENAI_API_KEY": KEY, "LLM_MODEL": "g1"}, None),           # คีย์ผิดเจ้า
+])
+def test_from_env_new_providers(env, expect):
+    c = from_env(env)
+    assert (c is None) if expect is None else ((c.provider, c.model) == expect)
+
+
+BASE = {"LLM_PROVIDER": "anthropic", "ANTHROPIC_API_KEY": KEY, "LLM_MODEL": "a1"}
+
+
+def test_from_env_builds_fallback_chain_in_order_and_skips_incomplete_or_unknown():
+    env = {**BASE, "LLM_FALLBACK": "gemini, nope, xai, openai, anthropic, gemini",
+           "GEMINI_API_KEY": "g", "GEMINI_MODEL": "g1", "XAI_API_KEY": "x", "XAI_MODEL": "x1",
+           "OPENAI_API_KEY": "o"}                     # openai ไม่มี OPENAI_MODEL จึงถูกข้าม
+    c = from_env(env)
+    assert isinstance(c, FallbackLLM)
+    assert [(x.provider, x.model) for x in c.clients] == [("anthropic", "a1"), ("gemini", "g1"), ("xai", "x1")]
+    assert (c.provider, c.model) == ("anthropic", "a1")
+    assert KEY not in repr(c) and "g" not in repr(c).split("(")[0]
+
+
+def test_from_env_without_usable_fallback_is_plain_client():
+    assert isinstance(from_env({**BASE, "LLM_FALLBACK": "gemini"}), LLMClient)
+    assert isinstance(from_env(BASE), LLMClient)
+
+
+def test_fallback_tries_next_provider_when_one_fails():
+    calls = []
+    bad = LLMClient("anthropic", "a", KEY, retries=0, post=fake_post([LLMError("HTTP 401")], calls))
+    good = LLMClient("gemini", "g", KEY, post=fake_post([OPENAI_OK], calls))
+    assert FallbackLLM([bad, good]).complete("s", "u") == "คำตอบ"
+    assert [c[0] for c in calls] == [llm.ANTHROPIC_URL, llm.GEMINI_URL]
+
+
+def test_fallback_raises_last_error_when_all_fail():
+    calls = []
+    a = LLMClient("anthropic", "a", KEY, retries=0, post=fake_post([LLMError("a down")], calls))
+    b = LLMClient("xai", "x", KEY, retries=0, post=fake_post([LLMError("x down")], calls))
+    with pytest.raises(LLMError, match="x down"):
+        FallbackLLM([a, b]).complete("s", "u")
+
+
+def test_fallback_does_not_call_backup_when_main_works():
+    calls = []
+    a = LLMClient("anthropic", "a", KEY, post=fake_post([ANTH_OK], calls))
+    b = LLMClient("gemini", "g", KEY, post=fake_post([OPENAI_OK], calls))
+    assert FallbackLLM([a, b]).complete("s", "u") == "สวัสดี ครับ" and len(calls) == 1
