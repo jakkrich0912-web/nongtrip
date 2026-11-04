@@ -9,6 +9,7 @@ import { placeById, placesNearby } from '../lib/api.js';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { mapsDirUrl } from '../lib/geo.js';
 import { useLanguage } from '../lib/language.jsx';
+import { provinceLabel } from '../lib/provinces.js';
 import { useShareCompanionHint } from '../lib/companionContext.jsx';
 
 const pin = L.divIcon({
@@ -69,7 +70,7 @@ export default function PlaceDetail() {
     <article className="detail page-pad">
       <nav className="crumbs" aria-label={t('ตำแหน่งหน้า', 'Breadcrumb')}>
         <Link to="/">{t('หน้าแรก', 'Home')}</Link>
-        {p.province && <><span aria-hidden="true">›</span><Link to={`/provinces/${encodeURIComponent(p.province)}`}>{p.province}</Link></>}
+        {p.province && <><span aria-hidden="true">›</span><Link to={`/provinces/${encodeURIComponent(p.province)}`}>{provinceLabel(p.province, lang)}</Link></>}
       </nav>
 
       <div className="detail-grid">
@@ -82,7 +83,7 @@ export default function PlaceDetail() {
               <p className="meta">
                 {subtypeLabel(p.subtype, p.kind, lang)}
                 {p.area && <> · {p.area}</>}
-                {p.province && <> · {p.province}</>}
+                {p.province && <> · {provinceLabel(p.province, lang)}</>}
               </p>
             </div>
             <FavButton place={p} onError={setNote} className="big" />

@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "apps" / "web" / "src"
-FILES = ["styles.css", "landing.css", "auth-v2.css", "pages/chat-v2.css", "pages/chat-gpt.css", "components/companion.css"]
+FILES = ["styles.css", "landing.css", "auth-v2.css", "pages/chat-v2.css", "pages/chat-gpt.css", "pages/info.css", "components/companion.css"]
 OUT = SRC / "dark.css"
 PREFIX = "html[data-theme=dark]"
 # ใช้ :where() ครอบ ไม่เพิ่มความเจาะจงของตัวเลือก กฎโหมดมืดจึงแทนกฎเดิมแบบตัวต่อตัว ไม่ไปชนะกฎที่เจาะจงกว่า (เช่น .btn.ghost)

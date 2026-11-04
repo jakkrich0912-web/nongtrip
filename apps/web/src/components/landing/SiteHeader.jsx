@@ -5,6 +5,7 @@ import { useAuth } from '../../lib/auth.jsx';
 import head from '../../assets/mascot/head.webp';
 import Icon from './Icon.jsx';
 import { useTheme } from '../../lib/theme.js';
+import AccountMenu from './AccountMenu.jsx';
 
 export function LanguageSwitch() {
   const { lang, setLang, t } = useLanguage();
@@ -34,11 +35,12 @@ export default function SiteHeader() {
     <nav id="nt-navigation" className={open ? 'is-open' : ''} aria-label={t('เมนูหลัก', 'Main navigation')} onClick={() => setOpen(false)}>
       <NavLink to="/" end>{t('หน้าแรก', 'Home')}</NavLink>
       <NavLink to="/search">{t('ค้นหารอบที่พัก', 'Search')}</NavLink>
+      <NavLink to="/provinces">{t('ทุกจังหวัด', 'Provinces')}</NavLink>
       <NavLink to="/chat">{t('คุยกับน้องทริป', 'Chat')}</NavLink>
       <a href="/#how-it-works">{t('ใช้งานอย่างไร', 'How it works')}</a>
-      <Link className="nt-mobile-account" to={user ? '/me' : '/login'}>{user ? t('ทริปของฉัน', 'My trips') : t('เข้าสู่ระบบ', 'Log in')}</Link>
+      {!user && <Link className="nt-mobile-account" to="/login">{t('เข้าสู่ระบบ', 'Log in')}</Link>}
     </nav>
-    <div className="nt-header-actions"><ThemeSwitch /><LanguageSwitch /><Link className="nt-login-link" to={user ? '/me' : '/login'}>{user ? t('ทริปของฉัน', 'My trips') : t('เข้าสู่ระบบ', 'Log in')}<Icon size={17} /></Link><button className="nt-menu" type="button" aria-label={t('เปิดเมนู', 'Toggle menu')} aria-expanded={open} aria-controls="nt-navigation" onClick={() => setOpen(!open)}><Icon name="menu" /></button></div>
+    <div className="nt-header-actions"><ThemeSwitch /><LanguageSwitch />{user ? <AccountMenu /> : <Link className="nt-login-link" to="/login">{t('เข้าสู่ระบบ', 'Log in')}<Icon size={17} /></Link>}<button className="nt-menu" type="button" aria-label={t('เปิดเมนู', 'Toggle menu')} aria-expanded={open} aria-controls="nt-navigation" onClick={() => setOpen(!open)}><Icon name="menu" /></button></div>
   </div></header>;
 }
 

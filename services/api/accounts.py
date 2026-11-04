@@ -37,6 +37,11 @@ class GoogleIn(BaseModel):
     credential: str = Field(min_length=1, max_length=5000)
 
 
+class PasswordChangeIn(BaseModel):
+    current_password: str = Field(max_length=auth.MAX_PASSWORD + 100)
+    new_password: str = Field(max_length=auth.MAX_PASSWORD + 100)
+
+
 class DeleteAccountIn(BaseModel):
     email: str = Field(max_length=300)  # พิมพ์อีเมลของตัวเองยืนยัน กันกดลบพลาด
 
@@ -66,6 +71,23 @@ class FavoriteIn(BaseModel):
     province: str | None = Field(default=None, max_length=60)
 
 
+def session_of(store: Store, secret: str, token: str | None) -> tuple[dict, str] | None:
+    """(ผู้ใช้, รหัสเซสชัน) จากคุกกี้ ต้องผ่านทั้งลายเซ็น วันหมดอายุ และยังมีเซสชันนี้ในฐานข้อมูล"""
+    got = auth.read_session(token, secret)
+    if not got:
+        return None
+    uid, sid = got
+    if not store.session_valid(uid, sid):
+        return None
+    user = store.user_by_id(uid)
+    return (user, sid) if user else None
+
+
+def session_user(store: Store, secret: str, token: str | None) -> dict | None:
+    got = session_of(store, secret, token)
+    return got[0] if got else None
+
+
 def build_router(store: Store, secret: str, verified: list, secure_cookie: bool = True,
                  throttle: auth.LoginThrottle | None = None, google: GoogleVerifier | None = None,
                  register_throttle: auth.LoginThrottle | None = None) -> APIRouter:
@@ -78,12 +100,13 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
     verified_by_id = {c.id: c for c in verified}
 
     def set_session(resp: Response, user_id: int) -> None:
-        resp.set_cookie(COOKIE, auth.make_token(user_id, secret), max_age=auth.SESSION_DAYS * 86400,
+        sid, exp = auth.new_session_id(), auth.session_expiry()
+        store.create_session(user_id, sid, exp)
+        resp.set_cookie(COOKIE, auth.make_token(user_id, secret, sid=sid, exp=exp), max_age=auth.SESSION_DAYS * 86400,
                         httponly=True, secure=secure_cookie, samesite="lax", path="/")
 
     def current_user(req: Request) -> dict | None:
-        uid = auth.read_token(req.cookies.get(COOKIE), secret)
-        return store.user_by_id(uid) if uid else None
+        return session_user(store, secret, req.cookies.get(COOKIE))
 
     def need_login(req: Request):
         """คืน (ผู้ใช้, None) หรือ (None, คำตอบ 401)"""
@@ -154,7 +177,11 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         return {"user": {"id": user["id"], "email": user["email"]}}
 
     @r.post("/api/auth/logout", status_code=204)
-    def logout():
+    def logout(req: Request):
+        # ยกเลิกเซสชันนี้ในฐานข้อมูลด้วย ใครคัดลอกคุกกี้ไปก่อนหน้าก็ใช้ต่อไม่ได้
+        got = auth.read_session(req.cookies.get(COOKIE), secret)
+        if got:
+            store.delete_session(got[1])
         resp = Response(status_code=204)
         resp.delete_cookie(COOKIE, path="/")
         return resp
@@ -163,6 +190,51 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
     def me(req: Request):
         u, bad = need_login(req)
         return bad or {"user": u}
+
+    # ---- ตั้งค่าบัญชี ----
+    @r.get("/api/me/account")
+    def account(req: Request):
+        got = session_of(store, secret, req.cookies.get(COOKIE))
+        if not got:
+            return _err(401, "unauthorized", "กรุณาเข้าสู่ระบบก่อน")
+        a = store.account(got[0]["id"])
+        return {"email": a["email"], "created_at": a["created_at"], "has_password": a["has_password"],
+                "google": a["google"], "sessions": store.count_sessions(a["id"])}
+
+    @r.post("/api/me/password")
+    def change_password(body: PasswordChangeIn, req: Request, response: Response):
+        """เปลี่ยนรหัสผ่าน ต้องใส่รหัสเดิม แล้วยกเลิกทุกเซสชันเดิม (อุปกรณ์อื่นต้องเข้าสู่ระบบใหม่)"""
+        got = session_of(store, secret, req.cookies.get(COOKIE))
+        if not got:
+            return _err(401, "unauthorized", "กรุณาเข้าสู่ระบบก่อน")
+        user = got[0]
+        stored = store.password_hash(user["id"]) or ""
+        if not stored.startswith("scrypt$"):
+            return _err(400, "no_password", "บัญชีนี้เข้าสู่ระบบด้วย Google จึงไม่มีรหัสผ่านให้เปลี่ยน")
+        # ใช้ตัวนับเดียวกับหน้าเข้าสู่ระบบ กันเดารหัสเดิมผ่านหน้านี้แทน
+        if throttle.blocked(user["email"]):
+            return _err(429, "rate_limited", "ใส่รหัสผ่านผิดหลายครั้งเกินไป กรุณารอสักครู่แล้วลองใหม่")
+        if not auth.verify_password(body.current_password, stored):
+            throttle.fail(user["email"])
+            return _err(400, "wrong_password", "รหัสผ่านปัจจุบันไม่ถูกต้อง")
+        throttle.reset(user["email"])
+        if not (auth.MIN_PASSWORD <= len(body.new_password) <= auth.MAX_PASSWORD):
+            return _err(400, "invalid_param", f"รหัสผ่านใหม่ต้องยาว {auth.MIN_PASSWORD}-{auth.MAX_PASSWORD} ตัวอักษร")
+        if body.new_password == body.current_password:
+            return _err(400, "invalid_param", "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม")
+        store.set_password(user["id"], auth.hash_password(body.new_password))
+        others = store.delete_sessions(user["id"], keep=got[1])
+        store.delete_session(got[1])
+        set_session(response, user["id"])  # เซสชันใหม่สำหรับเครื่องนี้ คุกกี้เดิมทุกใบใช้ไม่ได้แล้ว
+        return {"signed_out": others}
+
+    @r.post("/api/me/sessions/revoke-others")
+    def revoke_others(req: Request):
+        """ออกจากระบบทุกอุปกรณ์ ยกเว้นเครื่องที่กดอยู่"""
+        got = session_of(store, secret, req.cookies.get(COOKIE))
+        if not got:
+            return _err(401, "unauthorized", "กรุณาเข้าสู่ระบบก่อน")
+        return {"signed_out": store.delete_sessions(got[0]["id"], keep=got[1])}
 
     @r.post("/api/me/delete", status_code=204)
     def delete_account(body: DeleteAccountIn, req: Request):

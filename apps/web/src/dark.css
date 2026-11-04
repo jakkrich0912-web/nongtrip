@@ -303,6 +303,75 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .nt-chat-edit button[type=submit] { color:#ffffff; }
 :where(html[data-theme=dark]) .ntg-down { border:1px solid #494e46; background:#131313; color:#d9e5d7; box-shadow:0 4px 14px rgba(0,0,0,0.264); }
 
+/* จาก pages/info.css */
+:where(html[data-theme=dark]) .nti-crumbs a { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-hero { border:1px solid #42483c; }
+:where(html[data-theme=dark]) .nti-hero p { color:#cdd5c9; }
+:where(html[data-theme=dark]) .nti-toc a:hover { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-section p, :where(html[data-theme=dark]) .nti-section li { color:#d1dacd; }
+:where(html[data-theme=dark]) .nti-section a { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-section code { background:#262720; }
+:where(html[data-theme=dark]) .nti-cards>li { background:#131313; }
+:where(html[data-theme=dark]) .nti-cards>li>span { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-table-wrap { background:#131313; }
+:where(html[data-theme=dark]) .nti-table th { background:#1f221b; }
+:where(html[data-theme=dark]) .nti-table td { color:#d1dacd; }
+:where(html[data-theme=dark]) .nti-callout { background:#282111; border:1px solid #574c34; }
+:where(html[data-theme=dark]) .nti-callout.is-ok { background:#1f241b; border-color:#434c3d; }
+:where(html[data-theme=dark]) .nti-callout>span { background:#131313; color:#e4d4b9; }
+:where(html[data-theme=dark]) .nti-callout.is-ok>span { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-callout p { color:#d1dacd; }
+:where(html[data-theme=dark]) .nti-stats>div { background:#131313; }
+:where(html[data-theme=dark]) .nti-stats b { color:#8cc79a; }
+:where(html[data-theme=dark]) .nti-team li { background:#131313; }
+:where(html[data-theme=dark]) .nti-filter input { border:1px solid #45493f; background:#131313; }
+:where(html[data-theme=dark]) .nti-prov { background:#131313; }
+:where(html[data-theme=dark]) .nti-prov:hover { border-color:#51574b; box-shadow:0 4px 0 #000000; }
+:where(html[data-theme=dark]) .nti-badge { color:#c2dfcb; }
+:where(html[data-theme=dark]) .nti-badge.is-osm { background:#26241e; }
+:where(html[data-theme=dark]) .nti-404 code { background:#262720; }
+:where(html[data-theme=dark]) .st-form input { border:1px solid #45493f; background:#131313; }
+:where(html[data-theme=dark]) .st-ok { background:#242a1f; color:#c2dfcb; }
+@media(max-width:900px) {
+  :where(html[data-theme=dark]) .nti-toc a { background:#131313; }
+}
+:where(html[data-theme=dark]) .nt-footer-links a:hover { color:#8cc79a; }
+:where(html[data-theme=dark]) .nta-ring-1 { border:1px dashed #4d5247; }
+:where(html[data-theme=dark]) .nta-ring-2 { background:#282d23; border:1px solid #444a3d; }
+:where(html[data-theme=dark]) .nta-chip { background:#131313; border:1px solid #3f433a; box-shadow:0 4px 0 #000000; }
+:where(html[data-theme=dark]) .nta-chip svg { color:#8cc79a; }
+:where(html[data-theme=dark]) .nta-story-body p { color:#d0d8cc; }
+:where(html[data-theme=dark]) .nta-sign { color:#8cc79a!important; }
+:where(html[data-theme=dark]) .nta-mission { color:#ffffff; }
+:where(html[data-theme=dark]) .nta-mission h2 { color:#ffffff; }
+:where(html[data-theme=dark]) .nta-stats>div { background:rgba(19,19,19,0.08); border:1px solid rgba(43,43,43,0.16); }
+:where(html[data-theme=dark]) .nta-value-icon { background:#25291f; border:1px solid #44483d; color:#8cc79a; }
+:where(html[data-theme=dark]) .nta-values li:nth-child(even) .nta-value-icon { background:#362e1b; border-color:#534934; color:#e2d0b2; }
+:where(html[data-theme=dark]) .nta-nots { background:#24281f; border-block:1px solid #3d4238; }
+:where(html[data-theme=dark]) .nta-nots-inner>div>p { color:#c7d2c1; }
+:where(html[data-theme=dark]) .nta-nots li { background:#1f1b0d; border:1px solid #3e4238; }
+:where(html[data-theme=dark]) .nta-nots li>span { background:#2c201b; color:#deb5a9; }
+:where(html[data-theme=dark]) .nta-team li { background:#131313; box-shadow:0 5px 0 #000000; }
+:where(html[data-theme=dark]) .nta-avatar { color:#ffffff; }
+:where(html[data-theme=dark]) .nta-avatar-2 { color:#22301f; }
+:where(html[data-theme=dark]) .nta-team-cat { background:#272111!important; border-color:#544a33!important; box-shadow:0 5px 0 #000000!important; }
+:where(html[data-theme=dark]) .nta-team small { color:#8cc79a; }
+:where(html[data-theme=dark]) .nta-credit-list a { background:#131313; }
+:where(html[data-theme=dark]) .nta-credit-list a:hover { border-color:#51574b; }
+:where(html[data-theme=dark]) .nta-credit-list small { color:#8cc79a; }
+:where(html[data-theme=dark]) .nta-credit-note a { color:#8cc79a; }
+:where(html[data-theme=dark]) .nt-account-btn { border:1px solid #3f423b; background:#131313; }
+:where(html[data-theme=dark]) .nt-account-btn:hover, :where(html[data-theme=dark]) .nt-account-btn[aria-expanded=true] { border-color:#4d5247; box-shadow:0 3px 0 #000000; }
+:where(html[data-theme=dark]) .nt-avatar { color:#ffffff; }
+:where(html[data-theme=dark]) .nt-account-menu { background:#131313; border:1px solid #40423a; box-shadow:0 18px 40px rgba(0,0,0,0.308),0 2px 0 #000000; }
+:where(html[data-theme=dark]) .nt-account-head { border-bottom:1px solid #393b33; }
+:where(html[data-theme=dark]) .nt-account-group+.nt-account-group { border-top:1px solid #393b33; }
+:where(html[data-theme=dark]) .nt-account-menu [role=menuitem] svg { color:#8cc79a; }
+:where(html[data-theme=dark]) .nt-account-menu [role=menuitem]:hover, :where(html[data-theme=dark]) .nt-account-menu [role=menuitem]:focus-visible { background:#20231b; }
+:where(html[data-theme=dark]) .nt-account-menu [role=menuitem].is-current { background:#25291f; }
+:where(html[data-theme=dark]) .nt-account-menu .nt-account-logout, :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout svg { color:#deb5a9; }
+:where(html[data-theme=dark]) .nt-account-menu .nt-account-logout:hover, :where(html[data-theme=dark]) .nt-account-menu .nt-account-logout:focus-visible { background:#251a15; }
+
 /* จาก components/companion.css */
 :where(html[data-theme=dark]) .nt-comp-dot { border:2.5px solid #3c341d; box-shadow:0 1px 4px rgba(0,0,0,0.66); }
 :where(html[data-theme=dark]) .nt-comp-hello { background:#1d190c; border:1px solid #43483f; box-shadow:0 8px 24px rgba(0,0,0,0.352); }

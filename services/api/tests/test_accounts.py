@@ -128,17 +128,17 @@ def test_tampered_and_expired_tokens_rejected(env):
     c, _, _ = env
     signup(c)
     good = c.cookies.get("nt_session")
-    uid, exp, sig = good.split(".")
+    uid, exp, sid, sig = good.split(".")
     c.cookies.clear()
-    c.cookies.set("nt_session", f"2.{exp}.{sig}")          # สวมรอยผู้ใช้อื่น
+    c.cookies.set("nt_session", f"2.{exp}.{sid}.{sig}")          # สวมรอยผู้ใช้อื่น
     assert c.get("/api/auth/me").status_code == 401
     c.cookies.clear()
-    c.cookies.set("nt_session", f"{uid}.{exp}.{'0' * 64}")  # ลายเซ็นมั่ว
+    c.cookies.set("nt_session", f"{uid}.{exp}.{sid}.{'0' * 64}")  # ลายเซ็นมั่ว
     assert c.get("/api/auth/me").status_code == 401
     c.cookies.clear()
     c.cookies.set("nt_session", "garbage")
     assert c.get("/api/auth/me").status_code == 401
-    old = auth.make_token(int(uid), "test-secret", now=1_000_000)  # หมดอายุแล้ว
+    old = auth.make_token(int(uid), "test-secret", now=1_000_000, sid=sid)  # หมดอายุแล้ว
     c.cookies.clear()
     c.cookies.set("nt_session", old)
     assert c.get("/api/auth/me").status_code == 401
@@ -147,9 +147,9 @@ def test_tampered_and_expired_tokens_rejected(env):
 def test_token_signed_with_other_secret_rejected(env):
     c, _, _ = env
     signup(c)
-    uid = int(c.cookies.get("nt_session").split(".")[0])
+    uid, _, sid, _ = c.cookies.get("nt_session").split(".")
     c.cookies.clear()
-    c.cookies.set("nt_session", auth.make_token(uid, "other-secret"))
+    c.cookies.set("nt_session", auth.make_token(int(uid), "other-secret", sid=sid))
     assert c.get("/api/auth/me").status_code == 401
 
 
