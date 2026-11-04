@@ -539,3 +539,13 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 
 /* เครดิตแผนที่: ลิงก์ต้องแยกจากข้อความรอบข้างได้ (WCAG 1.4.1) และคอนทราสต์พอ */
 .leaflet-container .leaflet-control-attribution a { color:#005a80; text-decoration:underline; }
+
+/* แถบเลื่อนในแผงค้นหา: แท่งมนสีเทา ไม่มีราง ไม่มีลูกศร เข้มขึ้นเมื่อชี้ */
+/* Firefox ใช้ scrollbar-width/color ส่วน Chrome/Edge ใช้ ::-webkit-scrollbar (ถ้าตั้งทั้งคู่ Chrome จะไม่ใช้แบบหลัง) */
+@supports not selector(::-webkit-scrollbar) { .panel, .panel * { scrollbar-width:thin; scrollbar-color:rgba(60,64,58,.38) transparent; } }
+.panel ::-webkit-scrollbar, .panel::-webkit-scrollbar { width:12px; height:12px; }
+.panel ::-webkit-scrollbar-track, .panel::-webkit-scrollbar-track { background:transparent; }
+.panel ::-webkit-scrollbar-thumb, .panel::-webkit-scrollbar-thumb { background:rgba(60,64,58,.38); border-radius:999px; border:3px solid transparent; min-height:28px; background-clip:padding-box; }
+.panel ::-webkit-scrollbar-thumb:hover, .panel::-webkit-scrollbar-thumb:hover { background:rgba(60,64,58,.6); background-clip:padding-box; }
+.panel ::-webkit-scrollbar-button, .panel::-webkit-scrollbar-button { display:none; height:0; width:0; }
+.panel::-webkit-scrollbar-track { margin:22px 0; } /* ไม่ให้แถบเลื่อนชนมุมโค้งของแผง */
