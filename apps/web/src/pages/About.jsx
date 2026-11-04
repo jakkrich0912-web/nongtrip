@@ -36,7 +36,7 @@ export default function About() {
     [t('ไม่แต่งข้อมูล', 'No made-up facts'), t('เวลาเปิดปิดหรือค่าเข้าที่ไม่มีแหล่งยืนยัน จะไม่โผล่บนหน้าจอ', 'Opening hours or fees without a confirming source never appear.')],
     [t('ไม่มีราคาและรีวิวที่ยืนยันไม่ได้', 'No unverifiable prices or reviews'), t('อยากอ่านรีวิว เราส่งต่อให้ไปดูที่ Google Maps', 'Want reviews? We link you to Google Maps.')],
     [t('ไม่จองหรือรับเงินแทนคุณ', 'No bookings or payments'), t('เราไม่ใช่เอเจนซี่ ไม่มีค่าคอมมิชชัน', 'We are not an agency and earn no commission.')],
-    [t('ไม่มีโฆษณาหรือตัวติดตาม', 'No ads or trackers'), t('ไม่เก็บสถิติผู้เข้าชม และไม่ขายข้อมูลของใคร', 'No visitor analytics, and nobody’s data is sold.')],
+    [t('ไม่มีโฆษณาหรือตัวติดตาม', 'No ads or trackers'), t('ไม่ติดตามว่าใครดูอะไร นับแค่ยอดรวมของระบบ และไม่ขายข้อมูลของใคร', 'We never track who looks at what, only system totals, and nobody’s data is sold.')],
   ];
 
   return (

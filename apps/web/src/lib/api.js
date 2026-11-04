@@ -95,5 +95,7 @@ export const provincePlaces = (name, { category, limit = 50, offset = 0 } = {}) 
 export const provincesList = () => get('/api/provinces');
 // สถานะระบบ: จำนวนสถานที่ที่ตรวจแล้ว และแชตใช้โมเดลภาษาอยู่หรือไม่
 export const systemHealth = () => get('/api/health');
+// แดชบอร์ดผู้ดูแล (ข้อ 3.6) ไม่ใช่ผู้ดูแลได้ 403
+export const adminOverview = () => get('/api/admin/overview');
 export const provinceCenter = (name) => request('GET', `/api/provinces/${encodeURIComponent(name)}/center`);
 export const guideFeatured = ({ limit = 12, category } = {}) => request('GET', `/api/guide/featured?${qs({ limit, category })}`);

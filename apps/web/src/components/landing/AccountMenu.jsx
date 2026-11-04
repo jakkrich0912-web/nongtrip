@@ -52,6 +52,7 @@ export default function AccountMenu() {
     ['/me', 'pin', t('ทริปของฉัน', 'My trips'), t('ที่พักที่ค้น สถานที่โปรด', 'Searches and favourites')],
     ['/chat', 'chat', t('แชตของฉัน', 'My chats'), t('คุยต่อจากแชตเดิม', 'Pick up a conversation')],
     ['/settings', 'settings', t('ตั้งค่าบัญชี', 'Account settings'), t('รหัสผ่าน อุปกรณ์ที่เข้าอยู่', 'Password and devices')],
+    ...(user.is_admin ? [['/admin', 'shield', t('แดชบอร์ดผู้ดูแล', 'Admin dashboard'), t('ภาพรวมการใช้งานทั้งระบบ', 'System-wide usage')]] : []),
   ];
 
   return (
