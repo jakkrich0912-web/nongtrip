@@ -13,6 +13,7 @@ from pathlib import Path
 
 from services.places.retrieval import TOP_K, Retriever, fit_context, source_items
 
+from . import metrics
 from .answer_guard import GUARD_NOTICE, check_answer
 from .llm import LLMClient, LLMError
 from .validator import DATA_DIR, DATA_FILES
@@ -138,6 +139,8 @@ class Rag:
                                question=question, radius_km=radius_km, lang=lang)
         if not verdict["ok"]:
             log.warning("ด่านตรวจไม่ผ่าน %d ข้อ: %s", verdict["problem_count"], [p["rule"] for p in verdict["problems"]])
+            for rule in sorted({p["rule"] for p in verdict["problems"]}):
+                metrics.count("guard", rule)
             return RagResult("rule", reason="guard", problems=verdict["problems"], rejected=text)
         return RagResult("llm", text=text, sources=source_items(hits))
 

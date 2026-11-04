@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+CREATE TABLE IF NOT EXISTS metrics (
+  day TEXT NOT NULL, kind TEXT NOT NULL, key TEXT NOT NULL, n INTEGER NOT NULL,
+  PRIMARY KEY (day, kind, key)
+);
 CREATE TABLE IF NOT EXISTS searches (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -193,6 +197,46 @@ class Store:
         with self._db() as c:
             return c.execute("SELECT COUNT(*) FROM sessions WHERE user_id = ? AND expires_at >= ?",
                              (user_id, int(now if now is not None else time.time()))).fetchone()[0]
+
+    # ---- ตัวนับรวมและสรุปสำหรับผู้ดูแล (ไม่มีข้อมูลรายคน) ----
+    def bump_metric(self, kind: str, key: str, n: int = 1, day: str | None = None) -> None:
+        with self._db() as c:
+            c.execute("INSERT INTO metrics(day, kind, key, n) VALUES (?,?,?,?) "
+                      "ON CONFLICT(day, kind, key) DO UPDATE SET n = n + excluded.n",
+                      (day or now_iso()[:10], kind, key, n))
+
+    def metric_rows(self, since_day: str) -> list[dict]:
+        with self._db() as c:
+            rows = c.execute("SELECT day, kind, key, n FROM metrics WHERE day >= ? ORDER BY day", (since_day,)).fetchall()
+            return [dict(r) for r in rows]
+
+    def admin_counts(self, since_iso: str, now: float | None = None) -> dict:
+        """จำนวนรวมของทั้งระบบ ไม่คืนอีเมลหรือข้อมูลของใครเป็นรายคน"""
+        with self._db() as c:
+            one = lambda sql, *a: c.execute(sql, a).fetchone()[0]  # noqa: E731
+            out = {
+                "users": one("SELECT COUNT(*) FROM users"),
+                "users_google": one("SELECT COUNT(*) FROM users WHERE google_sub IS NOT NULL"),
+                "users_new": one("SELECT COUNT(*) FROM users WHERE created_at >= ?", since_iso),
+                "active_sessions": one("SELECT COUNT(*) FROM sessions WHERE expires_at >= ?",
+                                       int(now if now is not None else time.time())),
+                "users_signed_in": one("SELECT COUNT(DISTINCT user_id) FROM sessions WHERE expires_at >= ?",
+                                       int(now if now is not None else time.time())),
+                "saved_searches": one("SELECT COUNT(*) FROM searches"),
+                "favorites": one("SELECT COUNT(*) FROM favorites"),
+                "chats": one("SELECT COUNT(*) FROM chats"),
+                "messages": one("SELECT COUNT(*) FROM chat_messages"),
+                "ratings": None,
+            }
+            cols = {r[1] for r in c.execute("PRAGMA table_info(chat_messages)")}
+            if "rating" in cols:  # มีเมื่อหน้าแชตแบบใหม่ (ให้คะแนน 👍👎) เข้ามาแล้ว
+                out["ratings"] = {"up": one("SELECT COUNT(*) FROM chat_messages WHERE rating = 1"),
+                                  "down": one("SELECT COUNT(*) FROM chat_messages WHERE rating = -1")}
+            # สถานที่ที่คนบันทึกเป็นโปรดมากสุด นับเฉพาะที่บันทึกตั้งแต่ 2 บัญชีขึ้นไป ดูไม่ได้ว่าใครคนเดียวชอบอะไร
+            fav = c.execute("SELECT name_th, province, COUNT(*) AS n FROM favorites GROUP BY place_id "
+                            "HAVING n >= 2 ORDER BY n DESC, name_th LIMIT 5").fetchall()
+            out["top_favorites"] = [dict(r) for r in fav]
+            return out
 
     # ---- ประวัติที่พักที่เคยค้น ----
     def add_search(self, user_id: int, name: str, lat: float, lon: float) -> dict:

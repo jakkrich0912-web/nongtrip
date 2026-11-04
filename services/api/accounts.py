@@ -14,6 +14,7 @@ from services.places.geo import in_thailand, place_url
 
 from . import auth
 from .google import GoogleInvalid, GoogleUnavailable, GoogleVerifier
+from .roles import is_admin
 from .store import EmailTaken, Store
 
 COOKIE = "nt_session"
@@ -60,6 +61,11 @@ class FavoriteIn(BaseModel):
     lat: float | None = None
     lon: float | None = None
     province: str | None = Field(default=None, max_length=60)
+
+
+def user_out(u: dict) -> dict:
+    """ข้อมูลผู้ใช้ที่ส่งให้หน้าเว็บ: รหัส อีเมล และเป็นผู้ดูแลหรือไม่"""
+    return {"id": u["id"], "email": u["email"], "is_admin": is_admin(u["email"])}
 
 
 def session_of(store: Store, secret: str, token: str | None) -> tuple[dict, str] | None:
@@ -123,7 +129,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
         except EmailTaken:
             return _err(409, "email_taken", "อีเมลนี้สมัครไว้แล้ว")
         set_session(response, user["id"])
-        return {"user": user}
+        return {"user": user_out(user)}
 
     @r.post("/api/auth/login")
     def login(body: Credentials, response: Response):
@@ -137,7 +143,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
             return _err(401, "unauthorized", "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
         throttle.reset(email)
         set_session(response, row["id"])
-        return {"user": {"id": row["id"], "email": row["email"]}}
+        return {"user": user_out(row)}
 
     @r.post("/api/auth/google")
     def login_google(body: GoogleIn, req: Request, response: Response):
@@ -165,7 +171,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
                 return _err(409, "email_taken", "อีเมลนี้สมัครไว้แล้ว")
             response.status_code = 201
         set_session(response, user["id"])
-        return {"user": {"id": user["id"], "email": user["email"]}}
+        return {"user": user_out(user)}
 
     @r.post("/api/auth/logout", status_code=204)
     def logout(req: Request):
@@ -180,7 +186,7 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
     @r.get("/api/auth/me")
     def me(req: Request):
         u, bad = need_login(req)
-        return bad or {"user": u}
+        return bad or {"user": user_out(u)}
 
     # ---- ตั้งค่าบัญชี ----
     @r.get("/api/me/account")

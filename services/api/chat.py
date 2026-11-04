@@ -26,6 +26,7 @@ from services.places.geo import in_thailand
 from services.places.provinces import PROVINCES, province_en
 
 from .accounts import COOKIE, MAX_ID, session_user
+from . import metrics
 from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
 from .rag import Rag
@@ -533,6 +534,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         parts.append(ln)
                         yield _sse("token", {"text": ln})
                 save()
+                metrics.count("chat", mode)
                 # เวลาของแต่ละขั้น ไว้ดูว่าช้าที่ไหน (ไม่มีข้อความของผู้ใช้ในบรรทัดนี้) ขึ้นใน log ของ uvicorn
                 logging.getLogger("uvicorn.error").info(
                     "chat timing: ค้นสถานที่ %.1f วินาที, ขั้น RAG/LLM %.1f วินาที, โหมด %s",
