@@ -99,3 +99,14 @@ def test_committed_snapshot_files_are_sane():
             assert th and in_thailand(lat, lon), (f.name, ref)
             kinds[kind] = kinds.get(kind, 0) + 1
         assert all(kinds.get(k, 0) >= 10 for k in ("attraction", "cafe", "lodging")), (f.name, kinds)
+
+
+def test_load_skips_unsuitable_rows(tmp_path):
+    import json
+    (tmp_path / "ทดสอบ.json").write_text(json.dumps({"_meta": {"province": "ทดสอบ", "built_on": "2026-11-04"}, "items": [
+        ["node/1", "H", None, "attraction", "attraction", LAT, LON],
+        ["node/2", "สนามชนไก่บ้านนา", None, "attraction", "museum", LAT, LON],
+        ["node/3", "วัดทดสอบ", None, "attraction", "place_of_worship", LAT, LON],
+    ]}, ensure_ascii=False), encoding="utf-8")
+    snap = Snapshot(tmp_path)
+    assert [c.id for c in snap.around(LAT, LON, 5, ("attraction",))] == ["osm:node/3"]
