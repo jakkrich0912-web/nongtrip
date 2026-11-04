@@ -165,3 +165,29 @@
 .nta-credit-note a{color:var(--nt-green);font-weight:500}
 @media(max-width:950px){.nta-hero{grid-template-columns:1fr;min-height:0;text-align:center}.nta-hero p{margin-inline:auto}.nta-hero-actions{justify-content:center}.nta-hero-art{height:400px}.nta-story,.nta-nots-inner,.nta-mission{grid-template-columns:1fr;gap:32px}.nta-values ol{grid-template-columns:1fr 1fr}.nta-team ul,.nta-credit-list{grid-template-columns:1fr}}
 @media(max-width:700px){.nta-hero{padding-block:24px 10px}.nta-hero h1{font-size:clamp(36px,10vw,48px);letter-spacing:-1px}.nta-hero p{font-size:15px}.nta-hero-art{height:300px;transform:scale(.72);margin-block:-20px}.nta-ring-1{width:400px;height:400px}.nta .nt-section-heading h2{font-size:clamp(24px,6.6vw,30px)}.nta-story{padding-block:48px}.nta-story-body p{font-size:15px}.nta-mission{padding:32px 24px;border-radius:22px}.nta-stats{grid-template-columns:1fr}.nta-values{padding-block:60px 40px}.nta-values ol{grid-template-columns:1fr;gap:22px}.nta-nots-inner{padding-block:48px}.nta-nots ul{grid-template-columns:1fr}.nta-team{padding-block:60px 20px}}
+/* เมนูบัญชีที่หัวเว็บ */
+.nt-account{position:relative}
+.nt-account-btn{display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border:1px solid #dee2d7;border-radius:999px;background:#fff;color:var(--nt-ink);cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.nt-account-btn:hover,.nt-account-btn[aria-expanded=true]{border-color:#c3cfb6;box-shadow:0 3px 0 #e2e7d8}
+.nt-account-caret{color:var(--nt-muted);transition:transform .15s}
+.nt-account-btn[aria-expanded=true] .nt-account-caret{transform:rotate(180deg)}
+.nt-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#4a7c59,#2f5a3c);color:#fff;font:600 15px var(--display);flex-shrink:0}
+.nt-avatar-lg{width:44px;height:44px;font-size:19px}
+.nt-account-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:1200;width:290px;padding:8px;background:#fff;border:1px solid #e0e3d7;border-radius:18px;box-shadow:0 18px 40px rgba(34,48,31,.14),0 2px 0 #e6eade;transform-origin:top right;animation:nt-menu-in .14s ease-out}
+@keyframes nt-menu-in{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.nt-account-menu{animation:none}}
+.nt-account-head{display:flex;align-items:center;gap:12px;padding:12px 12px 14px;margin-bottom:6px;border-bottom:1px solid #eceee5}
+.nt-account-head div{min-width:0;display:flex;flex-direction:column}
+.nt-account-head small{font-size:11px;color:var(--nt-muted)}
+.nt-account-head strong{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt-account-group{display:flex;flex-direction:column;gap:2px;padding:4px 0}
+.nt-account-group+.nt-account-group{border-top:1px solid #eceee5;margin-top:4px;padding-top:8px}
+.nt-account-menu [role=menuitem]{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:12px;background:none;color:var(--nt-ink);font:500 14px var(--body);text-align:left;text-decoration:none;cursor:pointer}
+.nt-account-menu [role=menuitem] svg{color:var(--nt-green);flex-shrink:0}
+.nt-account-menu [role=menuitem] span{display:flex;flex-direction:column;line-height:1.35}
+.nt-account-menu [role=menuitem] small{font-size:11.5px;color:var(--nt-muted);font-weight:400}
+.nt-account-menu [role=menuitem]:hover,.nt-account-menu [role=menuitem]:focus-visible{background:#f0f4ea;outline:none}
+.nt-account-menu [role=menuitem].is-current{background:#eaf0e1}
+.nt-account-menu .nt-account-logout,.nt-account-menu .nt-account-logout svg{color:#a23f22}
+.nt-account-menu .nt-account-logout:hover,.nt-account-menu .nt-account-logout:focus-visible{background:#fbefe9}
+@media(max-width:700px){.nt-account-btn{padding:3px}.nt-account-caret{display:none}.nt-avatar{width:32px;height:32px;font-size:14px}.nt-account-menu{position:fixed;top:72px;right:12px;width:min(300px,calc(100vw - 24px))}}
