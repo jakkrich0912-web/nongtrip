@@ -171,7 +171,7 @@ function MyTripsBody({ user }) {
             {chats.items.map((c) => (
               <li key={c.id}>
                 <div className="mt-main">
-                  <strong>{c.title}</strong>
+                  <strong><Link to={`/chat?chat=${encodeURIComponent(c.id)}`}>{c.title}</Link></strong>
                   <small>{c.message_count} {t('ข้อความ', 'messages')} · {t('ล่าสุด', 'latest')} {fmt(c.updated_at, lang)}</small>
                 </div>
                 <button className="icon-btn" aria-label={t(`ลบแชต ${c.title}`, `Delete chat ${c.title}`)}

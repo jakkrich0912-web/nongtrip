@@ -84,6 +84,10 @@ export const removeFavorite = (id) => request('DELETE', `/api/me/favorites/${Str
 export const deleteAllFavorites = () => request('DELETE', '/api/me/favorites');
 
 export const myChats = () => request('GET', '/api/me/chats');
+export const getChat = (id) => request('GET', `/api/me/chats/${encodeURIComponent(id)}`);
+export const renameChat = (id, title) => request('PATCH', `/api/me/chats/${encodeURIComponent(id)}`, { title });
+export const rateMessage = (chatId, messageId, rating) =>
+  request('PUT', `/api/me/chats/${encodeURIComponent(chatId)}/messages/${encodeURIComponent(messageId)}/rating`, { rating });
 export const deleteChat = (id) => request('DELETE', `/api/me/chats/${encodeURIComponent(id)}`);
 export const deleteAllChats = () => request('DELETE', '/api/me/chats');
 

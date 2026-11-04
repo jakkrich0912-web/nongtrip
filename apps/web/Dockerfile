@@ -8,6 +8,10 @@ RUN cd apps/web && npm ci --no-audit --no-fund
 COPY apps/web apps/web
 # หน้าเว็บอ่านข้อมูลสถานที่ที่ตรวจที่มาแล้วจาก services/places/data (ดู vite.config.js)
 COPY services/places/data/places.json services/places/data/places_all_provinces.json services/places/data/
+# ปุ่มเข้าสู่ระบบด้วย Google ต้องรู้ client ID ตอน build (Vite ฝังค่าลงไฟล์ JS) ส่งมาจาก GOOGLE_CLIENT_ID ใน .env ผ่าน docker-compose
+# เป็นค่าสาธารณะ (เห็นได้ในหน้าเว็บอยู่แล้ว) ไม่ใช่ความลับ ว่าง = ซ่อนปุ่ม
+ARG VITE_GOOGLE_CLIENT_ID=
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
 RUN cd apps/web && npm run build
 
 FROM nginx:1.27-alpine
