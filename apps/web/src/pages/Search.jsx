@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { noticeText } from '../lib/notices.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { PLACES, subtypeLabel, iconGroup, placeName, INTERESTS, matchesInterest } from '../lib/data.js';
 import CatIcon from '../components/CatIcon.jsx';
+import PlaceCluster from '../components/PlaceCluster.jsx';
 import Mascot from '../components/Mascot.jsx';
 import LodgingResults from '../components/LodgingResults.jsx';
 import LodgingSearch from '../components/LodgingSearch.jsx';
@@ -26,14 +27,15 @@ const placeIcon = dot('#B7472A', 12);
 const activeIcon = dot('#4A7C59', 16);
 const lodgeIcon = dot('#3D6A4B', 14);
 const candIcon = dot('#7B5A2E', 14);
+const NONE = [];
 
 function PinPicker({ onPick }) {
   useMapEvents({ click: (e) => onPick({ lat: e.latlng.lat, lon: e.latlng.lng }) });
   return null;
 }
-function FlyTo({ target }) {
+function FlyTo({ target, zoom = 13 }) {
   const map = useMap();
-  useEffect(() => { if (target) map.flyTo([target.lat, target.lon], Math.max(map.getZoom(), 13), { duration: 0.6 }); }, [target, map]);
+  useEffect(() => { if (target) map.flyTo([target.lat, target.lon], Math.max(map.getZoom(), zoom), { duration: 0.6 }); }, [target, map, zoom]);
   return null;
 }
 
@@ -135,6 +137,7 @@ export default function Search() {
   const pickInterest = (id) => { setInterest(id); setKind(id ? 'attraction' : ''); };
   const switchMode = (m) => { cancelPending(); setKind(''); setInterest(''); setRadius(MAX_RADIUS_KM); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
+  const markerLabel = useCallback((p) => ({ title: placeName(p, lang), popup: `${placeName(p, lang)} · ${p.distance_km} ${lang === 'en' ? 'km (straight-line)' : 'กม. (เส้นตรง)'}` }), [lang]);
   const results = origin ? near.items : [];
   const check = validateResults(results);
   // กรองรัศมีฝั่งหน้าเว็บจากผลที่ได้มาแล้ว (เรียงใกล้ไปไกลอยู่แล้ว) ไม่เปลี่ยนข้อมูลจาก API
@@ -337,11 +340,13 @@ export default function Search() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <PinPicker onPick={pick} />
+        {/* เปิดจากลิงก์ ?lat=&lon= หรือใช้ตำแหน่งเครื่อง: เลื่อนแผนที่ไปที่พักก่อน */}
+        <FlyTo target={origin} zoom={11} />
         <FlyTo target={active} />
         {origin && (
           <>
             <Circle center={[origin.lat, origin.lon]} radius={radius * 1000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
-            <Marker position={[origin.lat, origin.lon]} icon={homeIcon} title={origin.name ?? t('ที่พักของคุณ', 'Your stay')}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
+            <Marker position={[origin.lat, origin.lon]} icon={homeIcon} zIndexOffset={1000} title={origin.name ?? t('ที่พักของคุณ', 'Your stay')}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
           </>
         )}
         {pin && (
@@ -360,16 +365,12 @@ export default function Search() {
             <Popup>{l.name} · {l.distance_from_pin_km} {t('กม.', 'km')}</Popup>
           </Marker>
         ))}
-        {check.ok && shown.map((p) => (
-          <span key={p.id}>
-            <Polyline positions={[[origin.lat, origin.lon], [p.lat, p.lon]]}
-              pathOptions={{ color: active?.id === p.id ? '#4A7C59' : '#B7472A', weight: active?.id === p.id ? 2.5 : 1, opacity: 0.6, dashArray: '3 5' }} />
-            <Marker position={[p.lat, p.lon]} icon={active?.id === p.id ? activeIcon : placeIcon} title={placeName(p, lang)}
-              eventHandlers={{ click: () => setActive(p) }}>
-              <Popup>{placeName(p, lang)} · {p.distance_km} {t('กม.', 'km')}</Popup>
-            </Marker>
-          </span>
-        ))}
+        {/* เส้นจากที่พักวาดเฉพาะสถานที่ที่เลือก หมุดที่เหลือรวมกลุ่มเมื่อซูมออก */}
+        {check.ok && origin && active?.id && shown.some((p) => p.id === active.id) && (
+          <Polyline positions={[[origin.lat, origin.lon], [active.lat, active.lon]]}
+            pathOptions={{ color: '#4A7C59', weight: 2.5, opacity: 0.7, dashArray: '3 5' }} />
+        )}
+        <PlaceCluster places={check.ok ? shown : NONE} activeId={active?.id} icon={placeIcon} activeIcon={activeIcon} label={markerLabel} onPick={setActive} />
       </MapContainer>
       </div>
     </div>

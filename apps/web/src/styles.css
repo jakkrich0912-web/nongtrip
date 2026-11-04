@@ -539,3 +539,7 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 
 /* เครดิตแผนที่: ลิงก์ต้องแยกจากข้อความรอบข้างได้ (WCAG 1.4.1) และคอนทราสต์พอ */
 .leaflet-container .leaflet-control-attribution a { color:#005a80; text-decoration:underline; }
+
+/* วงรวมหมุดบนแผนที่หน้าค้นหา (leaflet.markercluster) */
+.nt-cluster { background:transparent; }
+.nt-cluster span { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#B7472A; color:#fff; font:600 .82rem/1 var(--body); border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.35); }

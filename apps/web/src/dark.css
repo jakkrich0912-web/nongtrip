@@ -124,6 +124,7 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .chat-sources { border-top:1px dashed rgba(34,48,31,0.18); }
 :where(html[data-theme=dark]) .linkish { color:#8cc79a; }
 :where(html[data-theme=dark]) .leaflet-container .leaflet-control-attribution a { color:#bfdbe7; }
+:where(html[data-theme=dark]) .nt-cluster span { background:#b7472a; color:#ffffff; border:3px solid #2b2b2b; box-shadow:0 2px 8px rgba(0,0,0,0.77); }
 
 /* จาก landing.css */
 :where(html[data-theme=dark]) .nt-skip { background:#131313; }

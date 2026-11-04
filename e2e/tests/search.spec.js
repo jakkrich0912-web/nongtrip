@@ -27,3 +27,34 @@ test('ตัวกรองรัศมีลดรายการและไ�
   const km = (await page.locator('ol.track .km').allInnerTexts()).map((x) => parseFloat(x));
   expect(km.every((v) => v <= 5)).toBe(true);
 });
+
+test('หมุดสถานที่รวมกลุ่มเมื่อซูมออก และหมุดที่พักไม่ถูกรวม', async ({ page }) => {
+  await page.goto(`/search?lat=${CM.lat}&lon=${CM.lon}&name=${encodeURIComponent(CM.name)}`);
+  await expect(page.locator('ol.track > li').first()).toBeVisible();
+  await expect(page.locator('.nt-cluster').first()).toBeVisible();
+  await expect(page.locator(`.leaflet-marker-icon[title="${CM.name}"]`)).toHaveCount(1);
+});
+
+test('ตัวกรองความสนใจเหลือเฉพาะประเภทนั้น และกดซ้ำเพื่อยกเลิก', async ({ page }) => {
+  await page.goto(`/search?lat=${CM.lat}&lon=${CM.lon}&name=${encodeURIComponent(CM.name)}`);
+  await expect(page.locator('ol.track > li').first()).toBeVisible();
+  const chips = page.getByRole('group', { name: 'ความสนใจ' });
+  const history = chips.getByRole('button', { name: 'วัดและประวัติศาสตร์' });
+  await history.click();
+  await expect(history).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('p.count')).toContainText('กรองจากที่โหลดแล้ว');
+  await expect(page.locator('ol.track > li').first()).toBeVisible();
+  const tags = await page.locator('ol.track .cat-tag').allInnerTexts();
+  expect(tags.every((x) => /วัด|ศาสนสถาน|อนุสาวรีย์|ประตูเมือง|พิพิธภัณฑ์|หอศิลป์|วังเก่า|โบราณ|ป้อม|งานฝีมือ/.test(x))).toBe(true);
+  await history.click();
+  await expect(history).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('ค้นรอบตัวฉันตอนนี้ใช้ตำแหน่งเครื่อง', async ({ page, context }) => {
+  await context.grantPermissions(['geolocation']);
+  await context.setGeolocation({ latitude: CM.lat, longitude: CM.lon });
+  await page.goto('/search?province=' + encodeURIComponent('เชียงใหม่'));
+  await page.getByRole('button', { name: 'ค้นรอบตัวฉันตอนนี้' }).click();
+  await expect(page.locator('p.count')).toContainText('ตำแหน่งของฉัน');
+  await expect(page.locator('ol.track > li').first()).toBeVisible();
+});
