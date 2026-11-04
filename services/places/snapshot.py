@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 
 from .models import Candidate, LodgingCandidate
+from .osm import unsuitable
 
 DEFAULT_DIR = Path(__file__).parent / "data" / "osm_snapshot"
 DEG_PER_KM = 1 / 111.0
@@ -56,6 +57,8 @@ class Snapshot:
                 prov = meta.get("province") or f.stem
                 self.provinces.append(prov)
                 for ref, th, en, kind, sub, lat, lon in data.get("items", []):
+                    if unsuitable(th, en, sub, ref):
+                        continue
                     items.append(Candidate(id=f"osm:{ref}", name_th=th, name_en=en, kind=kind, subtype=sub,
                                            lat=lat, lon=lon, source="osm", province=prov,
                                            source_url=f"https://www.openstreetmap.org/{ref}"))

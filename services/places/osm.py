@@ -20,6 +20,27 @@ _HISTORIC = ("temple", "monument", "castle", "ruins", "archaeological_site", "fo
 _NATURAL = ("waterfall", "peak", "beach", "hot_spring", "cave_entrance")
 _LEISURE = ("park", "nature_reserve")
 
+# ข้อมูล OSM บางรายการไม่ใช่ที่เที่ยวจริง: ชื่อเป็นตัวอักษรตัวเดียวหรือเลขล้วน (เช่น เลขห้องพัก ความสูงยอดเขา)
+# สนามพนัน และสวนส่วนกลางในหมู่บ้านจัดสรร/คอนโด (คนนอกเข้าไม่ได้) จึงคัดออกทั้งตอนค้นสดและตอนอ่านสแนปช็อต
+_BANNED_WORDS = ("สนามชนไก่", "cockfight", "คาสิโน", "casino")
+_PRIVATE_PARK_WORDS = ("หมู่บ้าน", "village", "casa ville", "residence", "condominium", "คอนโด")
+# ตรวจด้วยตาแล้วชื่อไม่สื่อว่าเป็นที่ไหน (กฎข้างบนจับไม่ได้)
+EXCLUDED_REFS = frozenset({"node/11175880428"})
+
+
+def unsuitable(name: str | None, name_en: str | None = None, subtype: str | None = None,
+               ref: str | None = None) -> bool:
+    """True ถ้ารายการนี้ไม่ควรแสดงเป็นสถานที่ (ดูเหตุผลที่ค่าคงที่ด้านบน)"""
+    n = (name or "").strip()
+    if len(n) < 2 or not any(ch.isalpha() for ch in n):
+        return True
+    text = f"{n} {name_en or ''}".lower()
+    if any(w in text for w in _BANNED_WORDS):
+        return True
+    if subtype == "park" and any(w in text for w in _PRIVATE_PARK_WORDS):
+        return True
+    return ref in EXCLUDED_REFS
+
 # ตัวกรอง Overpass ต่อประเภท (ทุกตัวต้องมีชื่อ)
 FILTERS = {
     "attraction": [
@@ -95,7 +116,7 @@ def parse_elements(elements: list[dict]) -> list[Candidate]:
         if lat is None or lon is None:
             continue
         ref = f"{el.get('type', 'node')}/{el.get('id')}"
-        if ref in seen:
+        if ref in seen or unsuitable(name, tags.get("name:en"), cls[1], ref):
             continue
         seen.add(ref)
         out.append(Candidate(
