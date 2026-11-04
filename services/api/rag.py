@@ -300,9 +300,11 @@ def check_travel(text: str, known_names: set[str] | None = None, places: list[di
     hit = mentions_known_place(t, others)
     if hit:
         out.append({"rule": "place_name", "name": hit})
-    dists = {round(float(p["distance_km"]), 2) for p in (places or []) if p.get("distance_km") is not None}
+    dists = [float(p["distance_km"]) for p in (places or []) if p.get("distance_km") is not None]
     for m in _KM.finditer(t):
-        if round(_num(m.group(1)), 2) not in dists:
+        v = _num(m.group(1))
+        # ยอมให้ปัดเศษ ("ราว 6.8 กม." แทน 6.77 หรือ "ราว 7 กม.") แต่ต้องเป็นระยะของสถานที่ในรายการจริง
+        if not any(abs(v - d) < 0.1 or (v == int(v) and round(d) == v) for d in dists):
             out.append({"rule": "distance", "value": m.group(1)})
             break
     return out

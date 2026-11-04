@@ -477,6 +477,7 @@ def test_check_travel_rules():
     assert check_travel(f"ไป{NAME}ช่วงหน้าหนาวค่ะ ห่าง 1.77 กม. (เส้นตรง)", {NAME, "วัดของที่อื่น"}, places) == []
     assert check_travel("ไปวัดของที่อื่นสิคะ", {NAME, "วัดของที่อื่น"}, places)[0]["rule"] == "place_name"
     assert check_travel("ห่าง 3 กม.", set(), places)[0]["rule"] == "distance"
+    assert check_travel("ห่างราว 1.8 กม. หรือราว 2 กม. (เส้นตรง)", set(), places) == []      # ปัดเศษได้
     assert check_travel("ค่าเข้า 50 บาทค่ะ", set(), [])[0]["rule"] == "forbidden"
     assert check_travel("", set(), [])[0]["rule"] == "empty"
 
