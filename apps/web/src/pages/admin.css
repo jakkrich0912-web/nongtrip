@@ -21,8 +21,8 @@
 .adm-legend{display:flex;gap:16px;flex-wrap:wrap;list-style:none;padding:0;margin:0 0 10px;font-size:12.5px;color:var(--nt-muted)}
 .adm-legend li{display:flex;align-items:center;gap:6px}
 .adm-legend i,.adm-tip i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.s1{background:var(--adm-s1)}
-.s2{background:var(--adm-s2)}
+.adm .s1{background:var(--adm-s1)}
+.adm .s2{background:var(--adm-s2)}
 .adm-plot{display:grid;grid-template-columns:28px 1fr;gap:8px;height:180px}
 .adm-axis{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;font-size:11px;color:var(--nt-muted);font-variant-numeric:tabular-nums;transform:translateY(-6px)}
 .adm-bars{position:relative;display:flex;align-items:flex-end;gap:2px;border-bottom:1px solid var(--adm-line);background:linear-gradient(var(--adm-grid) 1px,transparent 1px) 0 0/100% 50%}

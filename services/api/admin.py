@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from services.places.provinces import REGION_ORDER, REGIONS
 
 from .accounts import COOKIE, session_user
+from .metrics import TH
 from .roles import is_admin
 from .store import Store
 
@@ -68,9 +69,10 @@ def build_admin_router(store: Store, secret: str, svc, rag) -> APIRouter:
         if not is_admin(user["email"]):
             return _err(403, "forbidden", "หน้านี้สำหรับผู้ดูแลระบบเท่านั้น")
         now = datetime.now(timezone.utc)
-        since = (now - timedelta(days=WINDOW - 1)).strftime("%Y-%m-%d")
+        local = now.astimezone(TH)
+        since = (local - timedelta(days=WINDOW - 1)).strftime("%Y-%m-%d")
         counts = store.admin_counts((now - timedelta(days=7)).strftime("%Y-%m-%dT%H:%M:%SZ"))
-        usage = summarize(store.metric_rows(since), now)
+        usage = summarize(store.metric_rows(since), local)
 
         snap = svc.snapshot
         snap_set: set[str] = set()

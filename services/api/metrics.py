@@ -7,10 +7,19 @@ from __future__ import annotations
 
 import logging
 import math
+from datetime import datetime, timedelta, timezone
 
 from .store import Store
 
 log = logging.getLogger(__name__)
+
+# นับเป็นวันตามเวลาประเทศไทย (UTC+7 ไม่มีเวลาออมแสง) ผู้ดูแลเห็น "วันนี้" ตรงกับวันจริง
+TH = timezone(timedelta(hours=7))
+
+
+def today_th(now: datetime | None = None) -> str:
+    return (now or datetime.now(timezone.utc)).astimezone(TH).strftime("%Y-%m-%d")
+
 
 KINDS = {"chat", "guard", "search", "search_province", "province_view"}
 _store: Store | None = None
@@ -26,7 +35,7 @@ def count(kind: str, key: str, n: int = 1) -> None:
     if _store is None or kind not in KINDS or not key:
         return
     try:
-        _store.bump_metric(kind, str(key)[:80], n)
+        _store.bump_metric(kind, str(key)[:80], n, day=today_th())
     except Exception:  # noqa: BLE001 ตัวนับห้ามทำให้คำขอล้ม
         log.warning("นับ %s/%s ไม่สำเร็จ", kind, key, exc_info=True)
 

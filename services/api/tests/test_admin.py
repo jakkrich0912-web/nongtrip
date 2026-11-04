@@ -58,7 +58,7 @@ def test_counts_searches_province_views_and_chat_modes(env):
     assert u["top_provinces"] == [{"key": "เชียงใหม่", "n": 1}]
     assert u["top_province_pages"] == [{"key": "เชียงใหม่", "n": 1}]
     assert u["chat_total"] == 1 and sum(u["chat_modes"].values()) == 1
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = metrics.today_th()
     assert u["daily"][-1]["day"] == today and u["daily"][-1]["search"] == 1 and u["daily"][-1]["chat"] == 1
     assert len(u["daily"]) == 14
 
@@ -114,6 +114,12 @@ def test_unknown_kind_is_ignored(env):
     metrics.count("email", "someone@example.com")
     metrics.count("search", "")
     assert sqlite3.connect(db).execute("select count(*) from metrics").fetchone()[0] == 0
+
+
+def test_days_follow_thai_time():
+    # 06:30 เช้าวันที่ 5 ที่ไทย ยังเป็นวันที่ 4 ตามเวลา UTC
+    assert metrics.today_th(datetime(2026, 11, 4, 23, 30, tzinfo=timezone.utc)) == "2026-11-05"
+    assert metrics.today_th(datetime(2026, 11, 4, 16, 59, tzinfo=timezone.utc)) == "2026-11-04"
 
 
 def test_summarize_fills_missing_days_and_sorts_tops():
