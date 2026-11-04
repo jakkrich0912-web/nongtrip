@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import MascotHead from '../components/MascotHead.jsx';
-import Mascot from '../components/Mascot.jsx';
+import MascotStage from '../components/MascotStage.jsx';
+import AuthScene from '../components/AuthScene.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import '../auth-v2.css';
@@ -48,6 +49,18 @@ export default function Login({ mode = 'login' }) {
   const credentialCallback = useRef(null);
   const inFlight = useRef(false);
   const mounted = useRef(true);
+  // ท่าทางของน้องทริปตามที่ผู้ใช้ทำในฟอร์ม (MascotStage) at ทำให้ cue ชื่อเดิมเล่นซ้ำได้
+  const [cue, setCue] = useState(null);
+  const say = (name, extra = {}) => setCue({ name, at: Date.now(), ...extra });
+  const prevLogin = useRef(isLogin);
+  // สลับหน้าเข้าสู่ระบบ/สมัคร: หน้าเดิม (ไม่โหลดใหม่) แผงเลื่อนข้ามกัน น้องทริปวิ่งตามไปฝั่งใหม่ ล้างข้อความผิดพลาดเก่า
+  useEffect(() => {
+    if (prevLogin.current === isLogin) return;
+    prevLogin.current = isLogin;
+    setError('');
+    say('travel', { dir: isLogin ? -1 : 1 });
+  }, [isLogin]);
+  useEffect(() => { if (error) say('error'); }, [error]);
 
   useEffect(() => {
     mounted.current = true;
@@ -105,25 +118,42 @@ export default function Login({ mode = 'login' }) {
 
   if (ready && user) return <Navigate to="/me" replace />;
 
+  // ข้อความในกล่องพูดของน้องทริป เปลี่ยนตามสิ่งที่ผู้ใช้กำลังทำ
+  const SPEECH = {
+    email: t('พิมพ์อีเมลได้เลย เดี๋ยวน้องจำไว้ให้', 'Type your email, I’ll remember it'),
+    password: t('ไม่แอบดูนะ ปิดตาแล้ว', 'I’m not peeking, promise'),
+    reveal: t('เอ๊ะ เห็นรหัสแล้วนะ', 'Oops, I can see it now'),
+    error: t('อุ๊ย ลองใหม่อีกทีนะ', 'Oops, let’s try that again'),
+    travel: isLogin ? t('กลับมาแล้ว! ไปเที่ยวต่อกัน', 'Welcome back! Let’s go') : t('ไปเริ่มทริปแรกกัน!', 'Off to your first trip!'),
+  };
+  const speech = (cue && SPEECH[cue.name]) || (isLogin ? t('พร้อมออกไปสำรวจกันหรือยัง?', 'Ready for a little adventure?') : t('มาเริ่มทริปแรกด้วยกันนะ!', 'Let’s start your first trip!'));
+  const parallax = (e) => {
+    const b = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--px', (((e.clientX - b.left) / b.width) * 2 - 1).toFixed(3));
+    e.currentTarget.style.setProperty('--py', (((e.clientY - b.top) / b.height) * 2 - 1).toFixed(3));
+  };
+  const onPasswordFocus = () => say(showPassword ? 'reveal' : 'password');
+
   const submit = (event) => {
     event.preventDefault();
     authenticate(() => (isLogin ? login : register)(email.trim(), password));
   };
 
   return (
-    <div className="nt-auth-page">
-      <aside className="nt-auth-story" aria-label={t('เพื่อนร่วมทางของคุณ', 'Your travel companion')}>
+    <div className={`nt-auth-page ${isLogin ? 'is-login' : 'is-signup'}`}>
+      <aside className="nt-auth-story" aria-label={t('เพื่อนร่วมทางของคุณ', 'Your travel companion')} onPointerMove={parallax}>
+        <AuthScene variant={isLogin ? 'day' : 'dusk'} />
         <Link to="/" className="nt-auth-brand"><MascotHead size={46} /><span>{t('น้องทริป', 'NongTrip')}<small>YOUR LITTLE TRAVEL BUDDY</small></span></Link>
         <div className="nt-auth-story-copy">
-          <span className="nt-auth-eyebrow">A LITTLE CURIOSITY. A NEW JOURNEY.</span>
-          <h2>{t('ทุกทริปมีเรื่องให้ค้นพบ', 'Every trip has a story.')}<br /><span>{t('ไปด้วยกันนะ', 'Let’s find yours.')}</span></h2>
-          <p>{t('บันทึกที่พัก เก็บสถานที่ที่ถูกใจ แล้วกลับมาวางแผนทริปครั้งต่อไปด้วยกัน', 'Save your stays and favourite places. Come back whenever your next adventure calls.')}</p>
+          <span className="nt-auth-eyebrow">{isLogin ? 'A LITTLE CURIOSITY. A NEW JOURNEY.' : 'EVERY JOURNEY STARTS WITH A PIN.'}</span>
+          <h2 key={isLogin ? 'in' : 'up'}>{isLogin ? t('ทุกทริปมีเรื่องให้ค้นพบ', 'Every trip has a story.') : t('ปักหมุดที่พักแรก', 'Drop your first pin.')}<br /><span>{isLogin ? t('ไปด้วยกันนะ', 'Let’s find yours.') : t('แล้วออกไปเที่ยวกัน', 'Then go explore.')}</span></h2>
+          <p>{isLogin ? t('บันทึกที่พัก เก็บสถานที่ที่ถูกใจ แล้วกลับมาวางแผนทริปครั้งต่อไปด้วยกัน', 'Save your stays and favourite places. Come back whenever your next adventure calls.') : t('สมัครแล้วเก็บที่พักที่ค้น สถานที่โปรด และประวัติแชตไว้ดูต่อได้ทุกเครื่อง', 'Sign up to keep your stays, favourite places and chats on every device.')}</p>
         </div>
         <div className="nt-auth-mascot-scene">
-          <span className="nt-auth-orbit nt-auth-orbit-one" /><span className="nt-auth-orbit nt-auth-orbit-two" />
-          <span className="nt-auth-speech">{t('พร้อมออกไปสำรวจกันหรือยัง?', 'Ready for a little adventure?')}</span>
-          <Mascot mood="front" size={270} title={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')} />
-          <span className="nt-auth-sticker" aria-hidden="true">LET’S<br />EXPLORE ↗</span>
+          <span className="nt-auth-live" aria-live="polite">{speech}</span>
+          <MascotStage size={250} cue={cue} formSide={isLogin ? 'right' : 'left'} title={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, the orange explorer cat')}>
+            <span className="nt-auth-speech" key={speech} aria-hidden="true">{speech}</span>
+          </MascotStage>
         </div>
         <p className="nt-auth-story-foot">{t('เริ่มจากที่พัก แล้วออกไปเจอสิ่งใหม่ ๆ', 'Start with your stay. Discover what’s around.')}</p>
       </aside>
@@ -150,11 +180,11 @@ export default function Login({ mode = 'login' }) {
           {expired && !error && <p className="nt-auth-message" role="status">{t('หมดเวลาเข้าสู่ระบบ กรุณาเข้าสู่ระบบอีกครั้ง', 'Your session expired. Please sign in again.')}</p>}
           <form className="nt-auth-form" onSubmit={submit} aria-busy={busy}>
             <label htmlFor="nt-auth-email">{t('อีเมล', 'Email address')}</label>
-            <input id="nt-auth-email" type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={(event) => setEmail(event.target.value)} disabled={busy} />
+            <input id="nt-auth-email" type="email" required autoComplete="email" placeholder="you@example.com" value={email} onChange={(event) => { setEmail(event.target.value); if (cue?.name !== 'email' || Date.now() - cue.at > 900) say('email'); }} onFocus={() => say('email')} disabled={busy} />
             <label htmlFor="nt-auth-password">{t('รหัสผ่าน', 'Password')}</label>
             <div className="nt-auth-password-field">
-              <input id="nt-auth-password" type={showPassword ? 'text' : 'password'} required minLength={8} maxLength={200} autoComplete={isLogin ? 'current-password' : 'new-password'} placeholder={t('อย่างน้อย 8 ตัวอักษร', 'At least 8 characters')} value={password} onChange={(event) => setPassword(event.target.value)} aria-describedby={!isLogin ? 'nt-auth-password-hint' : undefined} disabled={busy} />
-              <button type="button" className="nt-auth-password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? t('ซ่อนรหัสผ่าน', 'Hide password') : t('แสดงรหัสผ่าน', 'Show password')} aria-pressed={showPassword}>
+              <input id="nt-auth-password" type={showPassword ? 'text' : 'password'} required minLength={8} maxLength={200} autoComplete={isLogin ? 'current-password' : 'new-password'} placeholder={t('อย่างน้อย 8 ตัวอักษร', 'At least 8 characters')} value={password} onChange={(event) => setPassword(event.target.value)} onFocus={onPasswordFocus} onBlur={() => setCue(null)} aria-describedby={!isLogin ? 'nt-auth-password-hint' : undefined} disabled={busy} />
+              <button type="button" className="nt-auth-password-toggle" onClick={() => { setShowPassword(!showPassword); say(showPassword ? 'password' : 'reveal'); }} aria-label={showPassword ? t('ซ่อนรหัสผ่าน', 'Hide password') : t('แสดงรหัสผ่าน', 'Show password')} aria-pressed={showPassword}>
                 <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" />{showPassword && <path d="m3 3 18 18" />}</svg>
               </button>
             </div>
