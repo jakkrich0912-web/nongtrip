@@ -49,7 +49,7 @@ export function numberCitations(text, sources) {
 }
 
 // ส่งข้อความแล้วเรียก onEvent(event, data) ทีละขั้น จบเมื่อได้ done หรือ error
-export async function sendChat({ message, context, chat_id, last_province, lang }, onEvent, signal) {
+export async function sendChat({ message, context, chat_id, last_province, lang, edit_from }, onEvent, signal) {
   let res;
   try {
     res = await fetch('/api/chat', {
@@ -63,6 +63,8 @@ export async function sendChat({ message, context, chat_id, last_province, lang 
         // จังหวัดที่ถามไว้ล่าสุด ให้ "แล้วคาเฟ่ล่ะ" ตอบต่อได้ (ใช้เมื่อไม่มีหมุด)
         ...(last_province && !context ? { last_province } : {}),
         ...(lang === 'en' ? { lang } : {}),
+        // แก้คำถาม/ถามใหม่: ลบตั้งแต่ข้อความนี้ลงไปในแชตที่บันทึกไว้ แล้วถามใหม่ (ต้องมี chat_id)
+        ...(edit_from && chat_id ? { edit_from } : {}),
       }),
       signal,
     });

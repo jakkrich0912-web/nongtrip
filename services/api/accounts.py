@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
 
 from fastapi import APIRouter, Path, Request, Response
 from fastapi.responses import JSONResponse
@@ -38,6 +39,14 @@ class GoogleIn(BaseModel):
 
 class DeleteAccountIn(BaseModel):
     email: str = Field(max_length=300)  # พิมพ์อีเมลของตัวเองยืนยัน กันกดลบพลาด
+
+
+class ChatTitleIn(BaseModel):
+    title: str = Field(min_length=1, max_length=80)
+
+
+class RatingIn(BaseModel):
+    rating: Literal[-1, 0, 1]  # 1 = 👍, -1 = 👎, 0 = ยกเลิก
 
 
 class SearchIn(BaseModel):
@@ -284,6 +293,28 @@ def build_router(store: Store, secret: str, verified: list, secure_cookie: bool 
             return bad
         store.delete_all_chats(u["id"])
         return Response(status_code=204)
+
+    @r.patch("/api/me/chats/{chat_id}")
+    def rename_chat(body: ChatTitleIn, req: Request, chat_id: int = Path(ge=1, le=MAX_ID)):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        title = " ".join(body.title.split())
+        if not title:
+            return _err(400, "invalid_param", "ชื่อแชตว่าง")
+        if not store.rename_chat(u["id"], chat_id, title):
+            return _err(404, "not_found", "ไม่พบแชตนี้")
+        return {"id": chat_id, "title": title}
+
+    @r.put("/api/me/chats/{chat_id}/messages/{message_id}/rating")
+    def rate_message(body: RatingIn, req: Request, chat_id: int = Path(ge=1, le=MAX_ID),
+                     message_id: int = Path(ge=1, le=MAX_ID)):
+        u, bad = need_login(req)
+        if bad:
+            return bad
+        if not store.set_rating(u["id"], chat_id, message_id, body.rating or None):
+            return _err(404, "not_found", "ไม่พบคำตอบนี้")
+        return {"message_id": message_id, "rating": body.rating}
 
     @r.delete("/api/me/chats/{chat_id}", status_code=204)
     def delete_chat(req: Request, chat_id: int = Path(ge=1, le=MAX_ID)):

@@ -120,6 +120,8 @@ class ChatIn(BaseModel):
     # จังหวัดที่ถามไว้ล่าสุด (หน้าเว็บจำจาก event done) ใช้เมื่อข้อความใหม่ไม่ระบุที่ เช่น "แล้วคาเฟ่ล่ะ"
     last_province: str | None = Field(default=None, max_length=60)
     lang: Literal["th", "en"] = "th"
+    # แก้คำถาม/ถามใหม่ (ต้องล็อกอินและส่ง chat_id): รหัสข้อความผู้ใช้ในแชตนี้ ลบตั้งแต่ข้อความนั้นลงไปแล้วถามใหม่
+    edit_from: int | None = Field(default=None, ge=1, le=MAX_ID)
 
 
 class ChatThrottle:
@@ -451,25 +453,36 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
             return _err(400, "invalid_param", "พิกัดอยู่นอกประเทศไทย")
         user = user_of(req)
         chat_id = None
+        user_msg_id = None
         if user:
             if body.chat_id is not None:
                 if not store.get_chat(user["id"], body.chat_id):
                     return _err(404, "not_found", "ไม่พบแชตนี้")
                 chat_id = body.chat_id
+                if body.edit_from is not None and not store.truncate_from(user["id"], chat_id, body.edit_from):
+                    return _err(404, "not_found", "ไม่พบข้อความที่จะแก้")
             else:
                 chat_id = store.create_chat(user["id"], text)
-            store.add_message(user["id"], chat_id, "user", text)
+            user_msg_id = store.add_message(user["id"], chat_id, "user", text) or None
 
         def stream():
             parts: list[str] = []
             saved = False
+            shown: dict = {}              # การ์ดที่ส่งให้ผู้ใช้จริง (places lodgings sources) เก็บไว้กับคำตอบ เปิดแชตเก่าแล้วเห็นเหมือนเดิม
+            bot_msg_id = None
 
-            def save():
-                nonlocal saved
+            def emit(ev: str, data: dict) -> str:
+                if ev in ("places", "lodgings", "sources"):
+                    shown[ev] = data
+                return _sse(ev, data)
+
+            def save(mode: str | None = None):
+                nonlocal saved, bot_msg_id
                 if user and chat_id and parts and not saved:
                     saved = True
                     try:
-                        store.add_message(user["id"], chat_id, "assistant", "".join(parts).strip())
+                        extra = {**shown, **({"mode": mode} if mode else {})}
+                        bot_msg_id = store.add_message(user["id"], chat_id, "assistant", "".join(parts).strip(), extra or None) or None
                     except Exception:  # noqa: BLE001 บันทึกไม่ได้ไม่ควรทำให้คำตอบที่ส่งไปแล้วพัง
                         log.exception("save chat message failed")
 
@@ -516,7 +529,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         continue
                     if ev == "token":
                         parts.append(data["text"])
-                    yield _sse(ev, data)
+                    yield emit(ev, data)
                 mode = "rule"
                 t_search = time.perf_counter() - t0
                 t1 = time.perf_counter()
@@ -525,8 +538,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     if res.mode == "llm":
                         mode = "llm"
                         for ev, data in pending:
-                            yield _sse(ev, data)
-                        yield _sse("sources", {"items": res.sources})
+                            yield emit(ev, data)
+                        yield emit("sources", {"items": res.sources})
                         lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
                         lines += _footer(places_ev, intent, body.lang)
                     elif off_topic:
@@ -544,19 +557,21 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         lines = held + ([_notes([GUARD_NOTICE], body.lang)[0] + "\n"] if res.guard_failed else [])
                     for ln in lines:
                         parts.append(ln)
-                        yield _sse("token", {"text": ln})
-                save()
+                        yield emit("token", {"text": ln})
+                save(mode)
                 # เวลาของแต่ละขั้น ไว้ดูว่าช้าที่ไหน (ไม่มีข้อความของผู้ใช้ในบรรทัดนี้) ขึ้นใน log ของ uvicorn
                 logging.getLogger("uvicorn.error").info(
                     "chat timing: ค้นสถานที่ %.1f วินาที, ขั้น RAG/LLM %.1f วินาที, โหมด %s",
                     t_search, time.perf_counter() - t1, mode)
-                yield _sse("done", {"chat_id": chat_id, "mode": mode, **({"province": intent.province or remember} if (intent.province or remember) else {}),
+                yield emit("done", {"chat_id": chat_id, "mode": mode,
+                                   **({"message_id": bot_msg_id} if bot_msg_id else {}),
+                                   **({"user_message_id": user_msg_id} if user_msg_id else {}), **({"province": intent.province or remember} if (intent.province or remember) else {}),
                                    **({"ask": ask} if ask and mode == "rule" else {})})
             except SearchError as e:
-                yield _sse("error", {"error": str(e), "code": "invalid_param"})
+                yield emit("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้
                 log.exception("chat failed")
-                yield _sse("error", {"error": "เกิดข้อผิดพลาดภายในระบบ กรุณาลองใหม่", "code": "internal"})
+                yield emit("error", {"error": "เกิดข้อผิดพลาดภายในระบบ กรุณาลองใหม่", "code": "internal"})
             finally:
                 save()
 
