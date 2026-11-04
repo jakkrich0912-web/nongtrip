@@ -68,3 +68,8 @@
 .nt-chat-ask-provinces button:hover:not(:disabled) { background:#e4ecdf; }
 .nt-chat-ask button:disabled { opacity:.6; cursor:default; }
 .nt-chat-ask-error { color:#655315; font-size:.8rem; margin:0; }
+
+/* เคอร์เซอร์กะพริบตอนน้องทริปกำลังพิมพ์ */
+.nt-chat-text.is-typing::after { content:""; display:inline-block; width:.5em; height:1em; margin-left:2px; vertical-align:-.12em; border-radius:2px; background:currentColor; opacity:.55; animation:nt-caret 1s steps(2) infinite; }
+@keyframes nt-caret { 50% { opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .nt-chat-text.is-typing::after { animation:none; } }

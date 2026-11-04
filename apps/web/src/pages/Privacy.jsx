@@ -78,7 +78,7 @@ export default function Privacy() {
                   <tr><td>{t('เซสชัน', 'Sessions')}</td><td>{t('แฮชของรหัสเซสชัน วันที่เข้าสู่ระบบ และวันหมดอายุ (7 วัน) แยกตามอุปกรณ์', 'A hash of each session ID, when it started and when it expires (7 days), per device')}</td><td>{t('ให้คุณออกจากระบบได้จริง และสั่งออกจากระบบอุปกรณ์อื่นได้', 'So signing out really ends the session, and you can sign out other devices')}</td></tr>
                   <tr><td>{t('ที่พักที่เคยค้น', 'Stays you searched')}</td><td>{t('ชื่อที่พัก พิกัด และเวลา เก็บล่าสุด 100 รายการ', 'Stay name, coordinates and time; the latest 100')}</td><td>{t('กลับไปดูรอบที่พักเดิมได้ในคลิกเดียว', 'Reopen an area in one click')}</td></tr>
                   <tr><td>{t('สถานที่โปรด', 'Favourites')}</td><td>{t('ชื่อ ประเภท พิกัด จังหวัด และที่มาของสถานที่ สูงสุด 500 แห่ง', 'Name, type, coordinates, province and source; up to 500')}</td><td>{t('เก็บที่อยากไปไว้ดูทีหลัง', 'Keeping places for later')}</td></tr>
-                  <tr><td>{t('ประวัติแชต', 'Chat history')}</td><td>{t('คำถามที่คุณพิมพ์ และคำตอบของน้องทริป', 'The questions you typed and NongTrip’s answers')}</td><td>{t('เปิดแชตเก่าแล้วคุยต่อได้', 'Reopening and continuing a chat')}</td></tr>
+                  <tr><td>{t('ประวัติแชต', 'Chat history')}</td><td>{t('คำถามที่คุณพิมพ์ คำตอบของน้องทริป การ์ดสถานที่ที่แสดงกับคำตอบ และคะแนน 👍👎 ที่คุณให้', 'Your questions, NongTrip’s answers, the place cards shown with them and any 👍👎 you gave')}</td><td>{t('เปิดแชตเก่าแล้วคุยต่อได้', 'Reopening and continuing a chat')}</td></tr>
                 </tbody>
               </table>
             </div>
@@ -113,7 +113,7 @@ export default function Privacy() {
             <h2>{t('คุกกี้และข้อมูลในเครื่อง', 'Cookies and local storage')}</h2>
             <ul>
               <li>{t('คุกกี้ ', 'One cookie, ')}<code>nt_session</code>{t(' ใบเดียว ตั้งเมื่อคุณเข้าสู่ระบบ ใช้จำว่าเข้าสู่ระบบอยู่ อายุ 7 วัน สคริปต์ในหน้าเว็บอ่านไม่ได้ (HttpOnly)', ', set when you sign in to remember the session. It lasts 7 days and page scripts cannot read it (HttpOnly).')}</li>
-              <li>{t('การตั้งค่าหน้าจอ เช่น ภาษาที่เลือก เก็บใน localStorage ของเบราว์เซอร์คุณเอง ไม่ส่งมาที่เซิร์ฟเวอร์', 'Display settings such as language are kept in your browser’s localStorage and never sent to the server.')}</li>
+              <li>{t('การตั้งค่าหน้าจอ เช่น ภาษาและโหมดมืด เก็บใน localStorage ของเบราว์เซอร์คุณเอง ไม่ส่งมาที่เซิร์ฟเวอร์', 'Display settings such as language and dark mode are kept in your browser’s localStorage and never sent to the server.')}</li>
               <li>{t('ไม่มีคุกกี้โฆษณา คุกกี้ติดตาม หรือเครื่องมือวัดสถิติผู้เข้าชม', 'No advertising cookies, tracking cookies or visitor analytics.')}</li>
             </ul>
           </section>

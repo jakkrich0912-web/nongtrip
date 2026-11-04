@@ -296,3 +296,73 @@ def test_smalltalk_never_reaches_the_llm(tmp_path):
     evs = events(c.post("/api/chat", json={"message": "ชื่ออะไร", "context": {"lat": 18.8, "lon": 98.9}}))
     assert llm.calls == [] and done(evs)["mode"] == "rule"
     assert "น้องทริป" in text_of(evs) and "sources" not in dict(evs) and not [1 for e, _ in evs if e in ("tool", "places")]
+
+
+# ---------- คำถามนอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป พร้อมคำเตือนที่โค้ดใส่เอง ----------
+from services.api.chat import GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN  # noqa: E402
+from services.api.rag import GENERAL_PROMPT, check_general  # noqa: E402
+
+TECH_Q = "คอมช้าแก้ยังไง"
+TECH_A = "ลองปิดโปรแกรมที่ไม่ได้ใช้ และรีสตาร์ตเครื่องดูก่อนค่ะ\nถ้ายังช้าอยู่ ลองเช็กพื้นที่ว่างในดิสก์ค่ะ"
+
+
+def test_offtopic_is_answered_by_llm_with_disclaimer_first(tmp_path):
+    llm = FakeLLM(TECH_A)
+    c, _ = make(tmp_path, llm)
+    evs = events(c.post("/api/chat", json={"message": TECH_Q}))
+    text = text_of(evs)
+    assert text.startswith(GENERAL_DISCLAIMER)
+    assert "รีสตาร์ตเครื่อง" in text and "ที่เที่ยว" in text.splitlines()[-1]
+    names = [e for e, _ in evs]
+    assert "places" not in names and "sources" not in names
+    assert done(evs)["mode"] == "llm"
+    system, user = llm.calls[-1]
+    assert system == GENERAL_PROMPT and "<question" in user and TECH_Q in user
+
+
+def test_offtopic_answer_in_english_gets_english_disclaimer(tmp_path):
+    c, _ = make(tmp_path, FakeLLM("Try restarting the computer first."))
+    text = text_of(events(c.post("/api/chat", json={"message": "how do I fix a slow computer", "lang": "en"})))
+    assert text.startswith(GENERAL_DISCLAIMER_EN)
+
+
+@pytest.mark.parametrize("bad", [
+    "ราคาประมาณ 500 บาทค่ะ",                    # เรื่องเงิน
+    "ลองไปวัดพระธาตุดอยสุเทพดูค่ะ",                # เอ่ยชื่อสถานที่ที่ระบบรู้จัก ต้องตอบผ่านข้อมูลจริงเท่านั้น
+    "ดูที่ https://example.com ค่ะ",              # ลิงก์
+    "",                                          # ว่าง
+])
+def test_offtopic_falls_back_to_canned_reply_when_guard_fails(tmp_path, bad):
+    c, _ = make(tmp_path, FakeLLM(bad))
+    evs = events(c.post("/api/chat", json={"message": TECH_Q}))
+    text = text_of(evs)
+    assert GENERAL_DISCLAIMER not in text and "ไม่ถนัด" in text
+    assert done(evs)["mode"] == "rule"
+
+
+def test_offtopic_falls_back_when_llm_errors(tmp_path):
+    from services.api.llm import LLMError
+    c, _ = make(tmp_path, FakeLLM(error=LLMError("down")))
+    evs = events(c.post("/api/chat", json={"message": TECH_Q}))
+    assert "ไม่ถนัด" in text_of(evs) and done(evs)["mode"] == "rule"
+
+
+def test_food_question_keeps_canned_reply_without_calling_llm(tmp_path):
+    llm = FakeLLM(TECH_A)
+    c, _ = make(tmp_path, llm)
+    assert "ยังไม่มีข้อมูลร้านอาหาร" in text_of(events(c.post("/api/chat", json={"message": "กินข้าวยัง"})))
+    assert not llm.calls
+
+
+def test_smalltalk_still_does_not_call_llm(tmp_path):
+    llm = FakeLLM(TECH_A)
+    c, _ = make(tmp_path, llm)
+    events(c.post("/api/chat", json={"message": "ขอบคุณ"}))
+    assert not llm.calls
+
+
+def test_check_general_rules():
+    assert check_general(TECH_A, {NAME}) == []
+    assert [p["rule"] for p in check_general("ก" * 2000, set())] == ["too_long"]
+    assert check_general("ตามนี้ค่ะ [k:p01:0]", set())[0]["rule"] == "citation"
+    assert check_general("จองได้ที่หน้าเว็บค่ะ", set())[0]["rule"] == "forbidden"
