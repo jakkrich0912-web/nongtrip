@@ -109,15 +109,29 @@ def smalltalk_kind(text: str) -> str | None:
     return None
 
 # สิ่งที่ผู้ใช้อยากหาแบบเจาะจง ใช้พูดทวนตอนถามว่าให้ค้นแถวไหน ("อยากหาวัดใช่ไหม")
-SUBJECTS = (("วัด", "วัด", "temples"), ("น้ำตก", "น้ำตก", "waterfalls"), ("ทะเล", "ทะเล", "beaches"), ("หาด", "ชายหาด", "beaches"),
+# กลุ่มกว้าง (ประวัติศาสตร์) ตรวจก่อน "วัด" ให้ "วัดและโบราณสถาน" ได้ทั้งกลุ่ม
+SUBJECTS = (("โบราณสถาน", "วัดและประวัติศาสตร์", "temples and history"), ("ประวัติศาสตร์", "วัดและประวัติศาสตร์", "temples and history"),
+            ("วัด", "วัด", "temples"), ("น้ำตก", "น้ำตก", "waterfalls"), ("ทะเล", "ทะเล", "beaches"), ("หาด", "ชายหาด", "beaches"),
             ("ดอย", "ดอยและภูเขา", "mountains"), ("ภูเขา", "ดอยและภูเขา", "mountains"), ("พิพิธภัณฑ์", "พิพิธภัณฑ์", "museums"),
             ("ตลาด", "ตลาด", "markets"), ("อุทยาน", "อุทยาน", "national parks"), ("จุดชมวิว", "จุดชมวิว", "viewpoints"),
-            ("เกาะ", "เกาะ", "islands"))
-_EN_SUBJECTS = ((re.compile(r"\btemples?\b", re.I), "วัด", "temples"), (re.compile(r"\bwaterfalls?\b", re.I), "น้ำตก", "waterfalls"),
+            ("เกาะ", "เกาะ", "islands"), ("ธรรมชาติ", "ธรรมชาติ", "nature spots"))
+_EN_SUBJECTS = ((re.compile(r"\b(?:histor(?:y|ic|ical)|ruins)\b", re.I), "วัดและประวัติศาสตร์", "temples and history"),
+                (re.compile(r"\btemples?\b", re.I), "วัด", "temples"), (re.compile(r"\bwaterfalls?\b", re.I), "น้ำตก", "waterfalls"),
                 (re.compile(r"\bbeach(?:es)?\b", re.I), "ชายหาด", "beaches"), (re.compile(r"\bmuseums?\b", re.I), "พิพิธภัณฑ์", "museums"),
                 (re.compile(r"\bmarkets?\b", re.I), "ตลาด", "markets"), (re.compile(r"\bviewpoints?\b", re.I), "จุดชมวิว", "viewpoints"),
                 (re.compile(r"\bnational parks?\b", re.I), "อุทยาน", "national parks"), (re.compile(r"\bislands?\b", re.I), "เกาะ", "islands"),
-                (re.compile(r"\bmountains?\b", re.I), "ดอยและภูเขา", "mountains"))
+                (re.compile(r"\bmountains?\b", re.I), "ดอยและภูเขา", "mountains"),
+                (re.compile(r"\bnature\b", re.I), "ธรรมชาติ", "nature spots"))
+
+# ประเภทย่อย (subtype) ของแต่ละเรื่องที่อยากหา ใช้กรองผลค้นในแชต เรื่องที่ไม่มี subtype ตรง (อุทยาน เกาะ ทะเล) ไม่กรอง
+HISTORY_SUBTYPES = frozenset(("temple", "place_of_worship", "monument", "city_gate", "museum", "gallery", "castle", "ruins",
+                              "archaeological_site", "fort", "craft"))
+NATURE_SUBTYPES = frozenset(("nature", "waterfall", "peak", "beach", "hot_spring", "cave_entrance", "park", "nature_reserve"))
+SUBJECT_SUBTYPES = {
+    "วัด": frozenset(("temple", "place_of_worship")), "น้ำตก": frozenset(("waterfall",)), "ชายหาด": frozenset(("beach",)),
+    "ดอยและภูเขา": frozenset(("peak",)), "พิพิธภัณฑ์": frozenset(("museum", "gallery")), "ตลาด": frozenset(("market",)),
+    "จุดชมวิว": frozenset(("viewpoint",)), "วัดและประวัติศาสตร์": HISTORY_SUBTYPES, "ธรรมชาติ": NATURE_SUBTYPES,
+}
 
 # หัวข้อนอกเรื่องที่พบบ่อย ตอบให้ตรงหัวข้อแทนข้อความกลาง ๆ (เรียงตามลำดับที่ตรวจ)
 OFF_TOPIC_KINDS = {
@@ -244,6 +258,7 @@ class Intent:
     asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
     off_topic_kind: str | None = None    # หัวข้อนอกเรื่อง (health/tech/study/money/love/news) ตอบให้ตรงหัวข้อ
     subject: tuple[str, str] | None = None  # สิ่งที่อยากหาแบบเจาะจง (เช่น วัด) ใช้พูดทวนตอนถามว่าแถวไหน
+    named_place: bool = False            # ข้อความเอ่ยชื่อสถานที่ที่ตรวจแล้ว (คำว่า "วัด" ในชื่อไม่ใช่สิ่งที่อยากหา จึงไม่กรองตามประเภท)
     asks_money: bool = False
     asks_review: bool = False
     asks_booking: bool = False

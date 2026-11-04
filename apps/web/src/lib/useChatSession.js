@@ -254,7 +254,9 @@ export function useChatSession({ initialContext = null, persistKey = null } = {}
 }
 
 // คำถามแนะนำ ส่งตามภาษาที่เลือก (ตัวแยกคำถามเข้าใจทั้งไทยและอังกฤษ)
-export function chatSuggestions(hasContext) {
+// interest = กลุ่มความสนใจจากหน้าค้นหา ใส่เป็นคำถามแรก (แชตกรองตามประเภทให้)
+export function chatSuggestions(hasContext, interest = null) {
+  if (hasContext && interest?.ask) return [interest.ask, ...chatSuggestions(true).slice(0, 2)];
   return hasContext ? [
     ['คาเฟ่ใกล้ที่พักมีที่ไหนบ้าง', 'Which cafés are near my accommodation?'],
     ['ที่เที่ยวในระยะเส้นตรง 10 กม.', 'Attractions within 10 km straight-line distance'],

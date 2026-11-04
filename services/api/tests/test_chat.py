@@ -563,3 +563,22 @@ def test_drop_province_keeps_place_names_but_removes_province():
     assert "chiang mai" not in drop_province("cafes in Chiang Mai")
     assert "เชียงใหม่" not in drop_province("ที่เที่ยวเชียงใหม่")
     assert "ดอยสุเทพ" in drop_province("เล่าเรื่องวัดพระธาตุดอยสุเทพ เชียงใหม่")
+
+
+def test_subject_filters_places_by_subtype(tmp_path):
+    http = FakeHttp(overpass=[
+        el(1, "ใกล้สุด", up(1), LON, {"tourism": "attraction"}),
+        el(2, "น้ำตกเล็ก", up(3), LON, {"waterway": "waterfall"}),
+        el(3, "จุดชมวิวไกล", up(8), LON, {"tourism": "viewpoint"}),
+    ])
+    c, *_ = make(tmp_path, http)
+    evs = events(ask(c, "น้ำตกแถวนี้", context={"lat": LAT, "lon": LON}))
+    places = dict(evs)["places"]
+    assert [p["name_th"] for p in places["items"]] == ["น้ำตกเล็ก"] and places["total"] == 1
+    assert "พบน้ำตก 1 แห่ง" in text_of(evs)
+    # ไม่มีประเภทที่ขอ: แสดงที่เที่ยวทั้งหมดพร้อมบอก
+    evs = events(ask(c, "ตลาดแถวนี้", context={"lat": LAT, "lon": LON}))
+    assert len(dict(evs)["places"]["items"]) == 4 and "ไม่พบสถานที่ที่ระบุประเภทตลาด" in text_of(evs)
+    # เอ่ยชื่อสถานที่ที่มีคำว่าวัด ไม่กรองเหลือแต่วัด
+    evs = events(ask(c, "ที่เที่ยวใกล้วัดพระธาตุดอยสุเทพ", context={"lat": LAT, "lon": LON}))
+    assert len(dict(evs)["places"]["items"]) >= 3

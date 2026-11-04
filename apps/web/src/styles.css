@@ -397,6 +397,10 @@ main { min-height:calc(100vh - var(--chrome)); }
 .cands .btn.small { width:auto; padding:7px 16px; }
 .lsearch-results .attr { margin:8px 0 0; }
 .linkbtn.change { margin-top:10px; font-size:.88rem; }
+.near-me { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-top:12px; }
+.near-me .btn.small { width:auto; padding:8px 16px; }
+.near-me small { color:var(--muted); font-size:.78rem; }
+.near-me .notice { flex-basis:100%; margin:4px 0 0; }
 
 /* ล็อกอิน */
 .auth-error { margin:0; padding:10px 12px; background:#f7e3dc; color:#8f3720; border-radius:12px; font-size:.9rem; }

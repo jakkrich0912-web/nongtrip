@@ -54,3 +54,7 @@ export function radiusComplete(items, total, radiusKm) {
   const last = items[items.length - 1];
   return Boolean(last) && last.distance_km > radiusKm;
 }
+
+// กรอบประเทศไทยแบบเดียวกับฝั่ง API (services/places/geo.py THAILAND_BOUNDS) ใช้ตรวจตำแหน่งเครื่องก่อนค้น
+export const THAILAND_BOUNDS = [5.4, 20.6, 97.3, 105.7];
+export const inThailand = ({ lat, lon }) => lat >= THAILAND_BOUNDS[0] && lat <= THAILAND_BOUNDS[1] && lon >= THAILAND_BOUNDS[2] && lon <= THAILAND_BOUNDS[3];
