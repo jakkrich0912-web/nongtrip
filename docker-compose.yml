@@ -21,6 +21,9 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        # ใช้ค่าเดียวกับที่ API ใช้ตรวจ token (อ่านจาก .env) ปุ่ม Google ในหน้าเว็บจึงตรงกับหลังบ้านเสมอ
+        VITE_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     ports:
       - "${WEB_PORT:-8080}:80"
     depends_on:
