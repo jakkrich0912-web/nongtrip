@@ -46,6 +46,19 @@ cd apps/web && npm install && npm run dev      # http://localhost:5173 (ส่�
 make test
 ```
 
+### เทสต์ใช้งานจริงผ่านเบราว์เซอร์ (Playwright)
+
+เปิดระบบด้วย Docker ก่อน แล้วรันจากโฟลเดอร์ `e2e/` (รายละเอียดใน `e2e/README.md`) CI รันชุดนี้ต่อจาก smoke test ทุก PR
+
+```bash
+cd e2e && npm ci && npx playwright install chromium
+E2E_ADMIN_EMAIL=<อีเมลที่อยู่ใน ADMIN_EMAILS> npx playwright test
+```
+
+## แดชบอร์ดผู้ดูแล
+
+ใส่อีเมลของผู้ดูแลใน `.env` เช่น `ADMIN_EMAILS=jakkrich0912@gmail.com` (คั่นหลายคนด้วยจุลภาค) แล้วรีสตาร์ท API บัญชีนั้นจะเห็นเมนู "แดชบอร์ดผู้ดูแล" ในเมนูบัญชี (หน้า `/admin`) แสดงยอดรวมของทั้งระบบเท่านั้น ไม่มีข้อมูลรายคน
+
 ## ลองค้นกับ OpenStreetMap จริง
 
 ```
