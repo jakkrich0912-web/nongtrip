@@ -67,3 +67,16 @@ test('บันทึกสถานที่โปรดจากหน้า�
   await page.goto('/me');
   await expect(page.getByText(name).first()).toBeVisible();
 });
+
+test('หน้าแรกแสดงที่พักที่ค้นล่าสุดเฉพาะผู้ที่ล็อกอิน กดแล้วค้นซ้ำ', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('navigation', { name: 'ที่พักที่ค้นล่าสุด' })).toHaveCount(0);
+  await signUp(page);
+  const res = await page.request.post('/api/me/searches', { data: { name: 'ที่พักล่าสุดทดสอบ', lat: 18.7883, lon: 98.9853 } });
+  expect(res.ok()).toBe(true);
+  await page.goto('/');
+  const recent = page.getByRole('navigation', { name: 'ที่พักที่ค้นล่าสุด' });
+  await recent.getByRole('link', { name: 'ที่พักล่าสุดทดสอบ' }).click();
+  await expect(page).toHaveURL(/\/search\?lat=18\.7883/);
+  await expect(page.locator('p.count')).toContainText('ที่พักล่าสุดทดสอบ');
+});

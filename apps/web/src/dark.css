@@ -187,6 +187,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
   :where(html[data-theme=dark]) .nt-header nav { background:#131313; box-shadow:0 10px 20px rgba(0,0,0,0.398); }
 }
 :where(html[data-theme=dark]) .nt-theme { border:1px solid #3f423b; background:#292a23; }
+:where(html[data-theme=dark]) .nt-recent a { border:1px solid #4f4b41; background:#1f1b0d; }
+:where(html[data-theme=dark]) .nt-recent a:hover { background:#302915; }
 
 /* จาก auth-v2.css */
 :where(html[data-theme=dark]) .nt-auth-page { background:#211f1a; color:#d9e5d7; }
