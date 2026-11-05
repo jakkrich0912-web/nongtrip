@@ -297,13 +297,19 @@ SUGGEST_DISCLAIMER_EN = "The places below come from our source-checked list. The
 NARRATE_DISCLAIMER = "ชื่อสถานที่และระยะมาจากผลค้นของระบบ ส่วนคำอธิบายเป็นความรู้ทั่วไป อาจไม่ถูกต้องทั้งหมด ควรตรวจสอบอีกครั้งนะคะ"
 NARRATE_DISCLAIMER_EN = "Place names and distances come from our search results. The descriptions are general knowledge and may not be fully accurate, so please double-check."
 NARRATE_TASK = ("<places> คือผลค้นจริงของระบบรอบจุดที่ผู้ใช้ถาม เรียงใกล้ไปไกล ตอบคำถามของผู้ใช้ให้ตรงประเด็นก่อน "
-                "ถ้าเกี่ยวข้อง แนะนำ 3-5 แห่งจาก <places> ที่ตรงกับสิ่งที่ผู้ใช้อยากได้ บอกระยะตามรายการว่าเป็นระยะเส้นตรง "
-                "และเล่าสั้น ๆ ว่าน่าไปเพราะอะไรจากความรู้ทั่วไป ถ้าคำถามไม่ใช่การหาสถานที่ (เช่น เวลาเดินทาง ฤดูกาล) ตอบคำถามนั้นก่อน "
-                "แล้วค่อยเอ่ยถึงสถานที่ในรายการถ้าช่วยได้ ห้ามใช้ตัวหนาหรือ markdown")
+                "ถ้าคำถามไม่ใช่การหาสถานที่ (เช่น เวลาเดินทาง ฤดูกาล) ตอบคำถามนั้นก่อน แล้วค่อยเอ่ยถึงสถานที่ในรายการถ้าช่วยได้ "
+                "ถ้าแนะนำสถานที่ ให้ตอบตามรูปแบบนี้ทุกครั้ง: ขึ้นต้นด้วยประโยคเปิดสั้น ๆ 1 ประโยค "
+                "แล้วตามด้วยรายการ 3-5 แห่งจาก <places> ที่ตรงกับสิ่งที่ผู้ใช้อยากได้ แต่ละแห่งขึ้นบรรทัดใหม่ที่ขึ้นต้นด้วย \"- \" "
+                "เรียงตามลำดับใน <places> (ใกล้ไปไกล) แต่ละบรรทัดเป็น ชื่อ ห่าง X กม. (เส้นตรง) แล้วตามด้วยคำอธิบายสั้น ๆ 1 ประโยคเสมอ "
+                "ถ้าไม่รู้จักที่นั้น ให้อธิบายจากประเภทของสถานที่แบบกว้าง ๆ ห้ามแต่งรายละเอียดเฉพาะ "
+                "ห้ามใช้ตัวเลขนำหน้ารายการ ห้ามใช้ตัวหนาหรือ markdown อื่น")
 NARRATE_TASK_EN = ("<places> are the system's real search results around where the user asked, nearest first. Answer the user's question first. "
-                   "If it helps, recommend 3-5 places from <places> that fit what they want, give the listed straight-line distance, "
-                   "and say briefly why from general knowledge. If the question is not about finding places (travel time, season), "
-                   "answer that first and mention listed places only if useful. No bold or markdown.")
+                   "If the question is not about finding places (travel time, season), answer that first and mention listed places only if useful. "
+                   "When you recommend places, always use this format: one short opening sentence, "
+                   "then 3-5 places from <places> that fit what they want, each on a new line starting with \"- \", "
+                   "in the order of <places> (nearest first). Each line is: name, X km away (straight-line), then always one short sentence about it. "
+                   "If you do not know a place, describe it broadly from its type and do not invent specifics. "
+                   "No numbered lists, no bold, no other markdown.")
 SUGGEST_ELSEWHERE = ("ในพื้นที่ที่ผู้ใช้ถามไม่มีสิ่งที่อยากหา ให้บอกสั้น ๆ ว่าแถวนั้นไม่มี แล้วเสนอ 3-5 แห่งจาก <places> ที่น่าจะไปได้สะดวกจากพื้นที่นั้น "
                      "บอกชื่อจังหวัดของแต่ละแห่ง ห้ามบอกระยะทาง ห้ามใช้ตัวหนาหรือ markdown")
 SUGGEST_ELSEWHERE_EN = ("There is none of what the user wants in the area they asked about. Say so briefly, then suggest 3-5 places from <places> "
