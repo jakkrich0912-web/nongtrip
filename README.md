@@ -65,10 +65,18 @@ OpenStreetMap (Nominatim, Overpass) ไม่ต้องใช้คีย์ �
 
 ## 7. ทีมและโมดูล
 
-| คน | GitHub | หมายเหตุ |
+| โมดูล | ทำอะไร | คนทำ |
 |---|---|---|
-| Jakkrich | @jakkrich0912-web | เจ้าของ repo, งานแกน (ค้นหา, API, ตัวตรวจ, แชทบอท, หน้าค้นหา), รีวิวทุก PR |
-| Jirapa Gongmool | @jirapa-gm | หน้าแรก, หน้าล็อกอิน/ประวัติ, ข้อมูลที่ตรวจแล้ว, ชุดทดสอบ, สไลด์ |
+| 01 Web App | หน้าแรก ค้นหา แผนที่ แชต ล็อกอิน | Jakkrich, Jirapa |
+| 02 API Backend | ล็อกอิน บัญชี ประวัติ หน้าแอดมิน | Jakkrich |
+| 03 Chat Router | เข้าใจคำถาม และเลือกวิธีตอบ | Jakkrich |
+| 04 Place Search | หาที่เที่ยวรอบหมุด และคิดระยะเส้นตรง | Jakkrich, Jirapa |
+| 05 Knowledge Base | ข้อมูลจาก Wikipedia พร้อมที่มา | Jakkrich |
+| 06 LLM Answer & Guard | เขียนคำตอบ และตรวจก่อนส่งให้ผู้ใช้ | Jakkrich |
+| 07 Place Data | สถานที่ที่ตรวจที่มาแล้ว 341 แห่ง และ OSM 77 จังหวัด | Jakkrich, Jirapa |
+| 08 Deploy & Test | Docker ขึ้นเว็บจริง และชุดทดสอบ | Jakkrich, Jirapa |
+
+Jakkrich (@jakkrich0912-web) เป็นเจ้าของ repo และรีวิวทุก PR · Jirapa Gongmool (@jirapa-gm) ทำสไลด์ด้วย
 
 รายละเอียดและแผน 5 วันอยู่ใน `docs/WORKPLAN.md`
 
