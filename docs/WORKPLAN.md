@@ -28,7 +28,7 @@ Jirapa ทำงานที่แยกออกมาได้ชัด ไม
 | น้องทริปเพื่อนคู่ใจ หน้าต่างแชตลอย (มือถือยืนนิ่งไม่บังรายการ) | `apps/web` | Jakkrich | เสร็จ (#59 #65) |
 | มาสคอตมองตามเคอร์เซอร์ 16 ทิศ | `apps/web` | Jakkrich | เสร็จ (#61) |
 | ความปลอดภัย: IP จริงผ่าน nginx จำกัดการสมัคร เซสชันฝั่งเซิร์ฟเวอร์ | `services/api`, `apps/web` | Jakkrich | เสร็จ (#63 #64 #72) |
-| สแนปช็อต OSM 53 จังหวัด | `services/places/data` | Jirapa | เสร็จ (#70, #75, #80) |
+| สแนปช็อต OSM 71 จังหวัด | `services/places/data` | Jirapa | เสร็จ (#70, #75, #80, #90) |
 | ปุ่ม Google ใน Docker | `apps/web` | Jakkrich | เสร็จ (#68) |
 | แชตตอบคำถามนอกเรื่อง LLM สำรอง (Gemini Grok OpenAI) | `services/api` | Jakkrich | เสร็จ (#66 #67) |
 | หน้าแชตแบบแอปแชต ประวัติ แก้คำถาม ถามใหม่ 👍👎 โหมดมืด | `apps/web`, `services/api` | Jakkrich | เสร็จ (#69) |

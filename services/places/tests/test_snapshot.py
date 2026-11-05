@@ -85,6 +85,10 @@ def test_area_query_matches_by_name_not_iso_code():
     assert 'admin_level"="4"' in q and "(จังหวัด)?ลำปาง$" in q and "nwr(area.a)" in q
 
 
+# จังหวัดที่ OSM มีข้อมูลบางประเภทน้อยจริง (ดึงซ้ำแล้วได้ใกล้เคียงเดิม) ยอมให้น้อยกว่า 10 แต่ต้องไม่ว่าง
+LOW_DATA = {"ชัยนาท", "พิจิตร", "สมุทรสาคร", "สิงห์บุรี", "หนองบัวลำภู", "อำนาจเจริญ"}
+
+
 def test_committed_snapshot_files_are_sane():
     """ไฟล์สแนปช็อตจริงใน repo: รูปแบบถูก พิกัดในไทย แต่ละประเภทไม่ว่าง (กัน Overpass ตอบว่างตอนแน่น)"""
     import json
@@ -98,7 +102,8 @@ def test_committed_snapshot_files_are_sane():
         for ref, th, en, kind, sub, lat, lon in d["items"]:
             assert th and in_thailand(lat, lon), (f.name, ref)
             kinds[kind] = kinds.get(kind, 0) + 1
-        assert all(kinds.get(k, 0) >= 10 for k in ("attraction", "cafe", "lodging")), (f.name, kinds)
+        need = 1 if d["_meta"]["province"] in LOW_DATA else 10
+        assert all(kinds.get(k, 0) >= need for k in ("attraction", "cafe", "lodging")), (f.name, kinds)
 
 
 def test_load_skips_unsuitable_rows(tmp_path):
