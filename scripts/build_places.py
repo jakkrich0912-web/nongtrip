@@ -23,7 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "services" / "places")]
 
-from seed_places import CODES, SEED  # noqa: E402
+from seed_places import CODES, SEED, SEED_TH  # noqa: E402
 from provinces import PROVINCES  # noqa: E402  (รายชื่อ 77 จังหวัด เรียงตามอักษร)
 
 API = "https://en.wikipedia.org/w/api.php"
@@ -221,9 +221,35 @@ def discover_th_search(prov: str, fetch=fetch_json, limit: int = 6) -> list[dict
     return out[:limit]
 
 
-def build(fetch=fetch_json, today: str | None = None, sleep: float = 1.0, cache_path: Path | None = None, discover: bool = False):
+def lookup_th(titles: list[str], fetch=fetch_json) -> dict[str, dict]:
+    """บทความ th.wikipedia: คืน {ชื่อที่ขอ: {"title","lat","lon"} หรือ {"error": เหตุผล}} (ตามการเปลี่ยนเส้นทางของบทความด้วย)"""
+    if not titles:
+        return {}
+    d = fetch({"action": "query", "format": "json", "redirects": 1, "prop": "coordinates", "coprimary": "primary",
+               "titles": "|".join(titles)}, API_TH)
+    q = d.get("query", {})
+    redir = {r["from"]: r["to"] for r in q.get("redirects", [])}
+    pages = {pg["title"]: pg for pg in q.get("pages", {}).values()}
+    out = {}
+    for t in titles:
+        pg = pages.get(redir.get(t, t))
+        co = (pg or {}).get("coordinates") or [None]
+        if not pg or "missing" in pg:
+            out[t] = {"error": "ไม่พบบทความ (th)"}
+        elif not co[0]:
+            out[t] = {"error": "บทความไม่มีพิกัด (th)"}
+        elif not (LAT_RANGE[0] <= co[0]["lat"] <= LAT_RANGE[1] and LON_RANGE[0] <= co[0]["lon"] <= LON_RANGE[1]):
+            out[t] = {"error": "พิกัดอยู่นอกกรอบประเทศไทย (th)"}
+        else:
+            out[t] = {"title": pg["title"], "lat": co[0]["lat"], "lon": co[0]["lon"]}
+    return out
+
+
+def build(fetch=fetch_json, today: str | None = None, sleep: float = 1.0, cache_path: Path | None = None, discover: bool = False,
+          only: list[str] | None = None):
     today = today or date.today().isoformat()
-    order = [(prov, t, c) for prov in PROVINCES for (t, c) in SEED.get(prov, [])]
+    provs = [p for p in PROVINCES if not only or p in only]
+    order = [(prov, t, c) for prov in provs for (t, c) in SEED.get(prov, [])]
     titles = list(dict.fromkeys(t for _, t, _ in order))
     found: dict[str, dict] = {}
     if cache_path and cache_path.exists():              # รันซ้ำแล้วไม่ต้องดึงชุดที่ได้แล้วใหม่
@@ -274,11 +300,33 @@ def build(fetch=fetch_json, today: str | None = None, sleep: float = 1.0, cache_
                          "title": f"{r['title']} (Wikipedia)", "checked_on": today,
                          "fields": ["lat", "lon", "name_th", "name_en"] if r["th"] else ["lat", "lon", "name_en"]}],
         })
+    th_order = [(prov, t, c) for prov in provs for (t, c) in SEED_TH.get(prov, [])]
+    th_found = lookup_th([t for _, t, _ in th_order], fetch)
+    for prov, t, code in th_order:
+        r = th_found[t]
+        if "error" in r:
+            skipped.append((prov, t, r["error"]))
+            continue
+        pos = (round(r["lat"], 4), round(r["lon"], 4))
+        if pos in seen_pos:
+            skipped.append((prov, t, "ซ้ำกับสถานที่อื่น (พิกัดเดียวกัน)"))
+            continue
+        seen_pos.add(pos)
+        cat, tags, dur = CODES[code]
+        idx = PROVINCES.index(prov) + 1
+        counters[prov] = counters.get(prov, 0) + 1
+        places.append({
+            "id": f"p{idx}{counters[prov]:02d}", "name_th": r["title"], "name_en": None, "category": cat, "area": prov,
+            "lat": round(r["lat"], 5), "lon": round(r["lon"], 5), "duration_min": dur, "cost_thb": None, "open": None, "tags": list(tags),
+            "description": None, "notes": [], "province": prov, "verified": True,
+            "sources": [{"url": "https://th.wikipedia.org/wiki/" + urllib.parse.quote(r["title"].replace(" ", "_"), safe="_(),-"),
+                         "title": f"{r['title']} (Wikipedia ภาษาไทย)", "checked_on": today, "fields": ["lat", "lon", "name_th"]}],
+        })
     if discover:
         cnt = {}
         for q in places:
             cnt[q["province"]] = cnt.get(q["province"], 0) + 1
-        for prov in PROVINCES:
+        for prov in provs:
             if prov == "เชียงใหม่" or cnt.get(prov, 0) >= 5:
                 continue
             try:
@@ -388,8 +436,10 @@ def write_report(places, skipped, today, kept=()):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
+    # --only จังหวัด ...: ดึงเฉพาะจังหวัดที่ระบุ สถานที่ของจังหวัดอื่นคงเดิมจากไฟล์เดิม ไม่เขียน COVERAGE.md ใหม่ (แก้ตารางเอง)
+    ap.add_argument("--only", nargs="+", choices=PROVINCES, metavar="จังหวัด")
     a = ap.parse_args()
-    places, skipped, today = build(sleep=3.0, cache_path=ROOT / "scripts" / ".wiki_cache.json", discover=True)
+    places, skipped, today = build(sleep=3.0, cache_path=ROOT / "scripts" / ".wiki_cache.json", discover=True, only=a.only)
     previous = json.loads(OUT.read_text(encoding="utf-8"))["places"] if OUT.exists() else []
     places = keep_ids(places, previous)
     places, kept_prev = keep_previous(places, previous)
@@ -405,6 +455,11 @@ def main():
     meta = {"note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md",
             "built_on": today, "weekday_index": "0=จันทร์ ... 6=อาทิตย์"}
     OUT.write_text(json.dumps({"_meta": meta, "places": places}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if a.only:
+        for prov, t, why in skipped:
+            print(f"  ข้าม {prov} {t}: {why}")
+        print("เขียน", OUT, "(โหมด --only ไม่เขียน COVERAGE.md)")
+        return
     write_report(places, skipped, today, kept_prev)
     print("เขียน", OUT, "และ", REPORT)
 

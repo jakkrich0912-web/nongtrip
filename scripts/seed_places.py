@@ -61,7 +61,7 @@ SEED = {
     'มหาสารคาม': [('Phra_That_Na_Dun', 'T')],
     'มุกดาหาร': [('Phu_Pha_Thoep_National_Park', 'N'), ('Phu_Sa_Dok_Bua_National_Park', 'N'), ('Mukdahan_National_Museum', 'M'), ('Indochina_Market', 'K')],
     'แม่ฮ่องสอน': [('Pai,_Thailand', 'A'), ('Mae_Hong_Son', 'A'), ('Wat_Phra_That_Doi_Kong_Mu', 'T'), ('Tham_Lot', 'N'), ('Pang_Ung', 'N'), ('Mae_Surin_National_Park', 'N'), ('Ban_Rak_Thai', 'A'), ('Pai_Canyon', 'N'), ('Sri_Lanna_National_Park', 'N')],
-    'ยโสธร': [('Phra_That_Anon', 'T')],
+    'ยโสธร': [('Phra_That_Anon', 'T'), ('Ban_Singh_Tha', 'H')],  # เพิ่ม 5 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'ยะลา': [('Betong', 'A'), ('Yala_Central_Mosque', 'T')],
     'ร้อยเอ็ด': [('Bueng_Phalan_Chai', 'N'), ('Wat_Burapha_Phiram', 'T'), ('Phra_Maha_Chedi_Chai_Mongkhon', 'T')],
     'ระนอง': [('Raksa_Warin_Hot_Spring', 'N'), ('Ngao_Mangrove_Forest', 'N'), ('Laem_Son_National_Park', 'N'), ('Ko_Phayam', 'B')],
@@ -87,7 +87,7 @@ SEED = {
     'สุรินทร์': [('Prasat_Sikhoraphum', 'H'), ('Prasat_Ta_Muen_Thom', 'H'), ('Prasat_Ta_Muan', 'H'), ('Ban_Ta_Klang', 'A')],
     'หนองคาย': [('Sala_Keoku', 'M'), ('Wat_Phra_That_Bang_Phuan', 'T'), ('Thai-Lao_Friendship_Bridge', 'A'), ('Wat_Pho_Chai_(Nong_Khai)', 'T'), ('Tha_Sadet_Market', 'K')],
     'หนองบัวลำภู': [('Tham_Erawan', 'N'), ('Phu_Kao-Phu_Phan_Kham_National_Park', 'N'), ('Wat_Tham_Pha_Daen', 'T')],
-    'อ่างทอง': [('Wat_Muang', 'T'), ('Wat_Chaiyo_Worawihan', 'T'), ('Great_Buddha_of_Thailand', 'T')],  # เพิ่ม 2 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
+    'อ่างทอง': [('Wat_Muang', 'T'), ('Wat_Chaiyo_Worawihan', 'T'), ('Great_Buddha_of_Thailand', 'T'), ('Wat_Pa_Mok', 'T'), ('Kham_Yat_Palace', 'H')],  # เพิ่ม 2 และ 5 พ.ย. ตรวจแล้วว่ามีบทความ พิกัด และอยู่ในจังหวัดนี้
     'อำนาจเจริญ': [('Phu_Sa_Dok_Bua', 'N'), ('Phra_That_Phra_Mongkol_Ming_Mueang', 'T')],
     'อุดรธานี': [('Ban_Chiang_Archaeological_Site', 'H'), ('Nong_Han_Kumphawapi', 'N'), ('Phu_Phra_Bat_Historical_Park', 'H'), ('Phu_Foi_Lom', 'N')],
     'อุตรดิตถ์': [('Sirikit_Dam', 'A'), ('Phu_Soi_Dao_National_Park', 'N'), ('Wat_Phra_Borommathat_Thung_Yang', 'T')],
@@ -133,3 +133,10 @@ NE_EXTRA = {
 for _prov, _items in NE_EXTRA.items():
     _have = {t for t, _ in SEED.get(_prov, [])}
     SEED[_prov] = SEED.get(_prov, []) + [x for x in _items if x[0] not in _have]
+
+
+# บทความ th.wikipedia ที่ไม่มีบทความภาษาอังกฤษ (ชื่อบทความไทย, รหัสหมวด) ตรวจแล้วว่ามีพิกัดและอยู่ในจังหวัดนี้ (5 พ.ย.)
+SEED_TH = {
+    'ยโสธร': [('ธาตุก่องข้าวน้อย', 'T')],
+    'อ่างทอง': [('พิพิธภัณฑ์ตำนานเมืองอ่างทอง', 'M')],
+}
