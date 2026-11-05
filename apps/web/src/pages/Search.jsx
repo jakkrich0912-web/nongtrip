@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { noticeText } from '../lib/notices.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { PLACES, subtypeLabel, iconGroup, placeName } from '../lib/data.js';
+import { PLACES, subtypeLabel, iconGroup, placeName, INTERESTS, matchesInterest, dataDateLabel } from '../lib/data.js';
 import CatIcon from '../components/CatIcon.jsx';
+import PlaceCluster from '../components/PlaceCluster.jsx';
 import Mascot from '../components/Mascot.jsx';
 import LodgingResults from '../components/LodgingResults.jsx';
 import LodgingSearch from '../components/LodgingSearch.jsx';
@@ -14,7 +15,7 @@ import { useAuth } from '../lib/auth.jsx';
 import { useShareCompanionHint } from '../lib/companionContext.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import { provinceLabel } from '../lib/provinces.js';
-import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM, RADIUS_OPTIONS, radiusComplete, withinRadius } from '../lib/geo.js';
+import { placesAround, validateResults, mapsDirUrl, mapsSearchUrl, MAX_RADIUS_KM, RADIUS_OPTIONS, radiusComplete, withinRadius, inThailand } from '../lib/geo.js';
 
 const dot = (color, size) => L.divIcon({
   className: '',
@@ -26,14 +27,15 @@ const placeIcon = dot('#B7472A', 12);
 const activeIcon = dot('#4A7C59', 16);
 const lodgeIcon = dot('#3D6A4B', 14);
 const candIcon = dot('#7B5A2E', 14);
+const NONE = [];
 
 function PinPicker({ onPick }) {
   useMapEvents({ click: (e) => onPick({ lat: e.latlng.lat, lon: e.latlng.lng }) });
   return null;
 }
-function FlyTo({ target }) {
+function FlyTo({ target, zoom = 13 }) {
   const map = useMap();
-  useEffect(() => { if (target) map.flyTo([target.lat, target.lon], Math.max(map.getZoom(), 13), { duration: 0.6 }); }, [target, map]);
+  useEffect(() => { if (target) map.flyTo([target.lat, target.lon], Math.max(map.getZoom(), zoom), { duration: 0.6 }); }, [target, map, zoom]);
   return null;
 }
 
@@ -49,7 +51,6 @@ export default function Search() {
     const lat = parseFloat(params.get('lat')); const lon = parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || undefined } : null;
   });
-  useShareCompanionHint(origin);
   const { user } = useAuth();
   const [saveNote, setSaveNote] = useState('');
   const [cat, setCat] = useState('');
@@ -62,6 +63,11 @@ export default function Search() {
   // ถ้าเปิด API ไม่ได้ ใช้สถานที่ที่ตรวจที่มาแล้วในเครื่องแทน และบอกผู้ใช้
   const [near, setNear] = useState({ status: 'idle', items: [] });
   const [kind, setKind] = useState('');
+  // ความสนใจ (ธรรมชาติ/วัดและประวัติศาสตร์/...) กรองจากผลที่โหลดแล้วตาม subtype ค้นจาก API เฉพาะที่เที่ยว
+  const [interest, setInterest] = useState('');
+  useShareCompanionHint(origin ? { ...origin, interest } : null);
+  // ค้นรอบตัวฉันตอนนี้: ใช้ตำแหน่งจากเบราว์เซอร์ครั้งเดียว ไม่บันทึกลงบัญชี (ไม่เรียก saveSearch)
+  const [locate, setLocate] = useState({ status: 'idle' });
   const [radius, setRadius] = useState(MAX_RADIUS_KM); // รัศมีที่เลือกกรอง (กม.) ไม่เกิน 30
   const PAGE = 100;
 
@@ -79,7 +85,7 @@ export default function Search() {
       .then((d) => current() && setNear((n) => ({
         status: 'ok', source: 'api',
         items: offset ? [...n.items, ...d.items] : d.items,
-        total: d.total, counts: d.counts, notices: d.notices ?? [], attribution: d.attribution,
+        total: d.total, counts: d.counts, notices: d.notices ?? [], attribution: d.attribution, dataAsOf: d.data_as_of ?? null,
         offset: d.offset + d.items.length,
       })))
       .catch((e) => {
@@ -110,12 +116,33 @@ export default function Search() {
     // ล็อกอินอยู่: จำที่พักที่เลือกไว้ใน "ทริปของฉัน" (ไม่ล็อกอินไม่บันทึกอะไร)
     if (user && l.name) saveSearch({ name: l.name, lat: l.lat, lon: l.lon }).catch(() => {});
   };
-  const switchMode = (m) => { cancelPending(); setKind(''); setRadius(MAX_RADIUS_KM); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
+  const useMyLocation = () => {
+    if (!navigator.geolocation) { setLocate({ status: 'error', message: t('เบราว์เซอร์นี้หาตำแหน่งไม่ได้', 'This browser cannot get your location.') }); return; }
+    setLocate({ status: 'loading' });
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const o = { lat: coords.latitude, lon: coords.longitude };
+        if (!inThailand(o)) { setLocate({ status: 'error', message: t('ตำแหน่งของคุณอยู่นอกประเทศไทย ระบบค้นได้เฉพาะในประเทศไทย', 'Your location is outside Thailand. Search covers Thailand only.') }); return; }
+        setLocate({ status: 'idle' });
+        cancelPending(); setRadius(MAX_RADIUS_KM); setCands([]); setActive(o);
+        setOrigin({ ...o, name: t('ตำแหน่งของฉัน', 'My location') });
+      },
+      (e) => setLocate({ status: 'error', message: e.code === 1
+        ? t('ไม่ได้อนุญาตให้ใช้ตำแหน่ง เปิดสิทธิ์ตำแหน่งในเบราว์เซอร์ หรือพิมพ์ชื่อที่พักแทน', 'Location permission was denied. Allow it in your browser or type your stay instead.')
+        : t('หาตำแหน่งไม่ได้ ลองใหม่อีกครั้ง หรือพิมพ์ชื่อที่พักแทน', 'Could not get your location. Try again or type your stay.') }),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
+    );
+  };
+  const pickKind = (k) => { setInterest(''); setKind(k); };
+  const pickInterest = (id) => { setInterest(id); setKind(id ? 'attraction' : ''); };
+  const switchMode = (m) => { cancelPending(); setKind(''); setInterest(''); setRadius(MAX_RADIUS_KM); setCands([]); setMode(m); setOrigin(null); setPin(null); setLodging({ status: 'idle' }); setActive(null); };
 
+  const markerLabel = useCallback((p) => ({ title: placeName(p, lang), popup: `${placeName(p, lang)} · ${p.distance_km} ${lang === 'en' ? 'km (straight-line)' : 'กม. (เส้นตรง)'}` }), [lang]);
   const results = origin ? near.items : [];
   const check = validateResults(results);
   // กรองรัศมีฝั่งหน้าเว็บจากผลที่ได้มาแล้ว (เรียงใกล้ไปไกลอยู่แล้ว) ไม่เปลี่ยนข้อมูลจาก API
-  const shown = withinRadius(results, radius);
+  const inRadius = withinRadius(results, radius);
+  const shown = interest ? inRadius.filter((p) => matchesInterest(p, interest)) : inRadius;
   const radiusDone = radiusComplete(results, near.total ?? results.length, radius);
   const mixOf = (list) => Object.entries(list.reduce((m, p) => ({ ...m, [iconGroup(p)]: (m[iconGroup(p)] ?? 0) + 1 }), {})).sort((x, y) => y[1] - x[1]);
   const provMix = mixOf(inProv);
@@ -146,6 +173,15 @@ export default function Search() {
             <button role="tab" aria-selected={mode === 'browse'} onClick={() => switchMode('browse')}>{t('ยังไม่ได้จอง', 'Not booked yet')}</button>
           </div>
           {mode === 'booked' && !origin && (
+            <div className="near-me">
+              <button type="button" className="btn small ghost" onClick={useMyLocation} disabled={locate.status === 'loading'}>
+                {locate.status === 'loading' ? t('กำลังหาตำแหน่ง', 'Finding you…') : t('ค้นรอบตัวฉันตอนนี้', 'Search around me now')}
+              </button>
+              <small>{t('ใช้ตำแหน่งจากเครื่องครั้งเดียว ไม่บันทึกลงบัญชี', 'Uses your device location once. Not saved to your account.')}</small>
+              {locate.status === 'error' && <p className="notice" role="alert">{locate.message}</p>}
+            </div>
+          )}
+          {mode === 'booked' && !origin && (
             <LodgingSearch key={province} province={province} onChoose={chooseLodging} onResults={setCands} />
           )}
           {mode === 'booked' && origin && (
@@ -154,8 +190,17 @@ export default function Search() {
           {mode === 'booked' && origin && (
             <div className="chips" role="group" aria-label={t('ประเภท', 'Type')}>
               {KINDS.map(([k, label]) => (
-                <button key={k} className="chip" aria-pressed={kind === k} onClick={() => setKind(k)}>
+                <button key={k} className="chip" aria-pressed={kind === k && !interest} onClick={() => pickKind(k)}>
                   {k && <CatIcon cat={k === 'cafe' ? 'cafe' : 'temple'} size={14} />} {label}{near.counts && kind === '' && radius === MAX_RADIUS_KM ? ` ${kindCount(k) ?? 0}` : ''}
+                </button>
+              ))}
+            </div>
+          )}
+          {mode === 'booked' && origin && (
+            <div className="chips chips-wrap" role="group" aria-label={t('ความสนใจ', 'Interests')}>
+              {INTERESTS.map((x) => (
+                <button key={x.id} className="chip" aria-pressed={interest === x.id} onClick={() => pickInterest(interest === x.id ? '' : x.id)}>
+                  {t(x.th, x.en)}
                 </button>
               ))}
             </div>
@@ -214,7 +259,12 @@ export default function Search() {
               {!user && <p className="attr" style={{ padding: '8px 20px 0' }}><Link to="/login">{t('เข้าสู่ระบบ', 'Log in')}</Link> {t('เพื่อเก็บสถานที่โปรดและจำที่พักที่ค้นไว้', 'to save favourite places and remember your stays')}</p>}
               <p className="count">
                 {origin.name ? <>{t('รอบ', 'Around')} <b>{origin.name}</b> · </> : null}
-                {radius === MAX_RADIUS_KM ? (
+                {interest ? (
+                  <>
+                    <b>{shown.length}</b> {t(`แห่งที่เป็น${INTERESTS.find((x) => x.id === interest).th} ไม่เกิน ${radius} กม. วัดเป็นระยะเส้นตรง`, `${INTERESTS.find((x) => x.id === interest).en.toLowerCase()} within ${radius} km, straight-line distance`)}
+                    {t(` (กรองจากที่โหลดแล้ว ${inRadius.length} แห่ง)`, ` (filtered from ${inRadius.length} loaded)`)}
+                  </>
+                ) : radius === MAX_RADIUS_KM ? (
                   <>
                     <b>{near.total}</b> {t('แห่งใน 30 กม. วัดเป็นระยะเส้นตรง', 'places within 30 km, straight-line distance')}
                     {results.length < near.total ? t(` (แสดง ${results.length} แห่งที่ใกล้สุด)`, ` (showing the nearest ${results.length})`) : ''}
@@ -226,7 +276,10 @@ export default function Search() {
                   </>
                 )}
               </p>
-              {shown.length === 0 && results.length > 0 && radiusDone && (
+              {interest && shown.length === 0 && inRadius.length > 0 && (
+                <div className="empty"><Mascot size={84} mood="think" /><strong>{t('ยังไม่พบสถานที่ประเภทนี้ในที่โหลดแล้ว', 'None of this type among the loaded places')}</strong>{t('ลองโหลดเพิ่ม เพิ่มรัศมี หรือเลือกความสนใจอื่น', 'Load more, widen the radius, or pick another interest.')}</div>
+              )}
+              {!interest && shown.length === 0 && results.length > 0 && radiusDone && (
                 <div className="empty"><Mascot size={84} mood="think" /><strong>{t(`ไม่มีสถานที่ไม่เกิน ${radius} กม.`, `No places within ${radius} km`)}</strong>{t('ลองเพิ่มรัศมี', 'Try a larger radius.')}</div>
               )}
               {results.length === 0 && (
@@ -260,14 +313,17 @@ export default function Search() {
                   </ol>
                 </section>
               ))}
-              {results.length < near.total && !radiusDone && (
+              {results.length < near.total && (!radiusDone || interest) && (
                 <div className="more">
                   <button className="btn small" disabled={near.status === 'more'} onClick={() => loadNear(origin, kind, near.offset)}>
                     {near.status === 'more' ? t('กำลังโหลด', 'Loading…') : t(`โหลดเพิ่มอีก ${Math.min(PAGE, near.total - results.length)} แห่ง`, `Load ${Math.min(PAGE, near.total - results.length)} more`)}
                   </button>
                 </div>
               )}
-              {near.attribution && <p className="attr" style={{ padding: '0 20px 12px' }}>{near.attribution}</p>}
+              {near.attribution && <p className="attr" style={{ padding: '0 20px 12px' }}>
+                {near.attribution}
+                {dataDateLabel(near.dataAsOf, lang) && <span className="data-date"> · {t('ข้อมูล OSM เมื่อ', 'OSM data from')} {dataDateLabel(near.dataAsOf, lang)}</span>}
+              </p>}
             </>
           )}
         </div>
@@ -287,11 +343,13 @@ export default function Search() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <PinPicker onPick={pick} />
+        {/* เปิดจากลิงก์ ?lat=&lon= หรือใช้ตำแหน่งเครื่อง: เลื่อนแผนที่ไปที่พักก่อน */}
+        <FlyTo target={origin} zoom={11} />
         <FlyTo target={active} />
         {origin && (
           <>
             <Circle center={[origin.lat, origin.lon]} radius={radius * 1000} pathOptions={{ color: '#4A7C59', weight: 1.5, dashArray: '6 6', fillOpacity: 0.05 }} />
-            <Marker position={[origin.lat, origin.lon]} icon={homeIcon} title={origin.name ?? t('ที่พักของคุณ', 'Your stay')}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
+            <Marker position={[origin.lat, origin.lon]} icon={homeIcon} zIndexOffset={1000} title={origin.name ?? t('ที่พักของคุณ', 'Your stay')}><Popup>{origin.name ?? t('ที่พักของคุณ', 'Your stay')}</Popup></Marker>
           </>
         )}
         {pin && (
@@ -310,16 +368,12 @@ export default function Search() {
             <Popup>{l.name} · {l.distance_from_pin_km} {t('กม.', 'km')}</Popup>
           </Marker>
         ))}
-        {check.ok && shown.map((p) => (
-          <span key={p.id}>
-            <Polyline positions={[[origin.lat, origin.lon], [p.lat, p.lon]]}
-              pathOptions={{ color: active?.id === p.id ? '#4A7C59' : '#B7472A', weight: active?.id === p.id ? 2.5 : 1, opacity: 0.6, dashArray: '3 5' }} />
-            <Marker position={[p.lat, p.lon]} icon={active?.id === p.id ? activeIcon : placeIcon} title={placeName(p, lang)}
-              eventHandlers={{ click: () => setActive(p) }}>
-              <Popup>{placeName(p, lang)} · {p.distance_km} {t('กม.', 'km')}</Popup>
-            </Marker>
-          </span>
-        ))}
+        {/* เส้นจากที่พักวาดเฉพาะสถานที่ที่เลือก หมุดที่เหลือรวมกลุ่มเมื่อซูมออก */}
+        {check.ok && origin && active?.id && shown.some((p) => p.id === active.id) && (
+          <Polyline positions={[[origin.lat, origin.lon], [active.lat, active.lon]]}
+            pathOptions={{ color: '#4A7C59', weight: 2.5, opacity: 0.7, dashArray: '3 5' }} />
+        )}
+        <PlaceCluster places={check.ok ? shown : NONE} activeId={active?.id} icon={placeIcon} activeIcon={activeIcon} label={markerLabel} onPick={setActive} />
       </MapContainer>
       </div>
     </div>

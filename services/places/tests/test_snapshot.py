@@ -115,3 +115,12 @@ def test_load_skips_unsuitable_rows(tmp_path):
     ]}, ensure_ascii=False), encoding="utf-8")
     snap = Snapshot(tmp_path)
     assert [c.id for c in snap.around(LAT, LON, 5, ("attraction",))] == ["osm:node/3"]
+
+
+def test_snapshot_results_carry_data_date_but_live_results_do_not(tmp_path):
+    from .helpers import el
+    r = svc(tmp_path, FakeHttp(), live=False).nearby(LAT, LON, 30)
+    assert r.data_as_of == "2026-11-01" and r.to_dict()["data_as_of"] == "2026-11-01"
+    live = svc(tmp_path, FakeHttp(overpass=[el(9, "ออนไลน์", up(3), LON, {"tourism": "attraction"})])).nearby(LAT, LON, 30)
+    assert live.data_as_of is None
+    assert make_snapshot(tmp_path).date_of(["เชียงใหม่", "ไม่มีไฟล์"]) == "2026-11-01"

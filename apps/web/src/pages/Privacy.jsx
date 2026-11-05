@@ -82,6 +82,14 @@ export default function Privacy() {
                 </tbody>
               </table>
             </div>
+            <p>{t(
+              'แจ้งข้อมูลผิด: ใครก็แจ้งได้ ระบบเก็บรหัสและชื่อสถานที่ เหตุผลที่เลือก ข้อความที่พิมพ์ (ไม่เกิน 300 ตัวอักษร) และเวลา ไม่เก็บว่าใครแจ้ง ไม่เก็บอีเมลหรือที่อยู่ IP ผู้ดูแลระบบเห็นรายการนี้ และลบเมื่อตรวจแล้ว อย่าใส่ข้อมูลส่วนตัวในข้อความ',
+              'Problem reports: anyone can send one. We store the place ID and name, the reason you picked, the text you typed (up to 300 characters) and the time. We do not store who sent it, your email or your IP address. Administrators see these reports and delete each one once checked. Please don’t put personal details in the text.',
+            )}</p>
+            <p>{t(
+              'ถามเรื่องทริปในหน้าทริปของฉัน: ระบบตอบจากสถานที่โปรดและที่พักที่คุณบันทึกไว้แล้วเท่านั้น ไม่ส่งไปให้โมเดลภาษา และไม่บันทึกคำถาม',
+              'Questions about your trip on My trips are answered from your saved favourites and stays only. They are not sent to a language model and are not saved.',
+            )}</p>
             <p>{t('ถ้าไม่ได้เข้าสู่ระบบ ระบบไม่บันทึกที่พักที่ค้น สถานที่โปรด หรือแชตไว้ที่เซิร์ฟเวอร์เลย แชตที่คุยอยู่เก็บไว้ในแท็บนี้ของเบราว์เซอร์เท่านั้น (sessionStorage) เปลี่ยนหน้าหรือรีเฟรชแล้วยังอยู่ ปิดแท็บแล้วหายไป', 'If you are not signed in, no searches, favourites or chats are saved on the server. The chat you are having is kept only in this browser tab (sessionStorage): it survives page changes and refreshes, and is gone when you close the tab.')}</p>
           </section>
 
@@ -114,6 +122,8 @@ export default function Privacy() {
             <ul>
               <li>{t('คุกกี้ ', 'One cookie, ')}<code>nt_session</code>{t(' ใบเดียว ตั้งเมื่อคุณเข้าสู่ระบบ ใช้จำว่าเข้าสู่ระบบอยู่ อายุ 7 วัน สคริปต์ในหน้าเว็บอ่านไม่ได้ (HttpOnly)', ', set when you sign in to remember the session. It lasts 7 days and page scripts cannot read it (HttpOnly).')}</li>
               <li>{t('การตั้งค่าหน้าจอ เช่น ภาษาและโหมดมืด เก็บใน localStorage ของเบราว์เซอร์คุณเอง ไม่ส่งมาที่เซิร์ฟเวอร์', 'Display settings such as language and dark mode are kept in your browser’s localStorage and never sent to the server.')}</li>
+              <li>{t('จุดในทริปที่ติ๊กว่าไปแล้ว เก็บใน localStorage ของเครื่องนี้เท่านั้น ไม่ส่งมาที่เซิร์ฟเวอร์', 'Trip stops you tick as visited are kept in this device’s localStorage only and never sent to the server.')}</li>
+              <li>{t('ปุ่มค้นรอบตัวฉันตอนนี้ ใช้ตำแหน่งจากเบราว์เซอร์เมื่อคุณกดและอนุญาตเท่านั้น ใช้ค้นครั้งนั้นครั้งเดียว ไม่บันทึกลงบัญชีหรือฐานข้อมูล (พิกัดที่ค้นอยู่ใน log การเข้าถึงเหมือนการค้นทั่วไป ดูหัวข้อบันทึกของเซิร์ฟเวอร์)', 'Search around me uses your browser location only when you tap it and allow it, for that one search. It is not saved to your account or the database (the searched coordinates appear in access logs like any search; see Server logs).')}</li>
               <li>{t('ไม่มีคุกกี้โฆษณา คุกกี้ติดตาม หรือเครื่องมือวัดสถิติผู้เข้าชม', 'No advertising cookies, tracking cookies or visitor analytics.')}</li>
             </ul>
           </section>

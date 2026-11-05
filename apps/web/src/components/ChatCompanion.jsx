@@ -9,6 +9,7 @@ import { useLanguage } from '../lib/language.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { chatSuggestions, useChatSession } from '../lib/useChatSession.js';
 import { useCompanionHint } from '../lib/companionContext.jsx';
+import { interestById } from '../lib/data.js';
 import { preload, prefersReducedMotion } from '../lib/mascot.js';
 import {
   COMPANION_SIZE, DRAG_THRESHOLD, canWander, EDGE, GREETING, bodyHeight, clampPos, companionFace, fromRatio, homePos, loadRatio,
@@ -316,7 +317,7 @@ export default function ChatCompanion({ hidden = false }) {
   const anchored = open ? panelPlacement(pos, vp.w, vp.h) : null;
   const sheet = anchored?.sheet;
   const place = open && rect && !sheet ? { ...clampRect(rect, vp.w, vp.h), sheet: false, below: false } : anchored;
-  const suggestions = chatSuggestions(Boolean(context));
+  const suggestions = chatSuggestions(Boolean(context), context && hint?.lat === context.lat && hint?.lon === context.lon ? interestById(hint.interest) : null);
   const fullHref = context ? `/chat?${new URLSearchParams({ lat: context.lat, lon: context.lon, name: context.name || '' })}` : '/chat';
   const side = pos.x > vp.w / 2 ? 'right' : 'left';
   const body = bodyHeight();

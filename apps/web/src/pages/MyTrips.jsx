@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Mascot from '../components/Mascot.jsx';
 import CatIcon from '../components/CatIcon.jsx';
+import CompareStays from '../components/CompareStays.jsx';
+import TripPlan from '../components/TripPlan.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { subtypeLabel, iconGroup, placeName } from '../lib/data.js';
 import { mapsDirUrl } from '../lib/geo.js';
@@ -73,12 +75,14 @@ export default function MyTrips() {
 
 function MyTripsBody({ user }) {
   const { t, lang } = useLanguage();
-  const { logout, forget, setFavIds } = useAuth();
+  const { logout, forget, setFavIds, favIds } = useAuth();
   const nav = useNavigate();
   // session หมดอายุระหว่างใช้งาน: ล้างสถานะผู้ใช้ แล้วพาไปหน้าเข้าสู่ระบบพร้อมบอกเหตุผล
   const expire = () => { forget(); nav('/login', { replace: true, state: { expired: true } }); };
   const [searches, setSearches] = useList(mySearches, expire);
-  const [favs, setFavs] = useList(myFavorites, expire);
+  const [favs, setFavs, loadFavs] = useList(myFavorites, expire);
+  // เพิ่มสถานที่โปรดจากคำตอบเรื่องทริป: โหลดรายการใหม่ให้ทริปอัปเดต
+  useEffect(() => { if (favs.status === 'ok' && favIds.size !== favs.items.length) loadFavs(); }, [favIds]); // eslint-disable-line react-hooks/exhaustive-deps
   const [chats, setChats] = useList(myChats, expire);
   const [error, setError] = useState('');
   const [delEmail, setDelEmail] = useState('');
@@ -127,7 +131,10 @@ function MyTripsBody({ user }) {
               </li>
             ))}
           </ul>
+          <CompareStays searches={searches.items} />
         </Section>
+
+        {favs.status === 'ok' && searches.status !== 'loading' && <TripPlan userId={user.id} favs={favs.items} searches={searches.items} />}
 
         <Section
           title={t('สถานที่โปรด', 'Favourite places')} count={favs.items.length || null}

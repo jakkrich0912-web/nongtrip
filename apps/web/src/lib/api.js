@@ -103,3 +103,11 @@ export const systemHealth = () => get('/api/health');
 export const adminOverview = () => get('/api/admin/overview');
 export const provinceCenter = (name) => request('GET', `/api/provinces/${encodeURIComponent(name)}/center`);
 export const guideFeatured = ({ limit = 12, category } = {}) => request('GET', `/api/guide/featured?${qs({ limit, category })}`);
+
+// แจ้งข้อมูลผิด (v0.26) ไม่ต้องล็อกอิน และส่วนของผู้ดูแล
+export const reportPlace = ({ place_id, place_name, reason, note }) => request('POST', '/api/reports', { place_id, place_name, reason, note: note || undefined });
+export const adminReports = () => get('/api/admin/reports');
+export const resolveReport = (id) => request('DELETE', `/api/admin/reports/${encodeURIComponent(id)}`);
+
+// ถามต่อจากทริปที่บันทึก (v0.26 ต้องล็อกอิน)
+export const askTrip = ({ question, stay_id, lang }) => request('POST', '/api/me/trip/ask', { question, stay_id: stay_id ?? undefined, lang });

@@ -61,3 +61,27 @@ export const iconGroup = (p) => GROUP[p.subtype] ?? (p.kind === 'cafe' ? 'cafe' 
 
 // ชื่อสถานที่ตามภาษา: อังกฤษใช้ name_en ถ้ามี ไม่มีก็ใช้ชื่อไทย
 export const placeName = (p, lang = 'th') => (lang === 'en' && p?.name_en) ? p.name_en : p?.name_th;
+
+// ตัวกรองตามความสนใจ (หน้าค้นหา) จัดจาก subtype ของ OSM และสถานที่ที่ตรวจแล้ว คาเฟ่ใช้ตัวกรองประเภทเดิม
+// ชื่อกลุ่มตรงกับคำที่แชตเข้าใจ (services/api/chat_rules.py SUBJECT_SUBTYPES) จึงส่งต่อเป็นคำถามให้แชตได้
+export const INTERESTS = [
+  { id: 'nature', th: 'ธรรมชาติ', en: 'Nature', ask: ['ธรรมชาติใกล้ที่พักมีที่ไหนบ้าง', 'Nature spots near my stay'],
+    subtypes: ['nature', 'waterfall', 'peak', 'beach', 'hot_spring', 'cave_entrance', 'park', 'nature_reserve'] },
+  { id: 'history', th: 'วัดและประวัติศาสตร์', en: 'Temples & history', ask: ['วัดและโบราณสถานใกล้ที่พัก', 'Temples and historic sites near my stay'],
+    subtypes: ['temple', 'place_of_worship', 'monument', 'city_gate', 'museum', 'gallery', 'castle', 'ruins', 'archaeological_site', 'fort', 'craft'] },
+  { id: 'viewpoint', th: 'จุดชมวิว', en: 'Viewpoints', ask: ['จุดชมวิวใกล้ที่พักมีที่ไหนบ้าง', 'Viewpoints near my stay'], subtypes: ['viewpoint'] },
+  { id: 'market', th: 'ตลาด', en: 'Markets', ask: ['ตลาดใกล้ที่พักมีที่ไหนบ้าง', 'Markets near my stay'], subtypes: ['market'] },
+];
+export const interestById = (id) => INTERESTS.find((x) => x.id === id) ?? null;
+export const matchesInterest = (p, id) => {
+  const it = interestById(id);
+  return !it || it.subtypes.includes(p.subtype);
+};
+
+// วันที่ดึงข้อมูล OSM ที่เก็บไว้ (data_as_of จาก API รูปแบบ YYYY-MM-DD) เป็นข้อความสั้นตามภาษา รูปแบบผิดคืน null
+export function dataDateLabel(iso, lang = 'th') {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso ?? '')) return null;
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'th-TH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}

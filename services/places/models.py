@@ -63,6 +63,7 @@ class SearchResult:
     notices: list[str] = field(default_factory=list)
     osm_mode: str = "live"      # live | snapshot | none
     attribution: str = ATTRIBUTION_OSM
+    data_as_of: str | None = None   # v0.26: วันที่ดึงข้อมูล OSM ที่เก็บไว้ (โหมด snapshot) โหมดอื่นเป็น None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -75,6 +76,7 @@ class SearchResult:
             "sources": self.sources,
             "osm_available": self.osm_available,
             "osm_mode": self.osm_mode,
+            "data_as_of": self.data_as_of,
             "notices": self.notices,
             "attribution": self.attribution,
             "distance_note": "ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ",

@@ -5,6 +5,7 @@ import { noticeText } from '../../lib/notices.js';
 import { numberCitations, safeUrl as safeSourceUrl } from '../../lib/chat.js';
 import { QUICK_PROVINCES } from '../../lib/useChatSession.js';
 import { useTypewriter } from '../../lib/typewriter.js';
+import { followUps } from '../../lib/followUps.js';
 
 // คำตอบของน้องทริปพิมพ์ทีละตัว คำถามของผู้ใช้และคำตอบที่เสร็จก่อนเปิดหน้า (รวมจากประวัติ) แสดงทันที
 function MessageText({ message }) {
@@ -72,6 +73,15 @@ function EditBox({ message, onCancel, onSave, t }) {
   </form>;
 }
 
+// ปุ่มถามต่อใต้คำตอบล่าสุด กดแล้วถามต่อในแชตเดิมทันที
+function FollowUps({ message, session, t }) {
+  const list = followUps(message);
+  if (!list.length) return null;
+  return <div className="nt-chat-followups" role="group" aria-label={t('ถามต่อ', 'Follow-up questions')}>
+    {list.map(([th, en]) => <button key={th} type="button" onClick={() => session.send(t(th, en))}>{t(th, en)}</button>)}
+  </div>;
+}
+
 // รายการข้อความทั้งหมด ใช้ทั้งหน้า /chat และหน้าต่างแชตของมาสคอต
 // ปุ่มตอบเมื่อน้องทริปถามว่าให้ค้นแถวไหน (done.ask = location): ใช้ตำแหน่งปัจจุบัน หรือเลือกจังหวัด
 function AskLocation({ message, busy, session, t, lang }) {
@@ -110,6 +120,7 @@ export default function ChatMessages({ messages, busy, onChooseLodging, t, lang,
         </div>}
         <SourceCards sources={message.sources} t={t} />
         {message.ask === 'location' && message.id === lastId && message.status === 'done' && <AskLocation message={message} busy={busy} session={session} t={t} lang={lang} />}
+        {session && message.id === lastId && !busy && <FollowUps message={message} session={session} t={t} />}
         {message.status === 'stopped' && <p className="nt-chat-waiting">{t('หยุดรอคำตอบแล้ว ถามใหม่ได้เลย', 'Stopped waiting. Feel free to ask again.')}</p>}
         {message.error && <p className="nt-chat-error" role="alert">{message.error}</p>}
         {actions && message.role === 'bot' && <BotActions message={message} isLast={message.id === lastBotId} busy={busy} session={session} t={t} />}

@@ -59,3 +59,17 @@ test('คำถามต่อเนื่องส่งบทสนทนา�
   expect(body.history?.[1]?.role).toBe('assistant');
   await expect(log).toHaveAttribute('aria-busy', 'false', { timeout: 40_000 });
 });
+
+test('ปุ่มถามต่อใต้คำตอบล่าสุด กดแล้วถามต่อทันที', async ({ page }) => {
+  await page.goto('/chat');
+  await page.locator('#chat-message').fill('คาเฟ่ในเชียงใหม่');
+  await page.locator('form button[type=submit]').last().click();
+  const log = page.getByRole('log');
+  await expect(log).toHaveAttribute('aria-busy', 'false', { timeout: 40_000 });
+  const chips = page.getByRole('group', { name: 'ถามต่อ' });
+  await expect(chips).toHaveCount(1);
+  await chips.getByRole('button', { name: 'ที่เที่ยวแถวนี้' }).click();
+  await expect(log).toHaveAttribute('aria-busy', 'false', { timeout: 40_000 });
+  await expect(log).toContainText(/พบสถานที่เที่ยว/);
+  await expect(page.getByRole('group', { name: 'ถามต่อ' })).toHaveCount(1);       // มีเฉพาะใต้คำตอบล่าสุด
+});

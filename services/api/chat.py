@@ -28,7 +28,7 @@ from services.places.provinces import PROVINCES, province_en
 from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
-from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
+from .chat_rules import MAX_MESSAGE, SUBJECT_SUBTYPES, Intent, clean, drop_province, find_place, parse
 from .rag import MAX_HISTORY, Rag, is_no_info
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
@@ -396,9 +396,26 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
                        *_notes(notes + res_notes, lang), *tail)
         return
 
-    yield "tool", {"name": "places_nearby", "args": {"lat": lat, "lon": lon, "radius_km": it.radius_km,
-                                                     "kinds": list(it.kinds)}}
-    res = svc.nearby(lat, lon, it.radius_km, list(it.kinds), it.limit, 0).to_dict()
+    # อยากหาเรื่องเจาะจงที่มีประเภทย่อยตรง (น้ำตก วัด จุดชมวิว ...): ค้นทุกแห่งในรัศมีแล้วกรองตาม subtype
+    # ข้อความที่เอ่ยชื่อสถานที่ (anchor/named_place) ไม่กรอง เพราะคำว่า "วัด" เป็นส่วนของชื่อ ไม่ใช่สิ่งที่อยากหา
+    subs = (SUBJECT_SUBTYPES.get(it.subject[0])
+            if it.subject and not it.anchor and not it.named_place and "attraction" in it.kinds else None)
+    kinds = ["attraction"] if subs else list(it.kinds)
+    yield "tool", {"name": "places_nearby", "args": {"lat": lat, "lon": lon, "radius_km": it.radius_km, "kinds": kinds,
+                                                     **({"subtypes": sorted(subs)} if subs else {})}}
+    if subs:
+        full = svc.nearby(lat, lon, it.radius_km, kinds, None, 0).to_dict()
+        picked = [p for p in full["items"] if p.get("subtype") in subs]
+        if picked:
+            res = {**full, "items": picked[: it.limit], "total": len(picked), "counts": {"attraction": len(picked)},
+                   "sources": {s: sum(1 for p in picked if p.get("source") == s) for s in ("verified", "osm")}}
+        else:
+            subs = None   # ไม่มีที่ระบุประเภทนี้ไว้ แสดงที่เที่ยวทั้งหมดแทนพร้อมบอกผู้ใช้
+            notes = notes + [L(f"ไม่พบสถานที่ที่ระบุประเภท{it.subject[0]}ไว้ในรัศมีนี้ จึงแสดงที่เที่ยวทั้งหมด",
+                               f"No places tagged as {it.subject[1]} within this radius, so all attractions are shown.")]
+            res = {**full, "items": full["items"][: it.limit]}
+    else:
+        res = svc.nearby(lat, lon, it.radius_km, kinds, it.limit, 0).to_dict()
     res["validation"] = validate_nearby(res, known)
     res_notes = list(res["notices"])
     ok = res["validation"]["ok"]
@@ -414,8 +431,8 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
         yield from say(L("ผลค้นไม่ผ่านการตรวจอิสระ จึงยังไม่แสดงรายชื่อ ลองใหม่อีกครั้งภายหลัง",
                          "These results failed the independent check, so no names are shown. Please try again later."), *tail)
         return
-    kinds_th = " และ".join(KIND_TH[k] for k in it.kinds)
-    kinds_en = " and ".join(KIND_EN[k] for k in it.kinds)
+    kinds_th = it.subject[0] if subs else " และ".join(KIND_TH[k] for k in kinds)
+    kinds_en = it.subject[1] if subs else " and ".join(KIND_EN[k] for k in kinds)
     if not items:
         yield from say(L(f"ไม่พบ{kinds_th}ในรัศมี {res['radius_km']:g} กม. รอบ{where}",
                          f"No {kinds_en} within {res['radius_km']:g} km of {where}"),
@@ -503,6 +520,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
 
             try:
                 intent = parse(text)
+                if intent.subject and find_place(text, svc.verified):
+                    intent.named_place = True
                 # ข้อความใหม่ไม่ระบุที่ (ไม่มีจังหวัด ไม่มีหมุด ไม่มีชื่อที่พัก): ใช้จังหวัดที่ถามไว้ล่าสุด
                 eff_ctx = ctx
                 remember = None
@@ -513,7 +532,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     if not hit:
                         # คำถามต่อเนื่องที่ไม่เอ่ยชื่อที่ ("เล่าเพิ่มหน่อย"): ใช้สถานที่ที่เอ่ยในคำถามก่อนหน้าของแชตเดียวกัน
                         prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
-                        hit = find_place(clean(prev), svc.verified) if prev else None
+                        hit = find_place(drop_province(clean(prev)), svc.verified) if prev else None
                     if hit:
                         eff_ctx = Context(lat=hit.lat, lon=hit.lon)
                         intent.anchor = hit.name_th

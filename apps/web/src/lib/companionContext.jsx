@@ -12,17 +12,19 @@ export function CompanionHintProvider({ children }) {
 
 export const useCompanionHint = () => useContext(Ctx).hint;
 
-// เรียกจากหน้าที่มีบริบท: hint = { lat, lon, name } หรือ { province } หรือ null
+// เรียกจากหน้าที่มีบริบท: hint = { lat, lon, name, interest? } หรือ { province } หรือ null
+// interest = รหัสกลุ่มความสนใจที่เลือกในหน้าค้นหา (lib/data.js INTERESTS) แชตใช้เป็นคำถามแนะนำแรก
 export function useShareCompanionHint(hint) {
   const { setHint } = useContext(Ctx);
   const lat = hint?.lat;
   const lon = hint?.lon;
   const name = hint?.name;
   const province = hint?.province;
+  const interest = hint?.interest || '';
   useEffect(() => {
-    if (Number.isFinite(lat) && Number.isFinite(lon)) setHint({ lat, lon, name: name || '' });
+    if (Number.isFinite(lat) && Number.isFinite(lon)) setHint({ lat, lon, name: name || '', interest });
     else if (province) setHint({ province });
     else setHint(null);
     return () => setHint(null);
-  }, [lat, lon, name, province, setHint]);
+  }, [lat, lon, name, province, interest, setHint]);
 }

@@ -17,6 +17,7 @@ from pathlib import Path
 
 MAX_SEARCHES = 100
 MAX_FAVORITES = 500
+MAX_REPORTS = 2000      # รายการแจ้งที่ยังไม่ตรวจ เกินนี้ไม่รับเพิ่ม กันถูกยิงจนฐานข้อมูลโต
 GOOGLE_PW_HASH = "google"  # ไม่ใช่รูปแบบ scrypt$... จึงล็อกอินด้วยรหัสผ่านไม่ได้
 
 SCHEMA = """
@@ -63,6 +64,13 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   chat_id INTEGER NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
   role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
   content TEXT NOT NULL, created_at TEXT NOT NULL
+);
+-- แจ้งข้อมูลผิด (v0.26) ไม่เก็บว่าใครแจ้ง ไม่เก็บ IP ผู้ดูแลกดตรวจแล้วรายการถูกลบ
+CREATE TABLE IF NOT EXISTS reports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  place_id TEXT NOT NULL, place_name TEXT NOT NULL,
+  reason TEXT NOT NULL CHECK (reason IN ('closed', 'wrong_location', 'wrong_name', 'wrong_type', 'other')),
+  note TEXT, created_at TEXT NOT NULL
 );
 """
 
@@ -390,6 +398,27 @@ class Store:
             return c.execute("DELETE FROM chats WHERE user_id = ?", (user_id,)).rowcount
 
     # ---- ลบบัญชี ----
+    # ---- แจ้งข้อมูลผิด ----
+    def add_report(self, place_id: str, place_name: str, reason: str, note: str | None) -> dict:
+        with self._db() as c:
+            if c.execute("SELECT COUNT(*) FROM reports").fetchone()[0] >= MAX_REPORTS:
+                raise OverflowError("มีรายการแจ้งรอตรวจมากเกินไป กรุณาลองใหม่ภายหลัง")
+            cur = c.execute("INSERT INTO reports (place_id, place_name, reason, note, created_at) VALUES (?, ?, ?, ?, ?)",
+                            (place_id, place_name, reason, note, now_iso()))
+            return dict(c.execute("SELECT * FROM reports WHERE id = ?", (cur.lastrowid,)).fetchone())
+
+    def list_reports(self, limit: int = 200) -> list[dict]:
+        with self._db() as c:
+            return [dict(r) for r in c.execute("SELECT * FROM reports ORDER BY id DESC LIMIT ?", (limit,))]
+
+    def count_reports(self) -> int:
+        with self._db() as c:
+            return c.execute("SELECT COUNT(*) FROM reports").fetchone()[0]
+
+    def delete_report(self, report_id: int) -> bool:
+        with self._db() as c:
+            return c.execute("DELETE FROM reports WHERE id = ?", (report_id,)).rowcount > 0
+
     def delete_user(self, user_id: int) -> bool:
         """ลบผู้ใช้และข้อมูลทั้งหมดของเขา (ที่พักที่ค้น สถานที่โปรด แชตและข้อความ) ย้อนกลับไม่ได้"""
         with self._db() as c:

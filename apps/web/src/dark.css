@@ -124,6 +124,14 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .chat-sources { border-top:1px dashed rgba(34,48,31,0.18); }
 :where(html[data-theme=dark]) .linkish { color:#8cc79a; }
 :where(html[data-theme=dark]) .leaflet-container .leaflet-control-attribution a { color:#bfdbe7; }
+:where(html[data-theme=dark]) .nt-cluster span { background:#b7472a; color:#ffffff; border:3px solid #2b2b2b; box-shadow:0 2px 8px rgba(0,0,0,0.77); }
+:where(html[data-theme=dark]) .report-note textarea { background:#131313; }
+:where(html[data-theme=dark]) .report-done { color:#8cc79a; }
+:where(html[data-theme=dark]) .trip-stay select { background:#131313; }
+:where(html[data-theme=dark]) .trip-finished { color:#8cc79a; }
+:where(html[data-theme=dark]) .trip-groups li { background:rgba(74,124,89,0.07); }
+:where(html[data-theme=dark]) .trip-ask input { background:#131313; }
+:where(html[data-theme=dark]) .trip-answer { background:#131313; }
 :where(html[data-theme=dark]) .panel ::-webkit-scrollbar-thumb, :where(html[data-theme=dark]) .panel::-webkit-scrollbar-thumb { background:rgba(60,64,58,0.38); }
 :where(html[data-theme=dark]) .panel ::-webkit-scrollbar-thumb:hover, :where(html[data-theme=dark]) .panel::-webkit-scrollbar-thumb:hover { background:rgba(60,64,58,0.6); }
 
@@ -188,6 +196,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
   :where(html[data-theme=dark]) .nt-header nav { background:#131313; box-shadow:0 10px 20px rgba(0,0,0,0.398); }
 }
 :where(html[data-theme=dark]) .nt-theme { border:1px solid #3f423b; background:#292a23; }
+:where(html[data-theme=dark]) .nt-recent a { border:1px solid #4f4b41; background:#1f1b0d; }
+:where(html[data-theme=dark]) .nt-recent a:hover { background:#302915; }
 
 /* จาก auth-v2.css */
 :where(html[data-theme=dark]) .nt-auth-page { background:#211f1a; color:#d9e5d7; }
@@ -253,6 +263,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .nt-chat-ask-provinces button { border:1px solid #4f554c; background:#1d190c; color:#bcd8c5; }
 :where(html[data-theme=dark]) .nt-chat-ask-provinces button:hover:not(:disabled) { background:#252a22; }
 :where(html[data-theme=dark]) .nt-chat-ask-error { color:#e7dfc1; }
+:where(html[data-theme=dark]) .nt-chat-followups button { background:#21241c; color:#c7e0cf; }
+:where(html[data-theme=dark]) .nt-chat-followups button:hover:not(:disabled) { background:#2b3126; }
 
 /* จาก pages/chat-gpt.css */
 :where(html[data-theme=dark]) .ntg { background:#1f1e17; }
@@ -382,6 +394,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) b.is-warn { color:#e3cfb5; }
 :where(html[data-theme=dark]) .adm-chips a:hover { border-color:#51574b; color:#8cc79a; }
 :where(html[data-theme=dark]) :where(html[data-theme=dark]) b.is-warn { color:#d1b587; }
+:where(html[data-theme=dark]) .adm-reports li { border-top:1px solid #44413a; }
+:where(html[data-theme=dark]) .adm-reports small { color:#c0c6bc; }
 
 /* จาก components/companion.css */
 :where(html[data-theme=dark]) .nt-comp-dot { border:2.5px solid #3c341d; box-shadow:0 1px 4px rgba(0,0,0,0.66); }

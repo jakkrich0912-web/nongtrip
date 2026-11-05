@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import Mascot from '../components/Mascot.jsx';
 import Icon from '../components/landing/Icon.jsx';
-import { adminOverview } from '../lib/api.js';
+import { adminOverview, adminReports, resolveReport } from '../lib/api.js';
+import { REPORT_REASONS } from '../components/ReportPlace.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { useLanguage } from '../lib/language.jsx';
 import { provinceLabel, regionLabel } from '../lib/provinces.js';
@@ -126,6 +127,8 @@ function AdminBody() {
             : <p className="adm-empty">{t('แสดงเมื่อมีสถานที่ที่บันทึกตั้งแต่ 2 บัญชีขึ้นไป', 'Shown once a place is saved by 2 or more accounts')}</p>}
         </Card>
 
+        <Reports />
+
         <Card title={t('ความครอบคลุมข้อมูล', 'Data coverage')} sub={t(`${d.coverage.provinces} จังหวัด`, `${d.coverage.provinces} provinces`)} wide>
           <div className="adm-cover">
             <Meter label={t('มีข้อมูล OSM เก็บไว้ (ค้นได้แม้เน็ตช้า)', 'Saved OSM data (works on slow networks)')} n={d.coverage.with_snapshot} of={d.coverage.provinces} />
@@ -147,6 +150,43 @@ function AdminBody() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// รายการแจ้งข้อมูลผิด (v0.26) กดตรวจแล้วเพื่อลบออก ไม่มีข้อมูลว่าใครแจ้ง
+function Reports() {
+  const { t, lang } = useLanguage();
+  const [state, setState] = useState({ status: 'loading', items: [], total: 0 });
+  const [error, setError] = useState('');
+  useEffect(() => {
+    adminReports().then((d) => setState({ status: 'ok', items: d.items, total: d.total })).catch((e) => setState({ status: 'error', items: [], total: 0, message: e.message }));
+  }, []);
+  const reason = (id) => { const r = REPORT_REASONS.find((x) => x[0] === id); return r ? t(r[1], r[2]) : id; };
+  const done = async (id) => {
+    setError('');
+    try { await resolveReport(id); setState((s) => ({ ...s, items: s.items.filter((x) => x.id !== id), total: s.total - 1 })); }
+    catch (e) { setError(e.message); }
+  };
+  return (
+    <Card title={t('แจ้งข้อมูลผิด', 'Problem reports')} sub={t(`รอตรวจ ${state.total} รายการ ตรวจแล้วกดลบ`, `${state.total} waiting; delete once checked`)} wide>
+      {state.status === 'error' && <p className="auth-error" role="alert">{state.message}</p>}
+      {error && <p className="auth-error" role="alert">{error}</p>}
+      {state.status === 'ok' && !state.items.length && <p className="adm-empty">{t('ยังไม่มีรายการแจ้ง', 'No reports yet')}</p>}
+      {state.items.length > 0 && (
+        <ul className="adm-reports">
+          {state.items.map((r) => (
+            <li key={r.id}>
+              <div>
+                <strong>{r.place_id.startsWith('v:') ? <Link to={`/places/${encodeURIComponent(r.place_id)}`}>{r.place_name}</Link> : r.place_name}</strong>
+                <small>{reason(r.reason)} · {r.place_id} · {shortDay(r.created_at.slice(0, 10), lang)}</small>
+                {r.note && <p>{r.note}</p>}
+              </div>
+              <button type="button" className="btn small ghost" onClick={() => done(r.id)}>{t('ตรวจแล้ว ลบ', 'Checked, delete')}</button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   );
 }
 

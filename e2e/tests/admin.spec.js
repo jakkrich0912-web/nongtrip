@@ -29,3 +29,23 @@ test('ผู้ดูแลเข้าแดชบอร์ดจากเม�
   await page.locator('.adm-col').nth(13).hover();
   await expect(page.locator('.adm-tip')).toBeVisible();
 });
+
+test('แจ้งข้อมูลผิดจากหน้าสถานที่ แล้วผู้ดูแลเห็นและลบได้', async ({ page, browser }) => {
+  test.skip(!ADMIN, 'ตั้ง E2E_ADMIN_EMAIL ให้ตรงกับ ADMIN_EMAILS ของระบบก่อน');
+  const note = `ทดสอบ ${Date.now()}`;
+  await page.goto('/places/v%3Ap01');
+  await page.getByRole('button', { name: 'แจ้งข้อมูลผิด' }).click();
+  await page.getByRole('radio', { name: 'ตำแหน่งบนแผนที่ผิด' }).check();
+  await page.locator('.report-note textarea').fill(note);
+  await page.getByRole('button', { name: 'ส่งให้ผู้ดูแล' }).click();
+  await expect(page.getByText('ส่งให้ผู้ดูแลตรวจแล้ว')).toBeVisible();
+
+  const admin = await (await browser.newContext()).newPage();
+  const r = await admin.request.post('/api/auth/login', { data: { email: ADMIN, password: PASSWORD } });
+  if (r.status() !== 200) await signUp(admin, ADMIN);
+  await admin.goto('/admin');
+  const item = admin.locator('.adm-reports li', { hasText: note });
+  await expect(item).toContainText('ตำแหน่งบนแผนที่ผิด');
+  await item.getByRole('button', { name: 'ตรวจแล้ว ลบ' }).click();
+  await expect(admin.locator('.adm-reports li', { hasText: note })).toHaveCount(0);
+});

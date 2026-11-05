@@ -36,6 +36,7 @@ class Snapshot:
         self._items: list[Candidate] | None = None
         self.built_on: str | None = None
         self.provinces: list[str] = []
+        self.dates: dict[str, str] = {}      # จังหวัด -> วันที่ดึงข้อมูล (_meta.built_on)
 
     def available(self) -> bool:
         return bool(self.dir and self.dir.is_dir() and any(self.dir.glob("*.json")))
@@ -56,6 +57,8 @@ class Snapshot:
                     dates.append(meta["built_on"])
                 prov = meta.get("province") or f.stem
                 self.provinces.append(prov)
+                if meta.get("built_on"):
+                    self.dates[prov] = meta["built_on"]
                 for ref, th, en, kind, sub, lat, lon in data.get("items", []):
                     if unsuitable(th, en, sub, ref):
                         continue
@@ -65,6 +68,12 @@ class Snapshot:
         self.built_on = min(dates) if dates else None
         self._items = items
         return items
+
+    def date_of(self, provinces) -> str | None:
+        """วันที่ดึงข้อมูลเก่าสุดของจังหวัดที่ระบุ (ใช้แสดงความสดของข้อมูล) ไม่รู้วันที่คืน None"""
+        self._load()
+        dates = [self.dates[p] for p in set(provinces) if p in self.dates]
+        return min(dates) if dates else None
 
     def around(self, lat: float, lon: float, radius_km: float, kinds: tuple[str, ...]) -> list[Candidate]:
         """คัดแบบกรอบสี่เหลี่ยมก่อน (ระยะจริงคิดต่อทีหลังในตัวจัดอันดับ)"""
