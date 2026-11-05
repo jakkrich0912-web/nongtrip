@@ -23,13 +23,13 @@ from pydantic import BaseModel, Field
 
 from services.places import PlacesService, SearchError
 from services.places.geo import in_thailand
-from services.places.provinces import PROVINCES, province_en
+from services.places.provinces import PROVINCES, REGION_ORDER, REGIONS, province_en
 
 from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
 from .chat_rules import MAX_MESSAGE, SUBJECT_SUBTYPES, Intent, clean, drop_province, find_place, parse
-from .rag import MAX_HISTORY, Rag, is_no_info
+from .rag import MAX_HISTORY, Rag, RagResult, is_no_info
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
 
@@ -278,6 +278,61 @@ def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
     elif first:
         first = sorry + first
     return [first or _t(lang, OFF_TOPIC_SHORT, OFF_TOPIC_SHORT_EN), _t(lang, CAN_DO, CAN_DO_EN)]
+
+
+# ยังไม่รู้ว่าแถวไหน (โหมด LLM): เสนอสถานที่ที่ตรวจแล้วจากหลายภาค ให้ LLM แนะนำพร้อมชื่อจังหวัด แล้วชวนบอกที่พัก
+SUGGEST_LIMIT = 8
+# คำในชื่อสถานที่ที่ตรวจแล้ว และประเภทของไฟล์สถานที่ที่ตรวจแล้ว (temple nature museum activity market cafe craft) ต่อเรื่องที่อยากหา
+_SUGGEST_WORDS = {
+    "น้ำตก": ("น้ำตก",), "ชายหาด": ("หาด", "ทะเล", "เกาะ"), "ทะเล": ("หาด", "ทะเล", "เกาะ"), "เกาะ": ("เกาะ",),
+    "ดอยและภูเขา": ("ดอย", "ภู", "เขา"), "อุทยาน": ("อุทยาน",), "จุดชมวิว": ("ชมวิว", "ดอย", "ภู"),
+}
+_SUGGEST_SUBTYPES = {
+    "วัด": {"temple"}, "พิพิธภัณฑ์": {"museum"}, "ตลาด": {"market"}, "ธรรมชาติ": {"nature"},
+    "วัดและประวัติศาสตร์": {"temple", "museum"},
+}
+SUGGEST_DISCLAIMER = "ชื่อสถานที่ด้านล่างมาจากรายการที่ตรวจที่มาแล้ว ส่วนคำอธิบายเป็นความรู้ทั่วไป อาจไม่ถูกต้องทั้งหมด ควรตรวจสอบอีกครั้งนะคะ"
+SUGGEST_DISCLAIMER_EN = "The places below come from our source-checked list. The descriptions are general knowledge and may not be fully accurate, so please double-check."
+SUGGEST_TASK = ("ผู้ใช้ยังไม่ได้บอกว่าอยู่หรือจะไปแถวไหน ให้เสนอ 3-5 แห่งจาก <places> ที่ตรงกับสิ่งที่ผู้ใช้อยากหา "
+                "บอกชื่อจังหวัดของแต่ละแห่ง และเล่าสั้น ๆ ว่าน่าไปเพราะอะไรจากความรู้ทั่วไป ห้ามบอกระยะทาง "
+                "ปิดท้ายด้วยการชวนให้บอกจังหวัด ชื่อที่พัก หรือกดใช้ตำแหน่งปัจจุบัน เพื่อค้นสถานที่รอบตัวจริง")
+SUGGEST_TASK_EN = ("The user has not said where they are or are going. Suggest 3-5 places from <places> that fit what they want, "
+                   "give each one's province and a short reason from general knowledge. Do not give distances. "
+                   "End by inviting them to name a province or their stay, or use their current location, to search around it.")
+
+
+def suggestion_places(verified, it: Intent, prev: str = "") -> list[dict]:
+    """สถานที่ที่ตรวจแล้วสำหรับเสนอเมื่อยังไม่รู้ว่าแถวไหน: ตรงเรื่องที่อยากหา (จากข้อความนี้หรือคำถามก่อนหน้า)
+    จังหวัดละ 1 แห่ง สลับไปทีละภาค (ไม่ใช่การจัดอันดับความนิยม) ไม่ตรงเรื่องเลยใช้ทุกประเภท"""
+    subject, kinds = it.subject, it.kinds
+    if not subject and prev:
+        before = parse(prev)
+        if before.subject or before.kinds != it.kinds:
+            subject, kinds = before.subject, before.kinds
+    words = _SUGGEST_WORDS.get(subject[0]) if subject else None
+    subs = _SUGGEST_SUBTYPES.get(subject[0]) if subject else None
+    if kinds == ("cafe",):
+        subs = {"cafe"}
+
+    def fits(c) -> bool:
+        if words:
+            return any(w in (c.name_th or "") for w in words)
+        if subs:
+            return c.subtype in subs
+        return c.subtype != "cafe" if kinds == ("attraction",) else True
+
+    pool = [c for c in verified if fits(c)] or ([] if (words or subs) else list(verified))
+    by_prov: dict[str, object] = {}
+    for c in pool:
+        by_prov.setdefault(c.province, c)
+    lanes = [[by_prov[p] for p in REGIONS[r] if p in by_prov] for r in REGION_ORDER]
+    out = []
+    for i in range(max((len(x) for x in lanes), default=0)):
+        for lane in lanes:
+            if i < len(lane):
+                c = lane[i]
+                out.append({"name_th": c.name_th, "name_en": c.name_en, "province": c.province})
+    return out[:SUGGEST_LIMIT]
 
 
 def _ask_location(it: Intent, lang: str = "th") -> list[str]:
@@ -574,20 +629,32 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 general_used = False
                 if use_rag:
                     items = (places_ev or {}).get("items") or []
-                    res = rag.answer(text, items, (places_ev or {}).get("radius_km"), body.lang, hist)
+                    # ยังไม่รู้ว่าแถวไหนไม่มีผลค้นให้ตอบ ข้ามไปเสนอสถานที่เลย ไม่เสียการเรียก LLM อีกรอบ
+                    res = (RagResult("rule", reason="no_places") if ask == "location"
+                           else rag.answer(text, items, (places_ev or {}).get("radius_km"), body.lang, hist))
                     # คลังความรู้ไม่มีเรื่องนี้ หรือเป็นคำถามเรื่องเที่ยวทั่วไป (ฤดู การเดินทาง แผนเที่ยว อาหารท้องถิ่น) ที่ค้นได้แค่รายชื่อ:
                     # ให้ LLM ตอบจากความรู้ทั่วไปพร้อมคำเตือน ดีกว่าบอกว่าไม่มีข้อมูลแล้วยื่นรายชื่อที่ไม่ตรงคำถาม
                     no_info = res.mode == "llm" and is_no_info(res.text)
                     wants_general = (intent.asks_general or intent.asks_food) and not intent.smalltalk
                     trav = None
-                    if not off_topic and (no_info or (wants_general and res.mode == "rule" and res.reason in ("no_places", "no_chunks"))):
+                    suggested = False
+                    if ask == "location" and not off_topic:
+                        # ยังไม่รู้ว่าแถวไหน: แทนการถามกลับอย่างเดียว ให้เสนอสถานที่ที่ตรวจแล้วจากหลายภาคก่อน ปุ่มเลือกตำแหน่งยังอยู่
+                        prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
+                        sugg = suggestion_places(svc.verified, intent, clean(prev))
+                        if sugg:
+                            trav = rag.travel(text, sugg, body.lang, hist,
+                                              task=SUGGEST_TASK_EN if body.lang == "en" else SUGGEST_TASK)
+                            suggested = True
+                    elif not off_topic and (no_info or (wants_general and res.mode == "rule" and res.reason in ("no_places", "no_chunks"))):
                         trav = rag.travel(text, items, body.lang, hist)
                     if trav is not None and trav.mode == "llm":
                         mode = "llm"
                         general_used = True
                         for ev, data in pending:
                             yield emit(ev, data)
-                        lines = [_t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN) + "\n"]
+                        lines = [(_t(body.lang, SUGGEST_DISCLAIMER, SUGGEST_DISCLAIMER_EN) if suggested
+                                  else _t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN)) + "\n"]
                         lines += [ln + "\n" for ln in trav.text.split("\n") if ln.strip()]
                         if items:
                             lines += _footer(places_ev, intent, body.lang)

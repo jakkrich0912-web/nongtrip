@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from services.api.answer_guard import GUARD_NOTICE
 from services.api.chat import ChatThrottle
 from services.api.main import create_app
-from services.api.chat import TRAVEL_DISCLAIMER
+from services.api.chat import SUGGEST_DISCLAIMER, TRAVEL_DISCLAIMER
 from services.api.rag import TRAVEL_PROMPT, Rag, build_prompt, check_travel, load_known_names
 from services.api.store import Store
 from services.places import PlacesService
@@ -490,3 +490,45 @@ def test_follow_up_without_place_uses_place_from_previous_question(tmp_path):
     assert done(evs)["mode"] == "llm" and "ask" not in done(evs)
     evs = events(c.post("/api/chat", json={"message": "เล่าเพิ่มหน่อย"}))
     assert done(evs).get("ask") == "location"
+
+
+# ---------- ยังไม่รู้ว่าแถวไหน: เสนอสถานที่ที่ตรวจแล้วแทนการถามกลับอย่างเดียว ----------
+SUGGEST_VERIFIED = [
+    Candidate(id="v:w1", name_th="น้ำตกเอราวัณ", name_en="Erawan Falls", kind="attraction", subtype="nature",
+              lat=14.37, lon=98.99, source="verified", province="กาญจนบุรี"),
+    Candidate(id="v:w2", name_th="น้ำตกแม่กลาง", name_en=None, kind="attraction", subtype="nature",
+              lat=18.5, lon=98.6, source="verified", province="เชียงใหม่"),
+    Candidate(id="v:t1", name_th="วัดอรุณราชวราราม", name_en=None, kind="attraction", subtype="temple",
+              lat=13.74, lon=100.49, source="verified", province="กรุงเทพมหานคร"),
+]
+
+
+def test_suggestion_places_follow_subject_and_previous_turn():
+    from services.api.chat import suggestion_places
+    from services.api.chat_rules import parse
+    names = lambda xs: [x["name_th"] for x in xs]  # noqa: E731
+    assert names(suggestion_places(SUGGEST_VERIFIED, parse("อยากไปที่มีน้ำตก"))) == ["น้ำตกแม่กลาง", "น้ำตกเอราวัณ"]
+    # คำถามต่อ "ที่ไหนก็ได้" ไม่บอกเรื่อง ใช้เรื่องจากคำถามก่อนหน้า
+    assert set(names(suggestion_places(SUGGEST_VERIFIED, parse("ที่ไหนก็ได้ลองเสนอมาก่อน"), "อยากไปที่มีน้ำตก"))) == {"น้ำตกเอราวัณ", "น้ำตกแม่กลาง"}
+    assert names(suggestion_places(SUGGEST_VERIFIED, parse("แนะนำวัดหน่อย"))) == ["วัดอรุณราชวราราม"]
+    assert len(suggestion_places(SUGGEST_VERIFIED, parse("แนะนำที่เที่ยวหน่อย"))) == 3
+
+
+def test_no_location_in_llm_mode_suggests_listed_places_and_keeps_location_buttons(tmp_path):
+    llm = FakeLLM(lambda user: "ลองดูน้ำตกเอราวัณที่กาญจนบุรีค่ะ น้ำใสเป็นชั้น ๆ\nบอกจังหวัดหรือที่พักมา น้องทริปค้นรอบ ๆ ให้ได้ค่ะ")
+    svc = PlacesService(http=FakeHttp(overpass=[]), cache=TTLCache(None), verified=SUGGEST_VERIFIED, osm_live=True,
+                        snapshot=Snapshot(None))
+    rag = Rag(Retriever(DOCS), llm, known_names={"น้ำตกเอราวัณ", "น้ำตกแม่กลาง", "วัดอรุณราชวราราม"})
+    c = TestClient(create_app(svc, store=Store(tmp_path / "t.db"), session_secret="s", secure_cookie=False,
+                              chat_throttle=ChatThrottle(limit=1000), rag=rag))
+    evs = events(c.post("/api/chat", json={"message": "อยากไปที่มีน้ำตก"}))
+    d = done(evs)
+    assert d["mode"] == "llm" and d["ask"] == "location"
+    assert "น้ำตกเอราวัณ" in text_of(evs) and SUGGEST_DISCLAIMER in text_of(evs) and TRAVEL_DISCLAIMER not in text_of(evs)
+    system, user = llm.calls[-1]
+    assert system == TRAVEL_PROMPT and "<task>" in user and "จังหวัดกาญจนบุรี" in user and "วัดอรุณ" not in user
+    assert len(llm.calls) == 1                                   # ไม่เรียก LLM ตอบจากคลังความรู้ก่อนอีกรอบ
+    # ชื่อที่ไม่อยู่ในรายการ ด่านตรวจตีตก กลับไปถามว่าแถวไหนแบบเดิม
+    llm.reply = "ไปวัดอรุณราชวรารามสิคะ"
+    evs = events(c.post("/api/chat", json={"message": "อยากไปที่มีน้ำตก"}))
+    assert done(evs)["mode"] == "rule" and "แถวไหน" in text_of(evs)
