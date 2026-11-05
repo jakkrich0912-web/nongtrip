@@ -84,7 +84,8 @@ def test_llm_answer_passes_guard_and_streams_sources(tmp_path):
     text = text_of(evs)
     assert "สร้างขึ้นในสมัยล้านนา [k:p01:0]" in text
     assert "1. " not in text                       # ไม่ใช่รายการแบบกฎ
-    assert "ระยะเป็นเส้นตรง" in text and "OpenStreetMap" not in text   # ข้อความท้ายที่โค้ดเติม (หมายเหตุระยะ) ที่มา OSM อยู่ท้ายหน้าเว็บ
+    assert "(เส้นตรง)" in text and "ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ" not in text   # LLM บอกเส้นตรงแล้ว ไม่ต่อหมายเหตุซ้ำ
+    assert "OpenStreetMap" not in text                                                # ที่มา OSM อยู่ท้ายหน้าเว็บ
     assert len(llm.calls) == 1
 
 
@@ -236,7 +237,7 @@ def test_english_llm_uses_english_prompt_and_finds_thai_chunks(tmp_path):
     system, user = llm.calls[0]
     assert "Answer in English" in system and "k:p01:0" in user and "k:p99:0" not in user    # ค้นจากชื่อไทยของสถานที่ได้ แม้ถามเป็นอังกฤษ
     text = text_of(evs)
-    assert "Lanna era [k:p01:0]" in text and "Distances are straight-line" in text
+    assert "Lanna era [k:p01:0]" in text and "(straight-line)" in text and "Distances are straight-line" not in text
 
 
 def test_thai_reply_is_rejected_for_english_request(tmp_path):
@@ -475,7 +476,12 @@ def test_plain_search_is_narrated_from_results_and_falls_back_to_list(tmp_path):
     c, _ = make(tmp_path, llm)
     evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
     assert done(evs)["mode"] == "llm" and NARRATE_DISCLAIMER in text_of(evs) and "ใกล้สุด ห่าง 1 กม." in text_of(evs)
-    assert "ระยะเป็นเส้นตรง" in text_of(evs) and dict(evs)["places"]["items"]          # การ์ดและหมายเหตุระยะยังอยู่
+    assert dict(evs)["places"]["items"]                                                # การ์ดยังอยู่
+    assert "ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ" not in text_of(evs)                          # LLM บอกเส้นตรงแล้ว ไม่ต่อซ้ำ
+    llm.reply = "แถวนี้มีใกล้สุด ห่าง 1 กม. ลองแวะดูค่ะ"                                    # LLM ไม่บอก: ต่อหมายเหตุให้ ลงท้ายค่ะ
+    evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
+    assert "ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถค่ะ" in text_of(evs)
+    llm.reply = "แถวนี้มีใกล้สุด ห่าง 1 กม. (เส้นตรง) ลองแวะดูค่ะ"
     llm.reply = "ไปวัดของที่อื่นสิคะ"                                                    # ชื่อนอกผลค้น ด่านตีตก ใช้รายชื่อเดิม
     evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
     assert done(evs)["mode"] == "rule" and "1. " in text_of(evs)
@@ -547,3 +553,10 @@ def test_thai_prompts_fix_the_voice_to_kha():
     from services.api.rag import GENERAL_PROMPT, SYSTEM_PROMPT
     for p in (SYSTEM_PROMPT, TRAVEL_PROMPT, GENERAL_PROMPT):
         assert 'ลงท้ายด้วย "ค่ะ" หรือ "คะ" เท่านั้น ห้ามใช้ "ครับ"' in p
+
+
+def test_kha_on_fixed_footer_lines():
+    from services.api.chat import _kha
+    assert _kha("หมายเหตุ: ปักหมุดที่พักเพื่อให้ตรงขึ้น\n") == "หมายเหตุ: ปักหมุดที่พักเพื่อให้ตรงขึ้นค่ะ\n"
+    assert _kha("ระบบไม่ทำให้ (เส้นตรง)\n") == "ระบบไม่ทำให้ (เส้นตรง) ค่ะ\n"
+    assert _kha("ลองแวะดูค่ะ\n") == "ลองแวะดูค่ะ\n" and _kha("Note: straight-line\n") == "Note: straight-line\n"

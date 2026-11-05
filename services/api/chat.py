@@ -542,6 +542,22 @@ def _footer(places_ev: dict | None, it: Intent, lang: str = "th") -> list[str]:
     return out
 
 
+def _kha(line: str) -> str:
+    """ข้อความสำเร็จรูปภาษาไทยที่ต่อท้ายคำตอบ LLM ให้ลงท้ายค่ะเหมือนเนื้อความ"""
+    t = line.rstrip("\n")
+    if not THAI.search(t) or t.endswith(("ค่ะ", "คะ")):
+        return line
+    return t + (" ค่ะ" if t.endswith(")") else "ค่ะ") + "\n"
+
+
+def _llm_footer(foot: list[str], llm_text: str, lang: str) -> list[str]:
+    """ท้ายคำตอบ LLM: ไม่ซ้ำหมายเหตุระยะเส้นตรงถ้า LLM บอกแล้ว และลงท้ายค่ะ"""
+    if "เส้นตรง" in llm_text or "straight-line" in llm_text.lower():
+        drop = {"ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ", NOTE_EN["ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ"]}
+        foot = [f for f in foot if f.strip() not in drop]
+    return [_kha(f) for f in foot] if lang != "en" else foot
+
+
 def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[str],
                       throttle: ChatThrottle | None = None, rag: Rag | None = None) -> APIRouter:
     r = APIRouter()
@@ -706,14 +722,14 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                             foot = _footer(places_ev, intent, body.lang)
                             # หมายเหตุของคำตอบแบบกฎ (เช่น ค้นรอบจุดกลางจังหวัด ไม่ใช่รอบที่พัก) ยังต้องบอกผู้ใช้
                             foot += [h for h in held if h.startswith(("หมายเหตุ:", "Note:")) and h not in foot]
-                            lines += foot
+                            lines += _llm_footer(foot, trav.text, body.lang)
                     elif res.mode == "llm" and not (off_topic and no_info):
                         mode = "llm"
                         for ev, data in pending:
                             yield emit(ev, data)
                         yield emit("sources", {"items": res.sources})
                         lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
-                        lines += _footer(places_ev, intent, body.lang)
+                        lines += _llm_footer(_footer(places_ev, intent, body.lang), res.text, body.lang)
                     elif off_topic:
                         # นอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนที่โค้ดใส่เอง ไม่ผ่านด่านตรวจใช้คำตอบสำเร็จรูปเดิม
                         # ถามเรื่องอาหาร: ตอบเรื่องอาหารท้องถิ่นแบบทั่วไป (ห้ามแนะนำร้านเฉพาะแห่ง ระบบไม่มีข้อมูลร้านอาหาร)
