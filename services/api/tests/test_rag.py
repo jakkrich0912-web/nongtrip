@@ -541,3 +541,9 @@ def test_no_location_in_llm_mode_suggests_listed_places_and_keeps_location_butto
     llm.reply = "ไปวัดอรุณราชวรารามสิคะ"
     evs = events(c.post("/api/chat", json={"message": "อยากไปที่มีน้ำตก"}))
     assert done(evs)["mode"] == "rule" and "แถวไหน" in text_of(evs)
+
+
+def test_thai_prompts_fix_the_voice_to_kha():
+    from services.api.rag import GENERAL_PROMPT, SYSTEM_PROMPT
+    for p in (SYSTEM_PROMPT, TRAVEL_PROMPT, GENERAL_PROMPT):
+        assert 'ลงท้ายด้วย "ค่ะ" หรือ "คะ" เท่านั้น ห้ามใช้ "ครับ"' in p
