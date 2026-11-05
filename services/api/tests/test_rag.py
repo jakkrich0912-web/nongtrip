@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from services.api.answer_guard import GUARD_NOTICE
 from services.api.chat import ChatThrottle
 from services.api.main import create_app
-from services.api.chat import SUGGEST_DISCLAIMER, TRAVEL_DISCLAIMER
+from services.api.chat import NARRATE_DISCLAIMER, SUGGEST_DISCLAIMER, TRAVEL_DISCLAIMER
 from services.api.rag import TRAVEL_PROMPT, Rag, build_prompt, check_travel, load_known_names
 from services.api.store import Store
 from services.places import PlacesService
@@ -125,6 +125,10 @@ def test_guard_failure_falls_back_to_rule_answer_with_notice(tmp_path, bad):
     c, _ = make(tmp_path, FakeLLM(bad))
     evs = events(ask(c))
     names = [e for e, _ in evs]
+    if done(evs)["mode"] == "llm":
+        # ไม่ผ่านด่านตรวจของคลังความรู้ (ไม่มีรหัสที่มา) แต่ผ่านด่านของคำตอบแบบเรียบเรียงจากผลค้น: ไม่อ้างคลัง ไม่มี sources
+        assert "sources" not in names and NARRATE_DISCLAIMER in text_of(evs)
+        return
     assert "sources" not in names and done(evs) == {"chat_id": None, "mode": "rule"}
     text = text_of(evs)
     assert GUARD_NOTICE in text and "1. ใกล้สุด" in text            # คำตอบแบบกฎ
@@ -149,7 +153,8 @@ def test_no_verified_place_in_results_means_llm_not_called(tmp_path):
     llm = FakeLLM(GOOD)
     c, _ = make(tmp_path, llm, docs=[{**DOCS[0], "place_id": "v:zzz"}])
     evs = events(ask(c))
-    assert llm.calls == [] and done(evs)["mode"] == "rule"
+    # ไม่เรียก LLM ตอบจากคลังความรู้ (เรียกครั้งเดียวเพื่อเรียบเรียงผลค้น) คำตอบที่มีรหัสที่มาไม่ผ่านด่านจึงเป็นโหมดกฎ
+    assert len(llm.calls) == 1 and "<task>" in llm.calls[0][1] and done(evs)["mode"] == "rule"
 
 
 def test_without_llm_everything_is_rule_mode_and_streams_as_before(tmp_path):
@@ -465,11 +470,15 @@ def test_general_travel_question_without_chunks_uses_llm(tmp_path):
     assert done(evs)["mode"] == "llm" and text_of(evs).startswith(TRAVEL_DISCLAIMER)
 
 
-def test_plain_search_still_uses_rule_list(tmp_path):
-    llm = FakeLLM(lambda user: "ไม่ควรถูกเรียก")
+def test_plain_search_is_narrated_from_results_and_falls_back_to_list(tmp_path):
+    llm = FakeLLM(lambda user: "แถวนี้มีใกล้สุด ห่าง 1 กม. (เส้นตรง) ลองแวะดูค่ะ")
     c, _ = make(tmp_path, llm)
     evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
-    assert done(evs)["mode"] == "rule" and not llm.calls and "1. " in text_of(evs)
+    assert done(evs)["mode"] == "llm" and NARRATE_DISCLAIMER in text_of(evs) and "ใกล้สุด ห่าง 1 กม." in text_of(evs)
+    assert "ระยะเป็นเส้นตรง" in text_of(evs) and dict(evs)["places"]["items"]          # การ์ดและหมายเหตุระยะยังอยู่
+    llm.reply = "ไปวัดของที่อื่นสิคะ"                                                    # ชื่อนอกผลค้น ด่านตีตก ใช้รายชื่อเดิม
+    evs = events(ask(c, "ที่เที่ยวใกล้ๆ"))
+    assert done(evs)["mode"] == "rule" and "1. " in text_of(evs)
 
 
 def test_check_travel_rules():
@@ -532,3 +541,9 @@ def test_no_location_in_llm_mode_suggests_listed_places_and_keeps_location_butto
     llm.reply = "ไปวัดอรุณราชวรารามสิคะ"
     evs = events(c.post("/api/chat", json={"message": "อยากไปที่มีน้ำตก"}))
     assert done(evs)["mode"] == "rule" and "แถวไหน" in text_of(evs)
+
+
+def test_thai_prompts_fix_the_voice_to_kha():
+    from services.api.rag import GENERAL_PROMPT, SYSTEM_PROMPT
+    for p in (SYSTEM_PROMPT, TRAVEL_PROMPT, GENERAL_PROMPT):
+        assert 'ลงท้ายด้วย "ค่ะ" หรือ "คะ" เท่านั้น ห้ามใช้ "ครับ"' in p

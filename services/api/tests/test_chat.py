@@ -578,7 +578,29 @@ def test_subject_filters_places_by_subtype(tmp_path):
     assert "พบน้ำตก 1 แห่ง" in text_of(evs)
     # ไม่มีประเภทที่ขอ: แสดงที่เที่ยวทั้งหมดพร้อมบอก
     evs = events(ask(c, "ตลาดแถวนี้", context={"lat": LAT, "lon": LON}))
-    assert len(dict(evs)["places"]["items"]) == 4 and "ไม่พบสถานที่ที่ระบุประเภทตลาด" in text_of(evs)
+    assert "places" not in dict(evs) and "ไม่พบตลาดในรัศมี" in text_of(evs) and dict(evs)["done"]["ask"] == "location"
     # เอ่ยชื่อสถานที่ที่มีคำว่าวัด ไม่กรองเหลือแต่วัด
     evs = events(ask(c, "ที่เที่ยวใกล้วัดพระธาตุดอยสุเทพ", context={"lat": LAT, "lon": LON}))
     assert len(dict(evs)["places"]["items"]) >= 3
+
+
+def test_booking_request_without_a_stay_name_is_not_a_stay_search(tmp_path):
+    c, *_ = make(tmp_path)
+    out = text_of(events(ask(c, "ช่วยจองโรงแรมให้หน่อย")))
+    assert "จองหรือชำระเงินแทนไม่ได้" in out and "ไม่พบที่พักชื่อนี้" not in out
+
+
+def test_short_follow_up_with_a_place_keeps_the_subject_from_history(tmp_path):
+    http = FakeHttp(overpass=[el(1, "ใกล้สุด", up(1), LON, {"tourism": "attraction"}),
+                              el(2, "น้ำตกเล็ก", up(3), LON, {"waterway": "waterfall"})])
+    c, *_ = make(tmp_path, http)
+    hist = [{"role": "user", "content": "อยากไปที่มีน้ำตก"}, {"role": "assistant", "content": "อยากหาน้ำตกใช่ไหมคะ บอกหน่อยว่าแถวไหน"}]
+    evs = events(ask(c, "เอาแถวนี้", context={"lat": LAT, "lon": LON}, history=hist))
+    assert [p["name_th"] for p in dict(evs)["places"]["items"]] == ["น้ำตกเล็ก"]
+
+
+def test_price_question_says_no_price_first_without_guard_notice(tmp_path):
+    from services.api.chat import GUARD_NOTICE
+    c, *_ = make(tmp_path)
+    out = text_of(events(ask(c, "ค่าเข้าที่เที่ยวแถวนี้กี่บาท", context={"lat": LAT, "lon": LON})))
+    assert "ระบบไม่มีข้อมูลราคา" in out and GUARD_NOTICE not in out

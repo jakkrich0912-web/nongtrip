@@ -128,7 +128,7 @@ HISTORY_SUBTYPES = frozenset(("temple", "place_of_worship", "monument", "city_ga
                               "archaeological_site", "fort", "craft"))
 NATURE_SUBTYPES = frozenset(("nature", "waterfall", "peak", "beach", "hot_spring", "cave_entrance", "park", "nature_reserve"))
 SUBJECT_SUBTYPES = {
-    "วัด": frozenset(("temple", "place_of_worship")), "น้ำตก": frozenset(("waterfall",)), "ชายหาด": frozenset(("beach",)),
+    "วัด": frozenset(("temple", "place_of_worship")), "น้ำตก": frozenset(("waterfall",)), "ชายหาด": frozenset(("beach",)), "ทะเล": frozenset(("beach",)),
     "ดอยและภูเขา": frozenset(("peak",)), "พิพิธภัณฑ์": frozenset(("museum", "gallery")), "ตลาด": frozenset(("market",)),
     "จุดชมวิว": frozenset(("viewpoint",)), "วัดและประวัติศาสตร์": HISTORY_SUBTYPES, "ธรรมชาติ": NATURE_SUBTYPES,
 }
@@ -289,6 +289,14 @@ def find_province(text: str) -> str | None:
         if rx.search(low) and (not ambiguous or _NAN_OK.search(low)):
             return p
     return None
+
+
+_NOT_A_NAME = re.compile(r"โรงแรม|ที่พัก|รีสอร์ท|รีสอร์ต|โฮสเทล|ให้|หน่อย|ด้วย|ที|ครับ|ค่ะ|คะ|นะ|จ้า|\\s")
+
+
+def generic_stay_words(q: str | None) -> bool:
+    """ข้อความที่จับได้ว่าเป็นชื่อที่พักแต่มีแค่คำทั่วไป ("โรงแรมให้") ไม่ใช่ชื่อจริง"""
+    return bool(q) and len(_NOT_A_NAME.sub("", q)) < 2
 
 
 def drop_province(text: str) -> str:
