@@ -31,3 +31,8 @@
 @keyframes ms-shake { 0%, 100% { transform:none; } 25% { transform:translateX(-7px) rotate(-4deg); } 75% { transform:translateX(7px) rotate(4deg); } }
 @keyframes ms-nod { 0%, 100% { transform:none; } 40% { transform:rotate(calc(var(--ms-dir, 1) * 4deg)) translateY(3px) scale(1.02, .98); } }
 @media (prefers-reduced-motion:reduce) { .ms-walker, .ms-pose { animation:none !important; transition:none !important; transform:none !important; } }
+/* ภาพเคลื่อนไหวทีละเฟรม: วางในกล่องเดียวกับมาสคอตนิ่ง ภาพขยับเองอยู่แล้วจึงปิดท่า CSS ของท่านั้น */
+.ms-pose { position:relative; }
+.ms-pose.has-sprite { animation:none !important; transform:none !important; }
+/* เดินด้วยภาพทีละเฟรม: เลื่อนด้วยความเร็วคงที่ เท้าจึงไปกับพื้นตาม fps ที่คำนวณจากความเร็ว */
+.ms-walker.is-stepping { transition-timing-function:linear; }

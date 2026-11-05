@@ -24,7 +24,7 @@
 @keyframes nt-auth-pop-r { from { opacity:0; transform:rotate(5deg) scale(.6); } }
 .nt-auth-live { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .ms-walker { position:relative; }
-.nt-auth-story-foot { z-index:2; position:relative; font-size:12px; color:#e4ecdf; margin:26px 0 0; text-align:center; }
+.nt-auth-story-foot { z-index:2; position:relative; font-size:12px; color:#f5f3ed; margin:26px 0 0; text-align:center; text-shadow:0 1px 3px rgba(10,20,12,.85), 0 0 10px rgba(10,20,12,.6); }
 .nt-auth-form-panel { padding:38px clamp(24px,4.5vw,72px) 26px; display:flex; flex-direction:column; }
 .nt-auth-topline { display:flex; align-items:center; justify-content:space-between; gap:20px; }
 .nt-auth-back { display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:#53614f!important; font-size:13px; }
@@ -69,5 +69,12 @@
 .nt-auth-story :focus-visible { outline-color:#ffcf80; }
 @media (min-width:1500px) { .nt-auth-story { padding-left:max(80px,calc((100vw - 1200px)/2)); } .nt-auth-page.is-signup .nt-auth-story { padding-left:80px; padding-right:max(80px,calc((100vw - 1200px)/2)); } }
 @media (max-width:1050px) { .nt-auth-story { padding-inline:30px; } .nt-auth-story-copy { margin-top:55px; } .nt-auth-speech { font-size:11px; max-width:190px; } }
-@media (max-width:760px) { .nt-auth-page { display:block; } .nt-auth-story { display:none; } .nt-auth-page.is-signup .nt-auth-form-panel { transform:none; } .nt-auth-form-panel { min-height:100vh; padding:24px 24px 20px; } .nt-auth-form-content { padding:50px 0 35px; } .nt-auth-form-content h1 { font-size:30px; } }
+/* จอเล็ก: แผงเรื่องราวเป็นแถบด้านบนพร้อมภาพวิวรุ่นมือถือ ไม่มีมาสคอตและข้อความยาว ฟอร์มอยู่ถัดลงมา */
+@media (max-width:760px) {
+  .nt-auth-story { display:flex; padding:20px 24px 26px; min-height:0; transform:none !important; }
+  .nt-auth-story-copy { margin-top:22px; }
+  .nt-auth-story-copy h2 { margin:10px 0 0; font-size:26px; line-height:1.35; }
+  .nt-auth-story-copy p, .nt-auth-mascot-scene, .nt-auth-story-foot { display:none; }
+}
+@media (max-width:760px) { .nt-auth-page { display:block; } .nt-auth-page.is-signup .nt-auth-form-panel { transform:none; } .nt-auth-form-panel { min-height:0; padding:24px 24px 20px; } .nt-auth-form-content { padding:50px 0 35px; } .nt-auth-form-content h1 { font-size:30px; } }
 @media (prefers-reduced-motion:reduce) { .nt-auth-page *, .nt-auth-page *::before, .nt-auth-page *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
