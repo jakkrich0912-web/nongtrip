@@ -80,7 +80,7 @@ def test_english_question_gets_english_reply_with_english_province(tmp_path):
 
 def test_english_text_works_even_when_ui_is_thai(tmp_path):
     out = text_of(events(ask(_snap_client(tmp_path), "cafes in Chiang Mai")))
-    assert "จุดกลางจังหวัดเชียงใหม่" in out
+    assert "centre of Chiang Mai" in out and "จุดกลาง" not in out          # พิมพ์อังกฤษ ตอบอังกฤษ
 
 
 @pytest.mark.parametrize("thai,english", [

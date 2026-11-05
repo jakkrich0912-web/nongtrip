@@ -6,13 +6,14 @@ import { numberCitations, safeUrl as safeSourceUrl } from '../../lib/chat.js';
 import { QUICK_PROVINCES } from '../../lib/useChatSession.js';
 import { useTypewriter } from '../../lib/typewriter.js';
 import { followUps } from '../../lib/followUps.js';
+import { plainText, richParts } from '../../lib/richText.js';
 
 // คำตอบของน้องทริปพิมพ์ทีละตัว คำถามของผู้ใช้และคำตอบที่เสร็จก่อนเปิดหน้า (รวมจากประวัติ) แสดงทันที
 function MessageText({ message }) {
   const full = message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n');
   const [instant] = useState(() => message.role !== 'bot' || message.restored || message.status === 'done' || message.status === 'stopped');
   const [shown, typing] = useTypewriter(full, instant);
-  return <p className={`nt-chat-text${typing ? ' is-typing' : ''}`}>{shown}</p>;
+  return <p className={`nt-chat-text${typing ? ' is-typing' : ''}`}>{richParts(shown).map((part, i) => (part.bold ? <strong key={i}>{part.text}</strong> : part.text))}</p>;
 }
 
 function ResultCards({ result, t, lang }) {
@@ -46,7 +47,7 @@ function ResultCards({ result, t, lang }) {
 function BotActions({ message, isLast, busy, session, t }) {
   const [copied, setCopied] = useState(false);
   if (!session || !message.text || !['done', 'stopped', 'error'].includes(message.status)) return null;
-  const plain = message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n').trim();
+  const plain = plainText(message.text.split('\n').map((ln) => numberCitations(ln, message.sources)).join('\n')).trim();
   const copy = async () => {
     try { await navigator.clipboard.writeText(plain); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch { /* คัดลอกไม่ได้ (สิทธิ์เบราว์เซอร์) ไม่ต้องทำอะไร */ }
   };
