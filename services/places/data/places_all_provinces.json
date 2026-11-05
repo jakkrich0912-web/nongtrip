@@ -1,10 +1,177 @@
 {
  "_meta": {
-  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md",
+  "note": "สร้างโดย scripts/build_places.py จาก Wikipedia (ชื่อ พิกัด ชื่อไทย) เวลาเปิด ค่าเข้า คำอธิบายเป็น null ดู docs/COVERAGE.md และ docs/DATA_SOURCES.md (5 พ.ย. เพิ่มยโสธรและอ่างทองด้วย --only)",
   "built_on": "2026-11-02",
   "weekday_index": "0=จันทร์ ... 6=อาทิตย์"
  },
  "places": [
+  {
+   "id": "p4601",
+   "name_th": "Ban Singh Tha",
+   "name_en": "Ban Singh Tha",
+   "category": "museum",
+   "area": "ยโสธร",
+   "lat": 15.79161,
+   "lon": 104.1401,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [
+    "ยังไม่พบชื่อภาษาไทยใน Wikipedia จึงแสดงชื่ออังกฤษ"
+   ],
+   "province": "ยโสธร",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Ban_Singh_Tha",
+     "title": "Ban Singh Tha (Wikipedia)",
+     "checked_on": "2026-11-05",
+     "fields": [
+      "lat",
+      "lon",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7201",
+   "name_th": "วัดป่าโมกวรวิหาร",
+   "name_en": "Wat Pa Mok",
+   "category": "temple",
+   "area": "อ่างทอง",
+   "lat": 14.4822,
+   "lon": 100.4484,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อ่างทอง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Wat_Pa_Mok",
+     "title": "Wat Pa Mok (Wikipedia)",
+     "checked_on": "2026-11-05",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7202",
+   "name_th": "พระตำหนักคำหยาด",
+   "name_en": "Kham Yat Palace",
+   "category": "museum",
+   "area": "อ่างทอง",
+   "lat": 14.66,
+   "lon": 100.34,
+   "duration_min": 120,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "history",
+    "culture",
+    "outdoors"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อ่างทอง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Kham_Yat_Palace",
+     "title": "Kham Yat Palace (Wikipedia)",
+     "checked_on": "2026-11-05",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th",
+      "name_en"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p4602",
+   "name_th": "ธาตุก่องข้าวน้อย",
+   "name_en": null,
+   "category": "temple",
+   "area": "ยโสธร",
+   "lat": 15.76351,
+   "lon": 104.20704,
+   "duration_min": 60,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "photo"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "ยโสธร",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%98%E0%B8%B2%E0%B8%95%E0%B8%B8%E0%B8%81%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A7%E0%B8%99%E0%B9%89%E0%B8%AD%E0%B8%A2",
+     "title": "ธาตุก่องข้าวน้อย (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-05",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p7203",
+   "name_th": "พิพิธภัณฑ์ตำนานเมืองอ่างทอง",
+   "name_en": null,
+   "category": "museum",
+   "area": "อ่างทอง",
+   "lat": 14.58993,
+   "lon": 100.45496,
+   "duration_min": 90,
+   "cost_thb": null,
+   "open": null,
+   "tags": [
+    "culture",
+    "rainy_ok",
+    "history"
+   ],
+   "description": null,
+   "notes": [],
+   "province": "อ่างทอง",
+   "verified": true,
+   "sources": [
+    {
+     "url": "https://th.wikipedia.org/wiki/%E0%B8%9E%E0%B8%B4%E0%B8%9E%E0%B8%B4%E0%B8%98%E0%B8%A0%E0%B8%B1%E0%B8%93%E0%B8%91%E0%B9%8C%E0%B8%95%E0%B8%B3%E0%B8%99%E0%B8%B2%E0%B8%99%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%E0%B8%AD%E0%B9%88%E0%B8%B2%E0%B8%87%E0%B8%97%E0%B8%AD%E0%B8%87",
+     "title": "พิพิธภัณฑ์ตำนานเมืองอ่างทอง (Wikipedia ภาษาไทย)",
+     "checked_on": "2026-11-05",
+     "fields": [
+      "lat",
+      "lon",
+      "name_th"
+     ]
+    }
+   ]
+  },
   {
    "id": "p101",
    "name_th": "พระบรมมหาราชวัง",

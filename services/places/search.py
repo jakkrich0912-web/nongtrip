@@ -326,6 +326,8 @@ class PlacesService:
             counts={k: sum(1 for p in places if p.kind == k) for k in ks},
             sources={s: sum(1 for p in places if p.source == s) for s in ("verified", "osm")},
             osm_available=area.osm_ok, osm_mode=(area.mode if area.osm_ok else "none"), notices=notices,
+            data_as_of=(self.snapshot.date_of(p.province for p in places if p.source == "osm")
+                        if area.osm_ok and area.mode == "snapshot" else None),
         )
 
     # ---------- ค้นที่พักรอบหมุด + สถานที่เด่นของแต่ละที่พัก ----------

@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "name": "walk",
+  "canvas_size": [
+    360,
+    480
+  ],
+  "frame_count": 8,
+  "fps": 10,
+  "loop": true,
+  "anchor": [
+    180,
+    447
+  ],
+  "anchor_semantics": "fixed ground registration; feet lift only during hop",
+  "frames": [
+    {
+      "file": "00.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        30,
+        55,
+        305,
+        448
+      ],
+      "sha256": "59eea45d63c9adf402a25cbda150f1618c8d016ae833e712543e4402e430f500",
+      "bytes": 27740,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          33
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "01.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        30,
+        57,
+        304,
+        448
+      ],
+      "sha256": "ad386cae6afd594bc8c46ffcd5207d66d035eb0ab9b6b4492183c8ce593febf1",
+      "bytes": 26562,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          23,
+          32
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "02.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        31,
+        50,
+        305,
+        448
+      ],
+      "sha256": "8041c93ad658b1ab560e4686827193750ec6ccd8b079454a22a5f47062d7edcd",
+      "bytes": 26804,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          28
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "03.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        28,
+        49,
+        305,
+        448
+      ],
+      "sha256": "226ec95dff5a0c2af1323373e4d4072ad6b41d75e4d56a8d7a1ae516cfeb97f0",
+      "bytes": 27780,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          28
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "04.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        31,
+        53,
+        305,
+        448
+      ],
+      "sha256": "3a3527450bbeb9e3f50f766b9cef1009c1679bb6e3e6e4b8cfcfaa74ea9e5f8a",
+      "bytes": 30778,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          31
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "05.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        29,
+        61,
+        304,
+        448
+      ],
+      "sha256": "71d689cdae6319b99d07600a5fe323b3440c7b94e3dff681095deb1941afd57d",
+      "bytes": 26704,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          33
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "06.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        31,
+        51,
+        305,
+        448
+      ],
+      "sha256": "88b0ea20194a14c22d876ffc245093a3851ffdf320c5473e1e7505f226546cd8",
+      "bytes": 26860,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          29
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    },
+    {
+      "file": "07.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        30,
+        57,
+        305,
+        448
+      ],
+      "sha256": "0c827fb654c282d9c1274e8c412959f099c35ede3eb046b3097a8ce98fb3655b",
+      "bytes": 27308,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.29455630126771065,
+        "translation": [
+          24,
+          35
+        ],
+        "source_size": [
+          1024,
+          1536
+        ]
+      }
+    }
+  ]
+}

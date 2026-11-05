@@ -423,8 +423,9 @@ def test_multiline_osm_name_cannot_forge_reply_lines(tmp_path):
 
 
 def test_offtopic_message_is_not_answered_with_a_places_list():
-    # "กินข้าวยัง" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม
-    assert parse("กินข้าวยัง").off_topic
+    # "หิวแล้ว" ไม่มีคำที่ระบบรู้จักเลย ต้องไม่เดาว่าให้ค้นรายชื่อรอบจุดเดิม ("กินข้าวยัง" เป็นคุยเล่น ตอบสำเร็จรูป)
+    assert parse("หิวแล้ว").off_topic
+    assert parse("กินข้าวยัง").smalltalk == "eaten" and not parse("กินข้าวยัง").off_topic
     assert parse("ขอบคุณ").smalltalk == "thanks" and not parse("ขอบคุณ").off_topic
     assert parse("hello").greeting and not parse("hello").off_topic
     # ข้อความสั้นๆ ที่ยังหมายถึงการค้น ต้องไม่ถูกตีเป็นนอกเรื่อง
@@ -441,7 +442,7 @@ def test_food_question_says_there_is_no_restaurant_data():
 
 def test_offtopic_chat_runs_no_search_even_with_a_pin(env):
     c, *_ = env
-    evs = events(ask(c, "กินข้าวยัง", context={"lat": LAT, "lon": LON}))
+    evs = events(ask(c, "หิวแล้ว", context={"lat": LAT, "lon": LON}))
     assert not [1 for e, _ in evs if e in ("tool", "places", "lodgings")]
     text = text_of(evs)
     assert "ยังไม่มีข้อมูลร้านอาหาร" in text and "คาเฟ่" in text
@@ -470,12 +471,12 @@ def test_named_place_without_pin_searches_around_that_place(env):
 def test_smalltalk_kinds_and_guards():
     for text, kind in [("ชื่ออะไร", "name"), ("คุณชื่ออะไรเหรอ", "name"), ("เป็นคนหรือเปล่า", "bot"), ("ใครสร้างเธอ", "maker"),
                        ("สบายดีไหม", "wellbeing"), ("ขอบคุณค่ะ", "thanks"), ("บาย", "bye"), ("บ๊ายบายค่ะ", "bye"),
-                       ("เก่งจัง", "praise"), ("พรุ่งนี้ฝนตกไหม", "weather"), ("เบื่อจัง", "bored"),
+                       ("เก่งจัง", "praise"), ("พรุ่งนี้ฝนตกไหม", "weather"), ("เบื่อจัง", "bored"), ("กินข้าวยัง", "eaten"),
                        ("what's your name?", "name"), ("who are you", "name"), ("thank you!", "thanks"), ("how are you", "wellbeing")]:
         it = parse(text)
         assert it.smalltalk == kind and not it.off_topic and not it.greeting, text
     # ต้องไม่จับผิด: "สบาย" มี "บาย" อยู่ในคำ, ชื่อสถานที่, ข้อความที่มีจังหวัด/ประเภทสถานที่/ยาวเกิน
-    for text in ["สบายๆ", "วัดนี้ชื่ออะไร", "ขอบคุณ แล้วคาเฟ่ล่ะ", "ที่เที่ยวเชียงใหม่ ขอบคุณ", "คาเฟ่ใกล้ๆ", "สวัสดี", "กินข้าวยัง",
+    for text in ["สบายๆ", "วัดนี้ชื่ออะไร", "ขอบคุณ แล้วคาเฟ่ล่ะ", "ที่เที่ยวเชียงใหม่ ขอบคุณ", "คาเฟ่ใกล้ๆ", "สวัสดี", "หิวแล้ว",
                  "ขอบคุณที่ช่วยหาที่เที่ยวให้ ตอนนี้ขอรบกวนถามเรื่องอื่นต่ออีกนิดนะ",
                  "เขื่อนภูมิพลเดิมชื่ออะไร", "ชื่อไร่เลย์มาจากคำว่าอะไร", "พยากรณ์อากาศโตเกียวพรุ่งนี้",
                  "อุทยานแห่งชาติแจ้ซ้อนมีบ่อน้ำร้อนไหม"]:   # คำถามข้อเท็จจริงในชุดทดสอบทอง ต้องไปถึงผู้ตอบหลักเหมือนเดิม
@@ -555,3 +556,51 @@ def test_off_topic_reply_starts_softly():
     assert _off_topic_parts(parse("คอมช้าแก้ยังไง"))[0].startswith("ขอโทษนะคะ ")
     assert _off_topic_parts(parse("2+2 เท่ากับเท่าไร"))[0].startswith("ขอโทษนะคะ ")
     assert _off_topic_parts(parse("my laptop is slow"), "en")[0].startswith("Sorry, ")
+
+
+def test_drop_province_keeps_place_names_but_removes_province():
+    from services.api.chat_rules import drop_province
+    assert "chiang mai" not in drop_province("cafes in Chiang Mai")
+    assert "เชียงใหม่" not in drop_province("ที่เที่ยวเชียงใหม่")
+    assert "ดอยสุเทพ" in drop_province("เล่าเรื่องวัดพระธาตุดอยสุเทพ เชียงใหม่")
+
+
+def test_subject_filters_places_by_subtype(tmp_path):
+    http = FakeHttp(overpass=[
+        el(1, "ใกล้สุด", up(1), LON, {"tourism": "attraction"}),
+        el(2, "น้ำตกเล็ก", up(3), LON, {"waterway": "waterfall"}),
+        el(3, "จุดชมวิวไกล", up(8), LON, {"tourism": "viewpoint"}),
+    ])
+    c, *_ = make(tmp_path, http)
+    evs = events(ask(c, "น้ำตกแถวนี้", context={"lat": LAT, "lon": LON}))
+    places = dict(evs)["places"]
+    assert [p["name_th"] for p in places["items"]] == ["น้ำตกเล็ก"] and places["total"] == 1
+    assert "พบน้ำตก 1 แห่ง" in text_of(evs)
+    # ไม่มีประเภทที่ขอ: แสดงที่เที่ยวทั้งหมดพร้อมบอก
+    evs = events(ask(c, "ตลาดแถวนี้", context={"lat": LAT, "lon": LON}))
+    assert "places" not in dict(evs) and "ไม่พบตลาดในรัศมี" in text_of(evs) and dict(evs)["done"]["ask"] == "location"
+    # เอ่ยชื่อสถานที่ที่มีคำว่าวัด ไม่กรองเหลือแต่วัด
+    evs = events(ask(c, "ที่เที่ยวใกล้วัดพระธาตุดอยสุเทพ", context={"lat": LAT, "lon": LON}))
+    assert len(dict(evs)["places"]["items"]) >= 3
+
+
+def test_booking_request_without_a_stay_name_is_not_a_stay_search(tmp_path):
+    c, *_ = make(tmp_path)
+    out = text_of(events(ask(c, "ช่วยจองโรงแรมให้หน่อย")))
+    assert "จองหรือชำระเงินแทนไม่ได้" in out and "ไม่พบที่พักชื่อนี้" not in out
+
+
+def test_short_follow_up_with_a_place_keeps_the_subject_from_history(tmp_path):
+    http = FakeHttp(overpass=[el(1, "ใกล้สุด", up(1), LON, {"tourism": "attraction"}),
+                              el(2, "น้ำตกเล็ก", up(3), LON, {"waterway": "waterfall"})])
+    c, *_ = make(tmp_path, http)
+    hist = [{"role": "user", "content": "อยากไปที่มีน้ำตก"}, {"role": "assistant", "content": "อยากหาน้ำตกใช่ไหมคะ บอกหน่อยว่าแถวไหน"}]
+    evs = events(ask(c, "เอาแถวนี้", context={"lat": LAT, "lon": LON}, history=hist))
+    assert [p["name_th"] for p in dict(evs)["places"]["items"]] == ["น้ำตกเล็ก"]
+
+
+def test_price_question_says_no_price_first_without_guard_notice(tmp_path):
+    from services.api.chat import GUARD_NOTICE
+    c, *_ = make(tmp_path)
+    out = text_of(events(ask(c, "ค่าเข้าที่เที่ยวแถวนี้กี่บาท", context={"lat": LAT, "lon": LON})))
+    assert "ระบบไม่มีข้อมูลราคา" in out and GUARD_NOTICE not in out

@@ -1,15 +1,18 @@
 // ท่าทางเองของน้องทริปบนเวที (หน้าเข้าสู่ระบบ/สมัคร): เดินเตาะแตะไปมา กระโดดดึ๋ง ชะโงกดู และยืนหายใจ
 // ฟังก์ชันในไฟล์นี้ไม่แตะ DOM เลย ส่งค่าสุ่ม (0..1) เข้ามาเองได้ จึงเทสต์ได้ตรง ๆ
-// ภาพเดินทีละเฟรม (ถ้ามีในอนาคต) เสียบเพิ่มได้โดยไม่ต้องเปลี่ยนตารางนี้: ท่า walk ยังบอกระยะ ทิศ และเวลาเหมือนเดิม
+// ท่า walk hop look tail มีภาพเคลื่อนไหวทีละเฟรม (lib/mascotFrames.js) ไฟล์นี้บอกแค่ท่า ระยะ ทิศ และเวลา
 
 export const SPEED = 120;            // พิกเซลต่อวินาทีตอนเดิน
 export const STEP_MS = 300;          // หนึ่งก้าว (ตัวเด้งขึ้นลงหนึ่งรอบ)
 export const MIN_WALK = 50;          // เดินน้อยกว่านี้ไม่คุ้ม ยืนเฉย ๆ ดีกว่า
-export const HOP_MS = 720;
+export const HOP_MS = 600;           // hop 6 เฟรม 10 fps
 export const PEEK_MS = 1500;
+export const LOOK_MS = 1000;         // look-around 6 เฟรม 6 fps หนึ่งรอบ
+export const TAIL_MS = 1334;         // tail-wag 4 เฟรม 6 fps สองรอบ
 
 // น้ำหนักของแต่ละท่า รวมกันเท่าไรก็ได้ (คิดเป็นสัดส่วน)
-export const WEIGHTS = { walk: 40, hop: 18, peek: 17, rest: 25 };
+// ท่าพัก look/tail ให้น้ำหนักน้อย ไม่เล่นถี่จนรบกวน
+export const WEIGHTS = { walk: 36, hop: 14, peek: 12, look: 8, tail: 7, rest: 23 };
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
@@ -49,7 +52,7 @@ export function walkPlan(from, to) {
 
 // พักระหว่างท่า 1.6-4.4 วินาที ท่าที่เหนื่อยกว่าพักนานกว่านิดหน่อย
 export function restAfter(act, r) {
-  const base = act === 'walk' ? 2200 : act === 'hop' ? 1800 : 1600;
+  const base = act === 'walk' ? 2200 : act === 'hop' ? 1800 : act === 'look' || act === 'tail' ? 2600 : 1600;
   return base + Math.round(clamp(r, 0, 1) * 2200);
 }
 

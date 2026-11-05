@@ -62,3 +62,7 @@
 .nt-comp-rs-ne { top:-3px; right:-3px; cursor:nesw-resize; } .nt-comp-rs-sw { bottom:-3px; left:-3px; cursor:nesw-resize; }
 .nt-comp-rs-nw { top:-3px; left:-3px; cursor:nwse-resize; } .nt-comp-rs-se { bottom:-3px; right:-3px; cursor:nwse-resize; }
 .nt-comp-rs-se::after { content:""; position:absolute; right:7px; bottom:7px; width:9px; height:9px; border-right:2px solid #9fb196; border-bottom:2px solid #9fb196; border-radius:0 0 3px 0; opacity:.8; }
+/* ภาพทีละเฟรม (MotionSprite): อยู่กล่องเดียวกับมาสคอตนิ่ง ภาพเดินเองอยู่แล้วจึงปิดท่าโยกแบบเดิม */
+.nt-comp-sprite { position:relative; }
+.nt-comp-still { display:block; }
+.nt-comp.has-motion .nt-comp-sprite { animation:none !important; }

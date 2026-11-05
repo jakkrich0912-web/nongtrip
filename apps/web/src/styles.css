@@ -131,6 +131,10 @@ main { min-height:calc(100vh - var(--chrome)); }
 .seg.c-nature { background:#6f9c79; } .seg.c-temple { background:var(--mango); } .seg.c-museum { background:var(--hibiscus); }
 .seg.c-activity { background:#4f8a87; } .seg.c-market { background:#a7804a; } .seg.c-cafe { background:#8a5a3b; }
 .panel-body { flex:1; overflow:auto; padding-bottom:16px; }
+/* เปิดตัวกรองแล้วส่วนหัวสูงขึ้น: ให้ทั้งแผงเลื่อนเป็นก้อนเดียว ไม่บีบส่วนผลลัพธ์จนการ์ดถูกตัดครึ่ง */
+.panel { overflow-y:auto; }
+.panel-head { flex-shrink:0; }
+.panel-body { flex:1 0 auto; overflow:visible; }
 .chips { display:flex; gap:6px; margin-top:12px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
 .chips::-webkit-scrollbar { display:none; }
 .chips-wrap { flex-wrap:wrap; overflow:visible; } /* แถวรัศมีมี 4 ปุ่มยาว ให้ขึ้นบรรทัดใหม่แทนการเลื่อนซ่อน */
@@ -397,6 +401,10 @@ main { min-height:calc(100vh - var(--chrome)); }
 .cands .btn.small { width:auto; padding:7px 16px; }
 .lsearch-results .attr { margin:8px 0 0; }
 .linkbtn.change { margin-top:10px; font-size:.88rem; }
+.near-me { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-top:12px; }
+.near-me .btn.small { width:auto; padding:8px 16px; }
+.near-me small { color:var(--muted); font-size:.78rem; }
+.near-me .notice { flex-basis:100%; margin:4px 0 0; }
 
 /* ล็อกอิน */
 .auth-error { margin:0; padding:10px 12px; background:#f7e3dc; color:#8f3720; border-radius:12px; font-size:.9rem; }
@@ -535,3 +543,56 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 
 /* เครดิตแผนที่: ลิงก์ต้องแยกจากข้อความรอบข้างได้ (WCAG 1.4.1) และคอนทราสต์พอ */
 .leaflet-container .leaflet-control-attribution a { color:#005a80; text-decoration:underline; }
+
+/* วงรวมหมุดบนแผนที่หน้าค้นหา (leaflet.markercluster) */
+.nt-cluster { background:transparent; }
+.nt-cluster span { display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#B7472A; color:#fff; font:600 .82rem/1 var(--body); border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.35); }
+
+/* แจ้งข้อมูลผิด (หน้ารายละเอียดสถานที่) */
+.report-open { font-size:.88rem; color:var(--muted); }
+.report-form fieldset { border:1px solid var(--mist); border-radius:14px; padding:10px 14px; margin:0 0 10px; display:grid; gap:6px; }
+.report-form legend { font-weight:600; padding:0 4px; }
+.report-form label { font-size:.92rem; }
+.report-note { display:grid; gap:4px; color:var(--muted); font-size:.85rem !important; }
+.report-note textarea { font:inherit; color:var(--ink); padding:8px 10px; border:1.5px solid var(--mist); border-radius:12px; background:#fff; resize:vertical; }
+.report-actions { display:flex; align-items:center; gap:14px; margin-top:10px; }
+.report-actions .btn.small { width:auto; }
+.report-done { color:var(--lagoon-2); font-weight:500; }
+
+/* ทริปจากสถานที่โปรด และเทียบที่พัก (หน้าทริปของฉัน) */
+.trip-stay { display:flex; align-items:center; gap:8px; font-size:.88rem; color:var(--muted); margin:6px 0 10px; }
+.trip-stay select { font:inherit; color:var(--ink); padding:6px 10px; border:1.5px solid var(--mist); border-radius:10px; background:#fff; max-width:100%; }
+.btn.small.trip-next { width:auto; display:inline-flex; text-decoration:none; margin:2px 0 8px; }
+.trip-finished { color:var(--lagoon-2); font-weight:600; }
+.trip-stops { margin:6px 0 4px; padding-left:22px; }
+.trip-stops li { padding:5px 0; }
+.trip-stops label { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+.trip-stops small { margin-left:28px; display:block; color:var(--muted); font-size:.78rem; }
+.trip-stops li.is-done span { text-decoration:line-through; color:var(--muted); }
+.trip-h3 { font:600 1rem var(--display); margin:16px 0 6px; }
+.trip-groups { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+.trip-groups li { padding:10px 12px; border-radius:14px; background:rgba(74,124,89,.07); }
+.trip-groups strong, .trip-groups small, .trip-groups span { display:block; }
+.trip-groups small { color:var(--muted); font-size:.78rem; }
+.trip-groups span { font-size:.88rem; margin-top:2px; }
+.trip-ask-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+.trip-ask form, .compare-pick { display:flex; gap:8px; flex-wrap:wrap; }
+.trip-ask input { flex:1; min-width:160px; padding:8px 12px; border:1.5px solid var(--mist); border-radius:12px; font:inherit; background:#fff; }
+.trip-ask .btn.small { width:auto; }
+.trip-answer { margin-top:10px; padding:12px 14px; border-radius:14px; background:#fff; border:1px solid var(--mist); }
+.trip-answer p { margin:0 0 4px; }
+.compare-table { width:100%; border-collapse:collapse; margin-top:10px; font-size:.9rem; }
+.compare-table caption { text-align:left; color:var(--muted); font-size:.8rem; padding-bottom:6px; }
+.compare-table th, .compare-table td { padding:7px 8px; border-top:1px solid var(--mist); text-align:left; }
+.compare-table thead th { overflow-wrap:anywhere; }
+.compare-table td { font-variant-numeric:tabular-nums; font-weight:600; }
+
+/* แถบเลื่อนในแผงค้นหา: แท่งมนสีเทา ไม่มีราง ไม่มีลูกศร เข้มขึ้นเมื่อชี้ */
+/* Firefox ใช้ scrollbar-width/color ส่วน Chrome/Edge ใช้ ::-webkit-scrollbar (ถ้าตั้งทั้งคู่ Chrome จะไม่ใช้แบบหลัง) */
+@supports not selector(::-webkit-scrollbar) { .panel, .panel * { scrollbar-width:thin; scrollbar-color:rgba(60,64,58,.38) transparent; } }
+.panel ::-webkit-scrollbar, .panel::-webkit-scrollbar { width:12px; height:12px; }
+.panel ::-webkit-scrollbar-track, .panel::-webkit-scrollbar-track { background:transparent; }
+.panel ::-webkit-scrollbar-thumb, .panel::-webkit-scrollbar-thumb { background:rgba(60,64,58,.38); border-radius:999px; border:3px solid transparent; min-height:28px; background-clip:padding-box; }
+.panel ::-webkit-scrollbar-thumb:hover, .panel::-webkit-scrollbar-thumb:hover { background:rgba(60,64,58,.6); background-clip:padding-box; }
+.panel ::-webkit-scrollbar-button, .panel::-webkit-scrollbar-button { display:none; height:0; width:0; }
+.panel::-webkit-scrollbar-track { margin:22px 0; } /* ไม่ให้แถบเลื่อนชนมุมโค้งของแผง */

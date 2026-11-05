@@ -33,6 +33,19 @@ BOOKING_WORDS = ("จอง", "ชำระ", "จ่ายเงิน", "ซ�
 # คำถามกว้างๆ ที่ยังนับว่าอยากค้นรอบจุดเดิม ("มีอะไรบ้าง" "แนะนำหน่อย" "อีก") ถ้าไม่มีคำพวกนี้หรือคำอื่นที่ระบบรู้จักเลย ถือว่านอกเรื่อง
 GENERIC_WORDS = ("มีอะไร", "แนะนำ", "ใกล้", "รอบ", "แถว", "หา", "ไหน", "บ้าง", "อีก", "ต่อ", "เพิ่ม", "สถานที่", "พาไป",
                  "ไปดี", "จุดเริ่ม", "ระยะ", "รัศมี", "เรียง", "เปลี่ยน", "ไกล", "ถ่ายรูป", "ทั้งหมด")
+# คำถามเรื่องเที่ยวทั่วไปที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู อากาศ การเดินทาง แผนเที่ยว ประเพณี เคล็ดลับ) โหมด LLM ตอบจากความรู้ทั่วไปได้
+GENERAL_TRAVEL_WORDS = ("อากาศ", "ฤดู", "หน้าฝน", "หน้าหนาว", "หน้าร้อน", "ช่วงไหน", "เดือนไหน", "เดือน", "ช่วงเวลา", "ควรไป",
+                        "เดินทาง", "ไปยังไง", "ไปอย่างไร", "รถทัวร์", "รถไฟ", "เครื่องบิน", "สนามบิน", "รถเมล์", "แท็กซี่",
+                        "แผนเที่ยว", "จัดทริป", "ทริป", "วางแผน", "กี่วัน", "วันเดียว", "เตรียม", "ของฝาก", "ประเพณี", "เทศกาล",
+                        "วัฒนธรรม", "ปลอดภัย", "แต่งตัว", "ข้อควร", "ห้าม", "สวยที่สุด", "ไหนสวย", "ไหนดี", "น่าสนใจ",
+                        "ประวัติ", "ความเป็นมา", "ขึ้นชื่อ", "มีชื่อเสียง", "เคล็ดลับ", "ทิป")
+_EN_GENERAL_TRAVEL = re.compile(
+    r"\b(?:weather|season|rain(?:y)?|when to (?:go|visit)|best time|month|get (?:there|to)|how to get|flights?|trains?|bus(?:es)?|"
+    r"airport|taxi|itinerary|plan(?:ning)?|trip|days?|tips?|prepare|souvenirs?|festivals?|traditions?|culture|safe(?:ty)?|"
+    r"what to wear|famous|history|worth)\b", re.I)
+# "ที่พักใกล้ X" = อยากได้ที่พักรอบสถานที่นั้น (ไม่ใช่ที่เที่ยวรอบ X แม้ X จะเป็นดอยหรือวัด)
+_LODGING_NEAR = re.compile(r"(?:ที่พัก|โรงแรม|รีสอร์ท|รีสอร์ต|โฮสเทล|โฮมสเตย์|เกสต์เฮาส์|บ้านพัก)\s*(?:ที่)?\s*(?:ใกล้|แถว|รอบ|ละแวก|ติด)")
+_EN_LODGING_NEAR = re.compile(r"\b(?:hotels?|resorts?|hostels?|homestays?|guest ?houses?|accommodations?|places? to stay)\s+(?:near|around|close to|by)\b", re.I)
 FOOD_WORDS = ("กินข้าว", "ร้านอาหาร", "อาหาร", "หิว", "อร่อย", "ข้าว", "กินอะไร", "ของกิน", "เมนู")
 GREETING_WORDS = ("สวัสดี", "หวัดดี", "hello", "hi ", "ช่วยอะไรได้", "ทำอะไรได้", "ใช้ยังไง", "วิธีใช้")
 
@@ -47,6 +60,7 @@ SMALLTALK_TH = {
     "praise": ("เก่งจัง", "เก่งมาก", "น่ารักจัง", "น่ารักมาก", "เจ๋งมาก", "เจ๋งจัง", "ดีมาก", "สุดยอด"),
     "weather": ("ฝนตก", "อากาศ", "พยากรณ์"),
     "bored": ("เบื่อ", "เหงา"),
+    "eaten": ("กินข้าวยัง", "กินข้าวหรือยัง", "กินข้าวรึยัง", "กินข้าวมั้ย", "กินข้าวไหม", "กินอะไรยัง", "ทานข้าวยัง"),
 }
 # ถามชื่อ/ผู้สร้าง "ของน้องทริป" จับเฉพาะทั้งข้อความที่เป็นคำถามนั้นจริง ๆ ไม่จับ "เขื่อนภูมิพลเดิมชื่ออะไร" หรือ "ชื่อไร่เลย์มาจากไหน"
 _ADDRESS = r"(?:สวัสดี\S*\s*)?(?:คุณ|เธอ|เรา|น้อง(?:ทริป)?|ตัวเอง|แก|ท่าน)?\s*"
@@ -95,15 +109,29 @@ def smalltalk_kind(text: str) -> str | None:
     return None
 
 # สิ่งที่ผู้ใช้อยากหาแบบเจาะจง ใช้พูดทวนตอนถามว่าให้ค้นแถวไหน ("อยากหาวัดใช่ไหม")
-SUBJECTS = (("วัด", "วัด", "temples"), ("น้ำตก", "น้ำตก", "waterfalls"), ("ทะเล", "ทะเล", "beaches"), ("หาด", "ชายหาด", "beaches"),
+# กลุ่มกว้าง (ประวัติศาสตร์) ตรวจก่อน "วัด" ให้ "วัดและโบราณสถาน" ได้ทั้งกลุ่ม
+SUBJECTS = (("โบราณสถาน", "วัดและประวัติศาสตร์", "temples and history"), ("ประวัติศาสตร์", "วัดและประวัติศาสตร์", "temples and history"),
+            ("วัด", "วัด", "temples"), ("น้ำตก", "น้ำตก", "waterfalls"), ("ทะเล", "ทะเล", "beaches"), ("หาด", "ชายหาด", "beaches"),
             ("ดอย", "ดอยและภูเขา", "mountains"), ("ภูเขา", "ดอยและภูเขา", "mountains"), ("พิพิธภัณฑ์", "พิพิธภัณฑ์", "museums"),
             ("ตลาด", "ตลาด", "markets"), ("อุทยาน", "อุทยาน", "national parks"), ("จุดชมวิว", "จุดชมวิว", "viewpoints"),
-            ("เกาะ", "เกาะ", "islands"))
-_EN_SUBJECTS = ((re.compile(r"\btemples?\b", re.I), "วัด", "temples"), (re.compile(r"\bwaterfalls?\b", re.I), "น้ำตก", "waterfalls"),
+            ("เกาะ", "เกาะ", "islands"), ("ธรรมชาติ", "ธรรมชาติ", "nature spots"))
+_EN_SUBJECTS = ((re.compile(r"\b(?:histor(?:y|ic|ical)|ruins)\b", re.I), "วัดและประวัติศาสตร์", "temples and history"),
+                (re.compile(r"\btemples?\b", re.I), "วัด", "temples"), (re.compile(r"\bwaterfalls?\b", re.I), "น้ำตก", "waterfalls"),
                 (re.compile(r"\bbeach(?:es)?\b", re.I), "ชายหาด", "beaches"), (re.compile(r"\bmuseums?\b", re.I), "พิพิธภัณฑ์", "museums"),
                 (re.compile(r"\bmarkets?\b", re.I), "ตลาด", "markets"), (re.compile(r"\bviewpoints?\b", re.I), "จุดชมวิว", "viewpoints"),
                 (re.compile(r"\bnational parks?\b", re.I), "อุทยาน", "national parks"), (re.compile(r"\bislands?\b", re.I), "เกาะ", "islands"),
-                (re.compile(r"\bmountains?\b", re.I), "ดอยและภูเขา", "mountains"))
+                (re.compile(r"\bmountains?\b", re.I), "ดอยและภูเขา", "mountains"),
+                (re.compile(r"\bnature\b", re.I), "ธรรมชาติ", "nature spots"))
+
+# ประเภทย่อย (subtype) ของแต่ละเรื่องที่อยากหา ใช้กรองผลค้นในแชต เรื่องที่ไม่มี subtype ตรง (อุทยาน เกาะ ทะเล) ไม่กรอง
+HISTORY_SUBTYPES = frozenset(("temple", "place_of_worship", "monument", "city_gate", "museum", "gallery", "castle", "ruins",
+                              "archaeological_site", "fort", "craft"))
+NATURE_SUBTYPES = frozenset(("nature", "waterfall", "peak", "beach", "hot_spring", "cave_entrance", "park", "nature_reserve"))
+SUBJECT_SUBTYPES = {
+    "วัด": frozenset(("temple", "place_of_worship")), "น้ำตก": frozenset(("waterfall",)), "ชายหาด": frozenset(("beach",)), "ทะเล": frozenset(("beach",)),
+    "ดอยและภูเขา": frozenset(("peak",)), "พิพิธภัณฑ์": frozenset(("museum", "gallery")), "ตลาด": frozenset(("market",)),
+    "จุดชมวิว": frozenset(("viewpoint",)), "วัดและประวัติศาสตร์": HISTORY_SUBTYPES, "ธรรมชาติ": NATURE_SUBTYPES,
+}
 
 # หัวข้อนอกเรื่องที่พบบ่อย ตอบให้ตรงหัวข้อแทนข้อความกลาง ๆ (เรียงตามลำดับที่ตรวจ)
 OFF_TOPIC_KINDS = {
@@ -230,11 +258,13 @@ class Intent:
     asks_food: bool = False              # ถามเรื่องอาหาร ระบบไม่มีข้อมูลร้านอาหาร
     off_topic_kind: str | None = None    # หัวข้อนอกเรื่อง (health/tech/study/money/love/news) ตอบให้ตรงหัวข้อ
     subject: tuple[str, str] | None = None  # สิ่งที่อยากหาแบบเจาะจง (เช่น วัด) ใช้พูดทวนตอนถามว่าแถวไหน
+    named_place: bool = False            # ข้อความเอ่ยชื่อสถานที่ที่ตรวจแล้ว (คำว่า "วัด" ในชื่อไม่ใช่สิ่งที่อยากหา จึงไม่กรองตามประเภท)
     asks_money: bool = False
     asks_review: bool = False
     asks_booking: bool = False
     asks_hours: bool = False             # ถามเวลาเปิดปิด ระบบไม่มีข้อมูล
     asks_directions: bool = False        # ถามวิธีเดินทาง ระบบไม่วางเส้นทาง แนะนำปุ่มนำทาง
+    asks_general: bool = False           # ถามเรื่องเที่ยวทั่วไปที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู การเดินทาง แผนเที่ยว ...) โหมด LLM ตอบจากความรู้ทั่วไปได้
     notes: list[str] = field(default_factory=list)   # หมายเหตุที่ต้องบอกผู้ใช้ เช่น ปรับรัศมีลงเหลือ 30
 
 
@@ -259,6 +289,26 @@ def find_province(text: str) -> str | None:
         if rx.search(low) and (not ambiguous or _NAN_OK.search(low)):
             return p
     return None
+
+
+_NOT_A_NAME = re.compile(r"โรงแรม|ที่พัก|รีสอร์ท|รีสอร์ต|โฮสเทล|ให้|หน่อย|ด้วย|ที|ครับ|ค่ะ|คะ|นะ|จ้า|\\s")
+
+
+def generic_stay_words(q: str | None) -> bool:
+    """ข้อความที่จับได้ว่าเป็นชื่อที่พักแต่มีแค่คำทั่วไป ("โรงแรมให้") ไม่ใช่ชื่อจริง"""
+    return bool(q) and len(_NOT_A_NAME.sub("", q)) < 2
+
+
+def drop_province(text: str) -> str:
+    """ตัดชื่อจังหวัด (ไทย/อังกฤษ) ออกจากข้อความ ใช้ก่อนหาชื่อสถานที่ในคำถามก่อนหน้า
+    ไม่ให้ "cafes in Chiang Mai" ไปจับ "Chiang Mai Zoo" เป็นจุดค้น"""
+    out = text or ""
+    for p in sorted(PROVINCES, key=len, reverse=True):
+        out = out.replace(p, " ")
+    low = out.lower()
+    for rx, _p, _amb in _EN_PROVINCE:
+        low = rx.sub(" ", low)
+    return low
 
 
 # คำนำหน้าชนิดสถานที่ที่ซ้ำกันเยอะ ตัดออกก่อนเทียบชื่อ ไม่งั้น "วัด" "อุทยานแห่งชาติ" จะทำให้จับชื่อผิดที่
@@ -385,6 +435,8 @@ def parse(message: str) -> Intent:
     elif attr and not cafe:
         it.kinds = ("attraction",)
     it.want_lodgings = lodging and not cafe and not attr and not it.lodging_query
+    if lodging and not it.lodging_query and (_LODGING_NEAR.search(text) or _EN_LODGING_NEAR.search(text)):
+        it.want_lodgings = True
     m = _RADIUS_RE.search(text)
     if m:
         r = float(m.group(1))
@@ -407,6 +459,8 @@ def parse(message: str) -> Intent:
     it.greeting = hello and not (it.province or cafe or attr or lodging)
     has_number = bool(_RADIUS_RE.search(text) or _LIMIT_RE.search(text))
     it.asks_food = _has(text, FOOD_WORDS) or bool(_EN_FOOD.search(text))
+    it.asks_general = (_has(text, GENERAL_TRAVEL_WORDS) or bool(_EN_GENERAL_TRAVEL.search(text))
+                       or it.asks_directions or it.asks_food)
     known = (it.province or cafe or attr or lodging or has_number or hello or it.asks_money or it.asks_review
              or it.asks_booking or it.asks_hours or it.asks_directions or _has(text, GENERIC_WORDS) or bool(_EN_GENERIC.search(text)))
     it.off_topic = (not known and not it.greeting) or (it.asks_food and not (cafe or attr or lodging))

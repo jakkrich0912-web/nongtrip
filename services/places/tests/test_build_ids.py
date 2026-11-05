@@ -112,3 +112,17 @@ def test_write_report_keeps_manual_section(tmp_path, monkeypatch):
     assert "# เก่า" not in text
     assert text.count(build_places.MANUAL_MARK) == 1
     assert text.endswith("## ผลทดสอบค้นจริง\nบันทึกเอง\n")
+
+
+def test_lookup_th_follows_redirect_and_rejects_missing_or_no_coords():
+    from build_places import lookup_th
+
+    def fake(params, api=None):
+        return {"query": {
+            "redirects": [{"from": "พระธาตุก่องข้าวน้อย", "to": "ธาตุก่องข้าวน้อย"}],
+            "pages": {"1": {"title": "ธาตุก่องข้าวน้อย", "coordinates": [{"lat": 15.76, "lon": 104.2}]},
+                      "2": {"title": "ไม่มีพิกัด"}, "-1": {"title": "ไม่มีบทความ", "missing": ""}}}}
+    got = lookup_th(["พระธาตุก่องข้าวน้อย", "ไม่มีพิกัด", "ไม่มีบทความ"], fake)
+    assert got["พระธาตุก่องข้าวน้อย"] == {"title": "ธาตุก่องข้าวน้อย", "lat": 15.76, "lon": 104.2}
+    assert "ไม่มีพิกัด" in got["ไม่มีพิกัด"]["error"] and "ไม่พบ" in got["ไม่มีบทความ"]["error"]
+    assert lookup_th([], fake) == {}

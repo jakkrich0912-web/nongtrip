@@ -120,3 +120,28 @@ def test_old_database_gets_new_columns(tmp_path):
     Store(db).list_chats(1)
     cols = {r[1] for r in sqlite3.connect(db).execute("PRAGMA table_info(chat_messages)")}
     assert {"rating", "extra"} <= cols
+
+
+def test_lodging_near_a_landmark_asks_for_lodgings():
+    from services.api.chat_rules import parse
+    assert parse("ที่พักใกล้ดอยสุเทพ").want_lodgings
+    assert parse("โรงแรมแถววัดพระธาตุดอยสุเทพ").want_lodgings
+    assert parse("hotels near Doi Suthep").want_lodgings
+    assert not parse("ที่เที่ยวใกล้ที่พัก").want_lodgings
+    assert not parse("attractions near my hotel").want_lodgings
+
+
+def test_general_travel_words_are_detected_but_plain_searches_are_not():
+    from services.api.chat_rules import parse
+    for q in ("ไปเชียงใหม่ช่วงไหนดี", "แนะนำแผนเที่ยว 3 วันในน่าน", "เดินทางจากกรุงเทพไปเชียงใหม่ยังไง",
+              "ทะเลที่ไหนสวยในไทย", "best time to visit Chiang Mai", "how to get to Chiang Mai"):
+        assert parse(q).asks_general, q
+    for q in ("ที่เที่ยวในเชียงใหม่ 5 แห่ง", "คาเฟ่ใกล้ๆ", "cafes in Chiang Mai", "ที่เที่ยวในเชียงราย ในระยะเส้นตรง 10 กม."):
+        assert not parse(q).asks_general, q
+
+
+def test_ask_location_example_fits_the_subject():
+    from services.api.chat import _ask_location
+    from services.api.chat_rules import parse
+    assert "ทะเลในภูเก็ต" in " ".join(_ask_location(parse("ทะเลที่ไหนสวย")))
+    assert "วัดในเชียงใหม่" in " ".join(_ask_location(parse("อยากไปวัด")))

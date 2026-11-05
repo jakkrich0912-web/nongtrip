@@ -23,13 +23,13 @@ from pydantic import BaseModel, Field
 
 from services.places import PlacesService, SearchError
 from services.places.geo import in_thailand
-from services.places.provinces import PROVINCES, province_en
+from services.places.provinces import PROVINCES, REGION_ORDER, REGIONS, province_en
 
 from .accounts import COOKIE, MAX_ID, session_user
 from . import metrics
 from .answer_guard import GUARD_NOTICE
-from .chat_rules import MAX_MESSAGE, Intent, clean, find_place, parse
-from .rag import Rag
+from .chat_rules import MAX_MESSAGE, SUBJECT_SUBTYPES, Intent, clean, drop_province, find_place, generic_stay_words, parse
+from .rag import MAX_HISTORY, Rag, RagResult, is_no_info
 from .store import Store
 from .validator import validate_lodgings_near, validate_nearby
 
@@ -56,6 +56,7 @@ SMALLTALK_TH = {
     "praise": ["ขอบคุณค่ะ ดีใจที่ชอบ"],
     "weather": ["น้องทริปยังไม่มีข้อมูลสภาพอากาศค่ะ ก่อนออกเดินทางลองดูพยากรณ์จากกรมอุตุนิยมวิทยาอีกที"],
     "bored": ["เบื่อใช่ไหมคะ ไปเที่ยวเปลี่ยนบรรยากาศกันดีกว่า"],
+    "eaten": ["น้องทริปไม่ได้กินข้าวค่ะ แต่ถ้าหิว ไปชิมอาหารพื้นถิ่นระหว่างเที่ยวกันดีกว่า"],
 }
 SMALLTALK_ASK = "วันนี้อยากไปเที่ยวแถวไหนดีคะ บอกชื่อจังหวัดหรือที่พักได้เลย"
 SMALLTALK_EN = {
@@ -69,6 +70,7 @@ SMALLTALK_EN = {
     "praise": ["Thank you, I'm glad you like it."],
     "weather": ["NongTrip has no weather data yet. Please check the Thai Meteorological Department forecast before you travel."],
     "bored": ["Bored? Let's find somewhere new to go."],
+    "eaten": ["I don't eat, but if you're hungry, local food on the road is part of the trip!"],
 }
 SMALLTALK_ASK_EN = "Where would you like to go? Tell me a province or your stay."
 
@@ -113,6 +115,11 @@ class Context(BaseModel):
     lon: float
 
 
+class Turn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
 class ChatIn(BaseModel):
     message: str = Field(min_length=1, max_length=MAX_MESSAGE)
     context: Context | None = None
@@ -122,6 +129,8 @@ class ChatIn(BaseModel):
     lang: Literal["th", "en"] = "th"
     # แก้คำถาม/ถามใหม่ (ต้องล็อกอินและส่ง chat_id): รหัสข้อความผู้ใช้ในแชตนี้ ลบตั้งแต่ข้อความนั้นลงไปแล้วถามใหม่
     edit_from: int | None = Field(default=None, ge=1, le=MAX_ID)
+    # บทสนทนาก่อนหน้าในแชตเดียวกัน (หน้าเว็บส่งมา ใช้ไม่เกิน 6 ข้อความท้าย) ให้ LLM เข้าใจคำถามต่อเนื่อง ไม่ได้บันทึกเพิ่ม
+    history: list[Turn] | None = Field(default=None, max_length=20)
 
 
 class ChatThrottle:
@@ -249,6 +258,9 @@ OFF_TOPIC_EN_KIND = {
 }
 GENERAL_DISCLAIMER = "เรื่องนี้ไม่ใช่งานหลักของน้องทริปนะคะ ตอบจากความรู้ทั่วไป ข้อมูลอาจไม่ถูกต้อง 100% ควรตรวจสอบกับแหล่งที่เชื่อถือได้อีกครั้ง"
 GENERAL_DISCLAIMER_EN = "This isn't my main job, so this is general knowledge and may not be 100% accurate. Please double-check with a reliable source."
+# คำถามเรื่องเที่ยวที่ระบบไม่มีข้อมูลตรวจแล้ว (ฤดู การเดินทาง แผนเที่ยว อาหารท้องถิ่น) ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนนี้เสมอ
+TRAVEL_DISCLAIMER = "เรื่องนี้ระบบยังไม่มีข้อมูลที่ตรวจแล้ว น้องทริปตอบจากความรู้ทั่วไป อาจไม่ถูกต้อง 100% ควรตรวจสอบอีกครั้งนะคะ"
+TRAVEL_DISCLAIMER_EN = "The system has no verified data on this, so this is general knowledge and may not be 100% accurate. Please double-check."
 OFF_TOPIC_SHORT = "ขอโทษนะคะ อันนี้น้องทริปตอบไม่ได้จริง ๆ"
 OFF_TOPIC_SHORT_EN = "Sorry, that's outside what I know."
 CAN_DO = "น้องทริปช่วยได้เรื่องที่เที่ยว คาเฟ่ และที่พักรอบตัวคุณ ลองพิมพ์ เช่น \"ที่เที่ยวในเชียงใหม่\" หรือ \"คาเฟ่ใกล้ๆ\""
@@ -268,6 +280,82 @@ def _off_topic_parts(it: Intent, lang: str = "th") -> list[str]:
     return [first or _t(lang, OFF_TOPIC_SHORT, OFF_TOPIC_SHORT_EN), _t(lang, CAN_DO, CAN_DO_EN)]
 
 
+# ยังไม่รู้ว่าแถวไหน (โหมด LLM): เสนอสถานที่ที่ตรวจแล้วจากหลายภาค ให้ LLM แนะนำพร้อมชื่อจังหวัด แล้วชวนบอกที่พัก
+SUGGEST_LIMIT = 8
+THAI = re.compile(r"[\u0e00-\u0e7f]")
+# คำในชื่อสถานที่ที่ตรวจแล้ว และประเภทของไฟล์สถานที่ที่ตรวจแล้ว (temple nature museum activity market cafe craft) ต่อเรื่องที่อยากหา
+_SUGGEST_WORDS = {
+    "น้ำตก": ("น้ำตก",), "ชายหาด": ("หาด", "ทะเล", "เกาะ"), "ทะเล": ("หาด", "ทะเล", "เกาะ"), "เกาะ": ("เกาะ",),
+    "ดอยและภูเขา": ("ดอย", "ภู", "เขา"), "อุทยาน": ("อุทยาน",), "จุดชมวิว": ("ชมวิว", "ดอย", "ภู"),
+}
+_SUGGEST_SUBTYPES = {
+    "วัด": {"temple"}, "พิพิธภัณฑ์": {"museum"}, "ตลาด": {"market"}, "ธรรมชาติ": {"nature"},
+    "วัดและประวัติศาสตร์": {"temple", "museum"},
+}
+SUGGEST_DISCLAIMER = "ชื่อสถานที่ด้านล่างมาจากรายการที่ตรวจที่มาแล้ว ส่วนคำอธิบายเป็นความรู้ทั่วไป อาจไม่ถูกต้องทั้งหมด ควรตรวจสอบอีกครั้งนะคะ"
+SUGGEST_DISCLAIMER_EN = "The places below come from our source-checked list. The descriptions are general knowledge and may not be fully accurate, so please double-check."
+NARRATE_DISCLAIMER = "ชื่อสถานที่และระยะมาจากผลค้นของระบบ ส่วนคำอธิบายเป็นความรู้ทั่วไป อาจไม่ถูกต้องทั้งหมด ควรตรวจสอบอีกครั้งนะคะ"
+NARRATE_DISCLAIMER_EN = "Place names and distances come from our search results. The descriptions are general knowledge and may not be fully accurate, so please double-check."
+NARRATE_TASK = ("<places> คือผลค้นจริงของระบบรอบจุดที่ผู้ใช้ถาม เรียงใกล้ไปไกล ตอบคำถามของผู้ใช้ให้ตรงประเด็นก่อน "
+                "ถ้าคำถามไม่ใช่การหาสถานที่ (เช่น เวลาเดินทาง ฤดูกาล) ตอบคำถามนั้นก่อน แล้วค่อยเอ่ยถึงสถานที่ในรายการถ้าช่วยได้ "
+                "ถ้าแนะนำสถานที่ ให้ตอบตามรูปแบบนี้ทุกครั้ง: ขึ้นต้นด้วยประโยคเปิดสั้น ๆ 1 ประโยค "
+                "แล้วตามด้วยรายการ 3-5 แห่งจาก <places> ที่ตรงกับสิ่งที่ผู้ใช้อยากได้ แต่ละแห่งขึ้นบรรทัดใหม่ที่ขึ้นต้นด้วย \"- \" "
+                "เรียงตามลำดับใน <places> (ใกล้ไปไกล) แต่ละบรรทัดเป็น ชื่อ ห่าง X กม. (เส้นตรง) แล้วตามด้วยคำอธิบายสั้น ๆ 1 ประโยคเสมอ "
+                "ถ้าไม่รู้จักที่นั้น ให้อธิบายจากประเภทของสถานที่แบบกว้าง ๆ ห้ามแต่งรายละเอียดเฉพาะ "
+                "ห้ามใช้ตัวเลขนำหน้ารายการ ห้ามใช้ตัวหนาหรือ markdown อื่น")
+NARRATE_TASK_EN = ("<places> are the system's real search results around where the user asked, nearest first. Answer the user's question first. "
+                   "If the question is not about finding places (travel time, season), answer that first and mention listed places only if useful. "
+                   "When you recommend places, always use this format: one short opening sentence, "
+                   "then 3-5 places from <places> that fit what they want, each on a new line starting with \"- \", "
+                   "in the order of <places> (nearest first). Each line is: name, X km away (straight-line), then always one short sentence about it. "
+                   "If you do not know a place, describe it broadly from its type and do not invent specifics. "
+                   "No numbered lists, no bold, no other markdown.")
+SUGGEST_ELSEWHERE = ("ในพื้นที่ที่ผู้ใช้ถามไม่มีสิ่งที่อยากหา ให้บอกสั้น ๆ ว่าแถวนั้นไม่มี แล้วเสนอ 3-5 แห่งจาก <places> ที่น่าจะไปได้สะดวกจากพื้นที่นั้น "
+                     "บอกชื่อจังหวัดของแต่ละแห่ง ห้ามบอกระยะทาง ห้ามใช้ตัวหนาหรือ markdown")
+SUGGEST_ELSEWHERE_EN = ("There is none of what the user wants in the area they asked about. Say so briefly, then suggest 3-5 places from <places> "
+                        "that are likely convenient from that area, with each one's province. Do not give distances. No bold or markdown.")
+SUGGEST_TASK = ("ผู้ใช้ยังไม่ได้บอกว่าอยู่หรือจะไปแถวไหน ให้เสนอ 3-5 แห่งจาก <places> ที่ตรงกับสิ่งที่ผู้ใช้อยากหา "
+                "บอกชื่อจังหวัดของแต่ละแห่ง และเล่าสั้น ๆ ว่าน่าไปเพราะอะไรจากความรู้ทั่วไป ห้ามบอกระยะทาง "
+                "ปิดท้ายด้วยการชวนให้บอกจังหวัด ชื่อที่พัก หรือกดใช้ตำแหน่งปัจจุบัน เพื่อค้นสถานที่รอบตัวจริง ห้ามใช้ตัวหนาหรือ markdown")
+SUGGEST_TASK_EN = ("The user has not said where they are or are going. Suggest 3-5 places from <places> that fit what they want, "
+                   "give each one's province and a short reason from general knowledge. Do not give distances. "
+                   "End by inviting them to name a province or their stay, or use their current location, to search around it. No bold or markdown.")
+
+
+def suggestion_places(verified, it: Intent, prev: str = "") -> list[dict]:
+    """สถานที่ที่ตรวจแล้วสำหรับเสนอเมื่อยังไม่รู้ว่าแถวไหน: ตรงเรื่องที่อยากหา (จากข้อความนี้หรือคำถามก่อนหน้า)
+    จังหวัดละ 1 แห่ง สลับไปทีละภาค (ไม่ใช่การจัดอันดับความนิยม) ไม่ตรงเรื่องเลยใช้ทุกประเภท"""
+    subject, kinds = it.subject, it.kinds
+    if not subject and prev:
+        before = parse(prev)
+        if before.subject or before.kinds != it.kinds:
+            subject, kinds = before.subject, before.kinds
+    words = _SUGGEST_WORDS.get(subject[0]) if subject else None
+    subs = _SUGGEST_SUBTYPES.get(subject[0]) if subject else None
+    if kinds == ("cafe",):
+        subs = {"cafe"}
+
+    def fits(c) -> bool:
+        if words:
+            return any(w in (c.name_th or "") for w in words)
+        if subs:
+            return c.subtype in subs
+        return c.subtype != "cafe" if kinds == ("attraction",) else True
+
+    pool = [c for c in verified if fits(c)] or ([] if (words or subs) else list(verified))
+    by_prov: dict[str, object] = {}
+    for c in pool:
+        by_prov.setdefault(c.province, c)
+    lanes = [[by_prov[p] for p in REGIONS[r] if p in by_prov] for r in REGION_ORDER]
+    out = []
+    for i in range(max((len(x) for x in lanes), default=0)):
+        for lane in lanes:
+            if i < len(lane):
+                c = lane[i]
+                out.append({"name_th": c.name_th, "name_en": c.name_en, "province": c.province})
+    return out[:SUGGEST_LIMIT]
+
+
 def _ask_location(it: Intent, lang: str = "th") -> list[str]:
     """ถามว่าให้ค้นแถวไหน โดยพูดทวนสิ่งที่ผู้ใช้อยากหา ("อยากหาวัดใช่ไหมคะ")"""
     if it.subject:
@@ -278,10 +366,12 @@ def _ask_location(it: Intent, lang: str = "th") -> list[str]:
         th, en = "ที่เที่ยว", "attractions"
     else:
         th, en = "ที่เที่ยวกับคาเฟ่", "attractions and cafés"
+    # ตัวอย่างจังหวัดให้เข้ากับสิ่งที่หา (ทะเล/เกาะ ยกตัวอย่างเชียงใหม่ไม่ได้)
+    ex_th, ex_en = ("ภูเก็ต", "Phuket") if en in ("beaches", "islands") else ("เชียงใหม่", "Chiang Mai")
     return [_t(lang, f"อยากหา{th}ใช่ไหมคะ บอกน้องทริปหน่อยว่าแถวไหน",
                f"Looking for {en}? Tell me where."),
-            _t(lang, f"พิมพ์ชื่อจังหวัด (เช่น \"{th}ในเชียงใหม่\") ชื่อที่พัก หรือปักหมุดบนแผนที่ก็ได้ค่ะ",
-               f"Type a province (for example \"{en} in Chiang Mai\"), your stay's name, or pin the map.")]
+            _t(lang, f"พิมพ์ชื่อจังหวัด (เช่น \"{th}ใน{ex_th}\") ชื่อที่พัก หรือปักหมุดบนแผนที่ก็ได้ค่ะ",
+               f"Type a province (for example \"{en} in {ex_en}\"), your stay's name, or pin the map.")]
 
 
 def _smalltalk_parts(kind: str, lang: str = "th") -> list[str]:
@@ -352,6 +442,12 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
         notes += res["notices"]
     else:
         yield "ask", {"what": "location"}       # ภายในเท่านั้น: บอกหน้าเว็บผ่าน done.ask ให้แสดงปุ่มเลือกตำแหน่ง
+        if it.asks_booking:
+            yield from say(L("น้องทริปจองหรือชำระเงินแทนไม่ได้ค่ะ แต่ช่วยหาที่พักรอบจุดที่สนใจได้",
+                             "I can't book or pay for you, but I can find places to stay around where you're going."),
+                           L("บอกจังหวัดหรือปักหมุดบนแผนที่ เช่น \"ที่พักแถวภูเก็ต\" แล้วไปจองต่อกับผู้ให้บริการที่คุณใช้ได้เลย",
+                             "Tell me a province or pin the map, for example \"stays in Phuket\", then book with the provider you use."))
+            return
         yield from say(*_ask_location(it, lang), *tail)
         return
 
@@ -382,9 +478,29 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
                        *_notes(notes + res_notes, lang), *tail)
         return
 
-    yield "tool", {"name": "places_nearby", "args": {"lat": lat, "lon": lon, "radius_km": it.radius_km,
-                                                     "kinds": list(it.kinds)}}
-    res = svc.nearby(lat, lon, it.radius_km, list(it.kinds), it.limit, 0).to_dict()
+    # อยากหาเรื่องเจาะจงที่มีประเภทย่อยตรง (น้ำตก วัด จุดชมวิว ...): ค้นทุกแห่งในรัศมีแล้วกรองตาม subtype
+    # ข้อความที่เอ่ยชื่อสถานที่ (anchor/named_place) ไม่กรอง เพราะคำว่า "วัด" เป็นส่วนของชื่อ ไม่ใช่สิ่งที่อยากหา
+    subs = (SUBJECT_SUBTYPES.get(it.subject[0])
+            if it.subject and not it.anchor and not it.named_place and "attraction" in it.kinds else None)
+    kinds = ["attraction"] if subs else list(it.kinds)
+    yield "tool", {"name": "places_nearby", "args": {"lat": lat, "lon": lon, "radius_km": it.radius_km, "kinds": kinds,
+                                                     **({"subtypes": sorted(subs)} if subs else {})}}
+    if subs:
+        full = svc.nearby(lat, lon, it.radius_km, kinds, None, 0).to_dict()
+        picked = [p for p in full["items"] if p.get("subtype") in subs]
+        if picked:
+            res = {**full, "items": picked[: it.limit], "total": len(picked), "counts": {"attraction": len(picked)},
+                   "sources": {s: sum(1 for p in picked if p.get("source") == s) for s in ("verified", "osm")}}
+        else:
+            # ไม่มีประเภทนี้ในรัศมี (เช่น ทะเลรอบกรุงเทพ): ไม่ยื่นรายชื่อที่ไม่ตรงคำถาม บอกตรง ๆ แล้วให้เสนอที่อื่น (โหมด LLM)
+            yield "ask", {"what": "location"}
+            yield from say(L(f"ไม่พบ{it.subject[0]}ในรัศมี {full['radius_km']:g} กม. รอบ{where}",
+                             f"No {it.subject[1]} within {full['radius_km']:g} km of {where}."),
+                           L("ลองพิมพ์จังหวัดอื่น หรือปักหมุดที่พักบนแผนที่ได้ค่ะ", "Try another province or pin your stay on the map."),
+                           *tail)
+            return
+    else:
+        res = svc.nearby(lat, lon, it.radius_km, kinds, it.limit, 0).to_dict()
     res["validation"] = validate_nearby(res, known)
     res_notes = list(res["notices"])
     ok = res["validation"]["ok"]
@@ -400,8 +516,8 @@ def answer(it: Intent, ctx: Context | None, svc: PlacesService, known: set[str],
         yield from say(L("ผลค้นไม่ผ่านการตรวจอิสระ จึงยังไม่แสดงรายชื่อ ลองใหม่อีกครั้งภายหลัง",
                          "These results failed the independent check, so no names are shown. Please try again later."), *tail)
         return
-    kinds_th = " และ".join(KIND_TH[k] for k in it.kinds)
-    kinds_en = " and ".join(KIND_EN[k] for k in it.kinds)
+    kinds_th = it.subject[0] if subs else " และ".join(KIND_TH[k] for k in kinds)
+    kinds_en = it.subject[1] if subs else " and ".join(KIND_EN[k] for k in kinds)
     if not items:
         yield from say(L(f"ไม่พบ{kinds_th}ในรัศมี {res['radius_km']:g} กม. รอบ{where}",
                          f"No {kinds_en} within {res['radius_km']:g} km of {where}"),
@@ -430,6 +546,22 @@ def _footer(places_ev: dict | None, it: Intent, lang: str = "th") -> list[str]:
     out += [n + "\n" for n in _notes(list(ev.get("notices") or []), lang)]
     out += [t + "\n" for t in _tail(it, lang)]
     return out
+
+
+def _kha(line: str) -> str:
+    """ข้อความสำเร็จรูปภาษาไทยที่ต่อท้ายคำตอบ LLM ให้ลงท้ายค่ะเหมือนเนื้อความ"""
+    t = line.rstrip("\n")
+    if not THAI.search(t) or t.endswith(("ค่ะ", "คะ")):
+        return line
+    return t + (" ค่ะ" if t.endswith(")") else "ค่ะ") + "\n"
+
+
+def _llm_footer(foot: list[str], llm_text: str, lang: str) -> list[str]:
+    """ท้ายคำตอบ LLM: ไม่ซ้ำหมายเหตุระยะเส้นตรงถ้า LLM บอกแล้ว และลงท้ายค่ะ"""
+    if "เส้นตรง" in llm_text or "straight-line" in llm_text.lower():
+        drop = {"ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ", NOTE_EN["ระยะเป็นเส้นตรง ไม่ใช่ระยะขับรถ"]}
+        foot = [f for f in foot if f.strip() not in drop]
+    return [_kha(f) for f in foot] if lang != "en" else foot
 
 
 def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[str],
@@ -464,6 +596,8 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 chat_id = store.create_chat(user["id"], text)
             user_msg_id = store.add_message(user["id"], chat_id, "user", text) or None
 
+        hist = [(t.role, t.content) for t in (body.history or [])][-MAX_HISTORY:]
+
         def stream():
             parts: list[str] = []
             saved = False
@@ -486,7 +620,21 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                         log.exception("save chat message failed")
 
             try:
+                # พิมพ์ภาษาอังกฤษล้วน ตอบเป็นภาษาอังกฤษแม้หน้าเว็บตั้งภาษาไทยไว้
+                if body.lang == "th" and not THAI.search(text) and len(re.findall(r"[A-Za-z]{2,}", text)) >= 3:
+                    body.lang = "en"
                 intent = parse(text)
+                if intent.lodging_query and generic_stay_words(intent.lodging_query):
+                    intent.lodging_query = None          # "ช่วยจองโรงแรมให้หน่อย" ไม่ใช่ชื่อที่พัก
+                # ตอบต่อสั้น ๆ ที่บอกแค่ที่ ("เอาที่เชียงใหม่"): ใช้เรื่องที่อยากหาจากคำถามก่อนหน้า
+                prev_user = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
+                if (prev_user and not intent.subject and intent.kinds == ("attraction", "cafe") and len(text) <= 30
+                        and (intent.province or ctx)):
+                    before = parse(clean(prev_user))
+                    if before.subject:
+                        intent.subject, intent.kinds = before.subject, before.kinds
+                if intent.subject and find_place(drop_province(text), svc.verified):
+                    intent.named_place = True
                 # ข้อความใหม่ไม่ระบุที่ (ไม่มีจังหวัด ไม่มีหมุด ไม่มีชื่อที่พัก): ใช้จังหวัดที่ถามไว้ล่าสุด
                 eff_ctx = ctx
                 remember = None
@@ -494,6 +642,10 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                     # ไม่มีหมุด/จังหวัด แต่เอ่ยชื่อสถานที่ที่ตรวจแล้ว: ใช้ตำแหน่งสถานที่นั้นเป็นจุดค้น ไม่ต้องถามหาหมุดก่อน
                     # (ไม่ถือว่าเป็นหมุดของผู้ใช้ จึงไม่ย้ายหมุดบนหน้าเว็บ)
                     hit = find_place(text, svc.verified)
+                    if not hit:
+                        # คำถามต่อเนื่องที่ไม่เอ่ยชื่อที่ ("เล่าเพิ่มหน่อย"): ใช้สถานที่ที่เอ่ยในคำถามก่อนหน้าของแชตเดียวกัน
+                        prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
+                        hit = find_place(drop_province(clean(prev)), svc.verified) if prev else None
                     if hit:
                         eff_ctx = Context(lat=hit.lat, lon=hit.lon)
                         intent.anchor = hit.name_th
@@ -532,28 +684,82 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 mode = "rule"
                 t_search = time.perf_counter() - t0
                 t1 = time.perf_counter()
+                general_used = False
                 if use_rag:
-                    res = rag.answer(text, (places_ev or {}).get("items") or [], (places_ev or {}).get("radius_km"), body.lang)
-                    if res.mode == "llm":
+                    items = (places_ev or {}).get("items") or []
+                    # ยังไม่รู้ว่าแถวไหนไม่มีผลค้นให้ตอบ ข้ามไปเสนอสถานที่เลย ไม่เสียการเรียก LLM อีกรอบ
+                    res = (RagResult("rule", reason="no_places") if ask == "location"
+                           else rag.answer(text, items, (places_ev or {}).get("radius_km"), body.lang, hist))
+                    # คลังความรู้ไม่มีเรื่องนี้ หรือเป็นคำถามเรื่องเที่ยวทั่วไป (ฤดู การเดินทาง แผนเที่ยว อาหารท้องถิ่น) ที่ค้นได้แค่รายชื่อ:
+                    # ให้ LLM ตอบจากความรู้ทั่วไปพร้อมคำเตือน ดีกว่าบอกว่าไม่มีข้อมูลแล้วยื่นรายชื่อที่ไม่ตรงคำถาม
+                    no_info = res.mode == "llm" and is_no_info(res.text)
+                    wants_general = (intent.asks_general or intent.asks_food) and not intent.smalltalk
+                    trav = None
+                    suggested = narrated = False
+                    if ask == "location" and not off_topic and not intent.asks_booking:
+                        # ยังไม่รู้ว่าแถวไหน: แทนการถามกลับอย่างเดียว ให้เสนอสถานที่ที่ตรวจแล้วจากหลายภาคก่อน ปุ่มเลือกตำแหน่งยังอยู่
+                        prev = next((c for r, c in reversed(hist) if r == "user" and c.strip()), "")
+                        sugg = suggestion_places(svc.verified, intent, clean(prev))
+                        if sugg:
+                            elsewhere = bool(intent.province or eff_ctx)   # ถามแถวที่ไม่มีของที่อยากหา
+                            task = ((SUGGEST_ELSEWHERE_EN if body.lang == "en" else SUGGEST_ELSEWHERE) if elsewhere
+                                    else (SUGGEST_TASK_EN if body.lang == "en" else SUGGEST_TASK))
+                            trav = rag.travel(text, sugg, body.lang, hist, task=task)
+                            suggested = True
+                    elif not off_topic and (no_info or (wants_general and res.mode == "rule" and res.reason in ("no_places", "no_chunks"))):
+                        trav = rag.travel(text, items, body.lang, hist)
+                    elif (not off_topic and items and res.mode == "rule" and res.reason in ("no_places", "no_chunks", "guard")
+                          and not intent.asks_money):
+                        # ค้นเจอแต่ไม่มีก้อนความรู้ตรงคำถาม: ให้ LLM เรียบเรียงจากผลค้นจริง แทนการยื่นรายชื่อเปล่า ๆ
+                        trav = rag.travel(text, items, body.lang, hist,
+                                          task=NARRATE_TASK_EN if body.lang == "en" else NARRATE_TASK)
+                        narrated = True
+                    if trav is not None and trav.mode == "llm":
+                        mode = "llm"
+                        general_used = True
+                        for ev, data in pending:
+                            yield emit(ev, data)
+                        head = (_t(body.lang, SUGGEST_DISCLAIMER, SUGGEST_DISCLAIMER_EN) if suggested
+                                else _t(body.lang, NARRATE_DISCLAIMER, NARRATE_DISCLAIMER_EN) if narrated
+                                else _t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN))
+                        lines = [head + "\n"]
+                        lines += [ln + "\n" for ln in trav.text.split("\n") if ln.strip()]
+                        if items:
+                            foot = _footer(places_ev, intent, body.lang)
+                            # หมายเหตุของคำตอบแบบกฎ (เช่น ค้นรอบจุดกลางจังหวัด ไม่ใช่รอบที่พัก) ยังต้องบอกผู้ใช้
+                            foot += [h for h in held if h.startswith(("หมายเหตุ:", "Note:")) and h not in foot]
+                            lines += _llm_footer(foot, trav.text, body.lang)
+                    elif res.mode == "llm" and not (off_topic and no_info):
                         mode = "llm"
                         for ev, data in pending:
                             yield emit(ev, data)
                         yield emit("sources", {"items": res.sources})
                         lines = [ln + "\n" for ln in res.text.split("\n") if ln.strip()]
-                        lines += _footer(places_ev, intent, body.lang)
+                        lines += _llm_footer(_footer(places_ev, intent, body.lang), res.text, body.lang)
                     elif off_topic:
                         # นอกเรื่อง: ให้ LLM ตอบจากความรู้ทั่วไป ขึ้นต้นด้วยคำเตือนที่โค้ดใส่เอง ไม่ผ่านด่านตรวจใช้คำตอบสำเร็จรูปเดิม
-                        # ถามเรื่องอาหารยังตอบสำเร็จรูป (ระบบไม่มีข้อมูลร้านอาหาร ให้ LLM แนะนำร้านเองจะกลายเป็นการเดา)
-                        gen = rag.general(text, body.lang) if not intent.asks_food else None
+                        # ถามเรื่องอาหาร: ตอบเรื่องอาหารท้องถิ่นแบบทั่วไป (ห้ามแนะนำร้านเฉพาะแห่ง ระบบไม่มีข้อมูลร้านอาหาร)
+                        if intent.asks_food:
+                            gen = rag.travel(text, [], body.lang, hist)
+                            head = _t(body.lang, TRAVEL_DISCLAIMER, TRAVEL_DISCLAIMER_EN)
+                        else:
+                            gen = rag.general(text, body.lang, hist)
+                            head = _t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN)
                         if gen is not None and gen.mode == "llm":
                             mode = "llm"
-                            lines = [_t(body.lang, GENERAL_DISCLAIMER, GENERAL_DISCLAIMER_EN) + "\n"]
+                            general_used = True
+                            lines = [head + "\n"]
                             lines += [ln + "\n" for ln in gen.text.split("\n") if ln.strip()]
                             lines.append(_t(body.lang, CAN_DO, CAN_DO_EN) + "\n")
                         else:
                             lines = [ln + "\n" for ln in _lines(_off_topic_parts(intent, body.lang)).split("\n") if ln.strip()]
                     else:
-                        lines = held + ([_notes([GUARD_NOTICE], body.lang)[0] + "\n"] if res.guard_failed else [])
+                        if intent.asks_money:
+                            # ถามราคา/ค่าเข้า: บอกก่อนเลยว่าไม่มีข้อมูล แล้วค่อยรายชื่อ (ด่านตรวจตีตกเรื่องราคาเป็นเรื่องปกติ ไม่ต้องบอก)
+                            money = [h for h in held if h.strip() in [x.strip() for x in _tail(intent, body.lang)[:1]]]
+                            lines = money + [h for h in held if h not in money]
+                        else:
+                            lines = held + ([_notes([GUARD_NOTICE], body.lang)[0] + "\n"] if res.guard_failed else [])
                     for ln in lines:
                         parts.append(ln)
                         yield emit("token", {"text": ln})
@@ -566,7 +772,7 @@ def build_chat_router(store: Store, secret: str, svc: PlacesService, known: set[
                 yield emit("done", {"chat_id": chat_id, "mode": mode,
                                    **({"message_id": bot_msg_id} if bot_msg_id else {}),
                                    **({"user_message_id": user_msg_id} if user_msg_id else {}), **({"province": intent.province or remember} if (intent.province or remember) else {}),
-                                   **({"ask": ask} if ask and mode == "rule" else {})})
+                                   **({"ask": ask} if ask and (mode == "rule" or general_used) else {})})
             except SearchError as e:
                 yield emit("error", {"error": str(e), "code": "invalid_param"})
             except Exception:  # noqa: BLE001 ไม่ส่งรายละเอียดภายในให้ผู้ใช้

@@ -1,8 +1,30 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../lib/language.jsx';
+import { useAuth } from '../lib/auth.jsx';
+import { mySearches } from '../lib/api.js';
+import { recentStays } from '../lib/recent.js';
 import Mascot from '../components/Mascot.jsx';
 import Icon from '../components/landing/Icon.jsx';
 import ExploreDemo from '../components/landing/ExploreDemo.jsx';
+
+// ค้นล่าสุด: เฉพาะผู้ที่ล็อกอิน ใช้รายการเดิมจาก GET /api/me/searches (ที่เดียวกับหน้าทริปของฉัน) ไม่เก็บเพิ่ม
+function RecentStays() {
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    if (!user) { setItems([]); return undefined; }
+    let live = true;
+    mySearches().then((d) => live && setItems(recentStays(d.items))).catch(() => live && setItems([]));
+    return () => { live = false; };
+  }, [user]);
+  if (!user || !items.length) return null;
+  return <nav className="nt-recent" aria-label={t('ที่พักที่ค้นล่าสุด', 'Recent stays')}>
+    <span>{t('ค้นล่าสุด', 'Recent')}</span>
+    {items.map((s) => <Link key={s.id} to={`/search?lat=${s.lat}&lon=${s.lon}&name=${encodeURIComponent(s.name)}`}>{s.name}</Link>)}
+  </nav>;
+}
 
 function Hero() {
   const { t } = useLanguage();
@@ -12,6 +34,7 @@ function Hero() {
       <h1>{t('จองที่พักแล้ว', 'Stay booked.')}<br /><span className="nt-highlight">{t('ไปไหนต่อดี?', 'What’s nearby?')}</span></h1>
       <p>{t('ให้น้องทริปพาไปรู้จักที่เที่ยวและคาเฟ่รอบที่พัก', 'Meet the places and cafés around your stay.')}<br className="nt-desktop-break" />{t('ดูบนแผนที่ เลือกที่ถูกใจ แล้วออกไปเที่ยวกัน', 'Find your favorites on the map. Then go explore.')}</p>
       <div className="nt-hero-actions"><Link className="nt-button nt-button-amber" to="/search" data-mascot-cheer>{t('ค้นหารอบที่พัก', 'Explore around my stay')}<Icon /></Link><a className="nt-text-link" href="#try-it">{t('ลองเล่นตัวอย่าง', 'Try the demo')}<span>↘</span></a></div>
+      <RecentStays />
       <div className="nt-hero-note"><Icon name="check" size={16} />{t('เริ่มค้นหาได้เลย โดยไม่ต้องสมัครสมาชิก', 'Start exploring without an account')}</div>
     </div>
     <div className="nt-hero-art" aria-label={t('น้องทริป แมวส้มนักสำรวจ', 'NongTrip, your orange explorer cat')}>

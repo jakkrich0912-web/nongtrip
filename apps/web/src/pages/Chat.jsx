@@ -6,7 +6,8 @@ import { useLanguage } from '../lib/language.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { deleteChat, myChats, renameChat } from '../lib/api.js';
 import { groupChats } from '../lib/chatHistory.js';
-import { chatSuggestions, useChatSession } from '../lib/useChatSession.js';
+import { chatSuggestions } from '../lib/useChatSession.js';
+import { useChatPage } from '../lib/chatPage.jsx';
 import './chat-v2.css';
 import './chat-gpt.css';
 
@@ -22,7 +23,12 @@ export default function Chat() {
     const lon = Number.parseFloat(params.get('lon'));
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: params.get('name') || '' } : null;
   });
-  const session = useChatSession({ initialContext: initial });
+  const session = useChatPage();
+  // มาจากปุ่ม "ถามน้องทริป" ของหน้าค้นหา (/chat?lat=..&lon=..): ใช้จุดนั้นค้นต่อในแชตที่คุยอยู่
+  useEffect(() => {
+    if (initial) session.setContext(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, newChat, openChat, currentChat } = session;
   const [history, setHistory] = useState({ status: 'idle', items: [] });
   const [sideOpen, setSideOpen] = useState(false);

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import MotionSprite from './MotionSprite.jsx';
+import { loadMotion, walkFps } from '../lib/mascotFrames.js';
 import { Link } from 'react-router-dom';
 import Mascot from './Mascot.jsx';
 import MascotHead from './MascotHead.jsx';
@@ -7,10 +9,11 @@ import { useLanguage } from '../lib/language.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { chatSuggestions, useChatSession } from '../lib/useChatSession.js';
 import { useCompanionHint } from '../lib/companionContext.jsx';
+import { interestById } from '../lib/data.js';
 import { preload, prefersReducedMotion } from '../lib/mascot.js';
 import {
   COMPANION_SIZE, DRAG_THRESHOLD, canWander, EDGE, GREETING, bodyHeight, clampPos, companionFace, fromRatio, homePos, loadRatio,
-  nextActDelay, nextRestDelay, panelPlacement, pickAct, pickWalkTarget, saveRatio, stepToward, toRatio,
+  nextActDelay, nextRestDelay, panelPlacement, pickAct, pickWalkTarget, saveRatio, stepToward, toRatio, WALK_SPEED,
   clampRect, loadRect, maximizedRect, moveRect, resizeRect, saveRect,
 } from '../lib/companion.js';
 import './companion.css';
@@ -30,7 +33,7 @@ export default function ChatCompanion({ hidden = false }) {
   const { t, lang } = useLanguage();
   const { user } = useAuth();
   const hint = useCompanionHint();
-  const session = useChatSession();
+  const session = useChatSession({ persistKey: 'nongtrip-chat-companion' });
   const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince } = session;
   const [rect, setRect] = useState(null); // null = วางติดตัวมาสคอต, มีค่า = ผู้ใช้ลากย้าย/ปรับขนาดเอง
   const [maxed, setMaxed] = useState(null); // ขนาดก่อนขยายเต็ม (null = ไม่ได้ขยายอยู่)
@@ -45,6 +48,8 @@ export default function ChatCompanion({ hidden = false }) {
   const [hover, setHover] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [act, setAct] = useState(null);
+  const [motionReady, setMotionReady] = useState({}); // ชุดภาพเคลื่อนไหวที่โหลดครบแล้ว
+  const [hopped, setHopped] = useState(null);         // คำตอบล่าสุดที่กระโดดดีใจไปแล้ว (เล่นครั้งเดียวต่อคำตอบ)
   const [react, setReact] = useState(null);
   const [unread, setUnread] = useState(false);
   const [hello, setHello] = useState(false);
@@ -156,6 +161,16 @@ export default function ChatCompanion({ hidden = false }) {
     const hide = window.setTimeout(() => setHello(false), 6400);
     return () => { clearTimeout(show); clearTimeout(hide); };
   }, [hidden]);
+
+  // โหลดภาพเคลื่อนไหวไว้ก่อน (เดิน กระโดด มองรอบ กระดิกหาง) ชุดไหนยังไม่ครบใช้ท่าแบบเดิม
+  useEffect(() => {
+    if (hidden || reduced) return undefined;
+    let alive = true;
+    for (const name of ['walk', 'hop', 'look-around', 'tail-wag']) {
+      loadMotion(name).then((ok) => { if (alive && ok) setMotionReady((r) => ({ ...r, [name]: true })); });
+    }
+    return () => { alive = false; };
+  }, [hidden, reduced]);
 
   // อารมณ์ตามผลตอบ: ค้นอยู่ → คิด, เสร็จ → ยิ้ม, ผิดพลาด → ร้องไห้ (ค้างชั่วครู่) และมีจุดแจ้งถ้าหน้าต่างปิดอยู่
   const last = messages[messages.length - 1];
@@ -292,25 +307,37 @@ export default function ChatCompanion({ hidden = false }) {
 
   const busyStatus = status === 'searching' || status === 'answering' ? status : react;
   const base = companionFace({ open, status: busyStatus, typing: text.length > 0, hover, pressed, dragging });
-  const face = base.expression || base.mood !== 'front' ? base : (act ?? base);
+  const face = base.expression || base.mood !== 'front' || act?.motion ? base : (act ?? base);
+  // ภาพทีละเฟรมแทนมาสคอตนิ่งทั้งภาพ: เดิน, กระโดดดีใจเมื่อตอบเสร็จ (ครั้งเดียวต่อคำตอบ), ท่าพัก
+  // ถูกจับ ชี้ หรือกดอยู่ ใช้มาสคอตนิ่ง (สีหน้าตอบสนองยังทำงาน) ทิศซ้าย-ขวาได้จากการสะท้อนของ nt-comp-face อยู่แล้ว
+  const hopWanted = react === 'done' && hopped !== last?.id;
+  const motionName = reduced || dragging || hover || pressed ? null
+    : walking ? 'walk' : hopWanted ? 'hop' : (!open && act?.motion) || null;
+  const motion = motionName && motionReady[motionName] ? motionName : null;
   const anchored = open ? panelPlacement(pos, vp.w, vp.h) : null;
   const sheet = anchored?.sheet;
   const place = open && rect && !sheet ? { ...clampRect(rect, vp.w, vp.h), sheet: false, below: false } : anchored;
-  const suggestions = chatSuggestions(Boolean(context));
+  const suggestions = chatSuggestions(Boolean(context), context && hint?.lat === context.lat && hint?.lon === context.lon ? interestById(hint.interest) : null);
   const fullHref = context ? `/chat?${new URLSearchParams({ lat: context.lat, lon: context.lon, name: context.name || '' })}` : '/chat';
   const side = pos.x > vp.w / 2 ? 'right' : 'left';
   const body = bodyHeight();
   const label = open ? t('ปิดหน้าต่างแชตน้องทริป', 'Close the NongTrip chat') : t('คุยกับน้องทริป', 'Chat with NongTrip');
 
   return <>
-    <div ref={rootRef} className={`nt-comp ${walking ? 'is-walking' : ''} ${dragging ? 'is-dragging' : ''} ${sheet ? 'is-away' : ''}`} style={{ width: COMPANION_SIZE, height: body }}>
+    <div ref={rootRef} className={`nt-comp ${walking ? 'is-walking' : ''} ${motion ? 'has-motion' : ''} ${dragging ? 'is-dragging' : ''} ${sheet ? 'is-away' : ''}`} style={{ width: COMPANION_SIZE, height: body }}>
       {hello && !open && <p className={`nt-comp-hello nt-comp-hello-${side}`} role="status">{t(GREETING[0], GREETING[1])}</p>}
       <button ref={btnRef} type="button" className="nt-comp-btn" aria-label={label} aria-expanded={open} aria-haspopup="dialog"
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={(e) => endPointer(e, false)} onPointerCancel={(e) => endPointer(e, true)}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') { hoverRef.current = true; setHover(true); } }}
         onPointerLeave={() => { hoverRef.current = false; setHover(false); }}
         onClick={(e) => { if (e.detail === 0) { if (open) closeChat(); else openChat(); } }} onKeyDown={onKeyDown}>
-        <span ref={faceRef} className="nt-comp-face"><span className="nt-comp-sprite"><Mascot size={COMPANION_SIZE} mood={face.mood} expression={face.expression} interactive={false} title="" /></span></span>
+        <span ref={faceRef} className="nt-comp-face"><span className="nt-comp-sprite">
+          <span className="nt-comp-still" style={motion ? { visibility: 'hidden' } : undefined}><Mascot size={COMPANION_SIZE} mood={face.mood} expression={face.expression} interactive={false} title="" /></span>
+          {motion && <MotionSprite key={motion === 'hop' ? `hop-${last?.id}` : motion} name={motion} size={COMPANION_SIZE}
+            fps={motion === 'walk' ? walkFps(WALK_SPEED, COMPANION_SIZE) : undefined}
+            loops={motion === 'walk' ? Infinity : motion === 'tail-wag' ? 2 : 1}
+            onEnd={() => { if (motion === 'hop') setHopped(last?.id); else setAct(null); }} />}
+        </span></span>
         {unread && !open && <span className="nt-comp-dot" aria-hidden="true" />}
       </button>
     </div>
