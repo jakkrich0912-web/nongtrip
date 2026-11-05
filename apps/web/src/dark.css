@@ -132,6 +132,8 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .trip-groups li { background:rgba(74,124,89,0.07); }
 :where(html[data-theme=dark]) .trip-ask input { background:#131313; }
 :where(html[data-theme=dark]) .trip-answer { background:#131313; }
+:where(html[data-theme=dark]) .panel ::-webkit-scrollbar-thumb, :where(html[data-theme=dark]) .panel::-webkit-scrollbar-thumb { background:rgba(60,64,58,0.38); }
+:where(html[data-theme=dark]) .panel ::-webkit-scrollbar-thumb:hover, :where(html[data-theme=dark]) .panel::-webkit-scrollbar-thumb:hover { background:rgba(60,64,58,0.6); }
 
 /* จาก landing.css */
 :where(html[data-theme=dark]) .nt-skip { background:#131313; }
@@ -204,6 +206,7 @@ html[data-theme=dark] input::placeholder, html[data-theme=dark] textarea::placeh
 :where(html[data-theme=dark]) .nt-auth-brand { color:#ffffff!important; }
 :where(html[data-theme=dark]) .nt-auth-brand .mascot-head { background:#211f1a; }
 :where(html[data-theme=dark]) .nt-auth-speech { background:#211f1a; color:#d9e5d7; box-shadow:0 5px 0 #000000; }
+:where(html[data-theme=dark]) .nt-auth-story-foot { text-shadow:0 1px 3px #000000, 0 0 10px #000000; }
 :where(html[data-theme=dark]) .nt-auth-back { color:#c5cec2!important; }
 :where(html[data-theme=dark]) .nt-auth-languages button { color:#c5cec2; }
 :where(html[data-theme=dark]) .nt-auth-languages button[aria-pressed="true"] { color:#d9e5d7; }

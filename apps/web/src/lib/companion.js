@@ -88,6 +88,9 @@ export const IDLE_ACTS = [
   { expression: 'smirk', ms: 1500 },
   { expression: 'tongue', ms: 1200 },
   { expression: 'squint', ms: 1300 },
+  // ท่าพักที่เป็นภาพทีละเฟรม (lib/mascotFrames.js): มองซ้ายขวา และกระดิกหางสองรอบ
+  { motion: 'look-around', ms: 1000 },
+  { motion: 'tail-wag', ms: 1334 },
 ];
 export const pickAct = (rand = Math.random) => IDLE_ACTS[Math.min(IDLE_ACTS.length - 1, Math.floor(rand() * IDLE_ACTS.length))];
 
