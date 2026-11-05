@@ -30,7 +30,7 @@ export default function ChatCompanion({ hidden = false }) {
   const { t, lang } = useLanguage();
   const { user } = useAuth();
   const hint = useCompanionHint();
-  const session = useChatSession();
+  const session = useChatSession({ persistKey: 'nongtrip-chat-companion' });
   const { messages, text, setText, busy, context, setContext, send, stop, chooseLodging, input, lastProvince } = session;
   const [rect, setRect] = useState(null); // null = วางติดตัวมาสคอต, มีค่า = ผู้ใช้ลากย้าย/ปรับขนาดเอง
   const [maxed, setMaxed] = useState(null); // ขนาดก่อนขยายเต็ม (null = ไม่ได้ขยายอยู่)

@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import SiteHeader, { Brand } from './components/landing/SiteHeader.jsx';
 import ChatCompanion from './components/ChatCompanion.jsx';
 import { CompanionHintProvider } from './lib/companionContext.jsx';
+import { ChatPageProvider } from './lib/chatPage.jsx';
 import { useLanguage } from './lib/language.jsx';
 import './landing.css';
 
@@ -25,7 +26,7 @@ export default function App() {
   const { t } = useLanguage();
   useEffect(() => { if (!hash) window.scrollTo(0, 0); }, [pathname]);
   const auth = pathname === '/login' || pathname === '/signup';
-  return <CompanionHintProvider><div className={`nt-app ${auth ? 'nt-auth-route' : ''}`}>
+  return <CompanionHintProvider><ChatPageProvider><div className={`nt-app ${auth ? 'nt-auth-route' : ''}`}>
     {!auth && <><a className="nt-skip" href="#main-content">{t('ข้ามไปเนื้อหา', 'Skip to content')}</a><SiteHeader /></>}
     <main id="main-content" className={pathname === '/' || auth ? '' : pathname === '/chat' ? 'nt-chatspace' : 'nt-workspace'}>
       <Routes>
@@ -48,5 +49,5 @@ export default function App() {
     </main>
     {!auth && pathname !== '/chat' && <footer className="nt-footer nt-container"><div><Brand /><p>{t('โครงงานมหาวิทยาลัยเทคโนโลยีราชมงคลธัญบุรี', 'A project by Rajamangala University of Technology Thanyaburi')}</p></div><nav className="nt-footer-links" aria-label={t('ลิงก์ส่วนท้าย', 'Footer links')}><Link to="/about">{t('เกี่ยวกับเรา', 'About')}</Link><Link to="/provinces">{t('ทุกจังหวัด', 'All provinces')}</Link><Link to="/privacy">{t('ความเป็นส่วนตัว', 'Privacy')}</Link></nav><div><p>{t('ระยะทางเป็นเส้นตรง ไม่ใช่ระยะขับรถ', 'Distances are straight-line, not driving distances.')}</p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map data © OpenStreetMap contributors (ODbL)</a></div></footer>}
     <ChatCompanion hidden={auth || pathname === '/chat'} />
-  </div></CompanionHintProvider>;
+  </div></ChatPageProvider></CompanionHintProvider>;
 }

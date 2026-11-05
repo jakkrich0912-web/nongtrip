@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "name": "auth-backgrounds",
+  "palette": [
+    "#22301f",
+    "#3d6a4b",
+    "#f5f3ed",
+    "#f9a620"
+  ],
+  "safe_copy_region": {
+    "coordinate_system": "normalized",
+    "left": 0.2,
+    "top": 0.0,
+    "right": 0.8,
+    "bottom": 0.52,
+    "text_color": "#ffffff",
+    "description": "Upper 52%, with side insets to keep white copy clear of foliage."
+  },
+  "mascot_baked_in": false,
+  "framing": "3:4 source aspect ratio preserved without cropping",
+  "budget_scope": "Authentication backgrounds are separate from the motion asset budget.",
+  "webp_quality": 82,
+  "max_file_bytes": 250000,
+  "runtime_bytes": 309222,
+  "assets": [
+    {
+      "file": "login.webp",
+      "width": 1080,
+      "height": 1440,
+      "format": "WEBP",
+      "bytes": 93644,
+      "sha256": "3c45f679b5b35b60c5b04d0c779c98e8478fba93756b0c88c5a7934761ac9c9e",
+      "name": "login",
+      "variant": "desktop",
+      "webp_quality": 82,
+      "source_file": "login.png",
+      "source_sha256": "2ceff16174ac9630a79ce05353550ac9f43735e6fcd0529f0a2bf09ecd82112b",
+      "source_size": [
+        1086,
+        1448
+      ]
+    },
+    {
+      "file": "login-mobile.webp",
+      "width": 600,
+      "height": 800,
+      "format": "WEBP",
+      "bytes": 35206,
+      "sha256": "41086ef579877a51ebde2ee7e31b5462148289aab9b060fe1a31e2e44e1b40ab",
+      "name": "login",
+      "variant": "mobile",
+      "webp_quality": 82,
+      "source_file": "login.png",
+      "source_sha256": "2ceff16174ac9630a79ce05353550ac9f43735e6fcd0529f0a2bf09ecd82112b",
+      "source_size": [
+        1086,
+        1448
+      ]
+    },
+    {
+      "file": "signup.webp",
+      "width": 1080,
+      "height": 1440,
+      "format": "WEBP",
+      "bytes": 132000,
+      "sha256": "f5bf10cebb02757ae59b4f2be10eb9d1304b2bb4e4894860b45f4cce01d481f7",
+      "name": "signup",
+      "variant": "desktop",
+      "webp_quality": 82,
+      "source_file": "signup.png",
+      "source_sha256": "649a0312188ba2f9bc736fc346651435d4aec078bf5f3e8d2000d1fea8035403",
+      "source_size": [
+        1086,
+        1448
+      ]
+    },
+    {
+      "file": "signup-mobile.webp",
+      "width": 600,
+      "height": 800,
+      "format": "WEBP",
+      "bytes": 48372,
+      "sha256": "59296d6691f986d3444e723a5c83703ddef414f2f306ab0479bced1a41d63a5b",
+      "name": "signup",
+      "variant": "mobile",
+      "webp_quality": 82,
+      "source_file": "signup.png",
+      "source_sha256": "649a0312188ba2f9bc736fc346651435d4aec078bf5f3e8d2000d1fea8035403",
+      "source_size": [
+        1086,
+        1448
+      ]
+    }
+  ],
+  "contact_sheet": {
+    "file": "contact-sheet.jpg",
+    "width": 720,
+    "height": 510,
+    "format": "JPEG",
+    "bytes": 44805,
+    "sha256": "6a33c8ae3ca9df005b45ca6c8fc8ecd96d54b51e378094a52eaceb972811e397"
+  }
+}

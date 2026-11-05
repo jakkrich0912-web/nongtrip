@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "name": "look-around",
+  "canvas_size": [
+    360,
+    480
+  ],
+  "frame_count": 6,
+  "fps": 6,
+  "loop": true,
+  "anchor": [
+    180,
+    447
+  ],
+  "anchor_semantics": "fixed ground registration; feet lift only during hop",
+  "frames": [
+    {
+      "file": "00.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        25,
+        56,
+        329,
+        448
+      ],
+      "sha256": "b33f0ef09724ec9b05e0e54ef20a039df31cfbca91b57d22cf8628b4a80d393b",
+      "bytes": 27700,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          16,
+          28
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    },
+    {
+      "file": "01.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        34,
+        52,
+        315,
+        448
+      ],
+      "sha256": "f0b246ca95234df5448a694db2747f18c96727e0ec4a17ea197d373f6c6252a2",
+      "bytes": 29492,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          15,
+          27
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    },
+    {
+      "file": "02.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        34,
+        52,
+        308,
+        448
+      ],
+      "sha256": "5ee7a1a7bcda1608ea4eacc286e30ffda353202f70f924d1510add8bedcab739",
+      "bytes": 29710,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          16,
+          26
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    },
+    {
+      "file": "03.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        29,
+        53,
+        329,
+        448
+      ],
+      "sha256": "6bf5ab0b246e4fda2d25813a7acf9e0300b8fb04f65dcf8b18ee1b3ca8c6cc6d",
+      "bytes": 31410,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          18,
+          26
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    },
+    {
+      "file": "04.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        39,
+        57,
+        320,
+        448
+      ],
+      "sha256": "eb8ba71e9b5d3b76c47fff49af1b2defc9926abb26c72159a28a89ca9e919aa6",
+      "bytes": 29576,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          25,
+          26
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    },
+    {
+      "file": "05.webp",
+      "anchor": [
+        180,
+        447
+      ],
+      "ground_clearance_px": 0,
+      "alpha_bbox": [
+        37,
+        52,
+        325,
+        448
+      ],
+      "sha256": "62db46d0a750b1c253176f995d78e6d2b9900a9e84095c05cfb41a6844e42b6f",
+      "bytes": 31334,
+      "webp_quality": 82,
+      "registration": {
+        "scale": 0.8643326039387309,
+        "translation": [
+          21,
+          26
+        ],
+        "source_size": [
+          373,
+          520
+        ]
+      }
+    }
+  ]
+}

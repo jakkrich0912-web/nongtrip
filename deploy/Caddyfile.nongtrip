@@ -1,0 +1,9 @@
+# ต่อท้าย Caddyfile ของ video-buddy (Caddy ตัวนั้นถือพอร์ต 80/443 ของเครื่อง)
+nongtrip.traineeai.tech {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy nongtrip-web:80 {
+		# แชตเป็น SSE ห้ามพักข้อมูล
+		flush_interval -1
+	}
+}

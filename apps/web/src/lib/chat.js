@@ -49,7 +49,7 @@ export function numberCitations(text, sources) {
 }
 
 // ส่งข้อความแล้วเรียก onEvent(event, data) ทีละขั้น จบเมื่อได้ done หรือ error
-export async function sendChat({ message, context, chat_id, last_province, lang, edit_from }, onEvent, signal) {
+export async function sendChat({ message, context, chat_id, last_province, lang, edit_from, history }, onEvent, signal) {
   let res;
   try {
     res = await fetch('/api/chat', {
@@ -65,6 +65,8 @@ export async function sendChat({ message, context, chat_id, last_province, lang,
         ...(lang === 'en' ? { lang } : {}),
         // แก้คำถาม/ถามใหม่: ลบตั้งแต่ข้อความนี้ลงไปในแชตที่บันทึกไว้ แล้วถามใหม่ (ต้องมี chat_id)
         ...(edit_from && chat_id ? { edit_from } : {}),
+        // บทสนทนาก่อนหน้า (v0.24) ให้บอทเข้าใจคำถามต่อเนื่อง เช่น "ที่นั่น" "เล่าเพิ่มหน่อย"
+        ...(history?.length ? { history } : {}),
       }),
       signal,
     });
